@@ -300,6 +300,18 @@ var Eproc = {
         Eproc.colorirTabela(2, 'Tabela de Processos.');
     },
     // }}}
+// {{{ intimacao_bloco_filtrar_destino()
+    intimacao_bloco_filtrar_destino: function()
+    {
+        Eproc.colorirTabela(2, 'Tabela de Processos.');
+    },
+    // }}}
+    // {{{ intimacao_bloco_listar_destino()
+    intimacao_bloco_listar_destino: function()
+    {
+        Eproc.colorirTabela(2, 'Tabela de Processos.');
+    },
+    // }}}
     // {{{ colorirTabela()
     colorirTabela: function(col, summary)
     {
@@ -309,6 +321,9 @@ var Eproc = {
                 table.setAttribute('width', '');
                 for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
                     th.setAttribute('width', '');
+                    if (th.textContent == 'Classe') {
+                        col = h;
+                    }
                 }
                 for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
                     if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
