@@ -78,17 +78,17 @@ contentLoad: function(e) {
     if (eproc_gmCompiler.isGreasemonkeyable(href)) {
         var prefs = new eproc_PrefManager();
         var script = false;
-        if (/https?:\/\/(jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc(V2|v2_(homologacao|apresentacao))|eproc2?.trf4.(gov|jus).br\/eproc(2trf4|trf4_apresentacao))\/controlador\.php\?acao=acessar_documento/.test(href)) {
-        } else if (prefs.getValue('v2.enable') && /https?:\/\/(jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc(V2|v2_(homologacao|apresentacao))|eproc2?.trf4.(gov|jus).br\/eproc(2trf4|trf4_apresentacao))\/.*/.test(href)) {
+        if (/^https?:\/\/((eproc|jef)[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc(V2|v2_(homologacao|apresentacao))|eproc2?.trf4.(gov|jus).br\/eproc(2trf4|trf4_apresentacao))\/controlador\.php\?acao=acessar_documento/.test(href)) {
+        } else if (prefs.getValue('v2.enable') && /^https?:\/\/((eproc|jef)[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc(V2|v2_(homologacao|apresentacao))|eproc2?.trf4.(gov|jus).br\/eproc(2trf4|trf4_apresentacao))\//.test(href)) {
             script = eproc_gmCompiler.getUrlContents('chrome://eproc/content/eprocV2.js');
-        } else if (prefs.getValue('v1.enable') && /https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/.*/.test(href)) {
-            if (prefs.getValue('v1.consulta_processo.enable') && /https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/consulta_processo.php\?.*/.test(href)) {
+        } else if (prefs.getValue('v1.enable') && /^https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\//.test(href)) {
+            if (prefs.getValue('v1.consulta_processo.enable') && /^https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/consulta_processo.php\?.*/.test(href)) {
                 script = eproc_gmCompiler.getUrlContents('chrome://eproc/content/consulta_processo.js');
-            } else if (prefs.getValue('v1.html_to_pdf.enable') && /https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/html_to_pdf\.php/.test(href)) {
+            } else if (prefs.getValue('v1.html_to_pdf.enable') && /^https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/html_to_pdf\.php/.test(href)) {
                 script = eproc_gmCompiler.getUrlContents('chrome://eproc/content/html_to_pdf.js');
-            } else if (prefs.getValue('v1.alteracao_assunto.enable') && /https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/alteracao_assunto.php\?.*/.test(href)) {
+            } else if (prefs.getValue('v1.alteracao_assunto.enable') && /^https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/alteracao_assunto.php\?.*/.test(href)) {
                 script = eproc_gmCompiler.getUrlContents('chrome://eproc/content/alteracao_assunto.js');
-            } else if (/https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/class\/.*/.test(href)) {
+            } else if (/^https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/(class\/|download_documento\.php|download\/|arvore\.php)/.test(href)) {
             } else if (prefs.getValue('v1.eproc.enable')) {
                 script = eproc_gmCompiler.getUrlContents('chrome://eproc/content/eproc.js');
             }
