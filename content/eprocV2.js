@@ -265,6 +265,8 @@ var Eproc = {
         Eproc.mudaFundo(GM_getValue('background') || '#ffffff');
         if (this.acao && this[this.acao]) {
             this[this.acao]();
+        } else if (this.parametros.acao_origem && this[this.parametros.acao_origem + '_destino']) {
+            this[this.parametros.acao_origem + '_destino']();
         }
     },
     // }}}
@@ -273,6 +275,30 @@ var Eproc = {
     {
         this.setLastProcesso();
     },        
+    // }}}
+    // {{{ localizador_processos_lista_destino()
+    localizador_processos_lista_destino: function()
+    {
+/*        var form = document.getElementById('frmProcessoEventoLista');
+        form.action = location.pathname + location.search; */
+        for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
+            if (table.getAttribute('summary') == 'Tabela de Processos por Localizador.') {
+                table.setAttribute('width', '');
+                for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
+                    th.setAttribute('width', '');
+                }
+                for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
+                    if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
+                    tr.cells[1].getElementsByTagName('a')[0].setAttribute('target', '_blank');
+                    var classe = tr.cells[5].innerHTML;
+                    if (Classes[classe])
+                        for (var cells = tr.cells, c = 0, cl = cells.length; (c < cl) && (cell = cells[c]); c++) {
+                            cell.style.backgroundColor = Classes[classe];
+                        }
+                }
+            }
+        }
+    },
     // }}}
     // {{{ mudaFundo()
     mudaFundo: function(background)
@@ -296,19 +322,11 @@ var Eproc = {
     // {{{ processo_consultar_listar()
     processo_consulta_listar: function()
     {
+        var form = document.getElementById('frmProcessoEventoLista');
+        form.action = location.pathname + location.search;
         for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
             if (table.getAttribute('summary') == 'Tabela de Processos.') {
                 table.setAttribute('width', '');
-/*
- *
- */
-var form = document.getElementById('hdnInfraCampoOrd').form;
-form.action = form.action.replace('?&', '?acao=processo_consulta_listar&');
-form.action = location.pathname + location.search;
-/*
- *
- */
-
                 for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
                     th.setAttribute('width', '');
                 }
@@ -628,14 +646,6 @@ var StringMaker = function () {
 // }}}
 // {{{ Início do programa
 GM_addStyle(<style><![CDATA[
-.infraTrSelecionada
-{
-    background-color: inherit;
-}
-.infraTrSelecionada td
-{
-    background-color: rgba(0,0,0,.25);
-}
 .infraTrClara a:visited,
 .infraTrEscura a:visited
 {
