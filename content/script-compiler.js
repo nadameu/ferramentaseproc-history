@@ -249,6 +249,7 @@ var httpRequestObserver =
   observe: function(subject, topic, data)
   {
     if (topic == "http-on-examine-response") {
+      if (typeof Components == 'undefined') return;
       var httpChannel = subject.QueryInterface(Components.interfaces.nsIHttpChannel);
 
       if (httpChannel.name.match(/https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc(V2|v2_homologacao)\/controlador\.php\?acao=acessar_documento/)) {
