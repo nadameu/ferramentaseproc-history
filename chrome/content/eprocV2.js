@@ -61,11 +61,14 @@ var Classes = {
     'AÇÃO SUMÁRIA (PROCEDIMENTO COMUM SUMÁRIO)': Cores.VERDE,
     'AGRAVO DE EXECUÇÃO PENAL': Cores.BRANCA,
     'AGRAVO DE INSTRUMENTO': Cores.VERDE,
+    'Agravo de Instrumento': Cores.LARANJA,
     'AGRAVO DE INSTRUMENTO DE DECISÃO DENEGAT.DE REC.EX': Cores.VERDE,
     'ALIENAÇÃO JUDICIAL': Cores.BRANCA,
     'ALIENAÇÃO JUDICIAL CRIMINAL': Cores.VERMELHA,
     'ALVARÁ JUDICIAL': Cores.CINZA,
     'APELAÇÃO CRIMINAL': Cores.AZUL,
+    'Apelação Cível': Cores.ROSA,
+    'Apelação/Reexame Necessário': Cores.ROSA,
     'APREENSÃO DE EMBARCAÇÕES': Cores.BRANCA,
     'ARRESTO / HIPOTECA LEGAL - MEDIDAS ASSECURATÓRIAS': Cores.BRANCA,
     'ARRIBADAS FORÇADAS': Cores.BRANCA,
@@ -85,14 +88,14 @@ var Classes = {
     'DEMARCAÇÃO / DIVISÃO': Cores.CINZA,
     'DESAFORAMENTO DE JULGAMENTO': Cores.BRANCA,
     'DESPEJO P/FALTA DE PAGAMENTO CUMULADO C/COBRANÇA': Cores.VERDE,
-    'DESPEJO POR FALTA DE PAGAMENTO': Cores.DESCONHECIDA,
+    'DESPEJO POR FALTA DE PAGAMENTO': Cores.VERDE,
     'EMBARGOS À ADJUDICAÇÃO': Cores.VERDE,
     'EMBARGOS À ARREMATAÇÃO': Cores.VERDE,
     'EMBARGOS À EXECUÇÃO': Cores.VERDE,
     'EMBARGOS À EXECUÇÃO FISCAL': Cores.VERDE,
     'EMBARGOS DE RETENÇÃO POR BENFEITORIAS': Cores.VERDE,
     'EMBARGOS DE TERCEIRO': Cores.VERDE,
-    'EMBARGOS DO ACUSADO': Cores.DESCONHECIDA,
+    'EMBARGOS DO ACUSADO': Cores.VERDE,
     'ESPECIALIZAÇÃO DE HIPOTECA LEGAL': Cores.BRANCA,
     'EXCEÇÃO DA VERDADE': Cores.BRANCA,
     'EXCEÇÃO DE COISA JULGADA': Cores.BRANCA,
@@ -108,25 +111,25 @@ var Classes = {
     'EXECUÇÃO DE SENTENÇA CONTRA FAZENDA PÚBL': Cores.VERDE,
     'EXECUÇÃO DE TÍTULO EXTRAJUDICIAL': Cores.AMARELA,
     'EXECUÇÃO FISCAL': Cores.LARANJA,
-    'EXECUÇÃO HIPOTECÁRIA DO SISTEMA FINANCEIRO DA HABI': Cores.DESCONHECIDA,
-    'EXECUÇÃO PENAL': Cores.DESCONHECIDA,
+    'EXECUÇÃO HIPOTECÁRIA DO SISTEMA FINANCEIRO DA HABI': Cores.AMARELA,
+    'EXECUÇÃO PENAL': Cores.BRANCA,
     'EXECUÇÃO PENAL PROVISÓRIA': Cores.AMARELA,
     'EXECUÇÃO PROVISÓRIA DE SENTENÇA': Cores.VERDE,
     'EXIBIÇÃO DE DOCUMENTO OU COISA': Cores.LARANJA,
     'HABEAS CORPUS': Cores.AMARELA,
-    'HABEAS DATA': Cores.DESCONHECIDA,
-    'HABILITAÇÃO': Cores.DESCONHECIDA,
+    'HABEAS DATA': Cores.BRANCA,
+    'HABILITAÇÃO': Cores.VERDE,
     'HOMOLOGAÇÃO DE TRANSAÇÃO EXTRAJUDICIAL': Cores.VERDE,
     'IMPUGNAÇÃO AO CUMPRIMENTO DE SENTENÇA': Cores.AZUL,
     'IMPUGNAÇÃO AO PEDIDO DE ASSISTÊNCIA LITISCONSORCIA': Cores.BRANCA,
     'IMPUGNAÇÃO AO VALOR DA CAUSA': Cores.BRANCA,
-    'IMPUGNAÇÃO DO DIREITO A ASSISTÊNCIA JUDICIÁRIA': Cores.DESCONHECIDA,
+    'IMPUGNAÇÃO DO DIREITO A ASSISTÊNCIA JUDICIÁRIA': Cores.VERDE,
     'INCIDENTE DE AVALIAÇÃO DE DEPENDÊNCIA DE DROGAS': Cores.VERDE,
-    'INCIDENTE DE FALSIDADE': Cores.DESCONHECIDA,
+    'INCIDENTE DE FALSIDADE': Cores.VERDE,
     'INCIDENTE DE FALSIDADE CRIMINAL': Cores.BRANCA,
     'INCIDENTE DE INSANIDADE MENTAL': Cores.AMARELA,
     'INCIDENTE DE RESTITUIÇÃO DE COISAS APREENDIDAS': Cores.BRANCA,
-    'INCIDENTE DE TRANSF.ENTRE ESTABELECIMENTOS PENAIS': Cores.DESCONHECIDA,
+    'INCIDENTE DE TRANSF.ENTRE ESTABELECIMENTOS PENAIS': Cores.BRANCA,
     'INCIDENTE DE UNIFORMIZAÇÃO DE JURISPRUDÊNCIA': Cores.VERDE,
     'INQUÉRITO POLICIAL': Cores.VERDE,
     'INTERDITO PROIBITÓRIO': Cores.VERDE,
@@ -136,27 +139,27 @@ var Classes = {
     'LIQUIDAÇÃO PROVISÓRIA POR ARBITRAMENTO': Cores.BRANCA,
     'LIQUIDAÇÃO PROVISÓRIA POR ARTIGOS': Cores.BRANCA,
     'MANDADO DE SEGURANÇA': Cores.PALHA,
-    'MANDADO DE SEGURANÇA COLETIVO': Cores.DESCONHECIDA,
+    'MANDADO DE SEGURANÇA COLETIVO': Cores.PALHA,
     'MEDIDA CAUTELAR DE ALIMENTOS PROVISIONAIS': Cores.AZUL,
     'MEDIDA CAUTELAR DE APREENSÃO DE TÍTULOS': Cores.CINZA,
     'MEDIDA CAUTELAR DE ARRESTO': Cores.BRANCA,
     'MEDIDA CAUTELAR DE ARROLAMENTO DE BENS': Cores.BRANCA,
     'MEDIDA CAUTELAR DE ATENTADO': Cores.BRANCA,
-    'MEDIDA CAUTELAR DE BUSCA E APREENSÃO': Cores.DESCONHECIDA,
+    'MEDIDA CAUTELAR DE BUSCA E APREENSÃO': Cores.SALMÃO,
     'MEDIDA CAUTELAR DE CAUÇÃO': Cores.PALHA,
     'MEDIDA CAUTELAR DE EXIBIÇÃO': Cores.SALMÃO,
     'MEDIDA CAUTELAR DE HOMOLOGAÇÃO DO PENHOR LEGAL': Cores.SALMÃO,
     'MEDIDA CAUTELAR DE INTERPELAÇÃO': Cores.SALMÃO,
     'MEDIDA CAUTELAR DE JUSTIFICAÇÃO': Cores.SALMÃO,
     'MEDIDA CAUTELAR DE NOTIFICAÇÃO': Cores.SALMÃO,
-    'MEDIDA CAUTELAR DE POSSE EM NOME DO NASCITURO': Cores.DESCONHECIDA,
-    'MEDIDA CAUTELAR DE PRODUÇÃO ANTECIPADA DE PROVAS': Cores.DESCONHECIDA,
+    'MEDIDA CAUTELAR DE POSSE EM NOME DO NASCITURO': Cores.SALMÃO,
+    'MEDIDA CAUTELAR DE PRODUÇÃO ANTECIPADA DE PROVAS': Cores.SALMÃO,
     'MEDIDA CAUTELAR DE PROTESTO': Cores.SALMÃO,
     'MEDIDA CAUTELAR DE SEQUESTRO': Cores.SALMÃO,
-    'MEDIDA CAUTELAR FISCAL': Cores.DESCONHECIDA,
+    'MEDIDA CAUTELAR FISCAL': Cores.SALMÃO,
     'MEDIDA CAUTELAR INOMINADA': Cores.SALMÃO,
     'NATURALIZAÇÃO': Cores.SALMÃO,
-    'NOMEAÇÃO DE ADVOGADO': Cores.DESCONHECIDA,
+    'NOMEAÇÃO DE ADVOGADO': Cores.CINZA,
     'NOTIFICAÇÃO PARA EXPLICAÇÕES': Cores.SALMÃO,
     'NOTIFICAÇÃO PARA EXPLICAÇÕES (LEI DE IMPRENSA)': Cores.AMARELA,
     'OPÇÃO DE NACIONALIDADE': Cores.SALMÃO,
@@ -166,10 +169,10 @@ var Classes = {
     'OUTROS PROCEDIMENTOS DE JURISDIÇÃO VOLUNTÁRIA': Cores.VERDE,
     'PEDIDO DE ASSISTÊNCIA JUDICIÁRIA': Cores.SALMÃO,
     'PEDIDO DE BUSCA E APREENSÃO CRIMINAL': Cores.CINZA,
-    'PEDIDO DE LIBERDADE PROVISÓRIA COM OU SEM FIANÇA': Cores.DESCONHECIDA,
+    'PEDIDO DE LIBERDADE PROVISÓRIA COM OU SEM FIANÇA': Cores.AMARELA,
     'PEDIDO DE PRISÃO PREVENTIVA': Cores.VERDE,
     'PEDIDO DE PRISÃO TEMPORÁRIA': Cores.BRANCA,
-    'PEDIDO DE QUEBRA DE SIGILO DE DADOS E/OU TELEFÔNIC': Cores.DESCONHECIDA,
+    'PEDIDO DE QUEBRA DE SIGILO DE DADOS E/OU TELEFÔNIC': Cores.BRANCA,
     'PEDIDO DE RESPOSTA OU RETIFICAÇÃO DA LEI DE IMPREN': Cores.VERDE,
     'PEDIDO PRISÃO/LIBERDADE VIGIADA FINS DE EXPULSÃO': Cores.CINZA,
     'PRESTAÇÃO DE CONTAS - EXIGIDAS': Cores.VERDE,
@@ -187,14 +190,15 @@ var Classes = {
     'PROTESTO FORMADO A BORDO': Cores.AZUL,
     'RECURSO CÍVEL': Cores.BRANCA,
     'RECURSO DE MEDIDA CAUTELAR': Cores.BRANCA,
-    'RECURSO EM SENTIDO ESTRITO': Cores.DESCONHECIDA,
+    'RECURSO EM SENTIDO ESTRITO': Cores.ROSA,
+    'Reexame Necessário Cível': Cores.ROSA,
     'REINT/MANUTENÇÃO POSSE PROCED.ESP.JURISD.CONTENC.': Cores.BRANCA,
     'REMIÇÃO DO IMÓVEL HIPOTECADO': Cores.BRANCA,
-    'REPRESENTAÇÃO CRIMINAL': Cores.DESCONHECIDA,
-    'REQUERIMENTO DE REABILITAÇÃO': Cores.DESCONHECIDA,
+    'REPRESENTAÇÃO CRIMINAL': Cores.BRANCA,
+    'REQUERIMENTO DE REABILITAÇÃO': Cores.BRANCA,
     'RESTAURAÇÃO DE AUTOS': Cores.AZUL,
     'RETIFICAÇÃO DE REGISTRO DE IMÓVEL': Cores.ROSA,
-    'SEQÜESTRO - MEDIDAS ASSECURATÓRIAS': Cores.DESCONHECIDA,
+    'SEQÜESTRO - MEDIDAS ASSECURATÓRIAS': Cores.BRANCA,
     'SUPERVENIÊNCIA DOENÇA MENTAL-INCID.EXEC.CRIMINAL': Cores.BRANCA,
     'TERMO CIRCUNSTANCIADO': Cores.BRANCA
 }
@@ -207,7 +211,84 @@ var Eproc = {
     processo: 0,
     windows: [],
     // }}}
-    // {{{ citacao_bloco_filtrar_destino()
+    // {{{ arvore_processo()
+    arvore_processo: function()
+    {
+        GM_addStyle('dt { font-size: 12px; } dd { font-size: 11px; }');
+        if (!unsafeWindow.opener) return window.close();
+        document.title = Eproc.getProcessoF() + ' - Árvore de documentos';
+        Array.forEach(document.getElementsByClassName('infraAcaoBarraSistema'), function(acao)
+        {
+            acao.style.display = 'none';
+        });
+        document.getElementById('divInfraBarraSistemaE').style.display = 'none';
+        document.getElementById('divInfraBarraLocalizacao').textContent = unsafeWindow.opener.document.getElementById('divInfraBarraLocalizacao').textContent + ' - Árvore de documentos';
+        document.getElementById('divInfraAreaTela').style.display = 'none';
+        var area = document.createElement('div');
+        area.className = 'infraAreaTela';
+        for (var tables = unsafeWindow.opener.document.getElementsByTagName('table'), tl = tables.length, t = 0, t; (t < tl) && (table = tables[t]); t++) {
+            if (table.getAttribute('summary') == 'Eventos') {
+                var arvore = document.createElement('div');
+                arvore.style.cssFloat = 'left';
+                arvore.style.width = '20%';
+                arvore.style.overflowY = 'scroll';
+                for (var rows = table.rows, rl = rows.length, r = rl - 1, row; (r >= 0) && (row = rows[r]); r--) {
+                    if (!row.className.match(/infraTr(Clara|Escura)/)) continue;
+                    var evento = document.createElement('dl');
+                    var descricao = document.createElement('dt');
+                    descricao.textContent = row.cells[0].textContent + '. ' + row.cells[1].textContent;
+                    evento.appendChild(descricao);
+                    var descricao = document.createElement('dd');
+                    descricao.textContent = row.cells[2].innerHTML.split('<br')[0] + ' (' + row.cells[3].innerHTML + ')';
+                    evento.appendChild(descricao);
+                    for (var links = row.cells[4].getElementsByTagName('a'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
+                        if (link.search.match(/processo_evento_documento_tooltip_cadastrar/)) continue;
+                        var documento = document.createElement('dd');
+                        if (link.search.match(/processo_evento_documento_tooltip_alterar/)) {
+                            var link = link.cloneNode(true);
+                            link.addEventListener('click', function(e) { if (!e.shiftKey && !e.ctrlKey) { e.preventDefault(); e.stopPropagation(); } }, false);
+                            documento.appendChild(link);
+                            l++;
+                            if (l >= ll) continue;
+                            link = links[l];
+                        }
+                        var link = link.cloneNode(true);
+                        link.target = 'show_files';
+                        link.addEventListener('click', (function(link) { return function(e)
+                        {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            document.getElementsByClassName('docActiveFrame')[0].className = 'docFrame';
+                            var id = link.href.match(/doc=([0-9]+)/)[1];
+                            var iframe = document.getElementById('frame' + id) || (function()
+                            {
+                                var iframe = document.createElement('iframe');
+                                iframe.id = 'frame' + id;
+                                iframe.src = link.href;
+                                area.appendChild(iframe);
+                                return iframe;
+                            })();
+                            iframe.className = 'docFrame docActiveFrame';
+                        }; })(link), false);
+                        documento.appendChild(link);
+                        evento.appendChild(documento);
+                    }
+                    arvore.appendChild(evento);
+                }
+                area.appendChild(arvore);
+            }
+        }
+        var iframe = document.createElement('iframe');
+        iframe.name = 'show_files';
+        iframe.className = 'docFrame docActiveFrame';
+        area.appendChild(iframe);
+        var falta = window.innerHeight - document.getElementById('divInfraAreaGlobal').offsetHeight - 20;
+        document.getElementById('divInfraAreaTela').parentNode.insertBefore(area, document.getElementById('divInfraAreaTela').nextSibling);
+        arvore.style.height = falta + 'px';
+        GM_addStyle('iframe.docFrame { display: none; float: left; width: 80%; border: none; height: ' + falta + 'px; } iframe.docActiveFrame { display: block; }');
+},
+// }}}
+// {{{ citacao_bloco_filtrar_destino()
     citacao_bloco_filtrar_destino: function()
     {
         Eproc.colorirTabela(2, 'Tabela de Processos.');
@@ -276,31 +357,30 @@ var Eproc = {
      */
     getDocsGedpro: function()
     {
-        var grupos = arguments.length > 0 ? arguments[0] : '0';
+      if (arguments.length == 0) {
+        return Eproc.reloginGedpro();
+      } else if (arguments[0] == 'arvore') {
         GM_xmlhttpRequest({
             method: 'GET',
-            url: 'http://' + Eproc.loginGedpro.host + '/XMLInterface.asp?processo=' + Eproc.processo + '&ProcessoVisual=PV&grupos=' + grupos,
+            url: 'http://' + Eproc.loginGedpro.host + '/arvore2.asp?modulo=Textos do Processo&processo=' + Eproc.processo + '&numeroProcessoVisual=NPV&localizadorProcesso=LP',
             mimeType: 'application/xml; charset=ISO-8859-1',
             onload: function(obj)
             {
-                var div = document.createElement('div');
-                div.innerHTML = obj.responseText;
-                if (div.getElementsByTagName('erro').length) {
-                    return GM_xmlhttpRequest({
-                        method: 'GET',
-                        url: Eproc.loginGedpro.url,
-                        onload: function() { Eproc.getDocsGedpro(); },
-                    });
+                var xml = obj.responseText.split('clientEventHandlersVBS')[1].match(/[^']PathXML =  "([^"]+)"/)[1];
+                if (xml.match(/grupos=$/)) {
+                    return Eproc.reloginGedpro();
+                } else {
+                    return window.setTimeout((function(xml) { return function() { Eproc.getDocsGedpro(xml); }; })(xml), 100);
                 }
-                if (grupos == 0) {
-                    grupos = [];
-                    for (var rr = div.getElementsByTagName('reg'), rl = rr.length, r = 0, reg; (r < rl) && (reg = rr[r]); r++) {
-                        if (reg.getAttribute('codigoGrupoProprietario')) {
-                            grupos[reg.getAttribute('codigoGrupoProprietario')] = reg.getAttribute('codigoGrupoProprietario');
-                        }
-                    }
-                    return window.setTimeout((function(grupos) { return function() { Eproc.getDocsGedpro(grupos); }; })(grupos.join(',')), 100);
-                }
+            }
+        });
+      } else {
+        GM_xmlhttpRequest({
+            method: 'GET',
+            url: arguments[0],
+            mimeType: 'application/xml; charset=ISO-8859-1',
+            onload: function(obj)
+            {
                 var div = document.createElement('div');
                 div.innerHTML = obj.responseText;
                 var maiorIcone = 0;
@@ -343,14 +423,15 @@ var Eproc = {
                     rotulo.colSpan = maiorIcone - (icones.length / 3) + 1;
                     if (reg.getAttribute('codigoTipoNodo') == 2) {
                         rotulo.textContent = reg.getAttribute('nomeTipoDocumentoExibicao');
+                        rotulo.style.cursor = 'pointer';
                         if (reg.getAttribute('MaiorAcesso') >= 8) {
                             rotulo.style.color = 'green';
                         } else if (reg.getAttribute('MaiorAcesso') >= 2) {
                             rotulo.style.color = 'blue';
                         } else {
                             rotulo.style.color = 'gray';
+                            rotulo.style.cursor = 'inherit';
                         }
-                        rotulo.style.cursor = 'pointer';
                         row.insertCell(row.cells.length).textContent = reg.getAttribute('codigoDocumento');
                         if (reg.getAttribute('assinaturaDigital')) {
                             row.insertCell(row.cells.length).innerHTML = '<img style="cursor: inherit;" src="http://' + Eproc.loginGedpro.host + '/images/assinatura.gif"/>';
@@ -360,6 +441,7 @@ var Eproc = {
                         row.insertCell(row.cells.length).textContent = reg.getAttribute('dataDocumento');
                         row.insertCell(row.cells.length).innerHTML = [reg.getAttribute('siglaCriador'), reg.getAttribute('dataCriacao')].join('<br/>');
                         row.insertCell(row.cells.length).innerHTML = ['Versão ' + reg.getAttribute('numeroVersaoDocumento') + ' por ' + reg.getAttribute('siglaEditor'), reg.getAttribute('dataCriacao')].join('<br/>');
+                      if (rotulo.style.color != 'gray') {
                         rotulo.addEventListener('click', (function(reg) {
                             return function(e)
                             {
@@ -380,9 +462,11 @@ var Eproc = {
                                 }
                             };
                         })(reg), false);
+                      }
                     } else {
                         if (reg.getAttribute('codigoTipoNodo') == 0) {
                             rotulo.textContent = 'Documentos do GEDPRO';
+
                         } else if (reg.getAttribute('codigoTipoNodo') == 1) {
                             rotulo.textContent = reg.getAttribute('descricaoIncidente');
                         }
@@ -395,48 +479,113 @@ var Eproc = {
                 var link = document.createElement('a');
                 link.href = '#';
                 link.textContent = 'Falta de permissão de acesso?';
-                link.addEventListener('click', function(e)
-                {
-                    this.id = 'loginGedpro';
-                    this.textContent = 'Tentando fazer login no GEDPRO novamente...';
-                    e.preventDefault();
-                    e.stopPropagation();
-                    var iframe = document.createElement('iframe');
-                    iframe.src = Eproc.loginGedpro.url;
-                    iframe.style.display = 'none';
-                    document.getElementById('divInfraAreaTelaE').appendChild(iframe);
-                    Eproc.tester = {
-                        id: window.setInterval(function()
-                        {
-                            var limit = 30;
-                            var success = false;
-                            try {
-                                var x = frames[0].window;
-                                Eproc.tester.times++;
-                            } catch (ex) {
-                                success = true;
-                            }
-                            if (success || Eproc.tester.times >= limit) {
-                                window.clearInterval(Eproc.tester.id);
-                                delete Eproc.tester;
-                                var iframe = document.getElementsByTagName('iframe')[0];
-                                iframe.parentNode.removeChild(iframe);
-                                document.getElementById('loginGedpro').textContent = 'Falta de permissão de acesso?';
-                                if (success) {
-                                    alert('Feche o documento e tente novamente agora.');
-                                } else {
-                                    alert('Não foi possível fazer novo login no GEDPRO.');
-                                }
-                            }
-                        }, 500),
-                        times: 0,
-                    }
-                }, false);
+                link.addEventListener('click', (function(link) { return function(e) { Eproc.reloginGedpro(e); }; })(), false);
                 pai.insertBefore(link, table.nextSibling);
             },
         });
+      }
     },
-    // }}]
+    // }}}
+    // {{{ reloginGedpro()
+    /**
+     * Tenta fazer novo login no Gedpro
+     */
+    reloginGedpro: function(e)
+    {
+        var isEvent = false;
+        if (e) {
+            isEvent = true;
+            e.target.id = 'loginGedpro';
+            e.target.textContent = 'Tentando fazer login no GEDPRO...';
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        var iframe = document.createElement('iframe');
+        iframe.src = Eproc.loginGedpro.url;
+        iframe.style.display = 'none';
+        document.getElementById('divInfraAreaTelaE').appendChild(iframe);
+        Eproc.tester = {
+            ev: isEvent,
+            id: window.setInterval(function()
+            {
+                var limit = 30;
+                var success = false;
+                try {
+                    var x = frames[0].window;
+                    Eproc.tester.times++;
+                } catch (ex) {
+                    success = true;
+                }
+                if (success || Eproc.tester.times >= limit) {
+                    window.clearInterval(Eproc.tester.id);
+                    var ev = Eproc.tester.ev;
+                    delete Eproc.tester;
+                    var iframe = document.getElementsByTagName('iframe')[0];
+                    iframe.parentNode.removeChild(iframe);
+                    if (ev) {
+                        document.getElementById('loginGedpro').textContent = 'Falta de permissão de acesso?';
+                    } else {
+                        document.getElementById('cargaDocsGedpro').getElementsByTagName('a')[0].textContent = 'Carregando documentos do GEDPRO...';
+                    }
+                    if (success) {
+                        if (ev) {
+                            alert('Feche o documento e tente novamente agora.');
+                        } else {
+                            Eproc.getDocsGedpro('arvore');
+                        }
+                    } else {
+                        alert('Não foi possível fazer login no GEDPRO.');
+                    }
+                }
+            }, 500),
+            times: 0,
+        }
+    },
+    // }}}
+    // {{{ getNumproc()
+    /**
+     * Retorna o número do processo devidamente formatado
+     *
+     * @param String Número do processo
+     * @return false|String Número do processo
+     */
+    getNumproc: function(numproc)
+    {
+        var numero, ano, ramo = '4', tribunal = '04', secao = GM_getValue('v2.secao'), subsecao = GM_getValue('v2.subsecao'), secao_antiga = '50';
+        numproc = numproc.replace(/[^\d]/g, '');
+        if (numproc.length == 10) {
+            ano = numproc.substr(0, 2);
+            if (ano < 50) {
+                ano = Number(ano) + 2000;
+            } else {
+                ano = Number(ano) + 1900;
+            }
+            secao_antiga = numproc.substr(2, 2);
+            numero = '00' + numproc.substr(4, 5);
+        } else if (numproc.length == 15) {
+            ano = numproc.substr(0, 4);
+            secao = numproc.substr(4, 2);
+            subsecao = numproc.substr(6, 2);
+            numero = '0' + numproc.substr(8, 6);
+        } else if (numproc.length == 20) {
+            numero = numproc.substr(0, 7);
+            ano = numproc.substr(9, 4);
+            ramo = numproc.substr(13, 1);
+            tribunal = numproc.substr(14, 2);
+            secao = numproc.substr(16, 2);
+            subsecao = numproc.substr(18, 2);
+        } else {
+            return false;
+        }
+        var r1 = Number(numero) % 97;
+        var r2 = Number('' + r1 + ano + ramo + tribunal) % 97;
+        var r3 = Number('' + r2 + secao + subsecao + '00') % 97;
+        var dv = String(98 - r3);
+        while (dv.length < 2) dv = '0' + dv;
+        var numproc = '' + numero + dv + ano + ramo + tribunal + secao + subsecao;
+        return numproc;
+    },
+    // }}}
     // {{{ getProcessoF()
     getProcessoF: function()
     {
@@ -712,6 +861,87 @@ var Eproc = {
         }
     },
     // }}}
+    // {{{ processo_cadastrar()
+    processo_cadastrar: function()
+    {
+        return;
+        if (document.getElementById('selIdClasseJudicial')) {
+            var classe = document.getElementById('selIdClasseJudicial');
+            classe.addEventListener('change', function(e)
+            {
+                if (this.value == '0000000060') {
+                }
+            }, false);
+        }
+        if (document.getElementById('txtProcessoOriginario')) {
+            var orig = document.getElementById('txtProcessoOriginario');
+            orig.addEventListener('change', function(e)
+            {
+                if (true || classe.value == '0000000060') {
+                    var numproc = Eproc.getNumproc(this.value);
+                    if (numproc) {
+                        Eproc.processo = numproc;
+                        this.value = Eproc.getProcessoF();
+                        var todas_partes = 'N';
+                        var options = {
+                            method: 'POST',
+                            url: 'http://www.trf4.jus.br/trf4/processos/acompanhamento/ws_consulta_processual.php',
+                            data: '<?xml version="1.0" encoding="UTF-8"?>' + <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="urn:consulta_processual" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><SOAP-ENV:Body><ns1:ws_consulta_processo><num_proc xsi:type="xsd:string">{numproc}</num_proc><uf xsi:type="xsd:string">SC</uf><todas_fases xsi:type="xsd:string">N</todas_fases><todas_partes xsi:type="xsd:string">{todas_partes}</todas_partes><todos_valores>N</todos_valores></ns1:ws_consulta_processo></SOAP-ENV:Body></SOAP-ENV:Envelope>.toString(),
+                            onload: function(obj)
+                            {
+                                var div = document.createElement('div');
+                                div.innerHTML = obj.responseText;
+                                var processo = new XML(div.getElementsByTagName('return')[0].textContent.replace(/<\?xml[^\?]*\?>/, ''));
+                                orig.value = processo.Processo.toString();
+                                if (processo.ValCausa.length()) {
+                                    document.getElementById('txtValorCausa').value = String(processo.ValCausa).replace(/[^\d,]/g, '');
+                                } else {
+                                    document.getElementById('txtValorCausa').value = 0;
+                                }
+                                document.body.appendChild(div);
+                            },
+                        }
+                        GM_xmlhttpRequest(options);
+                    }
+                }
+            }, false);
+        }
+        if (document.getElementById('btnSalvar')) {
+            var salvar = document.getElementById('btnSalvar');
+            salvar.addEventListener('click', function(e)
+            {
+                e.preventDefault();
+                e.stopPropagation();
+                var form = document.getElementById('frmProcessoCadastro');
+                var data = [];
+                for (n in form.elements) {
+                    var el = form.elements[n];
+                    data.push(el.name + '=' + encodeURIComponent(el.value));
+                }
+                GM_xmlhttpRequest({
+                    method: 'POST',
+                    url: form.action,
+                    headers: { 'Content-type': 'application/x-www-form-urlencoded' },
+                    data: data.join('&'),
+                    onload: function(ht)
+                    {
+                        alert(ht.responseHeaders);
+                        var div = document.createElement('div');
+                        div.innerHTML = (ht.responseText);
+                        alert(div.getElementsByTagName('form')[1].action);
+                        document.body.appendChild(div);
+                    },
+                });
+            }, false);
+        }
+    },
+    // }}}
+    // {{{ processo_cadastrar_2()
+    processo_cadastrar_2: function()
+    {
+//        alert(document.referrer);
+    },
+    // }}}
     // {{{ processo_consulta_listar()
     processo_consulta_listar: function()
     {
@@ -752,8 +982,6 @@ var Eproc = {
     // {{{ processo_selecionar()
     processo_selecionar: function()
     {
-        if (!document.title || document.title.match(/Árvore/))
-            return;
         document.title = Eproc.getProcessoF();
         var assuntos = document.getElementById('fldAssuntos');
         var classe = document.getElementById('txtClasse').textContent;
@@ -789,7 +1017,7 @@ var Eproc = {
                     {
                         e.preventDefault();
                         e.stopPropagation();
-                        this.textContent = 'Carregando...';
+                        this.textContent = 'Tentando fazer login no GEDPRO...';
                         Eproc.getDocsGedpro();
                     }, false);
                     div.appendChild(link);
@@ -837,97 +1065,16 @@ var Eproc = {
                 var arvore = document.createElement('a');
                 arvore.textContent = 'Árvore de documentos';
                 arvore.href = '#';
-                arvore.addEventListener('click', (function(table) {
-                    return function(e)
-                    {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        var x = window.open('');
-                        x.focus();
-                        x.document.open();
-                        x.document.write(
-                            <html>
-                                <head><title>Árvore de documentos</title></head>
-                                <frameset cols="250,*" marginheight="0" marginwidth="0" rows="*">
-                                    <frame name="tree_files" marginwidth="5" marginheight="5"/>
-                                    <frame name="show_files" marginwidth="5" marginheight="5"/>
-                                </frameset>
-                                <noframes>
-                                    <body topmargin="0" leftmargin="0">
-                                        <p>Não foi possível exibir o conteúdo desta página</p>
-                                    </body>
-                                </noframes>
-                            </html>
-                        );
-                        x.document.title = Eproc.getProcessoF() + ' - ' + x.document.title;
-                        x.frames[0].document.write(
-                            <html>
-                                <head>
-                                    <style type="text/css"><![CDATA[
-body
-{
-    font-family: Verdana;
-    font-size: 12px;
-}
-li
-{
-    white-space: nowrap;
-}
-ul
-{
-    list-style-type: disc;
-    margin: 0 20px;
-    padding: 0;
-}
-ul ul
-{
-    margin: 0;
-    list-style-type: none;
-}
-a:link
-{
-    text-decoration: none;
-    color: #000;
-}
-a:visited
-{
-    text-decoration: none;
-    color: #848;
-}   
-img
-{
-    border: none;
-}
-                                    ]]></style>
-                                </head>
-                                <body>
-                                    <ul>
-                                    </ul>
-                                </body>
-                            </html>
-                        );
-                        x.frames[0].document.close();
-                        var lista = x.frames[0].document.getElementsByTagName('ul')[0];
-                        for (var trs = table.getElementsByTagName('tr'), r = trs.length - 1; (r >= 0) && (tr = trs[r]); r--) {
-                            if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
-                            var evento = document.createElement('li');
-                            evento.innerHTML = tr.cells[2].innerHTML.split(/<br/)[0] + ' - ' + tr.cells[1].innerHTML;
-                            var documentos = document.createElement('ul');
-                            for (var links = tr.cells[4].getElementsByTagName('a'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
-                                var item = document.createElement('li');
-                                var docLink = document.createElement('a');
-                                docLink.target = 'show_files';
-                                docLink.href = link.href;
-                                docLink.innerHTML = link.innerHTML;
-                                item.appendChild(docLink);
-                                documentos.appendChild(item);
-                            }
-                            evento.appendChild(documentos);
-                            lista.appendChild(evento);
-                        }
-                        x.document.close();
-                    };
-                })(table), false);
+                arvore.addEventListener('click', function(e)
+                {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (typeof Eproc.windows['arvore'] != 'undefined' && Eproc.windows['arvore'].document) {
+                        Eproc.windows['arvore'].close();
+                    }
+                    var win = Eproc.windows['arvore'] = window.open(location.search.replace('processo_selecionar', 'arvore_processo'), Eproc.processo + 'arvore');
+//                    win.focus();
+                }, false);
                 table.parentNode.insertBefore(arvore, table);
                 for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
                     th.setAttribute('width', '');
@@ -999,6 +1146,10 @@ img
         {
             var windows = [];
             var gedpro = [];
+            if (typeof Eproc.windows['arvore'] != 'undefined' && Eproc.windows['arvore'].document) {
+                Eproc.windows['arvore'].close();
+                delete Eproc.windows['arvore'];
+            }
             for (w in Eproc.windows) {
                 var win = Eproc.windows[w];
                 if (typeof win == 'object') {
@@ -1016,7 +1167,7 @@ img
                 }
             }
             if (windows.length) {
-                if (confirm('Este processo possui ' + windows.length + ' documento(s) aberto(s).\nDeseja fechá-lo(s)?')) {
+                if (confirm('Este processo possui ' + windows.length + ' ' + (windows.length > 1 ? 'janelas abertas' : 'janela aberta') + '.\nDeseja fechá-' + (windows.length > 1 ? 'las' : 'la') + '?')) {
                     for (var w = windows.length - 1; w >= 0; w--) {
                         windows[w].close();
                     }
@@ -1042,13 +1193,20 @@ img
     setLastProcesso: function()
     {
         var self = this;
-        if (document.getElementById('txtNumProcesso')) {
-            document.getElementById('txtNumProcesso').addEventListener('change', (function() { return function() { self.onNumprocChange.apply(self, arguments); }; })(), false);
-            if (before = document.referrer.match(/\&(txtNumProcesso|num_processo)=([0-9]{20})/)) {
-                document.getElementById('txtNumProcesso').value = before[2];
-            }
-            document.getElementById('txtNumProcesso').select();
+        var txtNumProcesso = document.getElementById('lblNumProcesso');
+        while (txtNumProcesso && txtNumProcesso.tagName != 'INPUT') {
+            txtNumProcesso = txtNumProcesso.nextSibling;
         }
+        GM_log('1');
+        if (txtNumProcesso) {
+            GM_log('ok');
+            txtNumProcesso.addEventListener('change', (function() { return function() { self.onNumprocChange.apply(self, arguments); }; })(), false);
+            if (before = document.referrer.match(/\&(txtNumProcesso|num_processo)=([0-9]{20})/)) {
+                txtNumProcesso.value = before[2];
+            }
+            txtNumProcesso.select();
+        }
+        GM_log('2');
     },
     // }}}
     // {{{ onNumprocChange()
