@@ -555,7 +555,10 @@ var Eproc = {
     processo_consultar: function()
     {
         this.setLastProcesso();
-        Eproc.colorirTabela(3, '', true);
+        Array.forEach(document.getElementsByTagName('table'), function(table)
+        {
+            if (table.rows[0].cells.length == 5) Eproc.colorirTabela(3, '', true);
+        });
     },        
     // }}}
     // {{{ processo_consultar_nome_parte()
@@ -733,24 +736,25 @@ img
                     } else if (match = tr.cells[2].innerHTML.match(/(.*) - Refer. ao Evento: (\d+)/)) {
                         eventos[match[2]] = match[1] + '<br/>' + (eventos[match[2]] ? eventos[match[2]] : '');
                     }
-                    /*
-                    for (var children = tr.cells[4].childNodes, c = children.length - 1; (c >= 0) && (child = children[c]); c--) {
-                        if (!child.tagName || (child.tagName == 'BR')) {
-                            child.parentNode.removeChild(child);
-                        } else {
-                            child.parentNode.insertBefore(document.createElement('br'), child.nextSibling);
+                    if (tr.cells[4].getElementsByTagName('table').length) {
+                        for (var subtrs = tr.cells[4].getElementsByTagName('tr'), subr = 0, subrl = subtrs.length; (subr < subrl) && (subtr = subtrs[subr]); subr++) {
+                            for (var subtds = subtr.cells, subc = 0, subcl = subtds.length; (subc < subcl) && (subtd = subtds[subc]); subc++) {
+                                tr.cells[4].appendChild(subtd.firstChild);
+                                tr.cells[4].appendChild(subtd.firstChild);
+                                tr.cells[4].appendChild(subtd.firstChild);
+                                tr.cells[4].appendChild(document.createElement('br'));
+                            }
+                        }
+                        tr.cells[4].removeChild(tr.cells[4].getElementsByTagName('table')[0]);
+                    } else {
+                        for (var children = tr.cells[4].childNodes, c = children.length - 1; (c >= 0) && (child = children[c]); c--) {
+                            if (!child.tagName || (child.tagName == 'BR')) {
+                                child.parentNode.removeChild(child);
+                            } else {
+                                child.parentNode.insertBefore(document.createElement('br'), child.nextSibling);
+                            }
                         }
                     }
-                    */
-                    for (var subtrs = tr.cells[4].getElementsByTagName('tr'), subr = 0, subrl = subtrs.length; (subr < subrl) && (subtr = subtrs[subr]); subr++) {
-                        for (var subtds = subtr.cells, subc = 0, subcl = subtds.length; (subc < subcl) && (subtd = subtds[subc]); subc++) {
-                            tr.cells[4].appendChild(subtd.firstChild);
-                            tr.cells[4].appendChild(subtd.firstChild);
-                            tr.cells[4].appendChild(subtd.firstChild);
-                            tr.cells[4].appendChild(document.createElement('br'));
-                        }
-                    }
-                    if (tr.cells[4].getElementsByTagName('table').length) tr.cells[4].removeChild(tr.cells[4].getElementsByTagName('table')[0]);
                     for (var links = tr.cells[4].getElementsByTagName('a'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
                         if (link.tabIndex) continue;
                         link.className = link.className.split(' ').concat(['docLink']).join(' ');
