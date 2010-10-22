@@ -235,7 +235,7 @@ var Eproc = {
                     descricao.textContent = row.cells[0].textContent + '. ' + row.cells[1].textContent;
                     evento.appendChild(descricao);
                     var descricao = document.createElement('dd');
-                    descricao.textContent = row.cells[2].innerHTML.split('<br')[0];
+                    descricao.textContent = row.cells[2].innerHTML.split('<br')[0] + ' (' + row.cells[3].innerHTML + ')';
                     evento.appendChild(descricao);
                     for (var links = row.cells[4].getElementsByTagName('a'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
                         if (link.search.match(/processo_evento_documento_tooltip_cadastrar/)) continue;
