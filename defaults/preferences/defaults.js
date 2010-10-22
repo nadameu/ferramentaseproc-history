@@ -11,3 +11,4 @@ pref('eproc.v2.fundo', '#ffffff');
 pref('eproc.v2.perfil', '');
 pref('eproc.v2.secao', '72');
 pref('eproc.v2.subsecao', '08');
+pref('eproc.v2.ielocation', 'C:\\Arquivos de programas\\Internet Explorer\\iexplore.exe');

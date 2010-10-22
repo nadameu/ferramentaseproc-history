@@ -72,6 +72,10 @@
                                 <label control="v2_subsecao" value="Código da Subseção Judiciária:"/>
                                 <textbox id="v2_subsecao" maxlength="2"/>
                             </row>
+                            <row align="center">
+                                <label control="v2_ielocation" value="Localização do Internet Explorer:"/>
+                                <textbox id="v2_ielocation"/><button label="Procurar..." oncommand="Commands.on_v2_ielocation();"/>
+                            </row>
                         </rows>
                     </grid>
                 </groupbox>

@@ -590,6 +590,24 @@ var Eproc = {
         var classe = document.getElementById('txtClasse').innerHTML;
         if (Classes[classe])
             assuntos.style.backgroundColor = Classes[classe];
+        for (var links = document.getElementsByTagName('a'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
+            if (!link.href && link.textContent.match(/GEDPRO/) && link.getAttribute('onclick')) {
+                link.innerHTML = 'GEDPRO';
+                link.parentNode.insertBefore(document.createTextNode(' | '), link.nextSibling);
+                link.href = link.getAttribute('onclick').match(/window.open\('([^']+)'/)[1];
+                link.setAttribute('onclick', '');
+                link.target = '_blank';
+                link.addEventListener('click', (function(link) { return function(e)
+                {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var x = new IE();
+                    x.launch(link.href);
+                }; })(link), false);
+            } else if (!link.href && link.textContent.match(/GEDPRO/) && link.title == 'Link para o GEDPRO não pôde ser gerado.') {
+                link.getElementsByTagName('u')[0].style.textDecoration = 'line-through';
+            }
+        }
         if (document.getElementById('lblProcRel')) {
             var link = null, relacionado = document.getElementById('lblProcRel').nextSibling;
             if (relacionado.tagName && relacionado.tagName.toLowerCase() == 'br') {

@@ -64,7 +64,8 @@ var Options = {
 //			'v2.fundo',
 			'v2.perfil',
 			'v2.secao',
-			'v2.subsecao'
+			'v2.subsecao',
+            'v2.ielocation'
         ];
         this.action('get');
         Commands.on_v1_enable();
@@ -98,6 +99,20 @@ var Commands = {
     on_v2_enable: function()
     {
         Commands.process('v2_enable', 'v2_perfil v2_secao v2_subsecao');
+    },
+
+    on_v2_ielocation: function()
+    {
+        var picker = Components.classes["@mozilla.org/filepicker;1"]
+                   .createInstance(Components.interfaces.nsIFilePicker);
+
+
+        picker.init(window, "Informe a localização", 0);
+        picker.appendFilter("iexplore.exe", 'iexplore.exe');
+        picker.appendFilters(64);
+        picker.appendFilters(1);
+
+        if(picker.show()==0) document.getElementById('v2_ielocation').value=picker.file.target; // load path into field
     },
 
 }
