@@ -4467,6 +4467,12 @@ Eproc = {
                 if (this.processos.filters.cod_localizador && this.processos.filters.cod_evento_com && this.processos.filters.cod_assunto_com) {
                     $('center:has(b > font) > font > b').append(' <font color="black">com Localizador:</font> ' + $('select[name=cod_localizador] option[value=' + this.processos.filters.cod_localizador + ']').text());
                 }
+                if (this.processos.filters.magistrados != 'T') {
+                    $('center:has(b > font) > font > b').append(' <font color="black">e Magistrado:</font> ' + this.processos.filters.magistrados);
+                }
+                if (this.processos.filters.tipoacao != 'NOK') {
+                    $('center:has(b > font) > font > b').append(' <font color="black">e Tipo de ação:</font> ' + ['','REVISÃO','CONCESSÃO','CÍVEL','REVISÃO / MATÉRIA DE FATO'][this.processos.filters.tipoacao]);
+                }
                 this.table = new Table(this.processos);
                 this.table.replace($('table').get(1));
                 $(window).unload(this.onUnload);
@@ -4713,14 +4719,14 @@ Table.prototype = {
             $(row.insertCell(11)).html('<font color=blue>' + processo.autor + '</font>' + (processo.al ? '<br /><font color=brown><b>' + processo.al + '</b></font>' : ''));
             $(row.insertCell(12)).html('<font color=red>' + processo.reus.join('<br />') + '</font>');
             var self = this;
-            $(row.insertCell(13)).html('<span>' + processo.assunto + '</span>').append($('<small> [x]</small>').css({cursor: 'pointer'}).hide().click(function(e)
+            $(row.insertCell(13)).html('<span>' + processo.assunto + '</span>').append($('<small> [x]</small>').css({cursor: 'pointer', visibility: 'hidden'}).click(function(e)
             {
                 self.filterCol('assunto', $(this).parent().find('span').html());
-            })).hover(function(e) { $(this).find('small').show(); }, function(e) { $(this).find('small').hide(); });
+            })).hover(function(e) { $(this).find('small').css({visibility: 'visible'}); }, function(e) { $(this).find('small').css({visibility: 'hidden'}); });
             $(row.insertCell(14)).html(('00' + processo.data.getDate()).substr(-2) + '/' + ('00' + (processo.data.getMonth() + 1)).substr(-2) + '/' + processo.data.getFullYear() + ' ' + ('00' + processo.data.getHours()).substr(-2) + ':' + ('00' + processo.data.getMinutes()).substr(-2));
             var cell = $(row.insertCell(15)).html('(' + processo.documentos.length + ')' + (processo.evento ? ' <font color="blue">' + processo.evento + '</font>' : ''));
             if (processo.evento) {
-                cell.append($('<small> [x]</small>').css({cursor: 'pointer'}).hide().click(function(e)
+                cell.append($('<small> [x]</small>').css({cursor: 'pointer', visibility: 'hidden'}).click(function(e)
                 {
                     self.filterCol('evento', $(this).parent().find('font').html());
                 }));
@@ -4739,7 +4745,7 @@ Table.prototype = {
                     }).html('<img border="0" src="imagens/icone-texto.gif" width="16" height="13">' + doc.name).click(this.onDocClick)).append($('<br />'));
                 }
             }
-            cell.hover(function(e) { $(this).find('div,small').show(); }, function(e) { $(this).find('div,small').hide(); });
+            cell.hover(function(e) { $(this).find('div').show(); $(this).find('small').css({visibility: 'visible'}); }, function(e) { $(this).find('div').hide(); $(this).find('small').css({visibility: 'hidden'}); });
         }
         $('<thead><tr></tr></thead>').insertBefore(this.table.firstChild);
         (this.unhide = $('<span>Reexibir colunas ocultas</span>').css({fontWeight: 'bold', color: 'red', cursor: 'pointer'}).hide().click(this.unhideCols)).insertBefore(this.table.firstChild).wrap('<caption></caption>');
@@ -4905,6 +4911,10 @@ Table.prototype = {
         table.parentNode.replaceChild(this.table, table); //$(table).replaceWith(this.table);
         if (Eproc.processos.filters.cod_localizador) this.hideCol('localizador');
         if (Eproc.processos.filters.cod_assunto_com) this.hideCol('assunto');
+        if (Eproc.processos.filters.magistrados != 'T') this.hideCol('juizo');
+        if (Eproc.processos.filters.tipoacao != 'NOK') this.hideCol('materia');
+        if ($(this.table).width() > $(window).width()) this.hideCol('advogados');
+        if ($(this.table).width() > $(window).width()) this.hideCol('materia');
     },
     // }}}
     // {{{ Table.sort

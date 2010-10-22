@@ -1,44 +1,4 @@
 unsafeWindow._eproc = 0.3;
-if ((tabelas = document.getElementsByTagName('table')).length > 0 && (tabela = tabelas[0]).getAttribute('height') == 30) {
-    tabela.setAttribute('height', 0);
-    tabela.setAttribute('cellpadding', 2);
-    if ((celula2 = (tabela2 = document.getElementsByTagName('table')[1]).rows[0].cells[0]).getAttribute('bgcolor') == '#cccccc' && celula2.getAttribute('width') == 760) {
-        var submenu = document.createElement('div');
-        with (submenu.style) {
-            display = 'none';
-            position = 'absolute';
-            background = "#cccccc";
-            padding = "2px";
-        }
-        for (var links = celula2.getElementsByTagName('a'), l = links.length - 1; l >= 0 && (link = links[l]); l--) {
-            with (link.style) {
-                display = 'block';
-                textAlign = 'left';
-            }
-            submenu.insertBefore(link, submenu.firstChild);
-        }
-        tabela2.parentNode.removeChild(tabela2);
-        with (document.getElementsByTagName('table')[0].rows[0].cells[4].getElementsByTagName('div')[0]) {
-            style.textAlign = 'center';
-            appendChild(submenu);
-            addEventListener('mouseover', function(e)
-            {
-                this.getElementsByTagName('div')[0].style.display = '';
-            }, true);
-            addEventListener('mouseout', function(e)
-            {
-                this.getElementsByTagName('div')[0].style.display = 'none';
-            }, true);
-        }
-    }
-    if ((center = document.getElementsByTagName('center')[0]).getElementsByTagName('img')[0].getAttribute('src').match(/imagens\/topico\.gif/)) {
-        (celula = tabela.insertRow(1).insertCell(0)).innerHTML = center.innerHTML;
-        celula.setAttribute('colspan', 6);
-        celula.setAttribute('align', 'center');
-        center.parentNode.removeChild(center);
-    }
-}
-// </script>
 var aMeses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
 var d = new Date();
 var sData = d.getDate() + ' de ' + aMeses[d.getMonth()] + ' de ' + d.getFullYear();
@@ -49,7 +9,7 @@ function criaBotao (sTexto, sTitulo, sConteudo, iTipo, oElemento)
     oBotao.innerHTML = sTexto;
     oBotao.addEventListener('click', function(evt)
     {
-        var oTexto = FCKeditorAPI.GetInstance('txt_fck');
+        var oTexto = unsafeWindow.FCKeditorAPI.GetInstance('txt_fck');
         if (!oTexto.IsDirty() || confirm('Todo o texto já digitado será apagado.\nConfirma?')) {
             oTexto.SetHTML('<html lang="pt-BR" dir="ltr"><head><title>' + sTitulo.replace(/<[^>]+>/g, '') + '</title><style type="text/css">.header { font-family: Arial; font-size: 10pt; } .title { font-family: Times New Roman; font-size: 14pt; font-weight: bold; } .text { font-family: Times New Roman; font-size: 13pt; } .signature { font-family: Times New Roman; font-size: 12pt; font-weight: bold; font-style: italic; }</style></head><body bgcolor="white"><div class="header" align="center"><img width="85" height="93" src="http://intranet.jfsc.gov.br/nucleos/ninf/bibli_img/TRF4_1,44X1,57-30o%20dpi.jpg"></div><div class="header" align="center">PODER JUDICIÁRIO</div><div class="header" align="center"><strong>JUSTIÇA FEDERAL</div><div class="header" align="center"></strong>SEÇÃO JUDICIÁRIA DE SANTA CATARINA</div><div class="header" align="center">SUBSEÇÃO JUDICIÁRIA DE ITAJAÍ</div><div class="header" align="center">1ª Vara Federal e Juizado Especial Federal Cível e Criminal</div><p class="text" align="justify">&nbsp;</p><p class="title" align="center">' + sTitulo + '</p><p class="text" align="justify">&nbsp;</p><p class="text" align="justify">' + sConteudo + '</p><p class="text" align="justify">&nbsp;</p><p class="text" align="justify">&nbsp;</p><p class="text" align="justify">&nbsp;</p><p class="signature" align="center">documento assinado eletronicamente</p></body></html>');
             document.getElementById('tipo_documento').value = iTipo;
@@ -57,7 +17,7 @@ function criaBotao (sTexto, sTitulo, sConteudo, iTipo, oElemento)
     }, true);
     document.body.insertBefore(oBotao, oElemento);
 }
-function FCKeditor_OnComplete(ed)
+unsafeWindow.FCKeditor_OnComplete = function(ed)
 {
 //    a = []; for (n in x = ed.Config) a.push(n + ' = "' + x[n] + '"'); ed.SetHTML(a.sort().join('<br />'));
     ed.Language = 'pt';
