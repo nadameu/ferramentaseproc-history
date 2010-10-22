@@ -239,10 +239,10 @@ var Eproc = {
                     descricao.textContent = row.cells[0].textContent + '. ' + row.cells[1].textContent;
                     evento.appendChild(descricao);
                     var descricao = document.createElement('dd');
-                    descricao.textContent = row.cells[2].innerHTML.split('<br')[0] + ' (' + row.cells[3].innerHTML + ')';
+                    descricao.textContent = row.cells[2].innerHTML.split('<br')[0] + ' (' + row.cells[3].textContent + ')';
                     evento.appendChild(descricao);
                     for (var links = row.cells[4].getElementsByTagName('a'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
-                        if (link.search.match(/processo_evento_documento_tooltip_cadastrar/)) continue;
+                        if (!link.search.match(/(processo_evento_documento_tooltip_alterar|acessar_documento)/)) continue;
                         var documento = document.createElement('dd');
                         if (link.search.match(/processo_evento_documento_tooltip_alterar/)) {
                             var link = link.cloneNode(true);
@@ -1121,9 +1121,10 @@ var Eproc = {
                     if (tr.cells[4].getElementsByTagName('table').length) {
                         for (var subtrs = tr.cells[4].getElementsByTagName('tr'), subr = 0, subrl = subtrs.length; (subr < subrl) && (subtr = subtrs[subr]); subr++) {
                             for (var subtds = subtr.cells, subc = 0, subcl = subtds.length; (subc < subcl) && (subtd = subtds[subc]); subc++) {
-                                tr.cells[4].appendChild(subtd.firstChild);
-                                tr.cells[4].appendChild(subtd.firstChild);
-                                tr.cells[4].appendChild(subtd.firstChild);
+                                var child = null;
+                                while (child = subtd.firstChild) {
+                                    tr.cells[4].appendChild(child);
+                                }
                                 tr.cells[4].appendChild(document.createElement('br'));
                             }
                         }
@@ -1138,7 +1139,7 @@ var Eproc = {
                         }
                     }
                     for (var links = tr.cells[4].getElementsByTagName('a'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
-                        if (link.tabIndex) continue;
+                        if (!/\?acao=acessar_documento\&/.test(link.href)) continue;
                         link.className = link.className.split(' ').concat(['docLink']).join(' ');
                         link.addEventListener('click', (function(id, link) {
                             return function(e)
