@@ -247,36 +247,6 @@ var Eproc = {
         }
     },
     // }}}
-    // {{{ loadDoc()
-    loadDoc: function(link, x)
-    {
-        x.document.close();
-        x.location.href = link.href;
-        x.focus();
-    },
-    // }}}
-    // {{{ loadJpeg()
-    loadJpeg: function(link, x)
-    {
-        var jpg = new XMLHttpRequest();
-        jpg.open('GET', link.href);
-        jpg.overrideMimeType('text/plain; charset=x-user-defined');
-        jpg.onreadystatechange = function()
-        {
-            x.document.write('.');
-            if (jpg.readyState == 4 && jpg.status == 200) {
-                x.document.write('OK.<br />Convertendo...');
-                url = 'data:image/jpeg;base64,' + encode64(jpg.responseText);
-                x.document.write('OK.<br />Aguarde...');
-                x.document.close();
-                x.location.href = url;
-            } else {
-                GM_log('xml.readyState = ' + xml.readyState + '; xml.status = ' + xml.status);
-            }
-        }
-        jpg.send(null);
-    },
-    // }}}
     // {{{ localizador_listar()
     localizador_listar: function()
     {
@@ -368,36 +338,7 @@ form.action = location.pathname + location.search;
                                     Eproc.windows[id].focus();
                                 } else {
                                     var x = Eproc.windows[id] = window.open(link.href,id,'menubar=0,resizable=1,status=0,toolbar=0,location=0,menubar=0,directories=0,scrollbars=1');
-/*                                
-                                    var x = Eproc.windows[id] = window.open('about:blank',id,'menubar=0,resizable=1,status=0,toolbar=0,location=0,menubar=0,directories=0,scrollbars=1');
                                     x.focus();
-                                    x.document.write('Carregando...');
-                                    if (content = link.getElementsByTagName('img')[0].src.match(/moz-icon:\/\/\.(.*)\?size=16/)) {
-                                        if (content[1] == 'jpg') {
-                                            Eproc.loadJpeg(link, x);
-                                        } else {
-                                            Eproc.loadDoc(link, x);
-                                        }
-                                    } else {
-                                        var xml = new XMLHttpRequest();
-                                        xml.open('HEAD', link.href);
-                                        xml.onreadystatechange = function()
-                                        {
-                                            if (xml.readyState == 4 && xml.status == 200) {
-                                                contentType = xml.getResponseHeader('Content-Type');
-                                                link.getElementsByTagName('img')[0].src = 'moz-icon://.' + contentType.split(/[;\/]/)[1] + '?size=16';
-                                                if (contentType == 'application/jpg;') {
-                                                    Eproc.loadJpeg(link, x);
-                                                } else {
-                                                    Eproc.loadDoc(link, x);
-                                                }
-                                            } else {
-                                                GM_log('xml.readyState = ' + xml.readyState + '; xml.status = ' + xml.status);
-                                            }
-                                        }
-                                        xml.send(null);
-                                    }
-*/
                                 }
                             };
                         })('' + Eproc.processo + r + link.innerHTML.replace(/<[^>]*>/g, ''), link), true);
@@ -487,6 +428,6 @@ var StringMaker = function () {
 }
 // }}}
 // {{{ Início do programa
-GM_addStyle('.infraTrSelecionada { background-color: #bbb !important; }');
+GM_addStyle('.infraTrSelecionada { background-color: #bbb !important; } a.docLink:visited { color: #444; }');
 Eproc.init();
 // }}}
