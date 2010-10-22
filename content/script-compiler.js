@@ -154,6 +154,7 @@ openInTab: function(unsafeContentWin, url) {
      tabBrowser.loadOneTab(url, referrer, null, null, loadInBackground);
  },
  
+ /*
  hitch: function(obj, meth) {
     var unsafeTop = new XPCNativeWrapper(unsafeContentWin, "top").top;
 
@@ -161,7 +162,7 @@ openInTab: function(unsafeContentWin, url) {
         this.browserWindows[i].openInTab(unsafeTop, url);
     }
 },
-
+*/
 apiLeakCheck: function(allowedCaller) {
     var stack=Components.stack;
 
