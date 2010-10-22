@@ -367,6 +367,8 @@ form.action = location.pathname + location.search;
                                 if (Eproc.windows[id] && typeof Eproc.windows[id] == 'object' && Eproc.windows[id].document) {
                                     Eproc.windows[id].focus();
                                 } else {
+                                    var x = Eproc.windows[id] = window.open(link.href,id,'menubar=0,resizable=1,status=0,toolbar=0,location=0,menubar=0,directories=0,scrollbars=1');
+/*                                
                                     var x = Eproc.windows[id] = window.open('about:blank',id,'menubar=0,resizable=1,status=0,toolbar=0,location=0,menubar=0,directories=0,scrollbars=1');
                                     x.focus();
                                     x.document.write('Carregando...');
@@ -395,6 +397,7 @@ form.action = location.pathname + location.search;
                                         }
                                         xml.send(null);
                                     }
+*/
                                 }
                             };
                         })('' + Eproc.processo + r + link.innerHTML.replace(/<[^>]*>/g, ''), link), true);

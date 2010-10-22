@@ -254,6 +254,7 @@ var httpRequestObserver =
 
       if (httpChannel.name.match(/https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc(V2|v2_homologacao)\/controlador\.php\?acao=acessar_documento/)) {
           httpChannel.setResponseHeader("Content-Disposition", httpChannel.getResponseHeader("Content-Disposition").replace('attachment', 'inline'), false);
+          httpChannel.contentType = httpChannel.contentType.replace('application/jpg', 'image/jpeg').replace('application/html', 'text/html');
       }
     }
   },
@@ -274,4 +275,8 @@ var httpRequestObserver =
   }
 };
 httpRequestObserver.register();
-
+function myDump(aMessage) {
+  var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
+                                 .getService(Components.interfaces.nsIConsoleService);
+  consoleService.logStringMessage("e-Proc: " + aMessage);
+}
