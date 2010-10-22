@@ -371,10 +371,34 @@ var Eproc = {
         this.setLastProcesso();
     },        
     // }}}
-    // {{{ localizador_processos_lista_destino()
+    // {{{ localizador_processos_alterar_destino()
     localizador_processos_alterar_destino: function()
     {
         this.localizador_processos_lista_destino.apply(this, arguments);
+    },
+    // }}}
+    // {{{ localizador_processos_lista()
+    localizador_processos_lista: function()
+    {
+/*        var form = document.getElementById('frmProcessoEventoLista');
+        form.action = location.pathname + location.search; */
+        for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
+            if (table.getAttribute('summary') == 'Tabela de Processos por Localizador.') {
+                table.setAttribute('width', '');
+                for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
+                    th.setAttribute('width', '');
+                }
+                for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
+                    if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
+                    tr.cells[1].getElementsByTagName('a')[0].setAttribute('target', '_blank');
+                    var classe = tr.cells[5].innerHTML;
+                    if (Classes[classe])
+                        for (var cells = tr.cells, c = 0, cl = cells.length; (c < cl) && (cell = cells[c]); c++) {
+                            cell.style.backgroundColor = Classes[classe];
+                        }
+                }
+            }
+        }
     },
     // }}}
     // {{{ localizador_processos_lista_destino()
@@ -406,7 +430,50 @@ var Eproc = {
     {
         GM_setValue('background', background);
         document.getElementsByTagName('body')[0].style.backgroundColor = background;
-        GM_addStyle('.infraTrClara, .infraTrEscura { background-color: ' + background + ' !important; } div.infraMenu a { background-color: ' + background + '; border-color: ' + background + '; }');
+        GM_addStyle(''
++ 'input, select, option {'
++ '    background-color: hsla(0, 0%, 100%, 0.5);'
++ '}'
++ 'table.infraTable {'
++ '    border-spacing: 0;'
++ '    border: solid #ccc;'
++ '    border-width: 1px 0 0 1px;'
++ '    background-color: transparent;'
++ '}'
++ '.infraTable th, .infraTable td {'
++ '    border-spacing: 0;'
++ '    border: solid #ccc;'
++ '    border-width: 0 1px 1px 0;'
++ '}'
++ '.infraTable table th, .infraTable table td {'
++ '    border: none;'
++ '}'
++ 'tr.infraTrClara {'
++ '    background-color: hsla(0, 0%, 98%, 0.5);'
++ '}'
++ 'tr.infraTrEscura {'
++ '    background-color: hsla(0, 0%, 94%, 0.5);'
++ '}'
++ 'tr.infraTrSelecionada td {'
++ '    background-color: hsla(0, 0%, 50%, 0.25);'
++ '}'
++ 'tr.infraTrMarcada td {'
++ '    background-color: hsla(0, 0%, 50%, 0.375);'
++ '}'
++ 'div.infraMenu a {'
++ '    background-color: ' + background + ';'
++ '    border-color: ' + background + ';'
++ '}'
++ '.infraTrClara a:visited, .infraTrEscura a:visited {'
++ '    color: #666;'
++ '}'
++ 'a.docLink:visited {'
++ '    color: #666;'
++ '}'
++ '.infraBarraComandos, .infraAreaTelaD, .infraAreaDados {'
++ '    border-color: ' + background + ' !important;'
++ '}'
+);
         for (var divs = document.getElementsByTagName('div'), d = divs.length - 1, div; (d >= 0) && (div = divs[d]); d--) {
             if ((div.className && div.className.match(/^infraLegend/)) || (div.id && div.id.match(/^divDes/))) {
                 div.style.backgroundColor = background;
@@ -490,7 +557,7 @@ var Eproc = {
         }
     },
     // }}}
-    // {{{ processo_consultar_listar()
+    // {{{ processo_consulta_listar()
     processo_consulta_listar: function()
     {
         var form = document.getElementById('frmProcessoEventoLista');
@@ -505,10 +572,9 @@ var Eproc = {
                     if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
                     tr.cells[1].getElementsByTagName('a')[0].setAttribute('target', '_blank');
                     var classe = tr.cells[3].innerHTML;
-                    if (Classes[classe])
-                        for (var cells = tr.cells, c = 0, cl = cells.length; (c < cl) && (cell = cells[c]); c++) {
-                            cell.style.backgroundColor = Classes[classe];
-                        }
+                    if (Classes[classe]) {
+                        tr.style.backgroundColor = Classes[classe];
+                    }
                 }
             }
         }
@@ -887,22 +953,5 @@ var StringMaker = function () {
 }
 // }}}
 // {{{ Início do programa
-GM_addStyle(<style><![CDATA[
-.infraTrClara a:visited,
-.infraTrEscura a:visited
-{
-    color: #666;
-}
-a.docLink:visited
-{
-    color: #666;
-}
-.infraBarraComandos,
-.infraAreaTelaD,
-.infraAreaDados
-{
-    border-color: transparent !important;
-}
-]]></style>);
 Eproc.init();
 // }}}
