@@ -207,6 +207,50 @@ var Eproc = {
     processo: 0,
     windows: [],
     // }}}
+    // {{{ citacao_bloco_filtrar_destino()
+    citacao_bloco_filtrar_destino: function()
+    {
+        for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
+            if (table.getAttribute('summary') == 'Tabela de Processos.') {
+                table.setAttribute('width', '');
+                for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
+                    th.setAttribute('width', '');
+                }
+                for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
+                    if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
+                    tr.cells[1].getElementsByTagName('a')[0].setAttribute('target', '_blank');
+                    var classe = tr.cells[2].innerHTML;
+                    if (Classes[classe])
+                        for (var cells = tr.cells, c = 0, cl = cells.length; (c < cl) && (cell = cells[c]); c++) {
+                            cell.style.backgroundColor = Classes[classe];
+                        }
+                }
+            }
+        }
+    },
+    // }}}
+    // {{{ citacao_bloco_listar_destino()
+    citacao_bloco_listar_destino: function()
+    {
+        for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
+            if (table.getAttribute('summary') == 'Tabela de Processos.') {
+                table.setAttribute('width', '');
+                for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
+                    th.setAttribute('width', '');
+                }
+                for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
+                    if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
+                    tr.cells[1].getElementsByTagName('a')[0].setAttribute('target', '_blank');
+                    var classe = tr.cells[2].innerHTML;
+                    if (Classes[classe])
+                        for (var cells = tr.cells, c = 0, cl = cells.length; (c < cl) && (cell = cells[c]); c++) {
+                            cell.style.backgroundColor = Classes[classe];
+                        }
+                }
+            }
+        }
+    },
+    // }}}
     // {{{ getProcessoF()
     getProcessoF: function()
     {
@@ -307,7 +351,7 @@ var Eproc = {
         document.getElementsByTagName('body')[0].style.backgroundColor = background;
         GM_addStyle('.infraTrClara, .infraTrEscura { background-color: ' + background + ' !important; } div.infraMenu a { background-color: ' + background + '; border-color: ' + background + '; }');
         for (var divs = document.getElementsByTagName('div'), d = divs.length - 1, div; (d >= 0) && (div = divs[d]); d--) {
-            if ((div.className && div.className.match(/^infraLegend/)) || (div.id && div.id.match(/^divDes(Criterios|Ordenacao|Paginacao)$/))) {
+            if ((div.className && div.className.match(/^infraLegend/)) || (div.id && div.id.match(/^divDes/))) {
                 div.style.backgroundColor = background;
             }
         }
