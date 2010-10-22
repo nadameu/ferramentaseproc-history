@@ -612,7 +612,17 @@ var Eproc = {
             }
         }
         for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
-            if (table.getAttribute('summary') == 'Eventos') {
+            if (table.getAttribute('summary') == 'Lembretes') {
+                Lembretes = 'eea eaa eae aae aee aea'.split(' ');
+                table.setAttribute('width', '');
+                for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
+                    th.setAttribute('width', '');
+                }
+                for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
+                    if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
+                    tr.cells[4].style.backgroundColor = '#' + Lembretes[(r - 1) % Lembretes.length];
+                }
+            } else if (table.getAttribute('summary') == 'Eventos') {
                 var arvore = document.createElement('a');
                 arvore.innerHTML = 'Árvore de documentos';
                 arvore.href = '#';
@@ -831,7 +841,7 @@ img
             numproc = '5' + numproc;
         }
         while (numproc.length < 13) {
-            numproc += '20104047208';
+            numproc += '2010404' + GM_getValue('v2.secao') + GM_getValue('v2.subsecao');
         }
         e.target.value = numproc;
     },

@@ -51,11 +51,16 @@ var Options = {
             'v1.enable',
             'v1.consulta_processo.enable',
             'v1.html_to_pdf.enable',
+            'v1.secao',
+            'v1.subsecao',
+            'v1.vara',
             'v1.alteracao_assunto.enable',
             'v1.eproc.enable',
 			'v2.enable',
 			'v2.fundo',
-			'v2.perfil'
+			'v2.perfil',
+			'v2.secao',
+			'v2.subsecao'
         ];
         this.action('get');
     },
