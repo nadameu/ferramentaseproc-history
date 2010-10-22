@@ -369,7 +369,7 @@ var Eproc = {
                         onload: function() { Eproc.getDocsGedpro(); },
                     });
                 }
-                if (grupos == 0) {
+                if (grupos === 0) {
                     grupos = [];
                     for (var rr = div.getElementsByTagName('reg'), rl = rr.length, r = 0, reg; (r < rl) && (reg = rr[r]); r++) {
                         if (reg.getAttribute('codigoGrupoProprietario')) {
@@ -460,6 +460,7 @@ var Eproc = {
                     } else {
                         if (reg.getAttribute('codigoTipoNodo') == 0) {
                             rotulo.textContent = 'Documentos do GEDPRO';
+
                         } else if (reg.getAttribute('codigoTipoNodo') == 1) {
                             rotulo.textContent = reg.getAttribute('descricaoIncidente');
                         }
