@@ -329,7 +329,7 @@ var Eproc = {
                     if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
                     tr.cells[noCheckbox ? 0 : 1].getElementsByTagName('a')[0].setAttribute('target', '_blank');
                     if (col) {
-                        var classe = tr.cells[col].textContent;
+                        var classe = tr.cells[col].innerHTML.split('<')[0];
                         if (Classes[classe])
                             tr.style.backgroundColor = Classes[classe];
                     }
