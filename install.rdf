@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<RDF:RDF xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+	xmlns:NC="http://home.netscape.com/NC-rdf#"
+	xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+	<RDF:Description RDF:about="urn:mozilla:install-manifest">
+		<em:name>Ferramentas e-Proc</em:name>
+		<em:version>1.0a</em:version>
+		<em:id>eproc@nadameu.com.br</em:id>
+		<em:description>Adiciona novas funcionalidades aos sistemas de processo eletrônico da Justiça Federal da 4ª Região (e-Proc V1 e V2).	</em:description>
+		<em:creator>Paulo Roberto Maurici Junior</em:creator>
+		<em:iconURL>chrome://eproc/skin/stapler-green-32.png</em:iconURL>
+		<em:optionsURL>chrome://eproc/content/options.xul</em:optionsURL>
+		<em:homepageURL>http://eproc.trf4.jus.br/eproc2trf4/ferramentas/plugin/</em:homepageURL>
+		<em:updateURL>http://eproc.trf4.jus.br/eproc2trf4/ferramentas/plugin/repo/update.rdf</em:updateURL>
+		<em:updateKey>MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDf0wty4meGsDmIrOYWRO7ZuJaYDqZnZ4dsCocUoXSB8mve+34VIAcrupkPGvaau3+TgH8fvtjOuF6g3g2XpD/cU/J8mMN8tAS5l0IG3ySGXug5NMVZ0uiq4T0vfy4T+i97NR+GbouIX/D6X8XZIOemGEIS6Uca6ff3OOrq/3EIlQIDAQAB</em:updateKey>
+		<em:contributor>Greasemonkey Compiler by Anthony Lieuallen;</em:contributor>
+		<em:contributor>http://arantius.com/</em:contributor>
+		<em:targetApplication>
+			<RDF:Description>
+				<em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+				<em:minVersion>3.5</em:minVersion>
+				<em:maxVersion>4.*</em:maxVersion>
+			</RDF:Description>
+		</em:targetApplication>
+	</RDF:Description>
+</RDF:RDF>

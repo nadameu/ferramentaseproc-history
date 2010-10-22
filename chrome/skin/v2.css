@@ -1,0 +1,233 @@
+@media screen {
+    body {
+        background-color: $background;
+    }
+    input, select {
+        background-color: hsl($h, 0%, 92%);
+    }
+    input:focus, select:focus {
+        background-color: hsl($h, 0%, 73%);
+    }
+    select:focus option {
+        background-color: hsl($h, 0%, 92%);
+    }
+    td label {
+        font-size: inherit;
+    }
+    div.infraAjaxAutoCompletar {
+        max-height: 30em;
+        overflow-y: scroll;
+        background-color: $background;
+    }
+    div.infraAjaxAutoCompletar li {
+        background-color: hsl($h, 0%, 92%);
+    }
+    div.infraAjaxAutoCompletar li a {
+        display: block;
+        margin-left: 3ex;
+        text-indent: -3ex;
+    }
+    div.infraAjaxAutoCompletar li.selected {
+        background-color: Highlight;
+    }
+    div.infraAjaxAutoCompletar li.selected a, div.infraAjaxAutoCompletar li.selected b {
+        color: HighlightText;
+    }
+    table.infraTable {
+        border-spacing: 0;
+        border: solid #ccc;
+        border-width: 1px 0 0 1px;
+        background-color: $background;
+    }
+    .infraTable .infraTh, .infraTable td {
+        border-spacing: 0;
+        border: solid #ccc;
+        border-width: 0 1px 1px 0;
+    }
+    .infraTable .infraTh {
+        background-color: hsl($h, $s2%, 93%);
+        background-image: -moz-linear-gradient(top,
+            hsl($h, $s4%, 96%),
+            hsl($h, $s38%, 88%) 50%,
+            hsl($h, $s38%, 82%) 50%,
+            hsl($h, $s4%, 84%)
+        );
+    }
+    .infraTable table .infraTh, .infraTable table td {
+        border: none;
+    }
+    tr.infraTrClara {
+        background-color: hsl($h, $s2%, 98%);
+    }
+    tr.infraTrEscura {
+        background-color: hsl($h, $s2%, 93%);
+    }
+    tr.infraTrSelecionada td {
+        background-color: hsla(0, 0%, 50%, 0.25);
+        background: transparent -moz-linear-gradient(top,
+            hsla(0, 0%, 100%, 0.25),
+            hsla(0, 0%, 75%, 0.25) 50%,
+            hsla(0, 0%, 50%, 0.25) 50%,
+            hsla(0, 0%, 75%, 0.25)
+        );
+    }
+    tr.infraTrSelecionada td td,
+    table.infraTable[summary="Tabela de Preventos."] tr.infraTrClara > td,
+    table.infraTable[summary="Tabela de Preventos."] tr.infraTrEscura > td,
+    table.infraTable[summary="Tabela de Preventos."] tr.infraTrSelecionada td {
+        background: none;
+    }
+    tr.infraTrMarcada td:first-child {
+        background-color: hsl(0, 0%, 65%);
+        background: -moz-linear-gradient(top,
+            hsl(0, 0%, 80%),
+            hsl(0, 0%, 64%) 50%,
+            hsl(0, 0%, 58%) 50%,
+            hsl(0, 0%, 68%)
+        );
+    }
+    #tabLocalizadores tr.infraTrMarcada td {
+        background-color: hsl(210, 60%, 85%);
+        background-image: -moz-linear-gradient(top,
+            hsl(210, 30%, 93%),
+            hsl(210, 45%, 76%) 50%,
+            hsl(210, 45%, 70%) 50%,
+            hsl(210, 30%, 68%)
+        );
+    }
+    div.infraMenu a {
+        background-color: $background;
+        border-color: $background;
+    }
+    .infraTrClara a:visited, .infraTrEscura a:visited {
+        color: #666;
+    }
+    a.docLink:visited {
+        color: #666;
+    }
+    img.infraImgNormal, img.infraImgOpaca {
+        width: 16px !important;
+        height: 16px !important;
+    }
+    .infraBarraComandos, .infraAreaTelaD, .infraAreaDados, .infraExcecao {
+        border-color: $background !important;
+    }
+    div.infraBarraTribunal {
+        background-color: hsl($hBT, $sBT%, $lBT%);
+    }
+    #divInfraBarraSistema,
+    #divInfraBarraSistema + div,
+    #divInfraBarraSistema + div + div {
+        background-color: hsl($hBS, $sBS%, $lBS%) !important;
+    }
+    div.infraBarraTribunal,
+    #divInfraBarraSistema,
+    #divInfraBarraSistema + div,
+    #divInfraBarraSistema + div + div {
+        background-image: -moz-linear-gradient(top,
+            hsla(0, 0%, 100%, 0.5),
+            hsla(0, 0%, 75%, 0.5) 25%,
+            hsla(0, 0%, 50%, 0.25) 25%,
+            hsla(0, 0%, 75%, 0.125)
+        ) !important;
+    }
+    #divInfraBarraSistema + div,
+    #divInfraBarraSistema + div + div,
+    #divInfraBarraSistema + div + div > div {
+        width: 2em;
+        height: 4em;
+    } 
+    #divInfraBarraSistema + div {
+        -moz-border-radius-bottomright: 2em;
+    }
+    #divInfraBarraSistema + div + div > div {
+        background-color: $background;
+        -moz-border-radius-topleft: 1em 2em;
+    }
+    div.infraBarraSistemaLocalizacao {
+        height: 4.3em;
+    }
+    div.infraAreaGlobal {
+        border-left: 0.2em solid hsl($hBS, $sBS%, $lBS%);
+    }
+    hr {
+        border-bottom: 0.1em solid hsl($hBS, $sBS%, $lBS%);
+    }
+    div[class^=infraLegend], div[id^=divDes] {
+        background-color: $background !important;
+    }
+    .extraCapa[data-cor="Amarela"],
+    .infraTrClara[data-cor="Amarela"],
+    .infraTrEscura[data-cor="Amarela"] {
+        background-color: hsl(60, 75%, 85%);
+    }
+    .extraCapa[data-cor="Azul"], .infraTrClara[data-cor="Azul"], .infraTrEscura[data-cor="Azul"] {     background-color: hsl(210, 50%, 80%); }
+    .extraCapa[data-cor="AzulClara"], .infraTrClara[data-cor="AzulClara"], .infraTrEscura[data-cor="AzulClara"] {     background-color: hsl(210, 60%, 85%); }
+    .extraCapa[data-cor="Marrom"], .infraTrClara[data-cor="Marrom"], .infraTrEscura[data-cor="Marrom"] {     background-color: hsl(30, 30%, 80%); }
+    .extraCapa[data-cor="Branca"], .infraTrClara[data-cor="Branca"], .infraTrEscura[data-cor="Branca"] {     background-color: hsl(0, 0%, 100%); }
+    .extraCapa[data-cor="Cinza"], .infraTrClara[data-cor="Cinza"], .infraTrEscura[data-cor="Cinza"] {     background-color: hsl(0, 0%, 75%); }
+    .extraCapa[data-cor="Laranja"], .infraTrClara[data-cor="Laranja"], .infraTrEscura[data-cor="Laranja"] {     background-color: hsl(32, 85%, 75%); }
+    .extraCapa[data-cor="Palha"], .infraTrClara[data-cor="Palha"], .infraTrEscura[data-cor="Palha"] {     background-color: hsl(36, 70%, 80%); }
+    .extraCapa[data-cor="Rosa"], .infraTrClara[data-cor="Rosa"], .infraTrEscura[data-cor="Rosa"] {     background-color: hsl(330, 50%, 85%); }
+    .extraCapa[data-cor="Salmao"], .infraTrClara[data-cor="Salmao"], .infraTrEscura[data-cor="Salmao"] {     background-color: hsl(18, 70%, 85%); }
+    .extraCapa[data-cor="Verde"], .infraTrClara[data-cor="Verde"], .infraTrEscura[data-cor="Verde"] {     background-color: hsl(120, 60%, 80%); }
+    .extraCapa[data-cor="Vermelha"], .infraTrClara[data-cor="Vermelha"], .infraTrEscura[data-cor="Vermelha"] {     background-color: hsl(0, 75%, 80%); }
+    .extraSeparador {
+        clear: both;
+    }
+    .extraLembrete {
+        float: left;
+        font-size: 12px;
+        min-width: 20ex;
+        max-width: 60ex;
+        margin-bottom: 0.5em;
+        margin-right: 1ex;
+        padding: 0 1ex;
+        text-align: center;
+        background-color: hsl(60, 100%, 80%);
+        color: hsl(0, 0%, 0%);
+    }
+    .extraLembreteVoce {
+        background-color: hsl(60, 100%, 70%);
+    }
+    .extraLembrete a {
+        float: right;
+        margin: -0.5em 0.5ex 0;
+    }
+    .extraLembretePara, .extraLembreteData {
+        margin-left: -1ex;
+        margin-right: -1ex;
+        color: hsl(0, 0%, 33%);
+    }
+    .extraLembretePara {
+        margin-bottom: 0.5em;
+    }
+    .extraLembreteData {
+        margin-top: 0.5em;
+        text-align: right;
+    }
+    .extraLembrete abbr {
+        color: hsl(240, 50%, 25%);
+        border-bottom: 1pt dotted;
+    }
+    .extraArvore dt {
+        font-size: 12px;
+    }
+    .extraArvore dd {
+        font-size: 11px;
+    }
+    .extraArvore div {
+        float: left;
+        width: 20%;
+        overflow-y: scroll;    
+    }
+    .extraArvore iframe.docFrame {
+        display: none;
+        float: left;
+        width: 80%;
+        border: none;
+    }
+    .extraArvore iframe.docActiveFrame {
+        display: block;
+    }
+}

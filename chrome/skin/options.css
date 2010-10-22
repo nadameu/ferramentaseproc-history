@@ -1,0 +1,6 @@
+#options radio[pane=v1] {
+  list-style-image: url("chrome://eproc/skin/stapler-red-32.png");
+}
+#options radio[pane=v2] {
+  list-style-image: url("chrome://eproc/skin/stapler-blue-32.png");
+}

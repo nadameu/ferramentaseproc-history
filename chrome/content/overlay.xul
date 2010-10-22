@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!DOCTYPE overlay SYSTEM "chrome://eproc/locale/overlay.dtd">
+<overlay id="eproc-browser-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+	<statusbar id="status-bar">
+		<statusbarpanel id="eproc-status-bar-panel" onclick="EprocChrome.BrowserOverlay.openPreferences();">
+			<html:img src="chrome://eproc/skin/stapler-green-16.png" width="16"
+				height="16" style="opacity: .5;"/>
+		</statusbarpanel>
+	</statusbar>
+	<script type="application/javascript;version=1.8" src="BrowserOverlay.js"></script>
+</overlay>
+

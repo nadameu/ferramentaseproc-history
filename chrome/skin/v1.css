@@ -1,0 +1,85 @@
+ul {
+    list-style-type: none;
+    margin: 0 0 10px;
+    padding: 0 20px;
+    font-family: Verdana;
+    font-size: 10pt;
+}
+li {
+    margin: 5px 0;
+}
+table.extraMenu {
+    font-family: Verdana;
+    font-size: 10pt;
+}
+td.extraMenuLink div.extraSubmenu {
+    display: none;
+}
+td.extraMenuLink:hover div.extraSubmenu {
+    display: block;
+}    
+div.extraSubmenu {
+    position: absolute;
+    background: #ccc;
+    padding: 2px;
+    border: 1px solid #888;
+}
+div.extraSubmenu a {
+    display: block;
+}
+li.extraMenuTitle > font > b {
+    cursor: pointer;
+}
+ul.extraMenuList {
+    display: none;
+}
+ul.extraMenuActiveList {
+    display: block;
+}
+.extraBloco {
+    border-color: #ccc;
+}
+.extraBloco thead {
+    font-weight: bold;
+    background-color: hsl(0, 0%, 93%);
+    background-image: -moz-linear-gradient(top,
+        hsl(0, 0%, 94.8%),
+        hsl(0, 0%, 88.5%) 50%,
+        hsl(0, 0%, 82.3%) 50%,
+        hsl(0, 0%, 88.5%)
+    );
+    color: green;    
+}
+.extraBloco tbody tr:nth-of-type(odd) {
+    background-color: hsl(0, 0%, 98%);
+}
+.extraBloco tbody tr:nth-of-type(even) {
+    background-color: hsl(0, 0%, 93%);
+}
+.extraBloco td {
+    font-family: Verdana;
+    font-size: small;
+}
+.extraBloco tbody td:nth-child(4) {
+    font-weight: bold;
+    color: brown;
+}
+.extraBloco tbody td:nth-child(7) {
+    font-weight: bold;
+}
+.extraBloco tbody td:nth-child(8) {
+    font-size: medium;
+}
+.extraBloco tbody td:nth-child(10) {
+    font-weight: bold;
+}
+.extraBloco tbody td:nth-child(11) {
+    color: blue;
+}
+.extraBloco tbody td:nth-child(11) span {
+    font-weight: bold;
+    color: brown;
+}
+.extraBloco tbody td:nth-child(12) {
+    color: red;
+}

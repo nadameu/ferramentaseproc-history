@@ -1,0 +1,29 @@
+<!ENTITY dialog.title "Preferências - Ferramentas e-Proc">
+<!ENTITY extra1.label "Restaurar valores padrão">
+<!ENTITY v1.label "e-Proc V1 (JEF)">
+<!ENTITY v1.general.label "Alterações do e-Proc V1">
+<!ENTITY v1.enable.label "Habilitar alterações">
+<!ENTITY v1.consulta.label "Tela de consulta de processos">
+<!ENTITY v1.consulta_processo.enable.label "Habilitar alterações">
+<!ENTITY v1.digitacao.label "Tela de digitação de documentos">
+<!ENTITY v1.html_to_pdf.enable.label "Habilitar alterações">
+<!ENTITY v1.secao.label "Seção Judiciária:">
+<!ENTITY v1.subsecao.label "Subseção Judiciária:">
+<!ENTITY v1.vara.label "Vara:">
+<!ENTITY v1.assunto.label "Alteração de tipo de ação/assunto">
+<!ENTITY v1.alteracao_assunto.enable.label "Habilitar alterações">
+<!ENTITY v1.demais.label "Demais alterações">
+<!ENTITY v1.eproc.enable.label "Habilitar alterações">
+<!ENTITY v2.label "e-Proc V2 (Rito Ordinário)">
+<!ENTITY v2.general.label "Alterações do e-Proc V2">
+<!ENTITY v2.enable.label "Habilitar alterações">
+<!ENTITY v2.perfil_padrao.label "Perfil padrão">
+<!ENTITY v2.perfil.label "Perfil padrão:">
+<!ENTITY v2.perfil.obs "Apague o valor acima para que o sistema volte a perguntar seu perfil ao fazer login.">
+<!ENTITY v2.perfil.button.label "Limpar o perfil padrão">
+<!ENTITY v2.abreviar.label "Digitação abreviada do número do processo">
+<!ENTITY v2.secao.label "Seção Judiciária:">
+<!ENTITY v2.subsecao.label "Subseção Judiciária:">
+<!ENTITY v2.gedpro.label "Integração com o GEDPRO">
+<!ENTITY v2.ielocation.label "Localização do Internet Explorer:">
+<!ENTITY v2.ielocation.button.label "Procurar...">

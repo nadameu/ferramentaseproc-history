@@ -1,0 +1,17 @@
+pref('extensions.eproc@nadameu.com.br.description', 'chrome://eproc/locale/defaults.properties');
+pref('extensions.eproc@nadameu.com.br.v1.enable', true);
+pref('extensions.eproc@nadameu.com.br.v1.consulta_processo.enable', true);
+pref('extensions.eproc@nadameu.com.br.v1.html_to_pdf.enable', true);
+pref('extensions.eproc@nadameu.com.br.v1.secao', 'SEÇÃO JUDICIÁRIA DE SANTA CATARINA');
+pref('extensions.eproc@nadameu.com.br.v1.subsecao', 'SUBSEÇÃO JUDICIÁRIA DE ITAJAÍ');
+pref('extensions.eproc@nadameu.com.br.v1.vara', '1ª Vara Federal e Juizado Especial Federal Cível e Criminal');
+pref('extensions.eproc@nadameu.com.br.v1.alteracao_assunto.enable', false);
+pref('extensions.eproc@nadameu.com.br.v1.eproc.enable', true);
+pref('extensions.eproc@nadameu.com.br.v2.enable', true);
+pref('extensions.eproc@nadameu.com.br.v2.cor.1grau', '195/25/96');
+pref('extensions.eproc@nadameu.com.br.v2.cor.2grau', '0/25/96');
+pref('extensions.eproc@nadameu.com.br.v2.perfil', '');
+pref('extensions.eproc@nadameu.com.br.v2.secao', '72');
+pref('extensions.eproc@nadameu.com.br.v2.subsecao', '08');
+pref('extensions.eproc@nadameu.com.br.v2.ielocation', 'C:\\Arquivos de programas\\Internet Explorer\\iexplore.exe');
+pref('extensions.eproc@nadameu.com.br.debug', false);

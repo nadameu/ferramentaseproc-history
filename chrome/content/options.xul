@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dialog SYSTEM "chrome://eproc/locale/options.dtd">
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://eproc/skin/options.css"?>
+<prefwindow id="options" title="&dialog.title;"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	buttons="accept,cancel,extra1"
+	buttonlabelextra1="&extra1.label;"
+	ondialogextra1="EprocChrome.Options.reset();">
+	<prefpane id="v1" label="&v1.label;">
+		<preferences>
+			<preference id="v1.enable" name="extensions.eproc@nadameu.com.br.v1.enable" type="bool"/>
+			<preference id="v1.consulta_processo.enable" name="extensions.eproc@nadameu.com.br.v1.consulta_processo.enable" type="bool"/>
+			<preference id="v1.html_to_pdf.enable" name="extensions.eproc@nadameu.com.br.v1.html_to_pdf.enable" type="bool"/>
+			<preference id="v1.secao" name="extensions.eproc@nadameu.com.br.v1.secao" type="string"/>
+			<preference id="v1.subsecao" name="extensions.eproc@nadameu.com.br.v1.subsecao" type="string"/>
+			<preference id="v1.vara" name="extensions.eproc@nadameu.com.br.v1.vara" type="string"/>
+			<preference id="v1.alteracao_assunto.enable" name="extensions.eproc@nadameu.com.br.v1.alteracao_assunto.enable" type="bool"/>
+			<preference id="v1.eproc.enable" name="extensions.eproc@nadameu.com.br.v1.eproc.enable" type="bool"/>
+		</preferences>
+		<groupbox>
+			<caption label="&v1.general.label;"/>
+			<checkbox id="v1_enable" preference="v1.enable" label="&v1.enable.label;" onsyncfrompreference="EprocChrome.Options.on_v1_enable();"/>
+			<separator class="thin"/>
+			<groupbox>
+				<caption label="&v1.consulta.label;"/>
+				<checkbox id="v1_consulta_processo_enable" preference="v1.consulta_processo.enable" label="&v1.consulta_processo.enable.label;"/>
+			</groupbox>
+			<separator class="thin"/>
+			<groupbox>
+				<caption label="&v1.digitacao.label;"/>
+				<checkbox id="v1_html_to_pdf_enable" preference="v1.html_to_pdf.enable" label="&v1.html_to_pdf.enable.label;" onsyncfrompreference="EprocChrome.Options.on_v1_html_to_pdf_enable();"/>
+				<grid>
+					<rows>
+						<row align="center">
+							<label control="v1_secao" value="&v1.secao.label;"/>
+							<textbox id="v1_secao" preference="v1.secao" size="50"/>
+						</row>
+						<row align="center">
+							<label control="v1_subsecao" value="&v1.subsecao.label;"/>
+							<textbox id="v1_subsecao" preference="v1.subsecao" size="50"/>
+						</row>
+						<row align="center">
+							<label control="v1_vara" value="&v1.vara.label;"/>
+							<textbox id="v1_vara" preference="v1.vara" size="50"/>
+						</row>
+					</rows>
+				</grid>
+			</groupbox>
+			<separator class="thin"/>
+			<groupbox>
+				<caption label="&v1.assunto.label;"/>
+				<checkbox id="v1_alteracao_assunto_enable" preference="v1.alteracao_assunto.enable" label="&v1.alteracao_assunto.enable.label;"/>
+			</groupbox>
+			<separator class="thin"/>
+			<groupbox>
+				<caption label="&v1.demais.label;"/>
+				<checkbox id="v1_eproc_enable" preference="v1.eproc.enable" label="&v1.eproc.enable.label;"/>
+			</groupbox>
+		</groupbox>
+	</prefpane>
+	<prefpane id="v2" label="&v2.label;">
+		<preferences>
+			<preference id="v2.enable" name="extensions.eproc@nadameu.com.br.v2.enable" type="bool"/>
+			<preference id="v2.perfil" name="extensions.eproc@nadameu.com.br.v2.perfil" type="string"/>
+			<preference id="v2.secao" name="extensions.eproc@nadameu.com.br.v2.secao" type="string"/>
+			<preference id="v2.subsecao" name="extensions.eproc@nadameu.com.br.v2.subsecao" type="string"/>
+			<preference id="v2.ielocation" name="extensions.eproc@nadameu.com.br.v2.ielocation" type="string"/>
+		</preferences>
+		<groupbox>
+			<caption label="&v2.general.label;"/>
+			<checkbox id="v2_enable" preference="v2.enable" label="&v2.enable.label;" onsyncfrompreference="EprocChrome.Options.on_v2_enable();"/>
+			<separator class="thin"/>
+			<groupbox>
+				<caption label="&v2.perfil_padrao.label;"/>
+				<vbox>
+					<hbox align="center">
+						<label id="v2_perfil_label" control="v2_perfil" value="&v2.perfil.label;"/>
+						<textbox id="v2_perfil" preference="v2.perfil"/>
+					</hbox>
+					<description value="&v2.perfil.obs;"/>
+				</vbox>
+			</groupbox>
+			<separator class="thin"/>
+			<groupbox>
+				<caption label="&v2.abreviar.label;"/>
+				<grid>
+					<rows>
+						<row align="center">
+							<label control="v2_secao" value="&v2.secao.label;"/>
+							<textbox id="v2_secao" preference="v2.secao" maxlength="2" size="2"/>
+						</row>
+						<row align="center">
+							<label control="v2_subsecao" value="&v2.subsecao.label;"/>
+							<textbox id="v2_subsecao" preference="v2.subsecao" maxlength="2" size="2"/>
+						</row>
+					</rows>
+				</grid>
+			</groupbox>
+			<separator class="thin"/>
+			<groupbox>
+				<caption label="&v2.gedpro.label;"/>
+				<hbox align="center">
+					<label control="v2_ielocation" value="&v2.ielocation.label;"/>
+					<textbox id="v2_ielocation" preference="v2.ielocation"/>
+					<button id="v2_ielocation_button" label="&v2.ielocation.button.label;" oncommand="EprocChrome.Options.on_v2_ielocation_click();"/>
+				</hbox>
+			</groupbox>
+		</groupbox>
+	</prefpane>
+	<script src="Options.js"/>
+</prefwindow>
+
