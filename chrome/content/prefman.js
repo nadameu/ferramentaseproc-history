@@ -5,6 +5,10 @@ function eproc_PrefManager() {
         getService(Components.interfaces.nsIPrefService).
         getBranch(startPoint);
 
+    var defaults=Components.classes["@mozilla.org/preferences-service;1"].
+        getService(Components.interfaces.nsIPrefService).
+        getDefaultBranch(startPoint);
+
     var observers={};
 
     // whether a preference exists
@@ -13,18 +17,28 @@ function eproc_PrefManager() {
     }
 
     // returns the named preference, or defaultValue if it does not exist
-    this.getValue=function(prefName, defaultValue) {
-        var prefType=pref.getPrefType(prefName);
-
-        // underlying preferences object throws an exception if pref doesn't exist
-        if (prefType==pref.PREF_INVALID) {
-            return defaultValue;
+    this.getValue=function(prefName) {
+        if (pref.prefHasUserValue(prefName)) {
+            var prefType=pref.getPrefType(prefName);
+            switch (prefType) {
+                case pref.PREF_STRING: return pref.getCharPref(prefName);
+                case pref.PREF_BOOL: return pref.getBoolPref(prefName);
+                case pref.PREF_INT: return pref.getIntPref(prefName);
+                case pref.PREF_INVALID: window.alert('Valor inválido para a preferência "' + prefName + '"!');
+            }
+        } else {
+            return this.getDefaultValue(prefName);
         }
+    }
 
-        switch (prefType) {
-            case pref.PREF_STRING: return pref.getCharPref(prefName);
-            case pref.PREF_BOOL: return pref.getBoolPref(prefName);
-            case pref.PREF_INT: return pref.getIntPref(prefName);
+
+    // returns the default value or the preference
+    this.getDefaultValue=function(prefName) {
+        switch (defaults.getPrefType(prefName)) {
+            case defaults.PREF_STRING: return defaults.getCharPref(prefName);
+            case defaults.PREF_BOOL: return defaults.getBoolPref(prefName);
+            case defaults.PREF_INT: return defaults.getIntPref(prefName);
+            case defaults.PREF_INVALID: window.alert('Valor inválido para a preferência "' + prefName + '"!');
         }
     }
 

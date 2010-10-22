@@ -3,6 +3,6 @@
       <statusbarpanel id="status-bar-eproc"
      label="Ferramentas e-Proc"
      tooltiptext="Ferramentas e-Proc instaladas e ativadas."
-     ><html:img src="chrome://eproc/content/stapler-16.png" width="16" height="16"/></statusbarpanel>
+     ><html:img src="chrome://eproc/content/stapler-16.png" width="16" height="16" onclick="window.open('chrome://eproc/content/options.xul', 'eproc-options', 'chrome,centerscreen');"/></statusbarpanel>
  </statusbar>
 </overlay>

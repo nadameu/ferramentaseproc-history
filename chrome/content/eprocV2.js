@@ -210,42 +210,33 @@ var Eproc = {
     // {{{ citacao_bloco_filtrar_destino()
     citacao_bloco_filtrar_destino: function()
     {
-        for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
-            if (table.getAttribute('summary') == 'Tabela de Processos.') {
-                table.setAttribute('width', '');
-                for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
-                    th.setAttribute('width', '');
-                }
-                for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
-                    if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
-                    tr.cells[1].getElementsByTagName('a')[0].setAttribute('target', '_blank');
-                    var classe = tr.cells[2].innerHTML;
-                    if (Classes[classe])
-                        for (var cells = tr.cells, c = 0, cl = cells.length; (c < cl) && (cell = cells[c]); c++) {
-                            cell.style.backgroundColor = Classes[classe];
-                        }
-                }
-            }
-        }
+        Eproc.colorirTabela(2, 'Tabela de Processos.');
     },
     // }}}
     // {{{ citacao_bloco_listar_destino()
     citacao_bloco_listar_destino: function()
     {
+        Eproc.colorirTabela(2, 'Tabela de Processos.');
+    },
+    // }}}
+    // {{{ colorirTabela()
+    colorirTabela: function(col, summary)
+    {
+        var noCheckbox = (arguments.length <= 2 ? false : arguments[2]);
         for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
-            if (table.getAttribute('summary') == 'Tabela de Processos.') {
+            if (table.getAttribute('summary') == summary) {
                 table.setAttribute('width', '');
                 for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
                     th.setAttribute('width', '');
                 }
                 for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
                     if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
-                    tr.cells[1].getElementsByTagName('a')[0].setAttribute('target', '_blank');
-                    var classe = tr.cells[2].innerHTML;
-                    if (Classes[classe])
-                        for (var cells = tr.cells, c = 0, cl = cells.length; (c < cl) && (cell = cells[c]); c++) {
-                            cell.style.backgroundColor = Classes[classe];
-                        }
+                    tr.cells[noCheckbox ? 0 : 1].getElementsByTagName('a')[0].setAttribute('target', '_blank');
+                    if (col) {
+                        var classe = tr.cells[col].innerHTML;
+                        if (Classes[classe])
+                            tr.style.backgroundColor = Classes[classe];
+                    }
                 }
             }
         }
@@ -255,7 +246,7 @@ var Eproc = {
     entrar: function()
     {
         if (document.getElementsByName('rdoUsuario').length) {
-            var padrao = GM_getValue('padrao');
+            var padrao = GM_getValue('v2.perfil');
             for (var perfis = document.getElementsByName('rdoUsuario'), pl = perfis.length, p = 0; (p < pl) && (perfil = perfis[p]); p++) {
                 var row = perfil.parentNode
                 do {
@@ -270,7 +261,7 @@ var Eproc = {
                     row.addEventListener('click', (function(id) { return function(e)
                     {
                         if (confirm('Definir este usuário/lotação como padrão?')) {
-                            GM_setValue('padrao', id);
+                            GM_setValue('v2.perfil', id);
                         }
                         unsafeWindow.acaoLogar(id);
                     }; })(id), true);
@@ -345,15 +336,22 @@ var Eproc = {
             menu.appendChild(cores);
         }
         if (document.getElementsByClassName('infraBarraSistema').length) {
-            Eproc.mudaFundo(GM_getValue('background') || '#ffffff');
+            Eproc.mudaFundo(GM_getValue('v2.fundo') || '#ffffff');
         }
         var unidades = document.getElementById('selInfraUnidades');
         if (unidades) {
             unidades.setAttribute('onchange', '');
             unidades.addEventListener('change', function(e)
             {
-                if (confirm('Definir este usuário/lotação como padrão?')) {
-                    GM_setValue('padrao', this.value);
+                for (var options = this.getElementsByTagName('option'), ol = options.length, option, o = 0; (o < ol) && (option = options[o]); o++) {
+                    if (option.getAttribute('selected')) break;
+                }
+                var padrao = prompt('Perfil selecionado: ' + options[this.selectedIndex].textContent + '\n\nDefinir este perfil como padrão?', 'N');
+                if (null === padrao) {
+                    this.value = option.value;
+                    return;
+                } else if (String(padrao).toLowerCase()[0] == 's') {
+                    GM_setValue('v2.perfil', this.value);
                 }
                 this.form.submit();
             }, true);
@@ -374,65 +372,50 @@ var Eproc = {
     // {{{ localizador_processos_alterar_destino()
     localizador_processos_alterar_destino: function()
     {
-        this.localizador_processos_lista_destino.apply(this, arguments);
+        Eproc.colorirTabela(5, 'Tabela de Processos por Localizador.');
     },
     // }}}
     // {{{ localizador_processos_lista()
     localizador_processos_lista: function()
     {
-/*        var form = document.getElementById('frmProcessoEventoLista');
-        form.action = location.pathname + location.search; */
-        for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
-            if (table.getAttribute('summary') == 'Tabela de Processos por Localizador.') {
-                table.setAttribute('width', '');
-                for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
-                    th.setAttribute('width', '');
-                }
-                for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
-                    if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
-                    tr.cells[1].getElementsByTagName('a')[0].setAttribute('target', '_blank');
-                    var classe = tr.cells[5].innerHTML;
-                    if (Classes[classe])
-                        for (var cells = tr.cells, c = 0, cl = cells.length; (c < cl) && (cell = cells[c]); c++) {
-                            cell.style.backgroundColor = Classes[classe];
-                        }
-                }
-            }
-        }
+        Eproc.colorirTabela(5, 'Tabela de Processos por Localizador.');
     },
     // }}}
     // {{{ localizador_processos_lista_destino()
     localizador_processos_lista_destino: function()
     {
-/*        var form = document.getElementById('frmProcessoEventoLista');
-        form.action = location.pathname + location.search; */
-        for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
-            if (table.getAttribute('summary') == 'Tabela de Processos por Localizador.') {
-                table.setAttribute('width', '');
-                for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
-                    th.setAttribute('width', '');
-                }
-                for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
-                    if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
-                    tr.cells[1].getElementsByTagName('a')[0].setAttribute('target', '_blank');
-                    var classe = tr.cells[5].innerHTML;
-                    if (Classes[classe])
-                        for (var cells = tr.cells, c = 0, cl = cells.length; (c < cl) && (cell = cells[c]); c++) {
-                            cell.style.backgroundColor = Classes[classe];
-                        }
-                }
-            }
-        }
+        Eproc.colorirTabela(5, 'Tabela de Processos por Localizador.');
     },
     // }}}
     // {{{ mudaFundo()
     mudaFundo: function(background)
     {
-        GM_setValue('background', background);
+        GM_setValue('v2.fundo', background);
         document.getElementsByTagName('body')[0].style.backgroundColor = background;
         GM_addStyle(''
-+ 'input, select, option {'
-+ '    background-color: hsla(0, 0%, 100%, 0.5);'
++ 'input, select {'
++ '    background-color: hsla(0, 0%, 80%, 0.25);'
++ '}'
++ 'input:focus {'
++ '    background-color: hsla(0, 0%, 50%, 0.5);'
++ '}'
++ 'select:focus {'
++ '    background-color: hsla(0, 0%, 50%, 0.25);'
++ '}'
++ 'select:focus option {'
++ '    background-color: hsla(0, 0%, 100%, 0.25);'
++ '}'
++ 'div.infraAjaxAutoCompletar {'
++ '    background-color: ' + background + ';'
++ '}'
++ 'div.infraAjaxAutoCompletar li {'
++ '    background-color: hsla(0, 0%, 80%, 0.25);'
++ '}'
++ 'div.infraAjaxAutoCompletar li.selected {'
++ '    background-color: Highlight;'
++ '}'
++ 'div.infraAjaxAutoCompletar li.selected a, div.infraAjaxAutoCompletar li.selected b {'
++ '    color: HighlightText;'
 + '}'
 + 'table.infraTable {'
 + '    border-spacing: 0;'
@@ -441,7 +424,7 @@ var Eproc = {
 + '    background-color: transparent;'
 + '}'
 + '.infraTable th, .infraTable td {'
-+ '    border-spacing: 0;'
+//+ '    border-spacing: 0;'
 + '    border: solid #ccc;'
 + '    border-width: 0 1px 1px 0;'
 + '}'
@@ -456,6 +439,9 @@ var Eproc = {
 + '}'
 + 'tr.infraTrSelecionada td {'
 + '    background-color: hsla(0, 0%, 50%, 0.25);'
++ '}'
++ 'tr.infraTrSelecionada td td {'
++ '    background-color: hsla(0, 0%, 50%, 0);'
 + '}'
 + 'tr.infraTrMarcada td {'
 + '    background-color: hsla(0, 0%, 50%, 0.375);'
@@ -562,73 +548,27 @@ var Eproc = {
     {
         var form = document.getElementById('frmProcessoEventoLista');
         form.action = location.pathname + location.search;
-        for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
-            if (table.getAttribute('summary') == 'Tabela de Processos.') {
-                table.setAttribute('width', '');
-                for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
-                    th.setAttribute('width', '');
-                }
-                for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
-                    if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
-                    tr.cells[1].getElementsByTagName('a')[0].setAttribute('target', '_blank');
-                    var classe = tr.cells[3].innerHTML;
-                    if (Classes[classe]) {
-                        tr.style.backgroundColor = Classes[classe];
-                    }
-                }
-            }
-        }
+        Eproc.colorirTabela(3, 'Tabela de Processos.');
     },
     // }}}
     // {{{ processo_consultar()
     processo_consultar: function()
     {
         this.setLastProcesso();
-        for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
-            if (table.getAttribute('summary') == '' && table.rows[0].cells.length > 3) {
-                table.setAttribute('width', '');
-                for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
-                    th.setAttribute('width', '');
-                }
-                for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
-                    if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
-                    tr.cells[0].getElementsByTagName('a')[0].setAttribute('target', '_blank');
-                    var classe = tr.cells[3].innerHTML;
-                    if (Classes[classe])
-                        for (var cells = tr.cells, c = 0, cl = cells.length; (c < cl) && (cell = cells[c]); c++) {
-                            cell.style.backgroundColor = Classes[classe];
-                        }
-                }
-            }
-        }
+        Eproc.colorirTabela(3, '', true);
     },        
     // }}}
     // {{{ processo_consultar_nome_parte()
     processo_consultar_nome_parte: function()
     {
-        for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
-            if (table.getAttribute('summary') == '') {
-                table.setAttribute('width', '');
-                for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
-                    th.setAttribute('width', '');
-                }
-                for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
-                    if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
-                    tr.cells[0].getElementsByTagName('a')[0].setAttribute('target', '_blank');
-                    var classe = tr.cells[3].innerHTML;
-                    if (Classes[classe])
-                        for (var cells = tr.cells, c = 0, cl = cells.length; (c < cl) && (cell = cells[c]); c++) {
-                            cell.style.backgroundColor = Classes[classe];
-                        }
-                }
-            }
-        }
+        Eproc.colorirTabela(3, '', true);
     },
     // }}}
     // {{{ processo_localizador_listar()
     processo_localizador_listar: function()
     {
         this.setLastProcesso();
+        document.getElementById('btnFechar').setAttribute('onclick', 'location.href="' + document.referrer + '";');
     },        
     // }}}
     // {{{ processo_movimentar()
@@ -768,17 +708,32 @@ img
                 for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
                     th.setAttribute('width', '');
                 }
+                var eventos = [];
                 for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
                     if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
-                    if (match = tr.cells[2].innerHTML.match(/Prazo: .*(\&nbsp;){3}Status:([^<]+)/)) {
-                        if (match[2] == 'AGUARD. ABERTURA') {
+                    if (match = tr.cells[2].innerHTML.match(/Prazo: .* Status:([^<]+)/)) {
+                        if (match[1] == 'AGUARD. ABERTURA') {
                             tr.cells[2].style.backgroundColor = '#caa';
-                        } else if (match[2] == 'ABERTO') {
+                        } else if (match[1] == 'ABERTO') {
                             tr.cells[2].style.backgroundColor = '#cca';
-                        } else if (match[2] == 'FECHADO') {
+                            if (eventos[tr.cells[0].textContent]) {
+                                tr.cells[2].appendChild(document.createElement('br'));
+                                tr.cells[2].appendChild(document.createTextNode('br'));
+                            }
+                        } else if (match[1] == 'FECHADO') {
                             tr.cells[2].style.backgroundColor = '#aca';
+                            if (eventos[tr.cells[0].textContent]) {
+                                tr.cells[2].appendChild(document.createElement('br'));
+                                var ok = tr.cells[2].appendChild(document.createElement('span'));
+                                ok.style.backgroundColor = '#cca';
+                                ok.innerHTML = eventos[tr.cells[0].textContent];
+                                tr.cells[2].appendChild(ok);
+                            }
                         }
+                    } else if (match = tr.cells[2].innerHTML.match(/(.*) - Refer. ao Evento: (\d+)/)) {
+                        eventos[match[2]] = match[1] + '<br/>' + (eventos[match[2]] ? eventos[match[2]] : '');
                     }
+                    /*
                     for (var children = tr.cells[4].childNodes, c = children.length - 1; (c >= 0) && (child = children[c]); c--) {
                         if (!child.tagName || (child.tagName == 'BR')) {
                             child.parentNode.removeChild(child);
@@ -786,7 +741,18 @@ img
                             child.parentNode.insertBefore(document.createElement('br'), child.nextSibling);
                         }
                     }
+                    */
+                    for (var subtrs = tr.cells[4].getElementsByTagName('tr'), subr = 0, subrl = subtrs.length; (subr < subrl) && (subtr = subtrs[subr]); subr++) {
+                        for (var subtds = subtr.cells, subc = 0, subcl = subtds.length; (subc < subcl) && (subtd = subtds[subc]); subc++) {
+                            tr.cells[4].appendChild(subtd.firstChild);
+                            tr.cells[4].appendChild(subtd.firstChild);
+                            tr.cells[4].appendChild(subtd.firstChild);
+                            tr.cells[4].appendChild(document.createElement('br'));
+                        }
+                    }
+                    if (tr.cells[4].getElementsByTagName('table').length) tr.cells[4].removeChild(tr.cells[4].getElementsByTagName('table')[0]);
                     for (var links = tr.cells[4].getElementsByTagName('a'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
+                        if (link.tabIndex) continue;
                         link.className = link.className.split(' ').concat(['docLink']).join(' ');
                         link.addEventListener('click', (function(id, link) {
                             return function(e)
@@ -827,45 +793,13 @@ img
     // {{{ relatorio_geral_listar()
     relatorio_geral_listar: function()
     {
-        for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
-            if (table.getAttribute('summary') == 'Lista de Processos') {
-                table.setAttribute('width', '');
-                for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
-                    th.setAttribute('width', '');
-                }
-                for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
-                    if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
-                    tr.cells[1].getElementsByTagName('a')[0].setAttribute('target', '_blank');
-                    var classe = tr.cells[5].innerHTML;
-                    if (Classes[classe])
-                        for (var cells = tr.cells, c = 0, cl = cells.length; (c < cl) && (cell = cells[c]); c++) {
-                            cell.style.backgroundColor = Classes[classe];
-                        }
-                }
-            }
-        }
+        Eproc.colorirTabela(5, 'Lista de Processos');
     },
     // }}}
     // {{{ relatorio_sem_movimentacao_consultar()
     relatorio_sem_movimentacao_consultar: function()
     {
-        for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
-            if (table.getAttribute('summary') == 'Processos') {
-                table.setAttribute('width', '');
-                for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
-                    th.setAttribute('width', '');
-                }
-                for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
-                    if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
-                    tr.cells[1].getElementsByTagName('a')[0].setAttribute('target', '_blank');
-                    var classe = tr.cells[4].innerHTML;
-                    if (Classes[classe])
-                        for (var cells = tr.cells, c = 0, cl = cells.length; (c < cl) && (cell = cells[c]); c++) {
-                            cell.style.backgroundColor = Classes[classe];
-                        }
-                }
-            }
-        }
+        Eproc.colorirTabela(4, 'Processos');
     },
     // }}}
     // {{{ setLastProcesso()
@@ -885,6 +819,7 @@ img
     onNumprocChange: function(e)
     {
         var numproc = e.target.value;
+        if (numproc.length < 3) return;
         while (numproc.length < 8) {
             numproc = '0' + numproc;
         }
@@ -897,59 +832,6 @@ img
         e.target.value = numproc;
     },
     // }}}
-}
-// }}}
-// {{{ encode64()
-/*
- * This code was written by Tyler Akins and has been placed in the
- * public domain.  It would be nice if you left this header intact.
- * Base64 code from Tyler Akins -- http://rumkin.com
- */
-function encode64(input)
-{
-    var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-    var output = new StringMaker();
-    var chr1, chr2, chr3;
-    var enc1, enc2, enc3, enc4;
-    var i = 0;
-
-    while (i < input.length) {
-        chr1 = input.charCodeAt(i++) & 0xff;
-        chr2 = input.charCodeAt(i++) & 0xff;
-        chr3 = input.charCodeAt(i++) & 0xff;
-
-        enc1 = chr1 >> 2;
-        enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-        enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-        enc4 = chr3 & 63;
-
-        if (isNaN(chr2)) {
-            enc3 = enc4 = 64;
-        } else if (isNaN(chr3)) {
-            enc4 = 64;
-        }
-
-        output.append(keyStr.charAt(enc1) + keyStr.charAt(enc2) + keyStr.charAt(enc3) + keyStr.charAt(enc4));
-   }
-   
-   return output.toString();
-}
-// }}}
-// {{{ StringMaker()
-var StringMaker = function () {
-    this.str = "";
-    this.length = 0;
-    this.append = function (s) {
-        this.str += s;
-        this.length += s.length;
-    }
-    this.prepend = function (s) {
-        this.str = s + this.str;
-        this.length += s.length;
-    }
-    this.toString = function () {
-        return this.str;
-    }
 }
 // }}}
 // {{{ Início do programa
