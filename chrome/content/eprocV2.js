@@ -207,7 +207,84 @@ var Eproc = {
     processo: 0,
     windows: [],
     // }}}
-    // {{{ citacao_bloco_filtrar_destino()
+    // {{{ arvore_processo()
+    arvore_processo: function()
+    {
+        GM_addStyle('dt { font-size: 12px; } dd { font-size: 11px; }');
+        if (!unsafeWindow.opener) return window.close();
+        document.title = Eproc.getProcessoF() + ' - Árvore de documentos';
+        Array.forEach(document.getElementsByClassName('infraAcaoBarraSistema'), function(acao)
+        {
+            acao.style.display = 'none';
+        });
+        document.getElementById('divInfraBarraSistemaE').style.display = 'none';
+        document.getElementById('divInfraBarraLocalizacao').textContent = unsafeWindow.opener.document.getElementById('divInfraBarraLocalizacao').textContent + ' - Árvore de documentos';
+        document.getElementById('divInfraAreaTela').style.display = 'none';
+        var area = document.createElement('div');
+        area.className = 'infraAreaTela';
+        for (var tables = unsafeWindow.opener.document.getElementsByTagName('table'), tl = tables.length, t = 0, t; (t < tl) && (table = tables[t]); t++) {
+            if (table.getAttribute('summary') == 'Eventos') {
+                var arvore = document.createElement('div');
+                arvore.style.cssFloat = 'left';
+                arvore.style.width = '20%';
+                arvore.style.overflowY = 'scroll';
+                for (var rows = table.rows, rl = rows.length, r = rl - 1, row; (r >= 0) && (row = rows[r]); r--) {
+                    if (!row.className.match(/infraTr(Clara|Escura)/)) continue;
+                    var evento = document.createElement('dl');
+                    var descricao = document.createElement('dt');
+                    descricao.textContent = row.cells[0].textContent + '. ' + row.cells[1].textContent;
+                    evento.appendChild(descricao);
+                    var descricao = document.createElement('dd');
+                    descricao.textContent = row.cells[2].innerHTML.split('<br')[0];
+                    evento.appendChild(descricao);
+                    for (var links = row.cells[4].getElementsByTagName('a'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
+                        if (link.search.match(/processo_evento_documento_tooltip_cadastrar/)) continue;
+                        var documento = document.createElement('dd');
+                        if (link.search.match(/processo_evento_documento_tooltip_alterar/)) {
+                            var link = link.cloneNode(true);
+                            link.addEventListener('click', function(e) { if (!e.shiftKey && !e.ctrlKey) { e.preventDefault(); e.stopPropagation(); } }, false);
+                            documento.appendChild(link);
+                            l++;
+                            if (l >= ll) continue;
+                            link = links[l];
+                        }
+                        var link = link.cloneNode(true);
+                        link.target = 'show_files';
+                        link.addEventListener('click', (function(link) { return function(e)
+                        {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            document.getElementsByClassName('docActiveFrame')[0].className = 'docFrame';
+                            var id = link.href.match(/doc=([0-9]+)/)[1];
+                            var iframe = document.getElementById('frame' + id) || (function()
+                            {
+                                var iframe = document.createElement('iframe');
+                                iframe.id = 'frame' + id;
+                                iframe.src = link.href;
+                                area.appendChild(iframe);
+                                return iframe;
+                            })();
+                            iframe.className = 'docFrame docActiveFrame';
+                        }; })(link), false);
+                        documento.appendChild(link);
+                        evento.appendChild(documento);
+                    }
+                    arvore.appendChild(evento);
+                }
+                area.appendChild(arvore);
+            }
+        }
+        var iframe = document.createElement('iframe');
+        iframe.name = 'show_files';
+        iframe.className = 'docFrame docActiveFrame';
+        area.appendChild(iframe);
+        var falta = window.innerHeight - document.getElementById('divInfraAreaGlobal').offsetHeight - 20;
+        document.getElementById('divInfraAreaTela').parentNode.insertBefore(area, document.getElementById('divInfraAreaTela').nextSibling);
+        arvore.style.height = falta + 'px';
+        GM_addStyle('iframe.docFrame { display: none; float: left; width: 80%; border: none; height: ' + falta + 'px; } iframe.docActiveFrame { display: block; }');
+},
+// }}}
+// {{{ citacao_bloco_filtrar_destino()
     citacao_bloco_filtrar_destino: function()
     {
         Eproc.colorirTabela(2, 'Tabela de Processos.');
@@ -752,8 +829,6 @@ var Eproc = {
     // {{{ processo_selecionar()
     processo_selecionar: function()
     {
-        if (!document.title || document.title.match(/Árvore/))
-            return;
         document.title = Eproc.getProcessoF();
         var assuntos = document.getElementById('fldAssuntos');
         var classe = document.getElementById('txtClasse').textContent;
@@ -837,97 +912,16 @@ var Eproc = {
                 var arvore = document.createElement('a');
                 arvore.textContent = 'Árvore de documentos';
                 arvore.href = '#';
-                arvore.addEventListener('click', (function(table) {
-                    return function(e)
-                    {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        var x = window.open('');
-                        x.focus();
-                        x.document.open();
-                        x.document.write(
-                            <html>
-                                <head><title>Árvore de documentos</title></head>
-                                <frameset cols="250,*" marginheight="0" marginwidth="0" rows="*">
-                                    <frame name="tree_files" marginwidth="5" marginheight="5"/>
-                                    <frame name="show_files" marginwidth="5" marginheight="5"/>
-                                </frameset>
-                                <noframes>
-                                    <body topmargin="0" leftmargin="0">
-                                        <p>Não foi possível exibir o conteúdo desta página</p>
-                                    </body>
-                                </noframes>
-                            </html>
-                        );
-                        x.document.title = Eproc.getProcessoF() + ' - ' + x.document.title;
-                        x.frames[0].document.write(
-                            <html>
-                                <head>
-                                    <style type="text/css"><![CDATA[
-body
-{
-    font-family: Verdana;
-    font-size: 12px;
-}
-li
-{
-    white-space: nowrap;
-}
-ul
-{
-    list-style-type: disc;
-    margin: 0 20px;
-    padding: 0;
-}
-ul ul
-{
-    margin: 0;
-    list-style-type: none;
-}
-a:link
-{
-    text-decoration: none;
-    color: #000;
-}
-a:visited
-{
-    text-decoration: none;
-    color: #848;
-}   
-img
-{
-    border: none;
-}
-                                    ]]></style>
-                                </head>
-                                <body>
-                                    <ul>
-                                    </ul>
-                                </body>
-                            </html>
-                        );
-                        x.frames[0].document.close();
-                        var lista = x.frames[0].document.getElementsByTagName('ul')[0];
-                        for (var trs = table.getElementsByTagName('tr'), r = trs.length - 1; (r >= 0) && (tr = trs[r]); r--) {
-                            if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
-                            var evento = document.createElement('li');
-                            evento.innerHTML = tr.cells[2].innerHTML.split(/<br/)[0] + ' - ' + tr.cells[1].innerHTML;
-                            var documentos = document.createElement('ul');
-                            for (var links = tr.cells[4].getElementsByTagName('a'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
-                                var item = document.createElement('li');
-                                var docLink = document.createElement('a');
-                                docLink.target = 'show_files';
-                                docLink.href = link.href;
-                                docLink.innerHTML = link.innerHTML;
-                                item.appendChild(docLink);
-                                documentos.appendChild(item);
-                            }
-                            evento.appendChild(documentos);
-                            lista.appendChild(evento);
-                        }
-                        x.document.close();
-                    };
-                })(table), false);
+                arvore.addEventListener('click', function(e)
+                {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (typeof Eproc.windows['arvore'] != 'undefined' && Eproc.windows['arvore'].document) {
+                        Eproc.windows['arvore'].close();
+                    }
+                    var win = Eproc.windows['arvore'] = window.open(location.search.replace('processo_selecionar', 'arvore_processo'), Eproc.processo + 'arvore');
+//                    win.focus();
+                }, false);
                 table.parentNode.insertBefore(arvore, table);
                 for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
                     th.setAttribute('width', '');
@@ -999,6 +993,10 @@ img
         {
             var windows = [];
             var gedpro = [];
+            if (typeof Eproc.windows['arvore'] != 'undefined' && Eproc.windows['arvore'].document) {
+                Eproc.windows['arvore'].close();
+                delete Eproc.windows['arvore'];
+            }
             for (w in Eproc.windows) {
                 var win = Eproc.windows[w];
                 if (typeof win == 'object') {
@@ -1016,7 +1014,7 @@ img
                 }
             }
             if (windows.length) {
-                if (confirm('Este processo possui ' + windows.length + ' documento(s) aberto(s).\nDeseja fechá-lo(s)?')) {
+                if (confirm('Este processo possui ' + windows.length + ' ' + (windows.length > 1 ? 'janelas abertas' : 'janela aberta') + '.\nDeseja fechá-' + (windows.length > 1 ? 'las' : 'la') + '?')) {
                     for (var w = windows.length - 1; w >= 0; w--) {
                         windows[w].close();
                     }
