@@ -280,7 +280,11 @@ var Eproc = {
         GM_setValue('background', background);
         document.getElementsByTagName('body')[0].style.backgroundColor = background;
         GM_addStyle('.infraTrClara, .infraTrEscura { background-color: ' + background + ' !important; } div.infraMenu a { background-color: ' + background + '; border-color: ' + background + '; }');
-
+        for (var divs = document.getElementsByTagName('div'), d = divs.length - 1, div; (d >= 0) && (div = divs[d]); d--) {
+            if ((div.className && div.className.match(/^infraLegend/)) || (div.id && div.id.match(/^divDes(Criterios|Ordenacao|Paginacao)$/))) {
+                div.style.backgroundColor = background;
+            }
+        }
     },
     // }}}
     // {{{ prevencao_judicial()
