@@ -572,8 +572,14 @@ var Eproc = {
         if (Classes[classe])
             assuntos.style.backgroundColor = Classes[classe];
         if (document.getElementById('lblProcRel')) {
-            var link = null, relacionado = document.getElementById('lblProcRel').nextSibling, processo = relacionado.textContent.match(/[\d\.\-]+\/[PRS][RSC]/)[0].replace(/[\.-]/g, '');
-            if (relacionado.tagName) link = relacionado;
+            var link = null, relacionado = document.getElementById('lblProcRel').nextSibling;
+            if (relacionado.tagName && relacionado.tagName.toLowerCase() == 'br') {
+                relacionado = relacionado.nextSibling.nextSibling;
+            }
+            if (relacionado.tagName && relacionado.tagName.toLowerCase() == 'a') {
+                link = relacionado;
+            }
+            var processo = relacionado.textContent.match(/[\d\.\-]+\/([PRS][RSC])?/)[0].replace(/[\.-]/g, '');
             if (!link) {
                 link = document.createElement('a'), tmp = relacionado.textContent.split('  '), numprocf = tmp[0], relacao = tmp[1];
                 link.textContent = numprocf;
