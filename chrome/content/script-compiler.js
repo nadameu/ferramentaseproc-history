@@ -78,8 +78,8 @@ contentLoad: function(e) {
     if (eproc_gmCompiler.isGreasemonkeyable(href)) {
         var prefs = new eproc_PrefManager();
         var script = false;
-        if (/^https?:\/\/((eproc|jef)[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc(V2|v2_(homologacao|apresentacao))|eproc2?.trf4.(gov|jus).br\/eproc(2trf4|trf4_apresentacao))\/controlador\.php\?acao=acessar_documento/.test(href)) {
-        } else if (prefs.getValue('v2.enable') && /^https?:\/\/((eproc|jef)[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc(V2|v2_(homologacao|apresentacao))|eproc2?.trf4.(gov|jus).br\/eproc(2trf4|trf4_apresentacao))\//.test(href)) {
+        if (/^https?:\/\/((eproc|jef)[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc(V2|v2_(homologacao|apresentacao))|eproc2?.trf4.(gov|jus).br\/eproc(2trf4|trf4_apresentacao)|eproc2d-(um|dois|tres)\.trf4\.(jus|gov)\.br\/.*)\/controlador\.php\?acao=acessar_documento/.test(href)) {
+        } else if (prefs.getValue('v2.enable') && /^https?:\/\/((eproc|jef)[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc(V2|v2_(homologacao|apresentacao))|eproc2?.trf4.(gov|jus).br\/eproc(2trf4|trf4_apresentacao)|eproc2d-(um|dois|tres)\.trf4\.(jus|gov)\.br)\//.test(href)) {
             script = eproc_gmCompiler.getUrlContents('chrome://eproc/content/eprocV2.js');
         } else if (prefs.getValue('v1.enable') && /^https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\//.test(href)) {
             if (prefs.getValue('v1.consulta_processo.enable') && /^https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/consulta_processo.php\?.*/.test(href)) {
@@ -290,7 +290,7 @@ var httpRequestObserver =
       if (typeof Components == 'undefined') return;
       var httpChannel = subject.QueryInterface(Components.interfaces.nsIHttpChannel);
 
-      if (/https?:\/\/(jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc(V2|v2_(homologacao|apresentacao))|eproc2?.trf4.(gov|jus).br\/eproc(2trf4|trf4_apresentacao))\/controlador\.php\?acao=acessar_documento/.test(httpChannel.name)) {
+      if (/https?:\/\/(jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc(V2|v2_(homologacao|apresentacao))|eproc2?.trf4.(gov|jus).br\/eproc(2trf4|trf4_apresentacao)|eproc2d-(um|dois|tres)\.trf4\.(jus|gov)\.br\/.*)\/controlador\.php\?acao=acessar_documento/.test(httpChannel.name)) {
 //          httpChannel.setResponseHeader("Content-Disposition", httpChannel.getResponseHeader("Content-Disposition").replace('attachment', 'inline'), false);
           httpChannel.contentType = httpChannel.contentType.replace(/^application\/(.*)$/, function(match, type) {
               return {

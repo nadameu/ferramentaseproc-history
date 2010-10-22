@@ -82,7 +82,7 @@ var Classes = {
     'COMUNICAÇÃO DE PRISÃO EM FLAGRANTE': Cores.BRANCA,
     'CONFLITO DE COMPETÊNCIA': Cores.BRANCA,
     'CRIMES AMBIENTAIS': Cores.BRANCA,
-    'CUMPRIMENTO DE SENTENÇA': Cores.BRANCA,
+    'CUMPRIMENTO DE SENTENÇA': Cores.AMARELA,
     'DECLARAÇÃO DE AUSÊNCIA': Cores.BRANCA,
     'DECLARAÇÃO DE DÚVIDA NO REGISTRO': Cores.BRANCA,
     'DEMARCAÇÃO / DIVISÃO': Cores.CINZA,
@@ -108,13 +108,13 @@ var Classes = {
     'EXCEÇÃO DE SUSPEIÇÃO': Cores.VERDE,
     'EXCEÇÃO DE SUSPEIÇÃO CRIMINAL': Cores.BRANCA,
     'EXCESSO OU DESVIO-INCIDENTES EM EXECUÇÃO CRIMINAL': Cores.BRANCA,
-    'EXECUÇÃO DE SENTENÇA CONTRA FAZENDA PÚBL': Cores.VERDE,
+    'EXECUÇÃO DE SENTENÇA CONTRA FAZENDA PÚBL': Cores.AMARELA,
     'EXECUÇÃO DE TÍTULO EXTRAJUDICIAL': Cores.AMARELA,
     'EXECUÇÃO FISCAL': Cores.LARANJA,
     'EXECUÇÃO HIPOTECÁRIA DO SISTEMA FINANCEIRO DA HABI': Cores.AMARELA,
     'EXECUÇÃO PENAL': Cores.BRANCA,
     'EXECUÇÃO PENAL PROVISÓRIA': Cores.AMARELA,
-    'EXECUÇÃO PROVISÓRIA DE SENTENÇA': Cores.VERDE,
+    'EXECUÇÃO PROVISÓRIA DE SENTENÇA': Cores.AMARELA,
     'EXIBIÇÃO DE DOCUMENTO OU COISA': Cores.LARANJA,
     'HABEAS CORPUS': Cores.AMARELA,
     'HABEAS DATA': Cores.BRANCA,
@@ -146,7 +146,7 @@ var Classes = {
     'MEDIDA CAUTELAR DE ARROLAMENTO DE BENS': Cores.BRANCA,
     'MEDIDA CAUTELAR DE ATENTADO': Cores.BRANCA,
     'MEDIDA CAUTELAR DE BUSCA E APREENSÃO': Cores.SALMÃO,
-    'MEDIDA CAUTELAR DE CAUÇÃO': Cores.PALHA,
+    'MEDIDA CAUTELAR DE CAUÇÃO': Cores.SALMÃO,
     'MEDIDA CAUTELAR DE EXIBIÇÃO': Cores.SALMÃO,
     'MEDIDA CAUTELAR DE HOMOLOGAÇÃO DO PENHOR LEGAL': Cores.SALMÃO,
     'MEDIDA CAUTELAR DE INTERPELAÇÃO': Cores.SALMÃO,
@@ -239,10 +239,10 @@ var Eproc = {
                     descricao.textContent = row.cells[0].textContent + '. ' + row.cells[1].textContent;
                     evento.appendChild(descricao);
                     var descricao = document.createElement('dd');
-                    descricao.textContent = row.cells[2].innerHTML.split('<br')[0] + ' (' + row.cells[3].innerHTML + ')';
+                    descricao.textContent = row.cells[2].innerHTML.split('<br')[0] + ' (' + row.cells[3].textContent + ')';
                     evento.appendChild(descricao);
                     for (var links = row.cells[4].getElementsByTagName('a'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
-                        if (link.search.match(/processo_evento_documento_tooltip_cadastrar/)) continue;
+                        if (!link.search.match(/(processo_evento_documento_tooltip_alterar|acessar_documento)/)) continue;
                         var documento = document.createElement('dd');
                         if (link.search.match(/processo_evento_documento_tooltip_alterar/)) {
                             var link = link.cloneNode(true);
@@ -300,6 +300,18 @@ var Eproc = {
         Eproc.colorirTabela(2, 'Tabela de Processos.');
     },
     // }}}
+// {{{ intimacao_bloco_filtrar_destino()
+    intimacao_bloco_filtrar_destino: function()
+    {
+        Eproc.colorirTabela(2, 'Tabela de Processos.');
+    },
+    // }}}
+    // {{{ intimacao_bloco_listar_destino()
+    intimacao_bloco_listar_destino: function()
+    {
+        Eproc.colorirTabela(2, 'Tabela de Processos.');
+    },
+    // }}}
     // {{{ colorirTabela()
     colorirTabela: function(col, summary)
     {
@@ -309,12 +321,15 @@ var Eproc = {
                 table.setAttribute('width', '');
                 for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
                     th.setAttribute('width', '');
+                    if (th.textContent == 'Classe') {
+                        col = h;
+                    }
                 }
                 for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
                     if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
                     tr.cells[noCheckbox ? 0 : 1].getElementsByTagName('a')[0].setAttribute('target', '_blank');
                     if (col) {
-                        var classe = tr.cells[col].textContent;
+                        var classe = tr.cells[col].innerHTML.split('<')[0];
                         if (Classes[classe])
                             tr.style.backgroundColor = Classes[classe];
                     }
@@ -1106,9 +1121,10 @@ var Eproc = {
                     if (tr.cells[4].getElementsByTagName('table').length) {
                         for (var subtrs = tr.cells[4].getElementsByTagName('tr'), subr = 0, subrl = subtrs.length; (subr < subrl) && (subtr = subtrs[subr]); subr++) {
                             for (var subtds = subtr.cells, subc = 0, subcl = subtds.length; (subc < subcl) && (subtd = subtds[subc]); subc++) {
-                                tr.cells[4].appendChild(subtd.firstChild);
-                                tr.cells[4].appendChild(subtd.firstChild);
-                                tr.cells[4].appendChild(subtd.firstChild);
+                                var child = null;
+                                while (child = subtd.firstChild) {
+                                    tr.cells[4].appendChild(child);
+                                }
                                 tr.cells[4].appendChild(document.createElement('br'));
                             }
                         }
@@ -1123,7 +1139,7 @@ var Eproc = {
                         }
                     }
                     for (var links = tr.cells[4].getElementsByTagName('a'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
-                        if (link.tabIndex) continue;
+                        if (!/\?acao=acessar_documento\&/.test(link.href)) continue;
                         link.className = link.className.split(' ').concat(['docLink']).join(' ');
                         link.addEventListener('click', (function(id, link) {
                             return function(e)
