@@ -135,7 +135,7 @@ var Classes = {
     'LIQUIDAÇÃO POR ARTIGOS': Cores.BRANCA,
     'LIQUIDAÇÃO PROVISÓRIA POR ARBITRAMENTO': Cores.BRANCA,
     'LIQUIDAÇÃO PROVISÓRIA POR ARTIGOS': Cores.BRANCA,
-    'MANDADO DE SEGURANÇA': Cores.BRANCA,
+    'MANDADO DE SEGURANÇA': Cores.PALHA,
     'MANDADO DE SEGURANÇA COLETIVO': Cores.DESCONHECIDA,
     'MEDIDA CAUTELAR DE ALIMENTOS PROVISIONAIS': Cores.AZUL,
     'MEDIDA CAUTELAR DE APREENSÃO DE TÍTULOS': Cores.CINZA,
@@ -242,6 +242,27 @@ var Eproc = {
             this.processo = this.parametros.num_processo;
             delete this.parametros.num_processo;
         }
+        if (document.getElementsByClassName('infraMenu').length) {
+            var menu = document.getElementById('infraMenuRaizes');
+            var cores = document.createElement('li');
+            cores.innerHTML = '<a class="infraMenuRaiz"  title="Cor de fundo" ><div class="infraItemMenu"><div class="infraRotuloMenu">Cor de fundo</div><div class="infraSetaMenu">&raquo;</div></div></a><ul></ul>';
+            ['#fff','#fee','#f6f6ee','#eef6ee','#eef6f6','#eef','#f6eef6','#f3f3f3']
+                .forEach(function(cl, c)
+            {
+                var cor = document.createElement('a');
+                cor.className = 'infraMenuFilho';
+                cor.style.backgroundColor = cl;
+                cor.style.border = '1px solid #888';
+                cor.innerHTML = '&nbsp;';
+                cor.addEventListener('click', (function() { return function()
+                {
+                    Eproc.mudaFundo(this.style.backgroundColor);
+                }; })(), true);
+                cores.getElementsByTagName('ul')[0].appendChild(cor);
+            });
+            menu.appendChild(cores);
+        }
+        Eproc.mudaFundo(GM_getValue('background') || '#ffffff');
         if (this.acao && this[this.acao]) {
             this[this.acao]();
         }
@@ -252,6 +273,19 @@ var Eproc = {
     {
         this.setLastProcesso();
     },        
+    // }}}
+    // {{{ mudaFundo()
+    mudaFundo: function(background)
+    {
+        GM_setValue('background', background);
+        document.getElementsByTagName('body')[0].style.backgroundColor = background;
+        GM_addStyle('.infraTrClara, .infraTrEscura { background-color: ' + background + ' !important; } div.infraMenu a { background-color: ' + background + '; border-color: ' + background + '; }');
+        for (var divs = document.getElementsByTagName('div'), d = divs.length - 1, div; (d >= 0) && (div = divs[d]); d--) {
+            if ((div.className && div.className.match(/^infraLegend/)) || (div.id && div.id.match(/^divDes(Criterios|Ordenacao|Paginacao)$/))) {
+                div.style.backgroundColor = background;
+            }
+        }
+    },
     // }}}
     // {{{ prevencao_judicial()
     prevencao_judicial: function()
@@ -284,7 +318,9 @@ form.action = location.pathname + location.search;
                     tr.cells[1].getElementsByTagName('a')[0].setAttribute('target', '_blank');
                     var classe = tr.cells[3].innerHTML;
                     if (Classes[classe])
-                        tr.style.backgroundColor = Classes[classe];
+                        for (var cells = tr.cells, c = 0, cl = cells.length; (c < cl) && (cell = cells[c]); c++) {
+                            cell.style.backgroundColor = Classes[classe];
+                        }
                 }
             }
         }
@@ -398,12 +434,13 @@ li {
     white-space: nowrap;
 }
 ul {
-    list-style-type: none;
-    margin: 0;
+    list-style-type: disc;
+    margin: 0 20px;
     padding: 0;
 }
 ul ul {
-    margin-left: 10px;
+    margin: 0;
+    list-style-type: none;
 }
 a:link {
     text-decoration: none;
@@ -452,6 +489,15 @@ img {
                 }
                 for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
                     if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
+                    if (match = tr.cells[2].innerHTML.match(/Prazo: .*(\&nbsp;){3}Status:([^<]+)/)) {
+                        if (match[2] == 'AGUARD. ABERTURA') {
+                            tr.cells[2].style.backgroundColor = '#caa';
+                        } else if (match[2] == 'ABERTO') {
+                            tr.cells[2].style.backgroundColor = '#cca';
+                        } else if (match[2] == 'FECHADO') {
+                            tr.cells[2].style.backgroundColor = '#aca';
+                        }
+                    }
                     for (var children = tr.cells[4].childNodes, c = children.length - 1; (c >= 0) && (child = children[c]); c--) {
                         if (!child.tagName || (child.tagName == 'BR')) {
                             child.parentNode.removeChild(child);
@@ -560,6 +606,6 @@ var StringMaker = function () {
 }
 // }}}
 // {{{ Início do programa
-GM_addStyle(' .infraTrSelecionada { background-color: inherit; } .infraTrSelecionada td { background-color: rgba(0,0,0,.25); } .infraTrClara a:visited, .infraTrEscura a:visited { color: #666; } a.docLink:visited { color: #666; }');
+GM_addStyle(' .infraTrSelecionada { background-color: inherit; } .infraTrSelecionada td { background-color: rgba(0,0,0,.25); } .infraTrClara a:visited, .infraTrEscura a:visited { color: #666; } a.docLink:visited { color: #666; } .infraBarraComandos, .infraAreaTelaD, .infraAreaDados { border-color: transparent !important; }');
 Eproc.init();
 // }}}
