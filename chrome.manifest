@@ -1,2 +1,2 @@
-content    eproc    content/
+content    eproc    chrome/content/
 overlay    chrome://browser/content/browser.xul    chrome://eproc/content/script-compiler-overlay.xul
