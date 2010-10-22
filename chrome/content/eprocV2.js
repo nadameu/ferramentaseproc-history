@@ -1064,12 +1064,16 @@ var Eproc = {
     setLastProcesso: function()
     {
         var self = this;
-        if (document.getElementById('txtNumProcesso')) {
-            document.getElementById('txtNumProcesso').addEventListener('change', (function() { return function() { self.onNumprocChange.apply(self, arguments); }; })(), false);
+        var txtNumProcesso = document.getElementById('lblNumProcesso');
+        while (txtNumProcesso && txtNumProcesso.tagName != 'INPUT') {
+            txtNumProcesso = txtNumProcesso.nextSibling;
+        }
+        if (txtNumProcesso) {
+            txtNumProcesso.addEventListener('change', (function() { return function() { self.onNumprocChange.apply(self, arguments); }; })(), false);
             if (before = document.referrer.match(/\&(txtNumProcesso|num_processo)=([0-9]{20})/)) {
-                document.getElementById('txtNumProcesso').value = before[2];
+                txtNumProcesso.value = before[2];
             }
-            document.getElementById('txtNumProcesso').select();
+            txtNumProcesso.select();
         }
     },
     // }}}
