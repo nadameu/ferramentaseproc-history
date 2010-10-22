@@ -251,6 +251,32 @@ var Eproc = {
         }
     },
     // }}}
+    // {{{ entrar()
+    entrar: function()
+    {
+        if (document.getElementsByName('rdoUsuario').length) {
+            var padrao = GM_getValue('padrao');
+            for (var perfis = document.getElementsByName('rdoUsuario'), pl = perfis.length, p = 0; (p < pl) && (perfil = perfis[p]); p++) {
+                do {
+                    perfil = perfil.parentNode;
+                } while (perfil.tagName.toLowerCase() != 'tr');
+                var id = perfil.getAttribute('onclick').match(/acaoLogar\('(\d+)'\);/)[1];
+                if (id == padrao) {
+                    unsafeWindow.infraExibirAviso();
+                    unsafeWindow.acaoLogar(id);
+                } else {
+                    perfil.addEventListener('click', (function(id) { return function(e)
+                    {
+                        if (confirm('Definir este usuário/lotação como padrão?')) {
+                            GM_setValue('padrao', id);
+                        }
+                        unsafeWindow.acaoLogar(id);
+                    }; })(id), true);
+                }
+            }
+        }
+    },
+    // }}}
     // {{{ getProcessoF()
     getProcessoF: function()
     {
@@ -309,6 +335,17 @@ var Eproc = {
         if (document.getElementsByClassName('infraBarraSistema').length) {
             Eproc.mudaFundo(GM_getValue('background') || '#ffffff');
         }
+        var unidades = document.getElementById('selInfraUnidades');
+        if (unidades) {
+            unidades.setAttribute('onchange', '');
+            unidades.addEventListener('change', function(e)
+            {
+                if (confirm('Definir este usuário/lotação como padrão?')) {
+                    GM_setValue('padrao', this.value);
+                }
+                this.form.submit();
+            }, true);
+        }
         if (this.acao && this[this.acao]) {
             this[this.acao]();
         } else if (this.parametros.acao_origem && this[this.parametros.acao_origem + '_destino']) {
@@ -321,6 +358,12 @@ var Eproc = {
     {
         this.setLastProcesso();
     },        
+    // }}}
+    // {{{ localizador_processos_lista_destino()
+    localizador_processos_alterar_destino: function()
+    {
+        this.localizador_processos_lista_destino.apply(this, arguments);
+    },
     // }}}
     // {{{ localizador_processos_lista_destino()
     localizador_processos_lista_destino: function()
@@ -364,6 +407,76 @@ var Eproc = {
     {
         this.setLastProcesso();
     },        
+    // }}}
+    // {{{ prevencao_judicial_bloco()
+    prevencao_judicial_bloco: function()
+    {
+        if (document.getElementById('btnBuscar')) {
+            document.getElementById('btnBuscar').setAttribute('onclick', '');
+            document.getElementById('btnBuscar').addEventListener('click', function(e)
+            {
+                this.form.target = '_blank';
+                unsafeWindow.submeterFrm('buscar');
+                this.form.target = '_top';
+                unsafeWindow.infraAvisoCancelar();
+            }, true);
+            document.getElementById('btnConsultar').setAttribute('onclick', '');
+            document.getElementById('btnConsultar').addEventListener('click', function(e)
+            {
+                document.getElementById('hdnInfraItensSelecionados').value = '';
+                unsafeWindow.submeterFrm('');
+            }, true);
+            for (var hh = document.getElementsByClassName('infraTdSetaOrdenacao'), hl = hh.length, h = 0; (h < hl) && (th = hh[h]); h++) {
+                var link = th.getElementsByTagName('a')[0];
+                var action = link.getAttribute('onclick');
+                link.setAttribute('onclick', '');
+                link.addEventListener('click', (function(action) { return function(e)
+                {
+                    document.getElementById('hdnInfraItensSelecionados').value = '';
+                    eval('unsafeWindow.' + action);
+                }; })(action), true);
+            }
+            for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
+                if (table.getAttribute('summary') == 'Tabela de Processos.') {
+                    table.setAttribute('width', '');
+                    for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
+                        th.setAttribute('width', '');
+                    }
+                    for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
+                        if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
+                        tr.cells[1].getElementsByTagName('a')[0].addEventListener('click', function(e)
+                        {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            document.getElementById('hdnInfraItensSelecionados').value = this.parentNode.parentNode.getElementsByTagName('input')[0].value;
+                            var link = this.search.match(/\&num_processo=.*$/);
+                            var form = document.getElementById('frmProcessoLista');
+                            var old = form.action;
+                            form.action = old + link;
+                            form.target = '_blank';
+                            form.submit();
+                            form.action = old;
+                            form.target = '_top';
+                        }, true);
+                    }
+                }
+            }
+        } else if (location.search.match(/num_processo/)) {
+            for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
+                if (table.getAttribute('summary') == 'Tabela de Preventos.') {
+                    table.setAttribute('width', '');
+                    for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
+                        th.setAttribute('width', '');
+                    }
+                    for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
+                        if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
+                        var cell = tr.getElementsByTagName('table')[0].rows[0].cells[0];
+                        cell.innerHTML = '<b>Processo: <a href="controlador.php?acao=processo_selecionar&acao_origem=prevencao_judicial_bloco' + location.search.match(/\&num_processo.*$/) + '" target="_blank">' + cell.innerHTML.match(/[0-9\.\-]{24}/) + '</a></b>';
+                    }
+                }
+            }
+        }
+    },
     // }}}
     // {{{ processo_consultar_listar()
     processo_consulta_listar: function()
@@ -454,54 +567,17 @@ var Eproc = {
         document.title = Eproc.getProcessoF();
         var assuntos = document.getElementById('fldAssuntos');
         var classe = document.getElementById('txtClasse').innerHTML;
-        /*
-        for (var links = document.getElementsByClassName('infraMenuFilho'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
-            if (link.title == 'Localizadores do Processo') {
-                var localizador = document.getElementById('txtLocalizador');
-                var locLink = document.createElement('a');
-                locLink.href = link.href;
-                locLink.style.fontSize = '1em';
-                localizador.style.cursor = 'pointer';
-                localizador.parentNode.insertBefore(locLink, localizador);
-                locLink.appendChild(localizador);
-                locLink.addEventListener('click', (function(link) {
-                    return function(e)
-                    {
-                        e.cancelBubble = true;
-                        e.preventDefault();
-                        var xml = GM_xmlhttpRequest({
-                            method: 'GET',
-                            url: link.href,
-                            onload: function(a)
-                            {
-                                var html = document.createElement('html');
-                                html.innerHTML = a.responseText;
-                                for (var forms = html.getElementsByTagName('form'), f = 0, fl = forms.length; (f < fl) && (form = forms[f]); f++) {
-                                    if (form.id == 'frmProcessoLocalizadorLista') {
-                                        form.getElementsByClassName('infraText')[0].value = Eproc.processo;
-                                        form.target = '_blank';
-                                        form.style.display = 'none';
-                                        document.getElementsByTagName('body')[0].appendChild(form);
-                                        form.submit();
-                                    }
-                                }
-                            },
-                            onerror: function()
-                            {
-                                window.open(link.href);
-                            }
-                        });
-                    }
-                })(link), true);
-            }
-        }
-        */
         if (Classes[classe])
             assuntos.style.backgroundColor = Classes[classe];
         if (document.getElementById('lblProcRel')) {
             for (var links = document.getElementById('lblProcRel').parentNode.getElementsByTagName('a'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
-                if (link.href.match(/[\?\&]txtValor=/)) {
-                    var processo = link.href.split(/[\?\&]txtValor=/)[1].split('&')[0];
+                if (link.href.match(/[\?\&]acao=processo_selecionar/)) {
+                    link.href = link.pathname + link.search;
+                    link.target = '_blank';
+                } else if (link.href.match(/[\?\&]acao=processo_seleciona_publica/)) {
+                    link.innerHTML = link.innerHTML.split('/')[0];
+                    var processo = link.href.split(/[\?\&]num_processo=/);
+                    var processo = processo[processo.length - 1].split('&')[0];
                     if (processo.length > 15 && processo.length < 20) {
                         var antigo = processo;
                         while (processo.length < 20) {
@@ -510,7 +586,11 @@ var Eproc = {
                         link.href = link.href.replace(antigo, processo);
                         link.innerHTML = processo.substr(0, 7) + '-' + processo.substr(7, 2) + '.' + processo.substr(9, 4) + '.' + processo.substr(13, 1) + '.' + processo.substr(14, 2) + '.' + processo.substr(16, 4);
                     }
-                    link.href = link.href.replace('jfrs.gov.br/', 'trf4.jus.br/trf4/');
+                    link.href = 'http://www.trf4.jus.br/trf4/processos/acompanhamento/resultado_pesquisa_popup.php?selForma=NU&txtValor=' + processo + '&chkMostrarBaixados=&todasfases=&todosvalores=&todaspartes=&txtDataFase=&selOrigem=SC&sistema=&hdnRefId=&txtPalavraGerada=';
+                    link.target = '_blank';
+                } else if (link.getAttribute('href').match(/^[0-9]{15}([0-9]{5})?$/)) {
+                    link.innerHTML = link.innerHTML.split('/')[0];
+                    link.href = 'http://www.trf4.jus.br/trf4/processos/acompanhamento/resultado_pesquisa_popup.php?selForma=NU&txtValor=' + link.getAttribute('href') + '&chkMostrarBaixados=&todasfases=&todosvalores=&todaspartes=&txtDataFase=&selOrigem=SC&sistema=&hdnRefId=&txtPalavraGerada=';
                 }
             }
         }
@@ -522,7 +602,7 @@ var Eproc = {
                 arvore.addEventListener('click', (function(table) {
                     return function(e)
                     {
-                        e.cancelBubble = true;
+                        e.stopPropagation();
                         e.preventDefault();
                         var x = window.open('');
                         x.focus();
@@ -637,7 +717,7 @@ img
                         link.addEventListener('click', (function(id, link) {
                             return function(e)
                             {
-                                e.cancelBubble = true;
+                                e.stopPropagation();
                                 e.preventDefault();
                                 if (Eproc.windows[id] && typeof Eproc.windows[id] == 'object' && Eproc.windows[id].document) {
                                     Eproc.windows[id].focus();
@@ -692,8 +772,8 @@ img
         }
     },
     // }}}
-    // {{{ relatorio_sem_movimentacao_listar()
-    relatorio_sem_movimentacao_listar: function()
+    // {{{ relatorio_sem_movimentacao_consultar()
+    relatorio_sem_movimentacao_consultar: function()
     {
         for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
             if (table.getAttribute('summary') == 'Processos') {
@@ -717,9 +797,31 @@ img
     // {{{ setLastProcesso()
     setLastProcesso: function()
     {
-        if (before = document.referrer.match(/\&(txtNumProcesso|num_processo)=([0-9]{20})/))
-            document.getElementById('txtNumProcesso').value = before[2];
-    }
+        var self = this;
+        if (document.getElementById('txtNumProcesso')) {
+            document.getElementById('txtNumProcesso').addEventListener('change', (function() { return function() { self.onNumprocChange.apply(self, arguments); }; })(), true);
+            if (before = document.referrer.match(/\&(txtNumProcesso|num_processo)=([0-9]{20})/)) {
+                document.getElementById('txtNumProcesso').value = before[2];
+            }
+            document.getElementById('txtNumProcesso').select();
+        }
+    },
+    // }}}
+    // {{{ onNumprocChange()
+    onNumprocChange: function(e)
+    {
+        var numproc = e.target.value;
+        while (numproc.length < 8) {
+            numproc = '0' + numproc;
+        }
+        while (numproc.length < 9) {
+            numproc = '5' + numproc;
+        }
+        while (numproc.length < 13) {
+            numproc += '20104047208';
+        }
+        e.target.value = numproc;
+    },
     // }}}
 }
 // }}}
