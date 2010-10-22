@@ -318,14 +318,24 @@ var Eproc = {
             var menu = document.getElementById('infraMenuRaizes');
             var cores = document.createElement('li');
             cores.innerHTML = '<a class="infraMenuRaiz"  title="Cor de fundo" ><div class="infraItemMenu"><div class="infraRotuloMenu">Cor de fundo</div><div class="infraSetaMenu">&raquo;</div></div></a><ul></ul>';
-            ['#fff','#fee','#f6f6ee','#eef6ee','#eef6f6','#eef','#f6eef6','#f3f3f3']
+            [-30, 0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360]
                 .forEach(function(cl, c)
             {
+                var h = 0, s = 0, l = 96;
+                if (cl < 0) {
+                    l = 100;
+                } else if (cl >= 360) {
+                    l = 96;
+                } else {
+                    h = cl;
+                    s = 66;
+                }
                 var cor = document.createElement('a');
                 cor.className = 'infraMenuFilho';
-                cor.style.backgroundColor = cl;
+                cor.style.backgroundColor = 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
+                cor.style.color = 'hsl(' + h + ', ' + s + '%, 25%)';
                 cor.style.border = '1px solid #888';
-                cor.innerHTML = '&nbsp;';
+                cor.innerHTML = 'Cor ' + (c + 1);
                 cor.addEventListener('click', (function() { return function()
                 {
                     Eproc.mudaFundo(this.style.backgroundColor);
