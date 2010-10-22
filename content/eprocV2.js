@@ -393,6 +393,19 @@ form.action = location.pathname + location.search;
         }
         if (Classes[classe])
             assuntos.style.backgroundColor = Classes[classe];
+        if (document.getElementById('lblProcRel')) {
+            var link = document.getElementById('lblProcRel').nextSibling.getElementsByTagName('a')[0];
+            var processo = link.href.split(/[\?\&]txtValor=/)[1].split('&')[0];
+            if (processo.length > 15 && processo.length < 20) {
+                var antigo = processo;
+                while (processo.length < 20) {
+                    processo = '0' + processo;
+                }
+                link.href = link.href.replace(antigo, processo);
+                link.innerHTML = processo.substr(0, 7) + '-' + processo.substr(7, 2) + '.' + processo.substr(9, 4) + '.' + processo.substr(13, 1) + '.' + processo.substr(14, 2) + '.' + processo.substr(16, 4);
+            }
+            link.href = link.href.replace('jfrs.gov.br/', 'trf4.jus.br/trf4/');
+        }
         for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
             if (table.getAttribute('summary') == 'Eventos') {
                 var arvore = document.createElement('a');

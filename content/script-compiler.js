@@ -57,7 +57,7 @@ contentLoad: function(e) {
         } else if (/https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/.*/.test(href)) {
             if (/https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/consulta_processo.php\?.*/.test(href)) {
                 script = eproc_gmCompiler.getUrlContents('chrome://eproc/content/consulta_processo.js');
-            } else if (/https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/html_to_pdf.php/.test(href)) {
+            } else if (/https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/html_to_pdf\.php/.test(href)) {
                 script = eproc_gmCompiler.getUrlContents('chrome://eproc/content/html_to_pdf.js');
             } else if (/https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/alteracao_assunto.php\?.*/.test(href)) {
                 script = eproc_gmCompiler.getUrlContents('chrome://eproc/content/alteracao_assunto.js');
