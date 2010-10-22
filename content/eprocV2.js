@@ -351,6 +351,7 @@ form.action = location.pathname + location.search;
         document.title = Eproc.getProcessoF();
         var assuntos = document.getElementById('fldAssuntos');
         var classe = document.getElementById('txtClasse').innerHTML;
+        /*
         for (var links = document.getElementsByClassName('infraMenuFilho'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
             if (link.title == 'Localizadores do Processo') {
                 var localizador = document.getElementById('txtLocalizador');
@@ -391,6 +392,7 @@ form.action = location.pathname + location.search;
                 })(link), true);
             }
         }
+        */
         if (Classes[classe])
             assuntos.style.backgroundColor = Classes[classe];
         if (document.getElementById('lblProcRel')) {
