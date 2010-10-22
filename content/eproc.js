@@ -428,6 +428,6 @@ var StringMaker = function () {
 }
 // }}}
 // {{{ Início do programa
-GM_addStyle('.infraTrSelecionada { background-color: #bbb !important; } a.docLink:visited { color: #444; }');
+GM_addStyle('.infraTrSelecionada { background-color: #bbb !important; } .infraTrClara a:visited, .infraTrEscura a:visited { color: #848; } a.docLink:visited { color: #848; }');
 Eproc.init();
 // }}}

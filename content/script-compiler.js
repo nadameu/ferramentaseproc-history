@@ -254,7 +254,16 @@ var httpRequestObserver =
 
       if (httpChannel.name.match(/https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc(V2|v2_homologacao)\/controlador\.php\?acao=acessar_documento/)) {
           httpChannel.setResponseHeader("Content-Disposition", httpChannel.getResponseHeader("Content-Disposition").replace('attachment', 'inline'), false);
-          httpChannel.contentType = httpChannel.contentType.replace('application/jpg', 'image/jpeg').replace('application/html', 'text/html');
+          httpChannel.contentType = httpChannel.contentType.replace(/^application\/(.*)$/, function(match, type) {
+              return {
+                  'jpeg': 'image/jpeg',
+                  'jpg' : 'image/jpeg',
+                  'png' : 'image/png',
+                  'pdf' : 'application/pdf',
+                  'odt' : 'application/x-vnd.oasis.opendocument.text',
+                  'html': 'text/html'
+              }[type];
+          });
       }
     }
   },
