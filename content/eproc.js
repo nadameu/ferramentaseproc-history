@@ -311,9 +311,98 @@ form.action = location.pathname + location.search;
     // {{{ processo_selecionar()
     processo_selecionar: function()
     {
+        if (!window.opener || opener.location.href == location.href)
+            return;
         document.title = Eproc.getProcessoF();
         for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
             if (table.getAttribute('summary') == 'Eventos') {
+                var arvore = document.createElement('a');
+                arvore.innerHTML = 'Árvore de documentos';
+                arvore.href = '#';
+                arvore.addEventListener('click', (function(table) {
+                    return function(e)
+                    {
+                        e.cancelBubble = true;
+                        e.preventDefault();
+                        var x = window.open();
+                        x.focus();
+                        x.document.open();
+                        x.document.write(
+                            <html>
+                                <head><title>Árvore de documentos</title></head>
+                                <frameset cols="250,*" marginheight="0" marginwidth="0" rows="*">
+                                    <frame name="tree_files" marginwidth="5" marginheight="5"/>
+                                    <frame name="show_files" marginwidth="5" marginheight="5"/>
+                                </frameset>
+                                <noframes>
+                                    <body topmargin="0" leftmargin="0">
+                                        <p>Não foi possível exibir o conteúdo desta página</p>
+                                    </body>
+                                </noframes>
+                            </html>
+                        );
+                        x.document.title = Eproc.getProcessoF() + ' - ' + x.document.title;
+                        x.frames[0].document.write(
+                            <html>
+                                <head>
+                                    <style type="text/css"><![CDATA[
+body {
+    font-family: Verdana;
+    font-size: 12px;
+}
+li {
+    white-space: nowrap;
+}
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+ul ul {
+    margin-left: 10px;
+}
+a:link {
+    text-decoration: none;
+    color: #000;
+}
+a:visited {
+    text-decoration: none;
+    color: #848;
+}   
+img {
+    border: none;
+}
+                                    ]]></style>
+                                </head>
+                                <body>
+                                    <ul>
+                                    </ul>
+                                </body>
+                            </html>
+                        );
+                        x.frames[0].document.close();
+                        var lista = x.frames[0].document.getElementsByTagName('ul')[0];
+                        for (var trs = table.getElementsByTagName('tr'), r = trs.length - 1; (r >= 0) && (tr = trs[r]); r--) {
+                            if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
+                            var evento = document.createElement('li');
+                            evento.innerHTML = tr.cells[2].innerHTML.split(/<br/)[0] + ' - ' + tr.cells[1].innerHTML;
+                            var documentos = document.createElement('ul');
+                            for (var links = tr.cells[4].getElementsByTagName('a'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
+                                var item = document.createElement('li');
+                                var docLink = document.createElement('a');
+                                docLink.target = 'show_files';
+                                docLink.href = link.href;
+                                docLink.innerHTML = link.innerHTML;
+                                item.appendChild(docLink);
+                                documentos.appendChild(item);
+                            }
+                            evento.appendChild(documentos);
+                            lista.appendChild(evento);
+                        }
+                        x.document.close();
+                    };
+                })(table), true);
+                table.parentNode.insertBefore(arvore, table);
                 table.setAttribute('width', '');
                 for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
                     th.setAttribute('width', '');
