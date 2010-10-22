@@ -305,6 +305,8 @@ var Eproc = {
                 cores.getElementsByTagName('ul')[0].appendChild(cor);
             });
             menu.appendChild(cores);
+        }
+        if (document.getElementsByClassName('infraBarraSistema').length) {
             Eproc.mudaFundo(GM_getValue('background') || '#ffffff');
         }
         if (this.acao && this[this.acao]) {
