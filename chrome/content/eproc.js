@@ -4493,6 +4493,7 @@ Eproc = {
             case 'status_prioridade_bd':
                 if (window.history.length == 2) window.close();
                 break;
+
         }
     },
     // }}}
@@ -4626,7 +4627,7 @@ Processo.prototype = {
             tutela: [(row.cells.length == 10 ? 5 : 6), />([^<]+)</],
             autor: [(row.cells.length == 10 ? 6 : 7), /blue[^>]*>([^<]+)</],
             al: [(row.cells.length == 10 ? 6 : 7), /brown[^>]*><b>([^<]+)</, true],
-            reus: [(row.cells.length == 10 ? 6 : 7), /red[^>]*> ([^<]+)</, function(v) { return v[1].split(' '); }],
+            reus: [(row.cells.length == 10 ? 6 : 7), /red[^>]*> ([^<]+)</, function(v) { if (v) return v[1].split(' '); else return ['N/D']; }],
             assunto: [(row.cells.length == 10 ? 7 : 8), />([^<]+)</],
             data: [(row.cells.length == 10 ? 8 : 9), />(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})</, function(data) { return new Date(data[3], data[2] - 1, data[1], data[4], data[5], 0, 0); }],
             evento: [(row.cells.length == 10 ? 9 : 10), /blue[^>]*>([^<]+)</, true],

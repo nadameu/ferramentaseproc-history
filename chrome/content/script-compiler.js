@@ -1,3 +1,28 @@
+var IE = function()
+{
+        // create an nsILocalFile for the executable
+        var file = Components.classes["@mozilla.org/file/local;1"]
+                             .createInstance(Components.interfaces.nsILocalFile);
+        var prefs = new eproc_PrefManager();
+        file.initWithPath(prefs.getValue('v2.ielocation'));
+
+        // create an nsIProcess
+        this.process = Components.classes["@mozilla.org/process/util;1"]
+                                .createInstance(Components.interfaces.nsIProcess);
+        this.process.init(file);
+
+        // Run the process.
+        // If first param is true, calling thread will be blocked until
+        // called process terminates.
+        // Second and third params are used to pass command-line arguments
+        // to the process.
+}
+IE.prototype.launch = function(url)
+{
+    var args = [url];
+    this.process.run(false, args, args.length);
+}
+
 var eproc_gmCompiler={
 
 // getUrlContents adapted from Greasemonkey Compiler
@@ -98,9 +123,10 @@ injectScript: function(script, url, unsafeContentWin) {
     sandbox.GM_xmlhttpRequest=eproc_gmCompiler.hitch(
         xmlhttpRequester, "contentStartRequest"
     );
+    sandbox.IE = IE;
     //unsupported
     sandbox.GM_registerMenuCommand=function(){};
-    sandbox.GM_log=function(){};
+    sandbox.GM_log=myDump; //function(){};
     sandbox.GM_getResourceURL=function(){};
     sandbox.GM_getResourceText=function(){};
 
@@ -300,3 +326,4 @@ function myDump(aMessage) {
                                  .getService(Components.interfaces.nsIConsoleService);
   consoleService.logStringMessage("e-Proc: " + aMessage);
 }
+

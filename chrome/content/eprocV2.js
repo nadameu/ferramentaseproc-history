@@ -555,7 +555,10 @@ var Eproc = {
     processo_consultar: function()
     {
         this.setLastProcesso();
-        Eproc.colorirTabela(3, '', true);
+        Array.forEach(document.getElementsByTagName('table'), function(table)
+        {
+            if (table.rows[0].cells.length == 5) Eproc.colorirTabela(3, '', true);
+        });
     },        
     // }}}
     // {{{ processo_consultar_nome_parte()
@@ -587,6 +590,24 @@ var Eproc = {
         var classe = document.getElementById('txtClasse').innerHTML;
         if (Classes[classe])
             assuntos.style.backgroundColor = Classes[classe];
+        for (var links = document.getElementsByTagName('a'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
+            if (!link.href && link.textContent.match(/GEDPRO/) && link.getAttribute('onclick')) {
+                link.innerHTML = 'GEDPRO';
+                link.parentNode.insertBefore(document.createTextNode(' | '), link.nextSibling);
+                link.href = link.getAttribute('onclick').match(/window.open\('([^']+)'/)[1];
+                link.setAttribute('onclick', '');
+                link.target = '_blank';
+                link.addEventListener('click', (function(link) { return function(e)
+                {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var x = new IE();
+                    x.launch(link.href);
+                }; })(link), false);
+            } else if (!link.href && link.textContent.match(/GEDPRO/) && link.title == 'Link para o GEDPRO não pôde ser gerado.') {
+                link.getElementsByTagName('u')[0].style.textDecoration = 'line-through';
+            }
+        }
         if (document.getElementById('lblProcRel')) {
             var link = null, relacionado = document.getElementById('lblProcRel').nextSibling;
             if (relacionado.tagName && relacionado.tagName.toLowerCase() == 'br') {
@@ -609,7 +630,17 @@ var Eproc = {
             }
         }
         for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
-            if (table.getAttribute('summary') == 'Eventos') {
+            if (table.getAttribute('summary') == 'Lembretes') {
+                Lembretes = 'eea eaa eae aae aee aea'.split(' ');
+                table.setAttribute('width', '');
+                for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
+                    th.setAttribute('width', '');
+                }
+                for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
+                    if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
+                    tr.cells[4].style.backgroundColor = '#' + Lembretes[(r - 1) % Lembretes.length];
+                }
+            } else if (table.getAttribute('summary') == 'Eventos') {
                 var arvore = document.createElement('a');
                 arvore.innerHTML = 'Árvore de documentos';
                 arvore.href = '#';
@@ -733,24 +764,25 @@ img
                     } else if (match = tr.cells[2].innerHTML.match(/(.*) - Refer. ao Evento: (\d+)/)) {
                         eventos[match[2]] = match[1] + '<br/>' + (eventos[match[2]] ? eventos[match[2]] : '');
                     }
-                    /*
-                    for (var children = tr.cells[4].childNodes, c = children.length - 1; (c >= 0) && (child = children[c]); c--) {
-                        if (!child.tagName || (child.tagName == 'BR')) {
-                            child.parentNode.removeChild(child);
-                        } else {
-                            child.parentNode.insertBefore(document.createElement('br'), child.nextSibling);
+                    if (tr.cells[4].getElementsByTagName('table').length) {
+                        for (var subtrs = tr.cells[4].getElementsByTagName('tr'), subr = 0, subrl = subtrs.length; (subr < subrl) && (subtr = subtrs[subr]); subr++) {
+                            for (var subtds = subtr.cells, subc = 0, subcl = subtds.length; (subc < subcl) && (subtd = subtds[subc]); subc++) {
+                                tr.cells[4].appendChild(subtd.firstChild);
+                                tr.cells[4].appendChild(subtd.firstChild);
+                                tr.cells[4].appendChild(subtd.firstChild);
+                                tr.cells[4].appendChild(document.createElement('br'));
+                            }
+                        }
+                        tr.cells[4].removeChild(tr.cells[4].getElementsByTagName('table')[0]);
+                    } else {
+                        for (var children = tr.cells[4].childNodes, c = children.length - 1; (c >= 0) && (child = children[c]); c--) {
+                            if (!child.tagName || (child.tagName == 'BR')) {
+                                child.parentNode.removeChild(child);
+                            } else {
+                                child.parentNode.insertBefore(document.createElement('br'), child.nextSibling);
+                            }
                         }
                     }
-                    */
-                    for (var subtrs = tr.cells[4].getElementsByTagName('tr'), subr = 0, subrl = subtrs.length; (subr < subrl) && (subtr = subtrs[subr]); subr++) {
-                        for (var subtds = subtr.cells, subc = 0, subcl = subtds.length; (subc < subcl) && (subtd = subtds[subc]); subc++) {
-                            tr.cells[4].appendChild(subtd.firstChild);
-                            tr.cells[4].appendChild(subtd.firstChild);
-                            tr.cells[4].appendChild(subtd.firstChild);
-                            tr.cells[4].appendChild(document.createElement('br'));
-                        }
-                    }
-                    if (tr.cells[4].getElementsByTagName('table').length) tr.cells[4].removeChild(tr.cells[4].getElementsByTagName('table')[0]);
                     for (var links = tr.cells[4].getElementsByTagName('a'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
                         if (link.tabIndex) continue;
                         link.className = link.className.split(' ').concat(['docLink']).join(' ');
@@ -827,7 +859,7 @@ img
             numproc = '5' + numproc;
         }
         while (numproc.length < 13) {
-            numproc += '20104047208';
+            numproc += '2010404' + GM_getValue('v2.secao') + GM_getValue('v2.subsecao');
         }
         e.target.value = numproc;
     },
