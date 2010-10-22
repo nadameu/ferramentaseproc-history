@@ -51,7 +51,7 @@ function IsNumeric(str){
   return IsNumber;
 }
 // {{{ Documentos e Janelas
-var processo = location.href.match(/num_processo_consulta=([^&]+)/)[1];
+var processo = document.getElementsByTagName('table')[1].innerHTML.match(/altera_lembrete\.php\?num_processo_lembrete=(\d+)/)[1];
 window._openWindows = [];
 Array.forEach(document.getElementsByTagName('table'), function(table, t, tables)
 {
@@ -173,8 +173,7 @@ setStyle = function(obj, style) {
         obj.style[n] = style[n];
     }
 }
-window.processo = document.getElementsByTagName('table')[1].innerHTML.match(/altera_lembrete\.php\?num_processo_lembrete=(\d+)/)[1];
-document.title = window.processo;
+document.title = processo;
 var x = new XMLHttpRequest();
 x.open('GET', 'https://' + location.host + '/eproc/altera_lembrete.php?num_processo_lembrete=' + processo);
 x.onreadystatechange = function()
