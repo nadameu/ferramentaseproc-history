@@ -354,6 +354,9 @@ var Eproc = {
     getDocsGedpro: function()
     {
         var grupos = arguments.length > 0 ? arguments[0] : '0';
+        if (grupos == '') {
+            grupos = 0;
+        }
         GM_xmlhttpRequest({
             method: 'GET',
             url: 'http://' + Eproc.loginGedpro.host + '/XMLInterface.asp?processo=' + Eproc.processo + '&ProcessoVisual=PV&grupos=' + grupos,
@@ -369,7 +372,7 @@ var Eproc = {
                         onload: function() { Eproc.getDocsGedpro(); },
                     });
                 }
-                if (grupos === 0) {
+                if (grupos === '0') {
                     grupos = [];
                     for (var rr = div.getElementsByTagName('reg'), rl = rr.length, r = 0, reg; (r < rl) && (reg = rr[r]); r++) {
                         if (reg.getAttribute('codigoGrupoProprietario')) {
