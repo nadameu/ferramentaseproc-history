@@ -302,7 +302,6 @@ var Eproc = {
 /*
  *
  */
-                
 var form = document.getElementById('hdnInfraCampoOrd').form;
 form.action = form.action.replace('?&', '?acao=processo_consulta_listar&');
 form.action = location.pathname + location.search;
@@ -310,7 +309,7 @@ form.action = location.pathname + location.search;
  *
  */
 
-              for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
+                for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
                     th.setAttribute('width', '');
                 }
                 for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
@@ -426,31 +425,38 @@ form.action = location.pathname + location.search;
                             <html>
                                 <head>
                                     <style type="text/css"><![CDATA[
-body {
+body
+{
     font-family: Verdana;
     font-size: 12px;
 }
-li {
+li
+{
     white-space: nowrap;
 }
-ul {
+ul
+{
     list-style-type: disc;
     margin: 0 20px;
     padding: 0;
 }
-ul ul {
+ul ul
+{
     margin: 0;
     list-style-type: none;
 }
-a:link {
+a:link
+{
     text-decoration: none;
     color: #000;
 }
-a:visited {
+a:visited
+{
     text-decoration: none;
     color: #848;
 }   
-img {
+img
+{
     border: none;
 }
                                     ]]></style>
@@ -606,6 +612,30 @@ var StringMaker = function () {
 }
 // }}}
 // {{{ Início do programa
-GM_addStyle(' .infraTrSelecionada { background-color: inherit; } .infraTrSelecionada td { background-color: rgba(0,0,0,.25); } .infraTrClara a:visited, .infraTrEscura a:visited { color: #666; } a.docLink:visited { color: #666; } .infraBarraComandos, .infraAreaTelaD, .infraAreaDados { border-color: transparent !important; }');
+GM_addStyle(<style><![CDATA[
+.infraTrSelecionada
+{
+    background-color: inherit;
+}
+.infraTrSelecionada td
+{
+    background-color: rgba(0,0,0,.25);
+}
+.infraTrClara a:visited,
+.infraTrEscura a:visited
+{
+    color: #666;
+}
+a.docLink:visited
+{
+    color: #666;
+}
+.infraBarraComandos,
+.infraAreaTelaD,
+.infraAreaDados
+{
+    border-color: transparent !important;
+}
+]]></style>);
 Eproc.init();
 // }}}
