@@ -78,7 +78,7 @@ contentLoad: function(e) {
     if (eproc_gmCompiler.isGreasemonkeyable(href)) {
         var prefs = new eproc_PrefManager();
         var script = false;
-        if (prefs.getValue('v2.enable') && /https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc(V2|v2_homologacao)\/.*/.test(href)) {
+        if (prefs.getValue('v2.enable') && /https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc(V2|v2_homologacao|v2_apresentacao)\/.*/.test(href)) {
             script = eproc_gmCompiler.getUrlContents('chrome://eproc/content/eprocV2.js');
         } else if (prefs.getValue('v1.enable') && /https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/.*/.test(href)) {
             if (prefs.getValue('v1.consulta_processo.enable') && /https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/consulta_processo.php\?.*/.test(href)) {

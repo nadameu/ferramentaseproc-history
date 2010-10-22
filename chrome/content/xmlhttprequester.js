@@ -57,7 +57,9 @@ eproc_xmlhttpRequester.prototype.chromeStartRequest=function(safeUrl, details) {
             req.setRequestHeader(prop, details.headers[prop]);
         }
     }
-
+    if (details.mimeType) {
+        req.overrideMimeType(details.mimeType);
+    }
     req.send(details.data);
 }
 
