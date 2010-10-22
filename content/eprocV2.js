@@ -679,7 +679,7 @@ img
                 for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
                     if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
                     tr.cells[1].getElementsByTagName('a')[0].setAttribute('target', '_blank');
-                    var classe = tr.cells[4].innerHTML;
+                    var classe = tr.cells[5].innerHTML;
                     if (Classes[classe])
                         for (var cells = tr.cells, c = 0, cl = cells.length; (c < cl) && (cell = cells[c]); c++) {
                             cell.style.backgroundColor = Classes[classe];
