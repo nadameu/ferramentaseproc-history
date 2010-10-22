@@ -257,15 +257,17 @@ var Eproc = {
         if (document.getElementsByName('rdoUsuario').length) {
             var padrao = GM_getValue('padrao');
             for (var perfis = document.getElementsByName('rdoUsuario'), pl = perfis.length, p = 0; (p < pl) && (perfil = perfis[p]); p++) {
+                var row = perfil.parentNode
                 do {
-                    perfil = perfil.parentNode;
-                } while (perfil.tagName.toLowerCase() != 'tr');
-                var id = perfil.getAttribute('onclick').match(/acaoLogar\('(\d+)'\);/)[1];
+                    row = row.parentNode;
+                } while (row.tagName.toLowerCase() != 'tr');
+                var id = row.getAttribute('onclick').match(/acaoLogar\('(\d+)'\);/)[1];
                 if (id == padrao) {
+                    perfil.checked = true;
                     unsafeWindow.infraExibirAviso();
                     unsafeWindow.acaoLogar(id);
                 } else {
-                    perfil.addEventListener('click', (function(id) { return function(e)
+                    row.addEventListener('click', (function(id) { return function(e)
                     {
                         if (confirm('Definir este usuário/lotação como padrão?')) {
                             GM_setValue('padrao', id);
@@ -570,28 +572,18 @@ var Eproc = {
         if (Classes[classe])
             assuntos.style.backgroundColor = Classes[classe];
         if (document.getElementById('lblProcRel')) {
-            for (var links = document.getElementById('lblProcRel').parentNode.getElementsByTagName('a'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
-                if (link.href.match(/[\?\&]acao=processo_selecionar/)) {
-                    link.href = link.pathname + link.search;
-                    link.target = '_blank';
-                } else if (link.href.match(/[\?\&]acao=processo_seleciona_publica/)) {
-                    link.innerHTML = link.innerHTML.split('/')[0];
-                    var processo = link.href.split(/[\?\&]num_processo=/);
-                    var processo = processo[processo.length - 1].split('&')[0];
-                    if (processo.length > 15 && processo.length < 20) {
-                        var antigo = processo;
-                        while (processo.length < 20) {
-                            processo = '0' + processo;
-                        }
-                        link.href = link.href.replace(antigo, processo);
-                        link.innerHTML = processo.substr(0, 7) + '-' + processo.substr(7, 2) + '.' + processo.substr(9, 4) + '.' + processo.substr(13, 1) + '.' + processo.substr(14, 2) + '.' + processo.substr(16, 4);
-                    }
-                    link.href = 'http://www.trf4.jus.br/trf4/processos/acompanhamento/resultado_pesquisa_popup.php?selForma=NU&txtValor=' + processo + '&chkMostrarBaixados=&todasfases=&todosvalores=&todaspartes=&txtDataFase=&selOrigem=SC&sistema=&hdnRefId=&txtPalavraGerada=';
-                    link.target = '_blank';
-                } else if (link.getAttribute('href').match(/^[0-9]{15}([0-9]{5})?$/)) {
-                    link.innerHTML = link.innerHTML.split('/')[0];
-                    link.href = 'http://www.trf4.jus.br/trf4/processos/acompanhamento/resultado_pesquisa_popup.php?selForma=NU&txtValor=' + link.getAttribute('href') + '&chkMostrarBaixados=&todasfases=&todosvalores=&todaspartes=&txtDataFase=&selOrigem=SC&sistema=&hdnRefId=&txtPalavraGerada=';
-                }
+            var link = null, relacionado = document.getElementById('lblProcRel').nextSibling, processo = relacionado.textContent.match(/[\d\.\-]+\/[PRS][RSC]/)[0].replace(/[\.-]/g, '');
+            if (relacionado.tagName) link = relacionado;
+            if (!link) {
+                link = document.createElement('a'), tmp = relacionado.textContent.split('  '), numprocf = tmp[0], relacao = tmp[1];
+                link.textContent = numprocf;
+                relacionado.textContent = '  ' + relacao;
+                relacionado.parentNode.insertBefore(link, relacionado);
+            }
+            link.target = '_blank';
+            if (processo[0] != '5' & !link.href.match(/txtValor/)) {
+                var tmp = processo.split('/'), numproc = tmp[0], origem = tmp[1];
+                link.href = 'http://www.trf4.jus.br/trf4/processos/acompanhamento/resultado_pesquisa.php?selForma=NU&selOrigem=' + origem + '&txtValor=' + numproc;
             }
         }
         for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
