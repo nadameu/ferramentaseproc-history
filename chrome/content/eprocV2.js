@@ -61,11 +61,14 @@ var Classes = {
     'AÇÃO SUMÁRIA (PROCEDIMENTO COMUM SUMÁRIO)': Cores.VERDE,
     'AGRAVO DE EXECUÇÃO PENAL': Cores.BRANCA,
     'AGRAVO DE INSTRUMENTO': Cores.VERDE,
+    'Agravo de Instrumento': Cores.LARANJA,
     'AGRAVO DE INSTRUMENTO DE DECISÃO DENEGAT.DE REC.EX': Cores.VERDE,
     'ALIENAÇÃO JUDICIAL': Cores.BRANCA,
     'ALIENAÇÃO JUDICIAL CRIMINAL': Cores.VERMELHA,
     'ALVARÁ JUDICIAL': Cores.CINZA,
     'APELAÇÃO CRIMINAL': Cores.AZUL,
+    'Apelação Cível': Cores.ROSA,
+    'Apelação/Reexame Necessário': Cores.ROSA,
     'APREENSÃO DE EMBARCAÇÕES': Cores.BRANCA,
     'ARRESTO / HIPOTECA LEGAL - MEDIDAS ASSECURATÓRIAS': Cores.BRANCA,
     'ARRIBADAS FORÇADAS': Cores.BRANCA,
@@ -188,6 +191,7 @@ var Classes = {
     'RECURSO CÍVEL': Cores.BRANCA,
     'RECURSO DE MEDIDA CAUTELAR': Cores.BRANCA,
     'RECURSO EM SENTIDO ESTRITO': Cores.ROSA,
+    'Reexame Necessário Cível': Cores.ROSA,
     'REINT/MANUTENÇÃO POSSE PROCED.ESP.JURISD.CONTENC.': Cores.BRANCA,
     'REMIÇÃO DO IMÓVEL HIPOTECADO': Cores.BRANCA,
     'REPRESENTAÇÃO CRIMINAL': Cores.BRANCA,
@@ -538,6 +542,50 @@ var Eproc = {
         }
     },
     // }}}
+    // {{{ getNumproc()
+    /**
+     * Retorna o número do processo devidamente formatado
+     *
+     * @param String Número do processo
+     * @return false|String Número do processo
+     */
+    getNumproc: function(numproc)
+    {
+        var numero, ano, ramo = '4', tribunal = '04', secao = GM_getValue('v2.secao'), subsecao = GM_getValue('v2.subsecao'), secao_antiga = '50';
+        numproc = numproc.replace(/[^\d]/g, '');
+        if (numproc.length == 10) {
+            ano = numproc.substr(0, 2);
+            if (ano < 50) {
+                ano = Number(ano) + 2000;
+            } else {
+                ano = Number(ano) + 1900;
+            }
+            secao_antiga = numproc.substr(2, 2);
+            numero = '00' + numproc.substr(4, 5);
+        } else if (numproc.length == 15) {
+            ano = numproc.substr(0, 4);
+            secao = numproc.substr(4, 2);
+            subsecao = numproc.substr(6, 2);
+            numero = '0' + numproc.substr(8, 6);
+        } else if (numproc.length == 20) {
+            numero = numproc.substr(0, 7);
+            ano = numproc.substr(9, 4);
+            ramo = numproc.substr(13, 1);
+            tribunal = numproc.substr(14, 2);
+            secao = numproc.substr(16, 2);
+            subsecao = numproc.substr(18, 2);
+        } else {
+            return false;
+        }
+        var r1 = Number(numero) % 97;
+        var r2 = Number('' + r1 + ano + ramo + tribunal) % 97;
+        var r3 = Number('' + r2 + secao + subsecao + '00') % 97;
+        var dv = String(98 - r3);
+        while (dv.length < 2) dv = '0' + dv;
+        var numproc = '' + numero + dv + ano + ramo + tribunal + secao + subsecao;
+        return numproc;
+    },
+    // }}}
     // {{{ getProcessoF()
     getProcessoF: function()
     {
@@ -813,6 +861,87 @@ var Eproc = {
         }
     },
     // }}}
+    // {{{ processo_cadastrar()
+    processo_cadastrar: function()
+    {
+        return;
+        if (document.getElementById('selIdClasseJudicial')) {
+            var classe = document.getElementById('selIdClasseJudicial');
+            classe.addEventListener('change', function(e)
+            {
+                if (this.value == '0000000060') {
+                }
+            }, false);
+        }
+        if (document.getElementById('txtProcessoOriginario')) {
+            var orig = document.getElementById('txtProcessoOriginario');
+            orig.addEventListener('change', function(e)
+            {
+                if (true || classe.value == '0000000060') {
+                    var numproc = Eproc.getNumproc(this.value);
+                    if (numproc) {
+                        Eproc.processo = numproc;
+                        this.value = Eproc.getProcessoF();
+                        var todas_partes = 'N';
+                        var options = {
+                            method: 'POST',
+                            url: 'http://www.trf4.jus.br/trf4/processos/acompanhamento/ws_consulta_processual.php',
+                            data: '<?xml version="1.0" encoding="UTF-8"?>' + <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="urn:consulta_processual" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><SOAP-ENV:Body><ns1:ws_consulta_processo><num_proc xsi:type="xsd:string">{numproc}</num_proc><uf xsi:type="xsd:string">SC</uf><todas_fases xsi:type="xsd:string">N</todas_fases><todas_partes xsi:type="xsd:string">{todas_partes}</todas_partes><todos_valores>N</todos_valores></ns1:ws_consulta_processo></SOAP-ENV:Body></SOAP-ENV:Envelope>.toString(),
+                            onload: function(obj)
+                            {
+                                var div = document.createElement('div');
+                                div.innerHTML = obj.responseText;
+                                var processo = new XML(div.getElementsByTagName('return')[0].textContent.replace(/<\?xml[^\?]*\?>/, ''));
+                                orig.value = processo.Processo.toString();
+                                if (processo.ValCausa.length()) {
+                                    document.getElementById('txtValorCausa').value = String(processo.ValCausa).replace(/[^\d,]/g, '');
+                                } else {
+                                    document.getElementById('txtValorCausa').value = 0;
+                                }
+                                document.body.appendChild(div);
+                            },
+                        }
+                        GM_xmlhttpRequest(options);
+                    }
+                }
+            }, false);
+        }
+        if (document.getElementById('btnSalvar')) {
+            var salvar = document.getElementById('btnSalvar');
+            salvar.addEventListener('click', function(e)
+            {
+                e.preventDefault();
+                e.stopPropagation();
+                var form = document.getElementById('frmProcessoCadastro');
+                var data = [];
+                for (n in form.elements) {
+                    var el = form.elements[n];
+                    data.push(el.name + '=' + encodeURIComponent(el.value));
+                }
+                GM_xmlhttpRequest({
+                    method: 'POST',
+                    url: form.action,
+                    headers: { 'Content-type': 'application/x-www-form-urlencoded' },
+                    data: data.join('&'),
+                    onload: function(ht)
+                    {
+                        alert(ht.responseHeaders);
+                        var div = document.createElement('div');
+                        div.innerHTML = (ht.responseText);
+                        alert(div.getElementsByTagName('form')[1].action);
+                        document.body.appendChild(div);
+                    },
+                });
+            }, false);
+        }
+    },
+    // }}}
+    // {{{ processo_cadastrar_2()
+    processo_cadastrar_2: function()
+    {
+//        alert(document.referrer);
+    },
+    // }}}
     // {{{ processo_consulta_listar()
     processo_consulta_listar: function()
     {
@@ -1068,13 +1197,16 @@ var Eproc = {
         while (txtNumProcesso && txtNumProcesso.tagName != 'INPUT') {
             txtNumProcesso = txtNumProcesso.nextSibling;
         }
+        GM_log('1');
         if (txtNumProcesso) {
+            GM_log('ok');
             txtNumProcesso.addEventListener('change', (function() { return function() { self.onNumprocChange.apply(self, arguments); }; })(), false);
             if (before = document.referrer.match(/\&(txtNumProcesso|num_processo)=([0-9]{20})/)) {
                 txtNumProcesso.value = before[2];
             }
             txtNumProcesso.select();
         }
+        GM_log('2');
     },
     // }}}
     // {{{ onNumprocChange()
