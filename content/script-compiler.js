@@ -56,7 +56,7 @@ contentLoad: function(e) {
         && true
     ) {
         var script=eproc_gmCompiler.getUrlContents(
-            'chrome://eproc/content/eproc.js'
+            'chrome://eproc/content/eprocV2.js'
         );
         eproc_gmCompiler.injectScript(script, href, unsafeWin);
     }
