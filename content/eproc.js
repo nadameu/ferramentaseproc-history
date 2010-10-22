@@ -1,18 +1,18 @@
 // {{{ Cores
 var Cores = {
-    AMARELA: '#ffc',
-    AZUL: '#9bc',
-    AZUL_CLARA: '#cef',
-    AZUL_OU_MARROM: '#cca',
+    AMARELA: '#efef8f',
+    AZUL: '#8fbfef',
+    AZUL_CLARA: '#c4dffb',
+    AZUL_OU_MARROM: '#bf8040',
     BRANCA: '#fff',
-    CINZA: '#ccc',
+    CINZA: '#bfbfbf',
     DESCONHECIDA: '#fff',
-    LARANJA: '#fda',
-    PALHA: '#feb',
-    ROSA: '#fce',
-    SALMÃO: '#fdc',
-    VERDE: '#bfd',
-    VERMELHA: '#fbb'
+    LARANJA: '#f5b574',
+    PALHA: '#efd88f',
+    ROSA: '#fbc4df',
+    SALMÃO: '#efa88f',
+    VERDE: '#a7eda7',
+    VERMELHA: '#db6464'
 }
 // }}}
 /*
@@ -311,9 +311,53 @@ form.action = location.pathname + location.search;
     // {{{ processo_selecionar()
     processo_selecionar: function()
     {
-        if (!window.opener || opener.location.href == location.href)
+        if (!document.title || document.title.match(/Árvore/))
             return;
         document.title = Eproc.getProcessoF();
+        var assuntos = document.getElementById('fldAssuntos');
+        var classe = document.getElementById('txtClasse').innerHTML;
+        for (var links = document.getElementsByClassName('infraMenuFilho'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
+            if (link.title == 'Localizadores do Processo') {
+                var localizador = document.getElementById('txtLocalizador');
+                var locLink = document.createElement('a');
+                locLink.href = link.href;
+                locLink.style.fontSize = '1em';
+                localizador.style.cursor = 'pointer';
+                localizador.parentNode.insertBefore(locLink, localizador);
+                locLink.appendChild(localizador);
+                locLink.addEventListener('click', (function(link) {
+                    return function(e)
+                    {
+                        e.cancelBubble = true;
+                        e.preventDefault();
+                        var xml = GM_xmlhttpRequest({
+                            method: 'GET',
+                            url: link.href,
+                            onload: function(a)
+                            {
+                                var html = document.createElement('html');
+                                html.innerHTML = a.responseText;
+                                for (var forms = html.getElementsByTagName('form'), f = 0, fl = forms.length; (f < fl) && (form = forms[f]); f++) {
+                                    if (form.id == 'frmProcessoLocalizadorLista') {
+                                        form.getElementsByClassName('infraText')[0].value = Eproc.processo;
+                                        form.target = '_blank';
+                                        form.style.display = 'none';
+                                        document.getElementsByTagName('body')[0].appendChild(form);
+                                        form.submit();
+                                    }
+                                }
+                            },
+                            onerror: function()
+                            {
+                                window.open(link.href);
+                            }
+                        });
+                    }
+                })(link), true);
+            }
+        }
+        if (Classes[classe])
+            assuntos.style.backgroundColor = Classes[classe];
         for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
             if (table.getAttribute('summary') == 'Eventos') {
                 var arvore = document.createElement('a');
@@ -324,7 +368,7 @@ form.action = location.pathname + location.search;
                     {
                         e.cancelBubble = true;
                         e.preventDefault();
-                        var x = window.open();
+                        var x = window.open('');
                         x.focus();
                         x.document.open();
                         x.document.write(
@@ -403,7 +447,6 @@ img {
                     };
                 })(table), true);
                 table.parentNode.insertBefore(arvore, table);
-                table.setAttribute('width', '');
                 for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
                     th.setAttribute('width', '');
                 }
@@ -517,6 +560,6 @@ var StringMaker = function () {
 }
 // }}}
 // {{{ Início do programa
-GM_addStyle('.infraTrSelecionada { background-color: #bbb !important; } .infraTrClara a:visited, .infraTrEscura a:visited { color: #848; } a.docLink:visited { color: #848; }');
+GM_addStyle(' .infraTrSelecionada { background-color: inherit; } .infraTrSelecionada td { background-color: rgba(0,0,0,.25); } .infraTrClara a:visited, .infraTrEscura a:visited { color: #666; } a.docLink:visited { color: #666; }');
 Eproc.init();
 // }}}
