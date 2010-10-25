@@ -961,24 +961,10 @@ var Eproc = {
                     if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
                     if (match = tr.cells[2].innerHTML.match(/Prazo: .* Status:([^<]+)/)) {
                         if (match[1] == 'AGUARD. ABERTURA') {
-                            tr.cells[2].style.backgroundColor = '#caa';
+                            tr.cells[2].style.backgroundColor = 'hsl(0, 50%, 80%)';
                         } else if (match[1] == 'ABERTO') {
-                            tr.cells[2].style.backgroundColor = '#cca';
-                            if (eventos[tr.cells[0].textContent]) {
-                                tr.cells[2].appendChild(document.createElement('br'));
-                            }
-                        } else if (match[1] == 'FECHADO') {
-                            tr.cells[2].style.backgroundColor = '#aca';
-                            if (eventos[tr.cells[0].textContent]) {
-                                tr.cells[2].appendChild(document.createElement('br'));
-                                var ok = tr.cells[2].appendChild(document.createElement('span'));
-                                ok.style.backgroundColor = '#cca';
-                                ok.innerHTML = eventos[tr.cells[0].textContent];
-                                tr.cells[2].appendChild(ok);
-                            }
+                            tr.cells[2].style.backgroundColor = 'hsl(60, 50%, 80%)';
                         }
-                    } else if (match = tr.cells[2].textContent.match(/(.*) - Refer. ao Evento: (\d+)/)) {
-                        eventos[match[2]] = match[1] + '<br/>' + (eventos[match[2]] ? eventos[match[2]] : '');
                     }
                     if (tr.cells[4].getElementsByTagName('table').length) {
                         for (var subtrs = tr.cells[4].getElementsByTagName('tr'), subr = 0, subrl = subtrs.length; (subr < subrl) && (subtr = subtrs[subr]); subr++) {
