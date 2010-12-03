@@ -810,6 +810,12 @@ var Eproc = {
         }
     },
     // }}}
+    // {{{ painel_orgao_processo_listar()
+    painel_orgao_processo_listar: function()
+    {
+        Eproc.colorirTabela(3, 'Tabela de Processos.');
+    },
+    // }}}
     // {{{ prevencao_judicial()
     prevencao_judicial: function()
     {
