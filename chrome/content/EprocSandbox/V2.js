@@ -817,6 +817,10 @@ EprocSandbox.V2 = {
     }
     delete Eproc;
   },
+  painel_orgao_processo_listar: function()
+  {
+    this.colorirTabela('Tabela de Processos.');
+  },
   plantao_magistrado_cadastrar: function()
   {
     this.setDatasPlantao();
