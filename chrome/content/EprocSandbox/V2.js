@@ -75,99 +75,6 @@ EprocSandbox.V2 = {
     this.setCorCapa();
     this.colorirTabela('Tabela de Apensos do Processo', true);
   },
-  arvore_processo: function()
-  {
-    if (!window.wrappedJSObject.opener) {
-      window.close();
-      return;
-    }
-    document.title =
-      EprocSandbox.Strings.get('arvore.title', [this.getProcessoF()]);
-    $$('.infraAcaoBarraSistema, #divInfraBarraSistemaE, #divInfraAreaTela')
-      .forEach(function(element)
-        {
-          element.style.display = 'none';
-        });
-    $('#divInfraBarraLocalizacao').textContent =
-      window.wrappedJSObject.opener.document
-        .getElementById('divInfraBarraLocalizacao').textContent
-        + ' - Árvore de documentos';
-    var area = document.createElement('div');
-    area.className = 'infraAreaTela extraArvore';
-    var table =
-      window.wrappedJSObject.opener.document
-        .querySelector('table[summary=Eventos]');
-    if (table) {
-      var arvore = document.createElement('div');
-      $$('tr.infraTrClara, tr.infraTrEscura', table).forEach(function(row)
-      {
-        var evento = document.createElement('dl')
-        var eventoDt = document.createElement('dt');
-        eventoDt.textContent =
-          row.cells[0].textContent + '. ' + row.cells[1].textContent
-        evento.appendChild(eventoDt);
-        var eventoDd = document.createElement('dd');
-        eventoDd.innerHTML =
-          row.cells[2].innerHTML.split('<br')[0] + ' ('
-            + row.cells[3].innerHTML + ')';
-        evento.appendChild(eventoDd);
-        for (var links = $$('a', row.cells[4]), link, i = 0; link = links[i]; i++) {
-          if (/processo_evento_documento_tooltip_cadastrar/.test(link.search)) {
-            continue;
-          }
-          var documento = document.createElement('dd');
-          var link = link.cloneNode(true);
-          if (/processo_evento_documento_tooltip_alterar/.test(link.search)) {
-            addListener(link, 'click', function(e)
-              {
-                if (!e.shiftKey && !e.ctrlKey) {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }
-              });
-            documento.appendChild(link);
-            link = links[++i].cloneNode(true);
-          }
-          link.target = 'show_files';
-          addListener(link, 'click', function(e)
-            {
-              e.preventDefault();
-              e.stopPropagation();
-              $('.docActiveFrame').className += ' docInactiveFrame';
-              var id = e.target.href.match(/doc=([0-9]+)/)[1];
-              var iframe = $('#frame' + id) || (function()
-              {
-                var iframe = document.createElement('iframe');
-                iframe.id = 'frame' + id;
-                iframe.src = e.target.href;
-                area.appendChild(iframe);
-                return iframe;
-              })();
-              iframe.className = 'docFrame docActiveFrame';
-              $('.docInactiveFrame').className = 'docFrame';
-            });
-          documento.appendChild(link);
-          evento.appendChild(documento);
-        }
-        arvore.insertBefore(evento, arvore.firstChild);
-      }, this
-      );
-      area.appendChild(arvore);
-    }
-    var iframe = document.createElement('iframe');
-    iframe.name = 'show_files';
-    iframe.className = 'docFrame docActiveFrame';
-    // iframe.src = 'about:blank';
-    area.appendChild(iframe);
-    var falta =
-      window.innerHeight
-        - document.getElementById('divInfraAreaGlobal').offsetHeight - 20;
-    document.getElementById('divInfraAreaTela').parentNode.insertBefore(area,
-      document.getElementById('divInfraAreaTela').nextSibling
-    );
-    arvore.style.height = falta + 'px';
-    addStyle('iframe.docFrame { height: ' + falta + 'px; }');
-  },
   citacao_bloco_filtrar_destino: function()
   {
     this.colorirTabela('Tabela de Processos.');
@@ -442,13 +349,11 @@ EprocSandbox.V2 = {
           mimeType: 'application/xml; charset=ISO-8859-1',
           onload: function(obj)
           {
-            var xml =
-              /[^']PathXML =  "([^"]+)"/.exec(obj.responseText
-                .split('clientEventHandlersVBS')[1])[1];
+            that.loginGedpro.docs = /[^']PathXMLOriginal =  "([^"]+)"/.exec(obj.responseText)[1];
             var bogusTimer, bogusFunction = function()
             {
               window.clearTimeout(bogusTimer);
-              that.getDocsGedpro(xml);
+              that.getDocsGedpro(1);
             };
             bogusTimer = window.setTimeout(bogusFunction, 100);
             return;
@@ -458,7 +363,7 @@ EprocSandbox.V2 = {
       var that = this;
       GM_xmlhttpRequest({
         method: 'GET',
-        url: url,
+        url: that.loginGedpro.docs + '&pgtree=' + url,
         mimeType: 'application/xml; charset=ISO-8859-1',
         onload: function(obj)
         {
@@ -487,7 +392,7 @@ EprocSandbox.V2 = {
               head.appendChild(th);
             });
           table.rows[0].cells[3].title = 'Assinado digitalmente';
-          var arvore = [];
+          var arvore = [], qtdDocs = 0;
           $$('reg', div).forEach(function(reg, r)
           {
             var row = table.insertRow(table.rows.length);
@@ -588,15 +493,43 @@ EprocSandbox.V2 = {
               var cell = row.insertCell(row.cells.length);
               cell.colSpan = 5;
             }
+            qtdDocs++;
           }
           );
-          var pai = $('#cargaDocsGedpro').parentNode;
-          pai.replaceChild(table, $('#cargaDocsGedpro'));
+          var pai = $('#cargaDocsGedpro');
+          pai.textContent = '';
+          pai.appendChild(table);
+          var next = table.nextSibling;
+          if (url > 1) {
+            var link = document.createElement('a');
+            link.href = '#';
+            link.textContent = '<';
+            addListener(link, 'click', function(e)
+            {
+              e.preventDefault();
+              e.stopPropagation();
+              return that.getDocsGedpro(url - 1);
+            }, that);
+            pai.appendChild(link);
+            pai.appendChild(document.createTextNode(' '));
+          }
+          pai.appendChild(document.createTextNode('Página ' + url + ' '));
+          var link = document.createElement('a');
+          link.href = '#';
+          link.textContent = '>';
+          addListener(link, 'click', function(e)
+          {
+            e.preventDefault();
+            e.stopPropagation();
+            return that.getDocsGedpro(url + 1);
+          }, that);
+          pai.appendChild(link);
+          pai.appendChild(document.createElement('br'));
           var link = document.createElement('a');
           link.href = '#';
           link.textContent = 'Falta de permissão de acesso?';
           addListener(link, 'click', that.reloginGedpro, that);
-          pai.insertBefore(link, table.nextSibling);
+          pai.appendChild(link);
         }
       }
       );
@@ -1149,26 +1082,6 @@ EprocSandbox.V2 = {
       if (table.getAttribute('summary') == 'Lembretes') {
         this.colorirLembretes(table);
       } else if (table.getAttribute('summary') == 'Eventos') {
-        var arvore = document.createElement('a');
-        arvore.textContent = 'Árvore de documentos';
-        arvore.href = '#';
-        addListener(arvore, 'click', function(e)
-        {
-          e.preventDefault();
-          e.stopPropagation();
-          if (typeof this.windows['arvore'] != 'undefined'
-            && this.windows['arvore'].document) {
-            this.windows['arvore'].close();
-          }
-          var sArvore = 'arvore', win =
-            this.windows[sArvore] =
-              window.open(location.search.replace('processo_selecionar',
-                  'arvore_processo'
-                ), EprocSandbox.Address.params.num_processo + 'arvore');
-          // win.focus();
-        }, this
-        );
-        table.parentNode.insertBefore(arvore, table);
         $$('th', table).forEach(function(th)
           {
             th.setAttribute('width', '');
