@@ -1144,7 +1144,7 @@ EprocSandbox.V2 = {
             link.className =
               link.className.split(' ').concat(['docLink']).join(' ');
             var name = link.innerHTML.replace(/<[^>]*>/g, '').replace(' ', '_'), ev =
-              tr.cells[0].textContent, id =
+              /^\d+/.exec(tr.cells[0].textContent), id =
               '' + EprocSandbox.Address.params.num_processo + ev + name;
             link.href = link.href + '#' + ev + '/' + name;
             addListener(link, 'click', function(e)
