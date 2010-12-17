@@ -207,7 +207,7 @@ EprocSandbox.V2 = {
             var eproc2 = table.rows[3*i + 1], eproc = table.rows[2*i + 1 + processos], siapro = table.rows[i + 1 + 2*processos];
             eproc2.parentNode.insertBefore(eproc, eproc2.nextSibling);
             eproc.deleteCell(eproc.cells[0]);
-            eproc2.parentNode.insertBefore(siapro, eproc2.nextSibling);
+            eproc.parentNode.insertBefore(siapro, eproc.nextSibling);
             siapro.deleteCell(siapro.cells[0]);
             eproc2.cells[0].rowSpan = 3;
           }
