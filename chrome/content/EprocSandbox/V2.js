@@ -202,12 +202,14 @@ EprocSandbox.V2 = {
             && /Siapro/
               .test(table.rows[table.rows.length - 1].cells[1].textContent);
         if (todos) {
-          var linhas = table.rows.length - 1, processos = linhas / 2;
-          for (var i = processos; i > 0; i--) {
-            var eproc = table.rows[i], siapro = table.rows[linhas];
-            eproc.parentNode.insertBefore(siapro, eproc.nextSibling);
+          var linhas = table.rows.length - 1, processos = linhas / 3;
+          for (var i = 0; i < processos; i++) {
+            var eproc2 = table.rows[3*i + 1], eproc = table.rows[2*i + 1 + processos], siapro = table.rows[i + 1 + 2*processos];
+            eproc2.parentNode.insertBefore(eproc, eproc2.nextSibling);
+            eproc.deleteCell(eproc.cells[0]);
+            eproc2.parentNode.insertBefore(siapro, eproc2.nextSibling);
             siapro.deleteCell(siapro.cells[0]);
-            eproc.cells[0].rowSpan = 2;
+            eproc2.cells[0].rowSpan = 3;
           }
         }
         div.parentNode.insertBefore(table, div);
