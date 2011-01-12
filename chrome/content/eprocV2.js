@@ -794,15 +794,32 @@ var Eproc = {
     {
         var buscarForm = document.querySelector('#frmProcessoLista');
         var buscar = document.querySelectorAll('#btnBuscar');
-        [].slice.call(buscar).forEach(function(buscar)
+        var submeteForm = function(processos, hashes)
+        {
+            var oldAction = buscarForm.action;
+            var oldValue = document.getElementById('hdnInfraItensSelecionados').value;
+            buscarForm.action = oldAction + '&num_processo=' + processos.join(',') + '&hashes=' + hashes.join(',');
+            buscarForm.target = '_blank';
+            document.getElementById('hdnInfraItensSelecionados').value = processos.join(',');
+            unsafeWindow.submeterFrm('buscar');
+            buscarForm.action = oldAction;
+            buscarForm.target = '';
+            document.getElementById('hdnInfraItensSelecionados').value = oldValue;
+            unsafeWindow.infraAvisoCancelar();
+        };
+        [].forEach.call(buscar, function(buscar)
         {
             buscar.setAttribute('onclick', '');
             buscar.addEventListener('click', function(e)
             {
-                buscarForm.target = '_blank';
-                unsafeWindow.submeterFrm('buscar');
-                buscarForm.target = '_top';
-                unsafeWindow.infraAvisoCancelar();
+                var processos = [], hashes = [];
+                [].forEach.call(document.querySelectorAll('tr.infraTrMarcada a[href]'), function(link)
+                {
+                    var match = link.search.match(/\&num_processo=(.*)\&hash=(.*)$/) 
+                    processos.push(match[1]);
+                    hashes.push(match[2]);
+                });
+                submeteForm(processos, hashes);
             }, false);
         });
         if (document.getElementById('btnConsultar')) {
@@ -814,13 +831,7 @@ var Eproc = {
             paginacao.insertBefore(option, paginacao.firstChild);
         }
         if (document.getElementById('btnBuscar')) {
-            document.getElementById('btnConsultar').setAttribute('onclick', '');
-            document.getElementById('btnConsultar').addEventListener('click', function(e)
-            {
-                document.getElementById('hdnInfraItensSelecionados').value = '';
-                unsafeWindow.submeterFrm('');
-            }, false);
-            for (var hh = document.querySelectorAll('.infraTdSetaOrdenacao a, #divInfraAreaPaginacao a, #divInfraAreaPaginacao select'), h = 0, link; link = hh[h]; h++) {
+            for (var hh = document.querySelectorAll('#btnConsultar, .infraTdSetaOrdenacao a, #divInfraAreaPaginacao a, #divInfraAreaPaginacao select'), h = 0, link; link = hh[h]; h++) {
                 var attr = link.hasAttribute('onclick') ? 'onclick' : 'onchange';
                 var action = link.getAttribute(attr);
                 link.setAttribute(attr, '');
@@ -842,17 +853,8 @@ var Eproc = {
                         {
                             e.preventDefault();
                             e.stopPropagation();
-                            var oldValue = document.getElementById('hdnInfraItensSelecionados').value;
-                            document.getElementById('hdnInfraItensSelecionados').value = this.parentNode.parentNode.getElementsByTagName('input')[0].value;
-                            var link = this.search.match(/\&num_processo=.*$/);
-                            var form = document.getElementById('frmProcessoLista');
-                            var old = form.action;
-                            form.action = old + link;
-                            form.target = '_blank';
-                            form.submit();
-                            form.action = old;
-                            form.target = '_top';
-                            document.getElementById('hdnInfraItensSelecionados').value = oldValue;
+                            var match = this.search.match(/\&num_processo=(.*)\&hash=(.*)$/);
+                            submeteForm([match[1]], [match[2]]);
                         }, false);
                     }
                 }
@@ -864,23 +866,29 @@ var Eproc = {
                     for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
                         th.setAttribute('width', '');
                     }
-                    for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
-                        if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
-                        tr.insertBefore(tr.cells[0], tr.cells[2]);
-                        if (location.search.match(/num_processo/)) {
-                            var cell = tr.getElementsByTagName('table')[0].rows[0].cells[0];
-                            cell.innerHTML = '<b>Processo: <a href="controlador.php?acao=processo_selecionar&acao_origem=prevencao_judicial_bloco' + location.search.match(/\&num_processo.*$/) + '" target="_blank">' + cell.innerHTML.match(/[0-9\.\-]{24}/) + '</a></b>';
-                        }
+                    for (var links = table.getElementsByTagName('a'), l = 0, ll = links.length, link; (l < ll) && (link = links[l]); l++) {
+                        link.target = '_blank';
                     }
-                    if (table.rows[1].cells[1].textContent == 'Eproc2' && table.rows[table.rows.length - 1].cells[1].textContent == 'Siapro') {
+                    if (table.rows[1].cells[0].textContent == 'Eproc2' && table.rows[table.rows.length - 1].cells[0].textContent == 'Siapro') {
                         var qtdProcessos = (table.rows.length - 1) / 3;
                         for (var i = 0; i < qtdProcessos; i++) {
                             var eproc2 = table.rows[3*i + 1], eproc = table.rows[2*i + 1 + qtdProcessos], siapro = table.rows[i + 1 + 2*qtdProcessos];
+                            eproc2.insertBefore(eproc2.cells[0], eproc2.cells[2]);
                             eproc2.parentNode.insertBefore(eproc, eproc2.nextSibling);
-                            eproc.deleteCell(eproc.cells[0]);
+                            eproc.deleteCell(1);
                             eproc.parentNode.insertBefore(siapro, eproc.nextSibling);
-                            siapro.deleteCell(siapro.cells[0]);
+                            siapro.deleteCell(1);
                             eproc2.cells[0].rowSpan = 3;
+                        }
+                    }
+                    if (location.search.match(/num_processo/)) {
+                        var match = location.search.match(/\&num_processo=(.*)\&hashes=(.*)$/);
+                        var processos = match[1].split(',');
+                        var hashes = match[2].split(',');
+                        for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
+                            if (!tr.className.match(/infraTr(Clara|Escura)/) || tr.cells.length < 3) continue;
+                            var cell = tr.getElementsByTagName('table')[0].rows[0].cells[0];
+                            cell.innerHTML = '<b>Processo: <a href="controlador.php?acao=processo_selecionar&acao_origem=prevencao_judicial_bloco&num_processo=' + processos.shift() + '&hash=' + hashes.shift() + '" target="_blank">' + cell.innerHTML.match(/[0-9\.\-]{24}/) + '</a></b>';
                         }
                     }
                 }
