@@ -119,6 +119,8 @@ var Classes = {
     'INCIDENTE DE TRANSF.ENTRE ESTABELECIMENTOS PENAIS': Cores.BRANCA,
     'INCIDENTE DE UNIFORMIZAÇÃO DE JURISPRUDÊNCIA': Cores.VERDE,
     'INQUÉRITO POLICIAL': Cores.VERDE,
+    'INQUÉRITO POLICIAL - PORTARIA': Cores.VERDE,
+    'INQUÉRITO POLICIAL - PRISAO EM FLAGRANTE': Cores.VERDE,
     'INTERDITO PROIBITÓRIO': Cores.VERDE,
     'JUSTIFICAÇÃO DE DINHEIRO A RISCO': Cores.VERDE,
     'LIQUIDAÇÃO POR ARBITRAMENTO': Cores.BRANCA,
@@ -790,26 +792,39 @@ var Eproc = {
     // {{{ prevencao_judicial_bloco()
     prevencao_judicial_bloco: function()
     {
-        if (document.getElementById('btnBuscar')) {
-            document.getElementById('btnBuscar').setAttribute('onclick', '');
-            document.getElementById('btnBuscar').addEventListener('click', function(e)
+        var buscarForm = document.querySelector('#frmProcessoLista');
+        var buscar = document.querySelectorAll('#btnBuscar');
+        [].slice.call(buscar).forEach(function(buscar)
+        {
+            buscar.setAttribute('onclick', '');
+            buscar.addEventListener('click', function(e)
             {
-                this.form.target = '_blank';
+                buscarForm.target = '_blank';
                 unsafeWindow.submeterFrm('buscar');
-                this.form.target = '_top';
+                buscarForm.target = '_top';
                 unsafeWindow.infraAvisoCancelar();
             }, false);
+        });
+        if (document.getElementById('btnConsultar')) {
+            var paginacao = document.getElementById('selPaginacao');
+            var option = document.createElement('option');
+            option.value = '10';
+            option.textContent = '10 processos por página';
+            if (paginacao.querySelectorAll('option[selected]').length == 0) option.selected = true;
+            paginacao.insertBefore(option, paginacao.firstChild);
+        }
+        if (document.getElementById('btnBuscar')) {
             document.getElementById('btnConsultar').setAttribute('onclick', '');
             document.getElementById('btnConsultar').addEventListener('click', function(e)
             {
                 document.getElementById('hdnInfraItensSelecionados').value = '';
                 unsafeWindow.submeterFrm('');
             }, false);
-            for (var hh = document.getElementsByClassName('infraTdSetaOrdenacao'), hl = hh.length, h = 0; (h < hl) && (th = hh[h]); h++) {
-                var link = th.getElementsByTagName('a')[0];
-                var action = link.getAttribute('onclick');
-                link.setAttribute('onclick', '');
-                link.addEventListener('click', (function(action) { return function(e)
+            for (var hh = document.querySelectorAll('.infraTdSetaOrdenacao a, #divInfraAreaPaginacao a, #divInfraAreaPaginacao select'), h = 0, link; link = hh[h]; h++) {
+                var attr = link.hasAttribute('onclick') ? 'onclick' : 'onchange';
+                var action = link.getAttribute(attr);
+                link.setAttribute(attr, '');
+                link.addEventListener(attr.replace(/^on/, ''), (function(action) { return function(e)
                 {
                     document.getElementById('hdnInfraItensSelecionados').value = '';
                     eval('unsafeWindow.' + action);
@@ -827,6 +842,7 @@ var Eproc = {
                         {
                             e.preventDefault();
                             e.stopPropagation();
+                            var oldValue = document.getElementById('hdnInfraItensSelecionados').value;
                             document.getElementById('hdnInfraItensSelecionados').value = this.parentNode.parentNode.getElementsByTagName('input')[0].value;
                             var link = this.search.match(/\&num_processo=.*$/);
                             var form = document.getElementById('frmProcessoLista');
@@ -836,11 +852,12 @@ var Eproc = {
                             form.submit();
                             form.action = old;
                             form.target = '_top';
+                            document.getElementById('hdnInfraItensSelecionados').value = oldValue;
                         }, false);
                     }
                 }
             }
-        } else if (location.search.match(/num_processo/)) {
+        } else {
             for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
                 if (table.getAttribute('summary') == 'Tabela de Preventos.') {
                     table.setAttribute('width', '');
@@ -849,8 +866,22 @@ var Eproc = {
                     }
                     for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
                         if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
-                        var cell = tr.getElementsByTagName('table')[0].rows[0].cells[0];
-                        cell.innerHTML = '<b>Processo: <a href="controlador.php?acao=processo_selecionar&acao_origem=prevencao_judicial_bloco' + location.search.match(/\&num_processo.*$/) + '" target="_blank">' + cell.innerHTML.match(/[0-9\.\-]{24}/) + '</a></b>';
+                        tr.insertBefore(tr.cells[0], tr.cells[2]);
+                        if (location.search.match(/num_processo/)) {
+                            var cell = tr.getElementsByTagName('table')[0].rows[0].cells[0];
+                            cell.innerHTML = '<b>Processo: <a href="controlador.php?acao=processo_selecionar&acao_origem=prevencao_judicial_bloco' + location.search.match(/\&num_processo.*$/) + '" target="_blank">' + cell.innerHTML.match(/[0-9\.\-]{24}/) + '</a></b>';
+                        }
+                    }
+                    if (table.rows[1].cells[1].textContent == 'Eproc2' && table.rows[table.rows.length - 1].cells[1].textContent == 'Siapro') {
+                        var qtdProcessos = (table.rows.length - 1) / 3;
+                        for (var i = 0; i < qtdProcessos; i++) {
+                            var eproc2 = table.rows[3*i + 1], eproc = table.rows[2*i + 1 + qtdProcessos], siapro = table.rows[i + 1 + 2*qtdProcessos];
+                            eproc2.parentNode.insertBefore(eproc, eproc2.nextSibling);
+                            eproc.deleteCell(eproc.cells[0]);
+                            eproc.parentNode.insertBefore(siapro, eproc.nextSibling);
+                            siapro.deleteCell(siapro.cells[0]);
+                            eproc2.cells[0].rowSpan = 3;
+                        }
                     }
                 }
             }
@@ -902,7 +933,7 @@ var Eproc = {
         var classe = document.getElementById('txtClasse').textContent;
         if (Classes[classe])
             assuntos.style.backgroundColor = Classes[classe];
-        for (var links = document.getElementsByTagName('a'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
+        for (var links = document.querySelectorAll('a'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
             if (!link.href && link.textContent.match(/GEDPRO/)) {
                 if (link.getAttribute('onclick')) {
                     link.textContent = 'GEDPRO';
@@ -942,6 +973,68 @@ var Eproc = {
                 } else if (link.title == 'Link para o GEDPRO não pôde ser gerado.') {
                     link.getElementsByTagName('u')[0].style.textDecoration = 'line-through';
                 }
+            } else if (/controlador\.php\?acao=prevencao_judicial\&/.exec(link.href) && link.className == 'infraMenuFilho') {
+                var informacoes = document.getElementById('fldInformacoesAdicionais').getElementsByTagName('table')[0], row = informacoes.insertRow(informacoes.rows.length), labelCell = row.insertCell(0), cell = row.insertCell(1);
+                labelCell.align = 'right';
+                labelCell.innerHTML = '<label>Preventos:</label>';
+                var myLink = document.createElement('a'), myLinkClicked = false;
+                myLink.href = link.href;
+                myLink.textContent = 'Buscar preventos'
+                myLink.addEventListener('click', function(e)
+                {
+                    if (e.ctrlKey || e.shiftKey) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (myLinkClicked) return;
+                    myLinkClicked = true;
+                    var myOldText = myLink.textContent;
+                    myLink.textContent = 'Aguarde, carregando...';
+                    var data = 'hdnInfraTipoPagina=1&selSistema=Todos&txtNumProcesso=' + Eproc.processo + '&hdnInfraSelecoes=&hdnInfraTotalRegistros=0';
+                    var restore = function()
+                    {
+                        alert('Ocorreu um erro durante a busca. Favor tentar novamente.');
+                        myLink.textContent = myOldText;
+                        myLinkClicked = false;
+                    }
+                    GM_xmlhttpRequest({
+                        url: e.target.href,
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        data: data,
+                        onload: function(response)
+                        {
+                            var div = document.createElement('div');
+                            div.innerHTML = response.responseText;
+                            var semPreventos = div.textContent.match(/Não há preventos/g);
+                            var resultLinks = div.querySelectorAll('#divInfraAreaTela a');
+                            if (semPreventos && semPreventos.length == 3) {
+                                myLink.parentNode.replaceChild(document.createTextNode('Não há preventos.'), myLink);
+                            } else if (resultLinks.length) {
+                                var parentNode = myLink.parentNode;
+                                parentNode.innerHTML = '';
+                                for (var rl = 0, resultLink; resultLink = resultLinks[rl]; rl++) {
+                                    resultLink.target = '_blank';
+                                    parentNode.appendChild(resultLink);
+                                    parentNode.appendChild(document.createElement('br'));
+                                }
+                            } else {
+                                restore();
+                            }
+                        },
+                        onerror: function(response)
+                        {
+                            restore();
+                        }
+                    });
+                }, false);
+                myLink.style.fontWeight = 'bold';
+                myLink.style.color = 'rgb(102, 102, 102)';
+                var label = document.createElement('label');
+                label.className = 'infraLabelObrigatorio';
+                label.appendChild(myLink);
+                cell.appendChild(label);
             }
         }
         if (document.getElementById('lblProcRel')) {
@@ -1077,11 +1170,69 @@ var Eproc = {
     setLastProcesso: function()
     {
         var self = this;
-        var txtNumProcesso = document.getElementById('lblNumProcesso');
-        while (txtNumProcesso && txtNumProcesso.tagName != 'INPUT') {
-            txtNumProcesso = txtNumProcesso.nextSibling;
-        }
+        var txtNumProcesso = document.getElementById('txtNumProcesso');
         if (txtNumProcesso) {
+            txtNumProcesso.setAttribute('maxlength', 20);
+            txtNumProcesso.setAttribute('onkeypress', '');
+            var valorAntigo;
+            function limpa(elemento)
+            {
+                var inicio = elemento.selectionStart;
+                var fim = elemento.selectionEnd;
+                var valor = elemento.value;
+                if (/^(\d{2}|\d{4})\/\d*$/.exec(valor)) return;
+                var segmentos = valor.split(/[^0-9_]/);
+                segmentos.forEach(function(segmento, s)
+                {
+                    if (s == 0) {
+                        valor = segmento;
+                    } else {
+                        if (inicio > valor.length) inicio--;
+                        if (fim > valor.length) fim--;
+                        valor += segmento;
+                    }
+                });
+                elemento.value = valor;
+                elemento.setSelectionRange(inicio, fim);
+            }
+            txtNumProcesso.addEventListener('keydown', function(e)
+            {
+                if ((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 105)) {
+                    limpa(this);
+                }
+                if (/^\d{2}\/\d*$/.exec(this.value)) this.setAttribute('maxlength', 11);
+                else if (/^\d{4}\/\d*$/.exec(this.value)) this.setAttribute('maxlength', 13);
+                else this.setAttribute('maxlength', 20);
+            }, false);
+            txtNumProcesso.addEventListener('keyup', function(e)
+            {
+                var inicio = this.selectionStart;
+                var fim = this.selectionEnd;
+                var valor = this.value;
+                if (/^(\d{2}|\d{4})\/\d*$/.exec(valor)) return;
+                if (valor != valorAntigo) {
+                    limpa(this);
+                    var inicio = this.selectionStart;
+                    var fim = this.selectionEnd;
+                    var valor = this.value;
+                    function quebra(posicao, caractere)
+                    {
+                        if (valor.length > posicao) {
+                            valor = valor.substr(0, posicao) + caractere + valor.substr(posicao);
+                            if (inicio > posicao) inicio++;
+                            if (fim > posicao) fim++;
+                        }
+                    }
+                    quebra(16, '.');
+                    quebra(14, '.');
+                    quebra(13, '.');
+                    quebra(9, '.');
+                    quebra(7, '-');
+                    this.value = valor;
+                    this.setSelectionRange(inicio, fim);
+                }
+                valorAntigo = this.value;
+            }, false);
             txtNumProcesso.addEventListener('change', (function() { return function() { self.onNumprocChange.apply(self, arguments); }; })(), false);
             if (before = document.referrer.match(/\&(txtNumProcesso|num_processo)=([0-9]{20})/)) {
                 txtNumProcesso.value = before[2];
@@ -1093,16 +1244,48 @@ var Eproc = {
     // {{{ onNumprocChange()
     onNumprocChange: function(e)
     {
+        var ano, anoAtual = new Date().getFullYear();
         var numproc = e.target.value;
-        if (numproc.length < 3) return;
-        while (numproc.length < 8) {
+        var lixo, novoAno, novoNumproc;
+        var match = /^(\d{2}|\d{4})\/(\d*)$/.exec(numproc);
+        if (match) {
+            var novoAno = match[1], novoNumproc = match[2];
+            if (novoAno.length == 2) novoAno = '20' + novoAno;
+            if (novoAno >= 2009 && novoAno <= anoAtual) {
+                ano = novoAno;
+                numproc = novoNumproc;
+            }
+        }
+        var segmentos = numproc.split(/[^0-9]/);
+        segmentos.forEach(function(segmento, s)
+        {
+            if (s == 0) {
+                numproc = segmento;
+            } else {
+                numproc += segmento;
+            }
+        }, this);
+        if (numproc.length < 3 || numproc.length > 8) return;
+        var dd = numproc.substr(numproc.length - 2);
+        numproc = numproc.substr(0, numproc.length - 2);
+        while (numproc.length < 6) {
             numproc = '0' + numproc;
         }
-        while (numproc.length < 9) {
+        while (numproc.length < 7) {
             numproc = '5' + numproc;
         }
-        while (numproc.length < 13) {
-            numproc += '2010404' + GM_getValue('v2.secao') + GM_getValue('v2.subsecao');
+        if (!ano) {
+            for (var a = 2009; a <= anoAtual; a++) {
+                var r1 = numproc % 97;
+                var r2 = ('' + r1 + a + '404') % 97;
+                var r3 = ('' + r2 + GM_getValue('v2.secao') + GM_getValue('v2.subsecao') + dd) % 97;
+                if (r3 == 1) ano = a;
+            }
+            if (!ano) throw new Error('Dígito verificador inválido!');
+        }
+        numproc = numproc + '-' + dd;
+        while (numproc.length < 14) {
+            numproc += '.' + ano + '.4.04.' + GM_getValue('v2.secao') + GM_getValue('v2.subsecao');
         }
         e.target.value = numproc;
     },
