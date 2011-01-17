@@ -1131,7 +1131,7 @@ var Eproc = {
                 }
             }
         }
-        window.addEventListener('unload', function(e)
+        window.addEventListener('beforeunload', function(e)
         {
             var windows = [];
             var gedpro = [];
