@@ -668,23 +668,53 @@ EprocSandbox.V2 = {
   {
     this.colorirTabela('Tabela de Processos por Localizador.');
   },
-  onNumprocChange: function(e)
-  {
-    var numproc = e.target.value;
-    if (numproc.length < 3) return;
-    while (numproc.length < 8) {
-      numproc = '0' + numproc;
-    }
-    while (numproc.length < 9) {
-      numproc = '5' + numproc;
-    }
-    while (numproc.length < 13) {
-      numproc +=
-        '2010404' + EprocSandbox.Preferences.get('v2.secao')
-          + EprocSandbox.Preferences.get('v2.subsecao');
-    }
-    e.target.value = numproc;
-  },
+    onNumprocChange: function(e)
+    {
+        var ano, anoAtual = new Date().getFullYear();
+        var numproc = e.target.value;
+        var lixo, novoAno, novoNumproc;
+        var match = /^(\d{2}|\d{4})\/(\d*)$/.exec(numproc);
+        if (match) {
+            var novoAno = match[1], novoNumproc = match[2];
+            if (novoAno.length == 2) novoAno = '20' + novoAno;
+            if (novoAno >= 2009 && novoAno <= anoAtual) {
+                ano = novoAno;
+                numproc = novoNumproc;
+            }
+        }
+        var segmentos = numproc.split(/[^0-9]/);
+        segmentos.forEach(function(segmento, s)
+        {
+            if (s == 0) {
+                numproc = segmento;
+            } else {
+                numproc += segmento;
+            }
+        }, this);
+        if (numproc.length < 3 || numproc.length > 8) return;
+        var dd = numproc.substr(numproc.length - 2);
+        numproc = numproc.substr(0, numproc.length - 2);
+        while (numproc.length < 6) {
+            numproc = '0' + numproc;
+        }
+        while (numproc.length < 7) {
+            numproc = '5' + numproc;
+        }
+        if (!ano) {
+            for (var a = 2009; a <= anoAtual; a++) {
+                var r1 = numproc % 97;
+                var r2 = ('' + r1 + a + '404') % 97;
+                var r3 = ('' + r2 + EprocSandbox.Preferences.get('v2.secao') + EprocSandbox.Preferences.get('v2.subsecao') + dd) % 97;
+                if (r3 == 1) ano = a;
+            }
+            if (!ano) throw new Error('Dígito verificador inválido!');
+        }
+        numproc = numproc + '-' + dd;
+        while (numproc.length < 14) {
+            numproc += '.' + ano + '.4.04.' + EprocSandbox.Preferences.get('v2.secao') + EprocSandbox.Preferences.get('v2.subsecao');
+        }
+        e.target.value = numproc;
+    },
   onPerfilSelected: function(e, id, name)
   {
     var padrao = EprocSandbox.Preferences.get('v2.perfil');
@@ -1366,7 +1396,69 @@ EprocSandbox.V2 = {
       txtNumProcesso = txtNumProcesso.nextSibling;
     }
     if (txtNumProcesso) {
+      txtNumProcesso.setAttribute('maxlength', '');
       txtNumProcesso.setAttribute('onkeypress', '');
+        var valorAntigo;
+        function limpa(elemento)
+        {
+            var inicio = elemento.selectionStart;
+            var fim = elemento.selectionEnd;
+            var valor = elemento.value;
+            if (/^(\d{2}|\d{4})\/\d*$/.exec(valor)) return;
+            var segmentos = valor.split(/[^0-9_]/);
+            segmentos.forEach(function(segmento, s)
+            {
+                if (s == 0) {
+                    valor = segmento;
+                } else {
+                    if (inicio > valor.length) inicio--;
+                    if (fim > valor.length) fim--;
+                    valor += segmento;
+                }
+            });
+            elemento.value = valor;
+            elemento.setSelectionRange(inicio, fim);
+        }
+        addListener(txtNumProcesso, 'keydown', function(e)
+        {
+            var el = e.target;
+            if ((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 105)) {
+                limpa(el);
+            }
+            if (/^\d{2}\/\d*$/.exec(el.value)) el.setAttribute('maxlength', 11);
+            else if (/^\d{4}\/\d*$/.exec(el.value)) el.setAttribute('maxlength', 13);
+            else el.setAttribute('maxlength', 20);
+        });
+        addListener(txtNumProcesso, 'keyup', function(e)
+        {
+            var el = e.target;
+            var inicio = el.selectionStart;
+            var fim = el.selectionEnd;
+            var valor = el.value;
+            if (/^(\d{2}|\d{4})\/\d*$/.exec(valor)) return;
+            if (valor != valorAntigo) {
+                limpa(el);
+                var inicio = el.selectionStart;
+                var fim = el.selectionEnd;
+                var valor = el.value;
+                function quebra(posicao, caractere)
+                {
+                    if (valor.length > posicao) {
+                        valor = valor.substr(0, posicao) + caractere + valor.substr(posicao);
+                        if (inicio > posicao) inicio++;
+                        if (fim > posicao) fim++;
+                    }
+                }
+                quebra(16, '.');
+                quebra(14, '.');
+                quebra(13, '.');
+                quebra(9, '.');
+                quebra(7, '-');
+                el.value = valor;
+                el.setSelectionRange(inicio, fim);
+            }
+            valorAntigo = el.value;
+        });
       addListener(txtNumProcesso, 'change', this.onNumprocChange, this);
       var before =
         /\&(txtNumProcesso|num_processo)=([0-9]{20})/.exec(document.referrer);
