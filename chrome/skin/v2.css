@@ -230,4 +230,7 @@
     .extraArvore iframe.docActiveFrame {
         display: block;
     }
+    .infraButton[disabled] {
+        color: #ccc;
+    }
 }

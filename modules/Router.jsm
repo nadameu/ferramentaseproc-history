@@ -514,13 +514,19 @@ function Sandbox(doc, address, chromeWindow)
     if (options.mimeType) {
       req.overrideMimeType(options.mimeType);
     }
+    if (options.headers) {
+        for (var prop in options.headers) {
+            req.setRequestHeader(prop, options.headers[prop]);
+        }
+    }
     req.onload = function()
     {
       return options.onload({
           responseText: req.responseText
         });
     };
-    req.send();
+    if (options.data) req.send(options.data);
+    else req.send();
   };
   sandbox.__proto__ = sandbox.window;
   this.run = function(script)

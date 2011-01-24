@@ -438,7 +438,113 @@ EprocSandbox.V2 = {
                   '<img style="cursor: inherit;" src="http://'
                     + that.loginGedpro.host + '/images/assinatura.gif"/>';
               } else {
-                row.insertCell(row.cells.length).innerHTML = '&nbsp;';
+                var cell = row.insertCell(row.cells.length);
+                switch (reg.getAttribute('codigoTipoDocumento')) {
+                    case '56':
+                        var changeText = function(text, button)
+                        {
+                            text = text.replace('Endereço: ###', function()
+                            {
+                                return 'Endereço: ' + $('#extraEndereco').value;
+                            });
+                            text = text.replace(' em ###', function()
+                            {
+                                return ' em ' + $('#extraDataValor').value;
+                            });
+                            var data = escape(text);
+                            GM_xmlhttpRequest({
+                                url: 'http://' + that.loginGedpro.host + '/AcessaDocumentoLocalSalva.asp?secao=0000004&codDocumento=' + reg.getAttribute('codigoDocumento') + '&Sair=Sair',
+                                method: 'POST',
+                                headers: {
+                                    'Content-type': 'application/x-www-form-urlencoded'
+                                },
+                                mimeType: 'text/html; charset=ISO-8859-1',
+                                data: 'Documento=' + data + '&Sair=Sair',
+                                onload: function(xhr)
+                                {
+                                    if (!/"Sucesso"/.test(xhr.responseText)) {
+                                        alert(xhr.responseText);
+                                        button.disabled = false;
+                                    } else {
+                                        alert('OK');
+                                        button.parentNode.innerHTML = '';
+                                    }
+                                }
+                            });
+                        };
+                        var link = document.createElement('a');
+                        link.href = 'http://' + that.loginGedpro.host + '/AcessaDocumentoWeb.asp?modulo=Editor Simples&codigoDocumento=' + reg.getAttribute('codigoDocumento') + '&origem=&secao=0000004';
+                        link.textContent = 'Editar campos da carta de citação';
+                        cell.appendChild(link);
+                        addListener(link, 'click', function(e)
+                        {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            GM_xmlhttpRequest({
+                                url: e.target.href,
+                                method: 'GET',
+                                mimeType: 'text/html; charset=ISO-8859-1',
+                                onload: function(response)
+                                {
+                                    cell.removeChild(link);
+                                    var tempDiv = document.createElement('div');
+                                    var text = response.responseText.match(/<input type="hidden" id="Documento" name="Documento" value="([^"]+)"/)[1];
+                                    tempDiv.innerHTML = text;
+                                    text = tempDiv.textContent;
+                                    text = text.replace(/<div[^>]+>\&nbsp;<\/div>$/, '').replace(/<div id="old(\d+)" class="([^"]+)">/g, '<DIV id=div$1 class=$2>').replace(/<\/div>/g, '</DIV>');
+                                    if (text.match(/Endereço: ###/)) {
+                                        var label = document.createElement('label');
+                                        label.htmlFor = 'extraEndereco';
+                                        label.textContent = 'Endereço: ';
+                                        cell.appendChild(label);
+                                        var input = document.createElement('textarea');
+                                        input.id = 'extraEndereco';
+                                        cell.appendChild(input);
+                                        cell.appendChild(document.createElement('br'));
+                                        var pessoas = $$('#divInfraAreaGlobal a[href*=id_pessoa]');
+                                        var pessoa = pessoas[0];
+                                        GM_xmlhttpRequest({
+                                            url: location.href.split('controlador.php')[0] + pessoa.href.match(/controlador\.php[^']+/),
+                                            method: 'GET',
+                                            mimeType: 'text/html; charset=ISO-8859-1',
+                                            onload: function(xhr)
+                                            {
+                                                var div = document.createElement('div');
+                                                div.innerHTML = xhr.responseText;
+                                                var informacoesEndereco = $$('#divInfraAreaDados table:last-of-type tr:last-of-type td:nth-child(2) label', div);
+                                                informacoesEndereco.forEach(function(informacaoEndereco, indiceInformacaoEndereco)
+                                                {
+                                                    informacoesEndereco[indiceInformacaoEndereco] = informacaoEndereco.textContent;
+                                                });
+                                                informacoesEndereco = informacoesEndereco.join(' - ');
+                                                $('#extraEndereco').value = informacoesEndereco;
+                                            }
+                                        });
+                                    }
+                                    if (text.match(/ em ###/)) {
+                                        var label = document.createElement('label');
+                                        label.htmlFor = 'extraDataValor';
+                                        label.textContent = 'Data do valor: ';
+                                        cell.appendChild(label);
+                                        var input = document.createElement('input');
+                                        input.id = 'extraDataValor';
+                                        cell.appendChild(input);
+                                        cell.appendChild(document.createElement('br'));
+                                    }
+                                    var alterar = document.createElement('button');
+                                    alterar.className = 'infraButton';
+                                    alterar.textContent = 'Alterar';
+                                    addListener(alterar, 'click', function(e) { e.preventDefault(); e.stopPropagation(); e.target.disabled = true; changeText(text, e.target); });
+                                    cell.appendChild(alterar);
+                                }
+                            });
+                        });
+                        break;
+
+                    default:
+                        cell.innerHTML = '&nbsp;';
+                        break;
+                }
               }
               row.insertCell(row.cells.length).textContent =
                 reg.getAttribute('dataDocumento');
@@ -528,7 +634,7 @@ EprocSandbox.V2 = {
           pai.appendChild(link);
           pai.appendChild(document.createElement('br'));
           var link = document.createElement('a');
-          link.href = '#';
+          link.href = that.loginGedpro.docs + '&pgtree=' + url;
           link.textContent = 'Falta de permissão de acesso?';
           addListener(link, 'click', that.reloginGedpro, that);
           pai.appendChild(link);
@@ -1150,11 +1256,13 @@ EprocSandbox.V2 = {
               {
                 Array.forEach(subtr.cells, function(subtd)
                   {
+                    var holder = document.createElement('div');
+                    holder.className = 'docsHolder';
                     var child = null;
                     while (child = subtd.firstChild) {
-                      docs.appendChild(child);
+                      holder.appendChild(child);
                     }
-                    docs.appendChild(document.createElement('br'));
+                    docs.appendChild(holder);
                   });
               });
             docs.removeChild($$('table', docs)[0]);
@@ -1251,7 +1359,7 @@ EprocSandbox.V2 = {
     var that = this;
     function tester()
     {
-      var limit = 30;
+      var limit = 120;
       var success = false;
       try {
         var x = frames[0].window;
@@ -1473,3 +1581,4 @@ EprocSandbox.V2 = {
 {
   EprocSandbox.V2.init();
 })();
+// vim:enc=utf-8
