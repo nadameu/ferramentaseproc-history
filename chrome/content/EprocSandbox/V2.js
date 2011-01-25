@@ -451,7 +451,7 @@ EprocSandbox.V2 = {
                             {
                                 return ' em ' + $('#extraDataValor').value;
                             });
-                            var data = escape(text);
+                            var data = escape(text).replace(/\+/g, '%2B');
                             GM_xmlhttpRequest({
                                 url: 'http://' + that.loginGedpro.host + '/AcessaDocumentoLocalSalva.asp?secao=0000004&codDocumento=' + reg.getAttribute('codigoDocumento') + '&Sair=Sair',
                                 method: 'POST',
