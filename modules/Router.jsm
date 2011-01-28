@@ -162,6 +162,23 @@ Eproc.Router = {
         var script = 'chrome://eproc/content/EprocSandbox/V1.js';
         var sandbox = new Sandbox(doc, address, chromeWindow);
         sandbox.run(script);
+      } else if (window.location.pathname.match(/\/class\/fckeditor\/editor\/fckeditor\.html/)) {
+        var digitar_documento_oncomplete = function(ed)
+        {
+            ed.Events.AttachEvent('OnAfterSetHTML', function(e) { e.ResetIsDirty(); });
+            ed.Config.FullPage = true;
+            ed.Config.ToolbarSets['eProcv2'] = [
+                ['Cut','Copy','Paste','PasteText','PasteWord'],
+                ['Undo','Redo'],
+                ['Bold','Italic','Underline'],
+                ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
+                ['OrderedList','UnorderedList'],
+                ['TextColor'],
+                ['Source']
+            ];
+            ed.ToolbarSet.Load('eProcv2');
+        };
+        window.wrappedJSObject.parent.FCKeditor_OnComplete = digitar_documento_oncomplete;
       }
       if ('undefined' != typeof(sandbox)) {
         this.getEvents().addListener(doc, window, 'unload',
@@ -278,7 +295,7 @@ function Address(url)
    */
   this.url = url.replace('//10.5.3.198/', '//jef3.jfsc.jus.br/');
   var parts = new RegExp('^(https?)' + // scheme
-    '://((?:(?:jef|eproc)[23]?|eproc2d-(?:um|dois|tres)))' + // subdominio
+    '://((?:jef|eproc)[23]?|eproc(?:2d-(?:um|dois|tres)|-(?:apresentacao|[12]g-desenv)|teste))' + // subdominio
     '\.(jf(pr|rs|sc)|trf4)' + // dominio, estado
     '\.(?:gov|jus)\.br/eproc(|V1|V2|2trf4|(?:trf4|v2)_[^/?#]+)/' + // sistema
     '(|([^\.]+)\.php)' + // arquivo, controlador
