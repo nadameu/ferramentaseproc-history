@@ -1253,7 +1253,7 @@ var Eproc = {
         var self = this;
         var txtNumProcesso = document.getElementById('txtNumProcesso');
         if (txtNumProcesso) {
-            txtNumProcesso.setAttribute('maxlength', 20);
+            txtNumProcesso.setAttribute('maxlength', 25);
             txtNumProcesso.setAttribute('onkeypress', '');
             var valorAntigo;
             function limpa(elemento)
@@ -1280,10 +1280,19 @@ var Eproc = {
             {
                 if ((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 105)) {
                     limpa(this);
+                    this.setAttribute('maxlength', 20);
+                } 
+                if (/^\d{2}\/5\d*$/.exec(this.value)) {
+                    this.setAttribute('maxlength', 12);
+                } else if (/^\d{2}\/\d*$/.exec(this.value)) {
+                    this.setAttribute('maxlength', 11);
+                } else if (/^\d{4}\/5\d*$/.exec(this.value)) {
+                    this.setAttribute('maxlength', 14);
+                } else if (/^\d{4}\/\d*$/.exec(this.value)) {
+                    this.setAttribute('maxlength', 13);
+                } else if (this.getAttribute('maxlength') != 20) {
+                    this.setAttribute('maxlength', 25);
                 }
-                if (/^\d{2}\/\d*$/.exec(this.value)) this.setAttribute('maxlength', 11);
-                else if (/^\d{4}\/\d*$/.exec(this.value)) this.setAttribute('maxlength', 13);
-                else this.setAttribute('maxlength', 20);
             }, false);
             txtNumProcesso.addEventListener('keyup', function(e)
             {
@@ -1311,6 +1320,7 @@ var Eproc = {
                     quebra(7, '-');
                     this.value = valor;
                     this.setSelectionRange(inicio, fim);
+                    this.setAttribute('maxlength', 25);
                 }
                 valorAntigo = this.value;
             }, false);
