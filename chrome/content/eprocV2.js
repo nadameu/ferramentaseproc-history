@@ -1152,7 +1152,7 @@ var Eproc = {
                         } else if (match[1] == 'ABERTO') {
                             tr.cells[2].className = 'prazoAberto';
                         } else if (match[1] == 'FECHADO') {
-                            var extraContent = '', fechamento = tr.cells[0].getElementsByTagName('a')[0].getAttribute('onmouseover').match(/Fechamento do Prazo:.*\D(\d+ - [^<]+).*Citado\(s\) \/ Intimado\(s\)/);
+                            var extraContent = '', fechamento = tr.cells[0].getElementsByTagName('a')[0].getAttribute('onmouseover').match(/Fechamento do Prazo:.*\D(\d+ - [^<]+)/);
                             if (fechamento) {
                                 var evento = fechamento[1]
                                 if (! evento.match(/^\d+ - Decurso de Prazo$/)) {
