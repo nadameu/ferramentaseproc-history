@@ -778,23 +778,23 @@ var Eproc = {
 + '.infraTable td label {'
 + '    font-size: 1em;'
 + '}'
-+ 'td.prazoAguardaAbertura {'
++ '.prazoAguardaAbertura {'
 + '    background-color: hsl(0, 50%, 80%);'
 + '}'
-+ 'td.prazoAberto {'
++ '.prazoAberto {'
 + '    background-color: hsl(60, 50%, 80%);'
 + '}'
-+ 'table.prazoComDestaque div.prazoFechado {'
-+ '    background-color: hsl(120, 50%, 80%);'
++ 'table.prazoComDestaque .prazoFechado {'
++ '    background-color: hsla(120, 50%, 50%, 0.2);'
 + '}'
-+ 'span.prazoExtra {'
++ '.prazoExtra {'
 + '    display: none;'
 + '}'
-+ 'table.prazoComDestaque span.prazoExtra {'
++ '.prazoComDestaque .prazoExtra {'
 + '    display: inline;'
 + '}'
-+ 'table.prazoComDestaque div.prazoFechado span.prazoEvento {'
-+ '    background-color: hsl(60, 50%, 80%);'
++ '.prazoComDestaque .prazoFechado .prazoEvento {'
++ '    background-color: hsl(60, 40%, 85%);'
 + '}'
 );
         for (var divs = document.getElementsByTagName('div'), d = divs.length - 1, div; (d >= 0) && (div = divs[d]); d--) {
@@ -1152,15 +1152,16 @@ var Eproc = {
                         } else if (match[1] == 'ABERTO') {
                             tr.cells[2].className = 'prazoAberto';
                         } else if (match[1] == 'FECHADO') {
-                            var extraContent = '', fechamento = tr.cells[0].getElementsByTagName('a')[0].getAttribute('onmouseover').match(/Fechamento do Prazo:.*\D(\d+ - [^<]+)/);
+                            var extraContent = '', fechamento = tr.cells[0].getElementsByTagName('a')[0].getAttribute('onmouseover').match(/Fechamento do Prazo:.*?\d+ - ([^<]+)/);
                             if (fechamento) {
                                 var evento = fechamento[1]
-                                if (! evento.match(/^\d+ - Decurso de Prazo$/)) {
+                                if (evento != 'Decurso de Prazo') {
                                     evento = '<span class="prazoEvento">' + evento + '</span>';
                                 }
                                 extraContent = '<span class="prazoExtra"> (' + evento + ')</span>';
                             }
-                            tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(/(Prazo: .* Status:FECHADO)<br>/, '<div class="prazoFechado">$1' + extraContent + '</div>');
+                            tr.cells[2].className = 'prazoFechado';
+                            tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(/Prazo: .* Status:FECHADO/, '$&' + extraContent);
                         }
                     }
                     if (tr.cells[4].getElementsByTagName('table').length) {
