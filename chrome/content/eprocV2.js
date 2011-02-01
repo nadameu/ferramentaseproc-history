@@ -10,7 +10,7 @@ var Cores = {
     LARANJA: '#f5b574',
     PALHA: '#efd88f',
     ROSA: '#fbc4df',
-    SALMÃO: '#efa88f',
+    SALMAO: '#efa88f',
     VERDE: '#a7eda7',
     VERMELHA: '#db6464'
 }
@@ -68,6 +68,8 @@ var Classes = {
     'CARTA TESTEMUNHÁVEL': Cores.AMARELA,
     'COMUNICAÇÃO DE PRISÃO EM FLAGRANTE': Cores.BRANCA,
     'CONFLITO DE COMPETÊNCIA': Cores.BRANCA,
+    'Conflito de Competência (Seção)': Cores.VERDE,
+    'Conflito de Jurisdição (Seção)': Cores.VERDE,
     'CRIMES AMBIENTAIS': Cores.BRANCA,
     'CUMPRIMENTO DE SENTENÇA': Cores.AMARELA,
     'DECLARAÇÃO DE AUSÊNCIA': Cores.BRANCA,
@@ -128,35 +130,36 @@ var Classes = {
     'LIQUIDAÇÃO PROVISÓRIA POR ARBITRAMENTO': Cores.BRANCA,
     'LIQUIDAÇÃO PROVISÓRIA POR ARTIGOS': Cores.BRANCA,
     'MANDADO DE SEGURANÇA': Cores.PALHA,
+    'Mandado de Segurança (Seção)': Cores.AMARELO,
     'MANDADO DE SEGURANÇA COLETIVO': Cores.PALHA,
     'MEDIDA CAUTELAR DE ALIMENTOS PROVISIONAIS': Cores.AZUL,
     'MEDIDA CAUTELAR DE APREENSÃO DE TÍTULOS': Cores.CINZA,
     'MEDIDA CAUTELAR DE ARRESTO': Cores.BRANCA,
     'MEDIDA CAUTELAR DE ARROLAMENTO DE BENS': Cores.BRANCA,
     'MEDIDA CAUTELAR DE ATENTADO': Cores.BRANCA,
-    'MEDIDA CAUTELAR DE BUSCA E APREENSÃO': Cores.SALMÃO,
-    'MEDIDA CAUTELAR DE CAUÇÃO': Cores.SALMÃO,
-    'MEDIDA CAUTELAR DE EXIBIÇÃO': Cores.SALMÃO,
-    'MEDIDA CAUTELAR DE HOMOLOGAÇÃO DO PENHOR LEGAL': Cores.SALMÃO,
-    'MEDIDA CAUTELAR DE INTERPELAÇÃO': Cores.SALMÃO,
-    'MEDIDA CAUTELAR DE JUSTIFICAÇÃO': Cores.SALMÃO,
-    'MEDIDA CAUTELAR DE NOTIFICAÇÃO': Cores.SALMÃO,
-    'MEDIDA CAUTELAR DE POSSE EM NOME DO NASCITURO': Cores.SALMÃO,
-    'MEDIDA CAUTELAR DE PRODUÇÃO ANTECIPADA DE PROVAS': Cores.SALMÃO,
-    'MEDIDA CAUTELAR DE PROTESTO': Cores.SALMÃO,
-    'MEDIDA CAUTELAR DE SEQUESTRO': Cores.SALMÃO,
-    'MEDIDA CAUTELAR FISCAL': Cores.SALMÃO,
-    'MEDIDA CAUTELAR INOMINADA': Cores.SALMÃO,
-    'NATURALIZAÇÃO': Cores.SALMÃO,
+    'MEDIDA CAUTELAR DE BUSCA E APREENSÃO': Cores.SALMAO,
+    'MEDIDA CAUTELAR DE CAUÇÃO': Cores.SALMAO,
+    'MEDIDA CAUTELAR DE EXIBIÇÃO': Cores.SALMAO,
+    'MEDIDA CAUTELAR DE HOMOLOGAÇÃO DO PENHOR LEGAL': Cores.SALMAO,
+    'MEDIDA CAUTELAR DE INTERPELAÇÃO': Cores.SALMAO,
+    'MEDIDA CAUTELAR DE JUSTIFICAÇÃO': Cores.SALMAO,
+    'MEDIDA CAUTELAR DE NOTIFICAÇÃO': Cores.SALMAO,
+    'MEDIDA CAUTELAR DE POSSE EM NOME DO NASCITURO': Cores.SALMAO,
+    'MEDIDA CAUTELAR DE PRODUÇÃO ANTECIPADA DE PROVAS': Cores.SALMAO,
+    'MEDIDA CAUTELAR DE PROTESTO': Cores.SALMAO,
+    'MEDIDA CAUTELAR DE SEQUESTRO': Cores.SALMAO,
+    'MEDIDA CAUTELAR FISCAL': Cores.SALMAO,
+    'MEDIDA CAUTELAR INOMINADA': Cores.SALMAO,
+    'NATURALIZAÇÃO': Cores.SALMAO,
     'NOMEAÇÃO DE ADVOGADO': Cores.CINZA,
-    'NOTIFICAÇÃO PARA EXPLICAÇÕES': Cores.SALMÃO,
+    'NOTIFICAÇÃO PARA EXPLICAÇÕES': Cores.SALMAO,
     'NOTIFICAÇÃO PARA EXPLICAÇÕES (LEI DE IMPRENSA)': Cores.AMARELA,
-    'OPÇÃO DE NACIONALIDADE': Cores.SALMÃO,
-    'OPOSIÇÃO': Cores.SALMÃO,
-    'ORGANIZAÇÃO E FISCALIZAÇÃO DE FUNDAÇÃO': Cores.SALMÃO,
+    'OPÇÃO DE NACIONALIDADE': Cores.SALMAO,
+    'OPOSIÇÃO': Cores.SALMAO,
+    'ORGANIZAÇÃO E FISCALIZAÇÃO DE FUNDAÇÃO': Cores.SALMAO,
     'OUTRAS MEDIDAS PROVISIONAIS': Cores.VERDE,
     'OUTROS PROCEDIMENTOS DE JURISDIÇÃO VOLUNTÁRIA': Cores.VERDE,
-    'PEDIDO DE ASSISTÊNCIA JUDICIÁRIA': Cores.SALMÃO,
+    'PEDIDO DE ASSISTÊNCIA JUDICIÁRIA': Cores.SALMAO,
     'PEDIDO DE BUSCA E APREENSÃO CRIMINAL': Cores.CINZA,
     'PEDIDO DE LIBERDADE PROVISÓRIA COM OU SEM FIANÇA': Cores.AMARELA,
     'PEDIDO DE PRISÃO PREVENTIVA': Cores.VERDE,
@@ -164,6 +167,7 @@ var Classes = {
     'PEDIDO DE QUEBRA DE SIGILO DE DADOS E/OU TELEFÔNIC': Cores.BRANCA,
     'PEDIDO DE RESPOSTA OU RETIFICAÇÃO DA LEI DE IMPREN': Cores.VERDE,
     'PEDIDO PRISÃO/LIBERDADE VIGIADA FINS DE EXPULSÃO': Cores.CINZA,
+    'Petição (Seção)': Cores.AMARELA,
     'PRESTAÇÃO DE CONTAS - EXIGIDAS': Cores.VERDE,
     'PRESTAÇÃO DE CONTAS - OFERECIDAS': Cores.VERDE,
     'PROCED.INVESTIGATÓRIO DO MP (PEÇAS DE INFORMAÇÃO)': Cores.BRANCA,
@@ -189,6 +193,8 @@ var Classes = {
     'RETIFICAÇÃO DE REGISTRO DE IMÓVEL': Cores.ROSA,
     'SEQÜESTRO - MEDIDAS ASSECURATÓRIAS': Cores.BRANCA,
     'SUPERVENIÊNCIA DOENÇA MENTAL-INCID.EXEC.CRIMINAL': Cores.BRANCA,
+    'Suspensão de Execução de Sentença': Cores.AMARELA,
+    'Suspensão de Liminar ou Antecipação de Tutela': Cores.AMARELA,
     'TERMO CIRCUNSTANCIADO': Cores.BRANCA
 }
 // }}}
@@ -769,6 +775,27 @@ var Eproc = {
 + '.infraBarraComandos, .infraAreaTelaD, .infraAreaDados {'
 + '    border-color: ' + background + ' !important;'
 + '}'
++ '.infraTable td label {'
++ '    font-size: 1em;'
++ '}'
++ 'td.prazoAguardaAbertura {'
++ '    background-color: hsl(0, 50%, 80%);'
++ '}'
++ 'td.prazoAberto {'
++ '    background-color: hsl(60, 50%, 80%);'
++ '}'
++ 'table.prazoComDestaque div.prazoFechado {'
++ '    background-color: hsl(120, 50%, 80%);'
++ '}'
++ 'span.prazoExtra {'
++ '    display: none;'
++ '}'
++ 'table.prazoComDestaque span.prazoExtra {'
++ '    display: inline;'
++ '}'
++ 'table.prazoComDestaque div.prazoFechado span.prazoEvento {'
++ '    background-color: hsl(60, 50%, 80%);'
++ '}'
 );
         for (var divs = document.getElementsByTagName('div'), d = divs.length - 1, div; (d >= 0) && (div = divs[d]); d--) {
             if ((div.className && div.className.match(/^infraLegend/)) || (div.id && div.id.match(/^divDes/))) {
@@ -1078,17 +1105,60 @@ var Eproc = {
                     tr.cells[4].style.backgroundColor = '#' + Lembretes[(r - 1) % Lembretes.length];
                 }
             } else if (table.getAttribute('summary') == 'Eventos') {
-                for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
+                for (var ths = table.getElementsByTagName('th'), h = 1, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
                     th.setAttribute('width', '');
                 }
-                var eventos = [];
+                var check = document.createElement('input');
+                check.type = 'checkbox';
+                check.id = 'extraSemDestaque';
+                table.parentNode.insertBefore(check, table.nextSibling);
+                var label = document.createElement('label');
+                label.textContent = ' Não destacar prazos fechados';
+                label.htmlFor = 'extraSemDestaque';
+                check.parentNode.insertBefore(label, check.nextSibling);
+                if (GM_getValue('v2.semdestaque')) {
+                    check.checked = true;
+                    table.className += ' prazoSemDestaque';
+                } else {
+                    check.checked = false;
+                    table.className += ' prazoComDestaque';
+                }
+                var thisTable = table;
+                check.addEventListener('change', function(e)
+                {
+                    var me = e.target;
+                    var thisTableClasses = thisTable.className.split(' ');
+                    ['prazoSemDestaque', 'prazoComDestaque'].forEach(function(nomeClasse)
+                    {
+                        var indexOfPrazo = thisTableClasses.indexOf(nomeClasse);
+                        if (indexOfPrazo > -1) {
+                            thisTableClasses.splice(indexOfPrazo, 1);
+                        }
+                    });
+                    if (me.checked) {
+                        thisTableClasses.push('prazoSemDestaque');
+                    } else {
+                        thisTableClasses.push('prazoComDestaque');
+                    }
+                    thisTable.className = thisTableClasses.join(' ');
+                }, false);
                 for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
                     if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
                     if (match = tr.cells[2].innerHTML.match(/Prazo: .* Status:([^<]+)/)) {
                         if (match[1] == 'AGUARD. ABERTURA') {
-                            tr.cells[2].style.backgroundColor = 'hsl(0, 50%, 80%)';
+                            tr.cells[2].className = 'prazoAguardaAbertura';
                         } else if (match[1] == 'ABERTO') {
-                            tr.cells[2].style.backgroundColor = 'hsl(60, 50%, 80%)';
+                            tr.cells[2].className = 'prazoAberto';
+                        } else if (match[1] == 'FECHADO') {
+                            var extraContent = '', fechamento = tr.cells[0].getElementsByTagName('a')[0].getAttribute('onmouseover').match(/Fechamento do Prazo:.*\D(\d+ - [^<]+).*Citado\(s\) \/ Intimado\(s\)/);
+                            if (fechamento) {
+                                var evento = fechamento[1]
+                                if (! evento.match(/^\d+ - Decurso de Prazo$/)) {
+                                    evento = '<span class="prazoEvento">' + evento + '</span>';
+                                }
+                                extraContent = '<span class="prazoExtra"> (' + evento + ')</span>';
+                            }
+                            tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(/(Prazo: .* Status:FECHADO)<br>/, '<div class="prazoFechado">$1' + extraContent + '</div>');
                         }
                     }
                     if (tr.cells[4].getElementsByTagName('table').length) {
