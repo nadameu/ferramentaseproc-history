@@ -1136,8 +1136,10 @@ var Eproc = {
                         }
                     });
                     if (me.checked) {
+                        GM_setValue('v2.semdestaque', true);
                         thisTableClasses.push('prazoSemDestaque');
                     } else {
+                        GM_setValue('v2.semdestaque', false);
                         thisTableClasses.push('prazoComDestaque');
                     }
                     thisTable.className = thisTableClasses.join(' ');
