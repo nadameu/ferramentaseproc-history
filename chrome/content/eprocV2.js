@@ -1250,135 +1250,14 @@ var Eproc = {
     // {{{ setLastProcesso()
     setLastProcesso: function()
     {
-        var self = this;
+        var before = document.referrer.match(/\&(txtNumProcesso|num_processo)=([0-9]{20})/);
         var txtNumProcesso = document.getElementById('txtNumProcesso');
         if (txtNumProcesso) {
-            txtNumProcesso.setAttribute('maxlength', 25);
-            txtNumProcesso.setAttribute('onkeypress', '');
-            var valorAntigo;
-            function limpa(elemento)
-            {
-                var inicio = elemento.selectionStart;
-                var fim = elemento.selectionEnd;
-                var valor = elemento.value;
-                if (/^(\d{2}|\d{4})\/\d*$/.exec(valor)) return;
-                var segmentos = valor.split(/[^0-9_]/);
-                segmentos.forEach(function(segmento, s)
-                {
-                    if (s == 0) {
-                        valor = segmento;
-                    } else {
-                        if (inicio > valor.length) inicio--;
-                        if (fim > valor.length) fim--;
-                        valor += segmento;
-                    }
-                });
-                elemento.value = valor;
-                elemento.setSelectionRange(inicio, fim);
-            }
-            txtNumProcesso.addEventListener('keydown', function(e)
-            {
-                if ((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 105)) {
-                    limpa(this);
-                    this.setAttribute('maxlength', 20);
-                } 
-                if (/^\d{2}\/5\d*$/.exec(this.value)) {
-                    this.setAttribute('maxlength', 12);
-                } else if (/^\d{2}\/\d*$/.exec(this.value)) {
-                    this.setAttribute('maxlength', 11);
-                } else if (/^\d{4}\/5\d*$/.exec(this.value)) {
-                    this.setAttribute('maxlength', 14);
-                } else if (/^\d{4}\/\d*$/.exec(this.value)) {
-                    this.setAttribute('maxlength', 13);
-                } else if (this.getAttribute('maxlength') != 20) {
-                    this.setAttribute('maxlength', 25);
-                }
-            }, false);
-            txtNumProcesso.addEventListener('keyup', function(e)
-            {
-                var inicio = this.selectionStart;
-                var fim = this.selectionEnd;
-                var valor = this.value;
-                if (/^(\d{2}|\d{4})\/\d*$/.exec(valor)) return;
-                if (valor != valorAntigo) {
-                    limpa(this);
-                    var inicio = this.selectionStart;
-                    var fim = this.selectionEnd;
-                    var valor = this.value;
-                    function quebra(posicao, caractere)
-                    {
-                        if (valor.length > posicao) {
-                            valor = valor.substr(0, posicao) + caractere + valor.substr(posicao);
-                            if (inicio > posicao) inicio++;
-                            if (fim > posicao) fim++;
-                        }
-                    }
-                    quebra(16, '.');
-                    quebra(14, '.');
-                    quebra(13, '.');
-                    quebra(9, '.');
-                    quebra(7, '-');
-                    this.value = valor;
-                    this.setSelectionRange(inicio, fim);
-                    this.setAttribute('maxlength', 25);
-                }
-                valorAntigo = this.value;
-            }, false);
-            txtNumProcesso.addEventListener('change', (function() { return function() { self.onNumprocChange.apply(self, arguments); }; })(), false);
-            if (before = document.referrer.match(/\&(txtNumProcesso|num_processo)=([0-9]{20})/)) {
+            if (before) {
                 txtNumProcesso.value = before[2];
             }
             txtNumProcesso.select();
         }
-    },
-    // }}}
-    // {{{ onNumprocChange()
-    onNumprocChange: function(e)
-    {
-        var ano, anoAtual = new Date().getFullYear();
-        var numproc = e.target.value;
-        var lixo, novoAno, novoNumproc;
-        var match = /^(\d{2}|\d{4})\/(\d*)$/.exec(numproc);
-        if (match) {
-            var novoAno = match[1], novoNumproc = match[2];
-            if (novoAno.length == 2) novoAno = '20' + novoAno;
-            if (novoAno >= 2009 && novoAno <= anoAtual) {
-                ano = novoAno;
-                numproc = novoNumproc;
-            }
-        }
-        var segmentos = numproc.split(/[^0-9]/);
-        segmentos.forEach(function(segmento, s)
-        {
-            if (s == 0) {
-                numproc = segmento;
-            } else {
-                numproc += segmento;
-            }
-        }, this);
-        if (numproc.length < 3 || numproc.length > 8) return;
-        var dd = numproc.substr(numproc.length - 2);
-        numproc = numproc.substr(0, numproc.length - 2);
-        while (numproc.length < 6) {
-            numproc = '0' + numproc;
-        }
-        while (numproc.length < 7) {
-            numproc = '5' + numproc;
-        }
-        if (!ano) {
-            for (var a = 2009; a <= anoAtual; a++) {
-                var r1 = numproc % 97;
-                var r2 = ('' + r1 + a + '404') % 97;
-                var r3 = ('' + r2 + GM_getValue('v2.secao') + GM_getValue('v2.subsecao') + dd) % 97;
-                if (r3 == 1) ano = a;
-            }
-            if (!ano) throw new Error('Dígito verificador inválido!');
-        }
-        numproc = numproc + '-' + dd;
-        while (numproc.length < 14) {
-            numproc += '.' + ano + '.4.04.' + GM_getValue('v2.secao') + GM_getValue('v2.subsecao');
-        }
-        e.target.value = numproc;
     },
     // }}}
 }

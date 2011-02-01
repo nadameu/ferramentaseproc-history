@@ -60,11 +60,9 @@ var Options = {
             'v1.vara',
             'v1.alteracao_assunto.enable',
             'v1.eproc.enable',
+            'v2.semdestaque',
 			'v2.enable',
-//			'v2.fundo',
 			'v2.perfil',
-			'v2.secao',
-			'v2.subsecao',
             'v2.ielocation'
         ];
         this.action('get');
@@ -91,14 +89,9 @@ var Commands = {
         Commands.on_v1_html_to_pdf_enable();
     },
 
-    on_v1_html_to_pdf_enable: function()
-    {
-        Commands.process('v1_html_to_pdf_enable', 'v1_secao v1_subsecao v1_vara');
-    },
-
     on_v2_enable: function()
     {
-        Commands.process('v2_enable', 'v2_perfil v2_secao v2_subsecao');
+        Commands.process('v2_enable', 'v2_perfil v2_semdestaque');
     },
 
     on_v2_ielocation: function()
@@ -113,6 +106,6 @@ var Commands = {
         picker.appendFilters(1);
 
         if(picker.show()==0) document.getElementById('v2_ielocation').value=picker.file.target; // load path into field
-    },
+    }
 
 }
