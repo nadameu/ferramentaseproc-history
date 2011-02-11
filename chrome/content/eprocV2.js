@@ -775,6 +775,9 @@ var Eproc = {
 + '.infraBarraComandos, .infraAreaTelaD, .infraAreaDados {'
 + '    border-color: ' + background + ' !important;'
 + '}'
++ 'div.infraBarraTribunal {'
++ '    -moz-background-size: 1px 80px;'
++ '}'
 + '.infraTable td label {'
 + '    font-size: 1em;'
 + '}'
@@ -1043,7 +1046,7 @@ var Eproc = {
                             var div = document.createElement('div');
                             div.innerHTML = response.responseText;
                             var semPreventos = div.textContent.match(/Não há preventos/g);
-                            var resultLinks = div.querySelectorAll('#divInfraAreaTela a');
+                            var resultLinks = div.querySelectorAll('#frmProcessoLista a');
                             if (semPreventos && semPreventos.length == 3) {
                                 myLink.parentNode.replaceChild(document.createTextNode('Não há preventos.'), myLink);
                             } else if (resultLinks.length) {
@@ -1108,42 +1111,7 @@ var Eproc = {
                 for (var ths = table.getElementsByTagName('th'), h = 1, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
                     th.setAttribute('width', '');
                 }
-                var check = document.createElement('input');
-                check.type = 'checkbox';
-                check.id = 'extraSemDestaque';
-                table.parentNode.insertBefore(check, table.nextSibling);
-                var label = document.createElement('label');
-                label.textContent = ' Não destacar prazos fechados';
-                label.htmlFor = 'extraSemDestaque';
-                check.parentNode.insertBefore(label, check.nextSibling);
-                if (GM_getValue('v2.semdestaque')) {
-                    check.checked = true;
-                    table.className += ' prazoSemDestaque';
-                } else {
-                    check.checked = false;
-                    table.className += ' prazoComDestaque';
-                }
-                var thisTable = table;
-                check.addEventListener('change', function(e)
-                {
-                    var me = e.target;
-                    var thisTableClasses = thisTable.className.split(' ');
-                    ['prazoSemDestaque', 'prazoComDestaque'].forEach(function(nomeClasse)
-                    {
-                        var indexOfPrazo = thisTableClasses.indexOf(nomeClasse);
-                        if (indexOfPrazo > -1) {
-                            thisTableClasses.splice(indexOfPrazo, 1);
-                        }
-                    });
-                    if (me.checked) {
-                        GM_setValue('v2.semdestaque', true);
-                        thisTableClasses.push('prazoSemDestaque');
-                    } else {
-                        GM_setValue('v2.semdestaque', false);
-                        thisTableClasses.push('prazoComDestaque');
-                    }
-                    thisTable.className = thisTableClasses.join(' ');
-                }, false);
+		var haPrazosFechados = false;
                 for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
                     if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
                     if (match = tr.cells[2].innerHTML.match(/Prazo: .* Status:([^<]+)/)) {
@@ -1152,6 +1120,7 @@ var Eproc = {
                         } else if (match[1] == 'ABERTO') {
                             tr.cells[2].className = 'prazoAberto';
                         } else if (match[1] == 'FECHADO') {
+                            haPrazosFechados = true;
                             var extraContent = '', fechamento = tr.cells[0].getElementsByTagName('a')[0].getAttribute('onmouseover').match(/Fechamento do Prazo:.*?\d+ - ([^<]+)/);
                             if (fechamento) {
                                 var evento = fechamento[1]
@@ -1202,6 +1171,44 @@ var Eproc = {
                         })('' + Eproc.processo + r + link.innerHTML.replace(/<[^>]*>/g, ''), link), false);
                     }
                 }
+		if (haPrazosFechados) {
+                    var check = document.createElement('input');
+                    check.type = 'checkbox';
+                    check.id = 'extraSemDestaque';
+                    table.parentNode.insertBefore(check, table.nextSibling);
+                    var label = document.createElement('label');
+                    label.textContent = ' Não destacar prazos fechados';
+                    label.htmlFor = 'extraSemDestaque';
+                    check.parentNode.insertBefore(label, check.nextSibling);
+                    if (GM_getValue('v2.semdestaque')) {
+                        check.checked = true;
+                        table.className += ' prazoSemDestaque';
+                    } else {
+                        check.checked = false;
+                        table.className += ' prazoComDestaque';
+                    }
+                    var thisTable = table;
+                    check.addEventListener('change', function(e)
+                    {
+                        var me = e.target;
+                        var thisTableClasses = thisTable.className.split(' ');
+                        ['prazoSemDestaque', 'prazoComDestaque'].forEach(function(nomeClasse)
+                        {
+                            var indexOfPrazo = thisTableClasses.indexOf(nomeClasse);
+                            if (indexOfPrazo > -1) {
+                                thisTableClasses.splice(indexOfPrazo, 1);
+                            }
+                        });
+                        if (me.checked) {
+                            GM_setValue('v2.semdestaque', true);
+                            thisTableClasses.push('prazoSemDestaque');
+                        } else {
+                            GM_setValue('v2.semdestaque', false);
+                            thisTableClasses.push('prazoComDestaque');
+                        }
+                        thisTable.className = thisTableClasses.join(' ');
+                    }, false);
+		}
             }
         }
         window.addEventListener('beforeunload', function(e)
