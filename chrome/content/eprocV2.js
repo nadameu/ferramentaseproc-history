@@ -799,12 +799,19 @@ var Eproc = {
 + '.prazoComDestaque .prazoFechado .prazoEvento {'
 + '    background-color: hsl(60, 40%, 85%);'
 + '}'
++ 'div.infraAjaxAutoCompletar { max-height: 30em; overflow-y: scroll; } div.infraAjaxAutoCompletar li a { display: block; margin-left: 3ex; text-indent: -3ex; } div.infraAjaxAutoCompletar li.selected { background-color: Highlight; } div.infraAjaxAutoCompletar li.selected a, div.infraAjaxAutoCompletar li.selected b { color: HighlightText; }'
 );
-        for (var divs = document.getElementsByTagName('div'), d = divs.length - 1, div; (d >= 0) && (div = divs[d]); d--) {
-            if ((div.className && div.className.match(/^infraLegend/)) || (div.id && div.id.match(/^divDes/))) {
+	Array.prototype.forEach.call(document.querySelectorAll('label[onclick^="listarTodos"], label[onclick^="listarEventos"], #txtEntidade, #txtPessoaEntidade'), function(auto)
+        {
+          var id = auto.id.replace('lblListar', 'txt');
+          auto = document.querySelector('#' + id);
+          if (auto) {
+            auto.style.width = auto.clientWidth + 'px';
+          }
+        }, this);
+	Array.prototype.forEach.call(document.querySelectorAll('div[class^=infraLegend], div[id^=divDes]'), function(div) {
                 div.style.backgroundColor = background;
-            }
-        }
+	});
     },
     // }}}
     // {{{ painel_orgao_processo_listar()
