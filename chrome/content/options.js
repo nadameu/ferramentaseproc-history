@@ -86,7 +86,6 @@ var Commands = {
     on_v1_enable: function()
     {
         Commands.process('v1_enable', 'v1_consulta_processo_enable v1_html_to_pdf_enable v1_alteracao_assunto_enable v1_eproc_enable');
-        Commands.on_v1_html_to_pdf_enable();
     },
 
     on_v2_enable: function()

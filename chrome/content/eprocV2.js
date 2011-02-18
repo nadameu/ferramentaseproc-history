@@ -824,6 +824,13 @@ var Eproc = {
     prevencao_judicial: function()
     {
         this.setLastProcesso();
+        if (document.referrer.match(/\?acao=processo_selecionar&/)) {
+            var voltarem = document.querySelectorAll('button[id=btnVoltar]');
+            Array.prototype.forEach.call(voltarem, function(voltar)
+            {
+                voltar.setAttribute('onclick', 'location.href="' + document.referrer + '";');
+            });
+        }
     },        
     // }}}
     // {{{ prevencao_judicial_bloco()
@@ -961,7 +968,6 @@ var Eproc = {
     processo_localizador_listar: function()
     {
         this.setLastProcesso();
-        document.getElementById('btnFechar').setAttribute('onclick', 'location.href="' + document.referrer + '";');
     },        
     // }}}
     // {{{ processo_movimentar()
@@ -1018,68 +1024,48 @@ var Eproc = {
                 } else if (link.title == 'Link para o GEDPRO não pôde ser gerado.') {
                     link.getElementsByTagName('u')[0].style.textDecoration = 'line-through';
                 }
-            } else if (/controlador\.php\?acao=prevencao_judicial\&/.exec(link.href) && link.className == 'infraMenuFilho') {
-                var informacoes = document.getElementById('fldInformacoesAdicionais').getElementsByTagName('table')[0], row = informacoes.insertRow(informacoes.rows.length), labelCell = row.insertCell(0), cell = row.insertCell(1);
-                labelCell.align = 'right';
-                labelCell.innerHTML = '<label>Preventos:</label>';
-                var myLink = document.createElement('a'), myLinkClicked = false;
-                myLink.href = link.href;
-                myLink.textContent = 'Buscar preventos'
-                myLink.addEventListener('click', function(e)
-                {
-                    if (e.ctrlKey || e.shiftKey) return;
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (myLinkClicked) return;
-                    myLinkClicked = true;
-                    var myOldText = myLink.textContent;
-                    myLink.textContent = 'Aguarde, carregando...';
-                    var data = 'hdnInfraTipoPagina=1&selSistema=Todos&txtNumProcesso=' + Eproc.processo + '&hdnInfraSelecoes=&hdnInfraTotalRegistros=0';
+            } else if (link.id == 'Prevencao') {
+                if (link.textContent.match(/NÃO executada/)) {
+                    var linkPrevencao = link, linkPrevencaoClicado = false, linkPrevencaoOldText = linkPrevencao.textContent;
+                    var onLinkPrevencaoClick;
                     var restore = function()
                     {
-                        alert('Ocorreu um erro durante a busca. Favor tentar novamente.');
-                        myLink.textContent = myOldText;
-                        myLinkClicked = false;
-                    }
-                    GM_xmlhttpRequest({
-                        url: e.target.href,
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        data: data,
-                        onload: function(response)
-                        {
-                            var div = document.createElement('div');
-                            div.innerHTML = response.responseText;
-                            var semPreventos = div.textContent.match(/Não há preventos/g);
-                            var resultLinks = div.querySelectorAll('#frmProcessoLista a');
-                            if (semPreventos && semPreventos.length == 3) {
-                                myLink.parentNode.replaceChild(document.createTextNode('Não há preventos.'), myLink);
-                            } else if (resultLinks.length) {
-                                var parentNode = myLink.parentNode;
-                                parentNode.innerHTML = '';
-                                for (var rl = 0, resultLink; resultLink = resultLinks[rl]; rl++) {
-                                    resultLink.target = '_blank';
-                                    parentNode.appendChild(resultLink);
-                                    parentNode.appendChild(document.createElement('br'));
+                        alert('Ocorreu um erro. Favor tentar novamente.');
+                        linkPrevencao.textContent = linkPrevencaoOldText;
+                        linkPrevencao.removeEventListener('click', onLinkPrevencaoClick, false);
+                        linkPrevencaoClicado = false;
+                    };
+                    onLinkPrevencaoClick = function(e)
+                    {
+                        if (e.ctrlKey || e.shiftKey) return;
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (linkPrevencaoClicado) return;
+                        linkPrevencaoClicado = true;
+                        e.target.textContent = 'Aguarde, executando...';
+                        GM_xmlhttpRequest({
+                            url: e.target.href.replace(/'\);$/, ''),
+                            method: 'GET',
+                            onload: function(response)
+                            {
+                                var div = document.createElement('div');
+                                div.innerHTML = response.responseText;
+                                var form = div.querySelector('#frmProcessoLista');
+                                if (form) {
+                                    form.action = response.responseText.match(/controlador\.php\?acao=prevencao_judicial&[^']+/);
+                                    form.querySelector('#acao').value = 'prevencao_judicial';
+                                    form.style.display = 'none';
+                                    document.body.appendChild(form);
+                                    form.submit();
+                                } else {
+                                    restore();
                                 }
-                            } else {
-                                restore();
-                            }
-                        },
-                        onerror: function(response)
-                        {
-                            restore();
-                        }
-                    });
-                }, false);
-                myLink.style.fontWeight = 'bold';
-                myLink.style.color = 'rgb(102, 102, 102)';
-                var label = document.createElement('label');
-                label.className = 'infraLabelObrigatorio';
-                label.appendChild(myLink);
-                cell.appendChild(label);
+                            },
+                            onerror: restore
+                        });
+                    };
+                    link.addEventListener('click', onLinkPrevencaoClick, false);
+                }
             }
         }
         if (document.getElementById('lblProcRel')) {
@@ -1271,8 +1257,103 @@ var Eproc = {
                 txtNumProcesso.value = before[2];
             }
             txtNumProcesso.select();
+            txtNumProcesso.addEventListener('change', this.onNumProcessoChange, false);
         }
     },
+    onNumProcessoChange: function(e)
+    {
+        var txtNumProcesso = e.target;
+        var possiveis = Eproc.getPossiveis(txtNumProcesso.value);
+        if (possiveis.length == 1) {
+            txtNumProcesso.value = possiveis[0];
+            return;
+        } else if (possiveis.length > 1) {
+            var message = [];
+            for (var i = 0, possivel; possivel = possiveis[i]; i++) {
+                message.push((i + 1) + '. ' + Eproc.getNumprocF(possivel));
+            }
+            var escolha = prompt('Escolha:\n' + message.join('\n'));
+            if (escolha) {
+                txtNumProcesso.value = possiveis[escolha - 1];
+            }
+            return;
+        }
+    },
+    getPossiveis: function(numproc)
+    {
+        var possibilidades = [];
+        var ano, anoAtual = new Date().getFullYear();
+        var novoAno, novoNumproc;
+        var match = /^(\d*)\/(\d{2}|\d{4})$/.exec(numproc);
+        if (match) {
+            var novoNumproc = match[1], novoAno = match[2];
+            if (novoAno.length == 2) novoAno = '20' + novoAno;
+            if (novoAno >= 2009 && novoAno <= anoAtual) {
+                ano = novoAno;
+                numproc = novoNumproc;
+            }
+        }
+        var segmentos = numproc.split(/[^0-9]/);
+        segmentos.forEach(function(segmento, s)
+        {
+            if (s == 0) {
+                numproc = segmento;
+            } else {
+                numproc += segmento;
+            }
+        }, this);
+        if (numproc.length < 3 || numproc.length > 8) return possibilidades;
+        var dd = numproc.substr(numproc.length - 2);
+        numproc = numproc.substr(0, numproc.length - 2);
+        while (numproc.length < 6) {
+            numproc = '0' + numproc;
+        }
+        while (numproc.length < 7) {
+            numproc = '5' + numproc;
+        }
+        var se = '04', maxSu = 0;
+        var linkSecao = document.getElementById('divInfraBarraTribunalE').getElementsByTagName('a')[0];
+        var estado = linkSecao.hostname.match(/\.jf(pr|rs|sc)\.(?:gov|jus)\.br/);
+        if (estado) {
+            switch (estado[1]) {
+                case 'pr':
+                    se = '70';
+                    maxSu = 17;
+                    break;
+                    
+                case 'rs':
+                    se = '71';
+                    maxSu = 20;
+                    break;
+                    
+                case 'sc':
+                    se = '72';
+                    maxSu = 16;
+                    break;
+                    
+            }
+        }
+        for (var su = 0; su < maxSu; su++) {
+            if (su.toString().length == 1) su = '0' + su;
+            for (var a = 2009; a <= anoAtual; a++) {
+                var r1 = numproc % 97;
+                var r2 = ('' + r1 + a + '404') % 97;
+                var r3 = ('' + r2 + se + su + dd) % 97;
+                if (r3 == 1) possibilidades.push(numproc + dd + a + '404' + se + su);
+            }
+        }
+        return possibilidades;
+    },
+    getNumprocF: function(numproc)
+    {
+        var numprocF = '';
+        for (var i = 0, d; d = numproc.substr(i, 1); i++) {
+            if (i == 7) numprocF += '-';
+            if (i == 9 || i == 13 || i == 14 || i == 16) numprocF += '.';
+            numprocF += d;
+        }
+        return numprocF;
+    }
     // }}}
 }
 // }}}
