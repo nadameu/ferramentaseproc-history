@@ -323,28 +323,206 @@ var Eproc = {
     // {{{ entrar()
     entrar: function()
     {
-        if (document.getElementsByName('rdoUsuario').length) {
-            var padrao = GM_getValue('v2.perfil');
-            for (var perfis = document.getElementsByName('rdoUsuario'), pl = perfis.length, p = 0; (p < pl) && (perfil = perfis[p]); p++) {
-                var row = perfil.parentNode
-                do {
-                    row = row.parentNode;
-                } while (row.tagName.toLowerCase() != 'tr');
-                var id = row.getAttribute('onclick').match(/acaoLogar\('(\d+)'\);/)[1];
-                if (id == padrao) {
-                    perfil.checked = true;
-                    unsafeWindow.infraExibirAviso();
-                    unsafeWindow.acaoLogar(id);
-                } else {
-                    row.addEventListener('click', (function(id) { return function(e)
-                    {
-                        if (confirm('Definir este usuário/lotação como padrão?')) {
-                            GM_setValue('v2.perfil', id);
-                        }
-                        unsafeWindow.acaoLogar(id);
-                    }; })(id), false);
-                }
+        function Perfil(perfil)
+        {
+            for (n in perfil) {
+                if (n in this) this[n] = perfil[n];
             }
+        }
+        Perfil.prototype = {
+            get isPadrao()
+            {
+                var idPadrao = GM_getValue('v2.perfil');
+                return this.id == idPadrao;
+            },
+            id: null,
+            sigla: null,
+            nome: null,
+            tipo: null,
+            orgao: null,
+            siglaOrgao: null,
+            get row()
+            {
+                return this._row;
+            },
+            set row(row)
+            {
+                this._row = row;
+                var me = this;
+                this.addListener(function(){me.selecionar();});
+            },
+            addButton: function()
+            {
+                var button = document.createElement('button');
+                button.textContent = 'Tornar padrão';
+                var me = this;
+                button.addEventListener('click', function(e)
+                {
+                    if (confirm('Deseja tornar o perfil "' + me + '" o padrão para os próximos logins?')) {
+                        me.definirComoPadrao();
+                    } else {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                }, false);
+                if (this.isPadrao) button.disabled = true;
+                var row = this.row, cell = row.insertCell(row.cells.length);
+                cell.appendChild(button);
+            },
+            addListener: function(fn)
+            {
+                this.row.addEventListener('click', fn, false);
+            },
+            definirComoPadrao: function()
+            {
+                GM_setValue('v2.perfil', this.id);
+            },
+            selecionar: function()
+            {
+                this.row.cells[0].getElementsByTagName('input')[0].checked = true;
+            },
+            toString: function()
+            {
+                return [this.siglaOrgao, this.tipo].join(' / ');
+            }            
+        };
+        Perfil.fromRow = function(row)
+        {
+            var perfil = {};
+            perfil.id = row.getAttribute('onclick').match(/^acaoLogar\('(\d+)'\);$/)[1];
+            var siglaNome = row.cells[1].getElementsByTagName('div')[0].innerHTML.split('&nbsp;&nbsp;/&nbsp;&nbsp;');
+            perfil.sigla = siglaNome[0];
+            perfil.nome = siglaNome[1];
+            perfil.tipo = row.cells[2].textContent;
+            var orgaoSigla = row.cells[3].textContent.match(/^(.*) +\((.*)\)$/);
+            perfil.orgao = orgaoSigla[1];
+            perfil.siglaOrgao = orgaoSigla[2];
+            perfil = new Perfil(perfil);
+            perfil.row = row;
+            return perfil;
+        };
+        function Perfis(perfis)
+        {
+            var me = this;
+            perfis.forEach(function(perfil)
+            {
+                me.push(perfil);
+            });
+        }
+        Perfis.prototype = new Array();
+        Perfis.prototype.toString = function()
+        {
+            return this.join(',');
+        };
+        Perfis.prototype.__defineGetter__('hasPadrao', function()
+        {
+            return 'undefined' != typeof this.getPadrao();
+        });
+        Perfis.prototype.getPadrao = function()
+        {
+            var padrao = false;
+            this.forEach(function(perfil)
+            {
+                if (perfil.isPadrao) padrao = perfil;
+            });
+            if (padrao) return padrao;
+        }
+        Perfis.prototype.createAviso = function()
+        {
+            var aviso = new Aviso();
+            aviso.inserir(this.fieldset);
+            return aviso;
+        }
+        Perfis.fromFieldset = function(fieldset)
+        {
+            var perfis = [];
+            var table = fieldset.getElementsByTagName('table')[0];
+            Array.prototype.forEach.call(table.rows, function(row)
+            {
+                var perfil = Perfil.fromRow(row);
+                perfis.push(perfil);
+            });
+            perfis = new Perfis(perfis);
+            perfis.fieldset = fieldset;
+            return perfis;
+        };
+        function Aviso()
+        {
+            this.aviso = document.createElement('div');
+            this.mensagem = document.createElement('label');
+            this.mensagem.style.color = 'red';
+            this.cancelar = document.createElement('button');
+            this.cancelar.textContent = 'Cancelar login automático';
+            this.aviso.appendChild(this.mensagem);
+            this.aviso.appendChild(this.cancelar);
+        }
+        Aviso.prototype = {
+            inserir: function(parentNode)
+            {
+                this.parentNode = parentNode;
+                this.parentNode.appendChild(this.aviso);
+            },
+            esconder: function()
+            {
+                this.parentNode.removeChild(this.aviso);
+            },
+            atualizar: function(t) {
+                var text = 'Carregando perfil padrão em ' + t + ' ' + (t > 1 ? 'segundos' : 'segundo') + '...';
+                this.mensagem.textContent = text;
+            },
+            createTimer: function(padrao)
+            {
+                var timer = new Timer(this, padrao.id);
+                padrao.selecionar();
+                this.cancelar.addEventListener('click', function(e)
+                {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    timer.cancelar();
+                }, false);
+                return timer;
+            }
+        }
+        function Timer(aviso, id)
+        {
+            var timer;
+            var timeRemaining = 3;
+            aviso.atualizar(timeRemaining);
+            var me = this;
+            this.executa = function()
+            {
+                if (timeRemaining > 1) {
+                    timeRemaining -= 1;
+                    aviso.atualizar(timeRemaining);
+                } else {
+                    me.cancelar();
+                    unsafeWindow.acaoLogar(id);
+                }
+            };
+            this.cancelar = function()
+            {
+                window.clearInterval(timer);
+                aviso.esconder();
+            };
+            timer = window.setInterval(me.executa, 1000);
+        }
+        var fieldset = document.getElementById('fldLogin');
+        var perfis = Perfis.fromFieldset(fieldset);
+        if (perfis.length > 0) {
+            document.getElementById('fldLogin').style.left = '15%';
+            if (perfis.hasPadrao) {
+                var padrao = perfis.getPadrao();
+                var aviso = perfis.createAviso();
+                var timer = aviso.createTimer(padrao);
+                perfis.forEach(function(perfil)
+                {
+                    perfil.addListener(timer.cancelar);
+                });
+            }
+            perfis.forEach(function(perfil)
+            {
+                perfil.addButton();
+            });
         }
     },
     // }}}
@@ -667,6 +845,10 @@ var Eproc = {
                 this.form.submit();
             }, false);
         }
+        var pesquisaRapida = document.getElementById('txtNumProcessoPesquisaRapida');
+        if (pesquisaRapida) {
+            pesquisaRapida.addEventListener('change', this.onNumProcessoChange, false);
+        }
         if (this.acao && this[this.acao]) {
             this[this.acao]();
         } else if (this.parametros.acao_origem && this[this.parametros.acao_origem + '_destino']) {
@@ -709,10 +891,10 @@ var Eproc = {
         GM_setValue('v2.fundo', background);
         document.getElementsByTagName('body')[0].style.backgroundColor = background;
         GM_addStyle(''
-+ 'input, select {'
++ '#divInfraAreaTela input, select {'
 + '    background-color: hsla(0, 0%, 80%, 0.25);'
 + '}'
-+ 'input:focus {'
++ '#divInfraAreaTela input:focus {'
 + '    background-color: hsla(0, 0%, 50%, 0.5);'
 + '}'
 + 'select:focus {'
@@ -798,6 +980,12 @@ var Eproc = {
 + '}'
 + '.prazoComDestaque .prazoFechado .prazoEvento {'
 + '    background-color: hsl(60, 40%, 85%);'
++ '}'
++ '*[disabled] {'
++ '    color: #aaa;'
++ '}'
++ 'button {'
++ '    background-color: #eee;'
 + '}'
 + 'div.infraAjaxAutoCompletar { max-height: 30em; overflow-y: scroll; } div.infraAjaxAutoCompletar li a { display: block; margin-left: 3ex; text-indent: -3ex; } div.infraAjaxAutoCompletar li.selected { background-color: Highlight; } div.infraAjaxAutoCompletar li.selected a, div.infraAjaxAutoCompletar li.selected b { color: HighlightText; }'
 );
