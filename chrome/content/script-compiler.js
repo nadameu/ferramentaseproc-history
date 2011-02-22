@@ -130,7 +130,22 @@ injectScript: function(script, url, unsafeContentWin) {
     sandbox.GM_log=myDump; //function(){};
     sandbox.GM_getResourceURL=function(){};
     sandbox.GM_getResourceText=function(){};
-
+    sandbox.GM_confirmCheck=function(title, text, chkMsg, chkState)
+    {
+        var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+            .getService(Components.interfaces.nsIPromptService);
+        var result = prompts.confirmCheck(null, title, text, chkMsg, chkState);
+        return result;
+    };
+    sandbox.GM_yesNo=function(title, text)
+    {
+        var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+            .getService(Components.interfaces.nsIPromptService);
+        var flags = prompts.BUTTON_POS_0 * prompts.BUTTON_TITLE_YES  +
+                    prompts.BUTTON_POS_1 * prompts.BUTTON_TITLE_NO;
+        var button = prompts.confirmEx(null, title, text, flags, '', '', '', '', {value: false});
+        return button;
+    };
     sandbox.__proto__=sandbox.window;
 
     try {

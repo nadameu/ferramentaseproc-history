@@ -806,11 +806,14 @@ var Eproc = {
                 for (var options = this.getElementsByTagName('option'), ol = options.length, option, o = 0; (o < ol) && (option = options[o]); o++) {
                     if (option.getAttribute('selected')) break;
                 }
-                var padrao = prompt('Perfil selecionado: ' + options[this.selectedIndex].textContent + '\n\nDefinir este perfil como padrão?', 'N');
-                if (null === padrao) {
+                var padrao = {value: false};
+                var msgPadrao = (this.value != GM_getValue('v2.perfil')) ? 'Definir este perfil como padrão' : '';
+                var mudanca = GM_confirmCheck('Mudança de perfil',
+                    'Perfil selecionado: ' + options[this.selectedIndex].textContent, msgPadrao, padrao);
+                if (!mudanca) {
                     this.value = option.value;
                     return;
-                } else if (String(padrao).toLowerCase()[0] == 's') {
+                } else if (padrao.value == true) {
                     GM_setValue('v2.perfil', this.value);
                 }
                 this.form.submit();
@@ -1345,10 +1348,14 @@ var Eproc = {
                 }
             }
             if (windows.length) {
-                if (confirm('Este processo possui ' + windows.length + ' ' + (windows.length > 1 ? 'janelas abertas' : 'janela aberta') + '.\nDeseja fechá-' + (windows.length > 1 ? 'las' : 'la') + '?')) {
+                var resposta = GM_yesNo('Janelas abertas', 'Este processo possui ' + windows.length + ' ' + (windows.length > 1 ? 'janelas abertas' : 'janela aberta') + '.\nDeseja fechá-' + (windows.length > 1 ? 'las' : 'la') + '?');
+                if (resposta == 0) {
                     for (var w = windows.length - 1; w >= 0; w--) {
                         windows[w].close();
                     }
+                } else {
+                    e.preventDefault();
+                    e.stopPropagation();
                 }
             }
             delete Eproc;
