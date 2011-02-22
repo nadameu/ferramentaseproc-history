@@ -1,4 +1,3 @@
-// {{{ Cores
 var Cores = {
     AMARELA: '#efef8f',
     AZUL: '#8fbfef',
@@ -14,8 +13,6 @@ var Cores = {
     VERDE: '#a7eda7',
     VERMELHA: '#db6464'
 }
-// }}}
-// {{{ Classes
 var Classes = {
     'AÇÃO CIVIL PÚBLICA': Cores.VERDE,
     'AÇÃO CIVIL PÚBLICA DE IMPROBIDADE ADMINISTRATIVA': Cores.VERDE,
@@ -197,66 +194,53 @@ var Classes = {
     'Suspensão de Liminar ou Antecipação de Tutela': Cores.AMARELA,
     'TERMO CIRCUNSTANCIADO': Cores.BRANCA
 }
-// }}}
-// {{{ Eproc
 var Eproc = {
-    // {{{ Variáveis
     acao: '',
     pagina: '',
     processo: 0,
     windows: [],
-    // }}}
-    // {{{ citacao_bloco_filtrar_destino()
     citacao_bloco_filtrar_destino: function()
     {
-        Eproc.colorirTabela(2, 'Tabela de Processos.');
+        Eproc.colorirTabela('Tabela de Processos.');
     },
-    // }}}
-    // {{{ citacao_bloco_listar_destino()
     citacao_bloco_listar_destino: function()
     {
-        Eproc.colorirTabela(2, 'Tabela de Processos.');
+        Eproc.colorirTabela('Tabela de Processos.');
     },
-    // }}}
-    // {{{ intimacao_bloco_filtrar_destino()
     intimacao_bloco_filtrar_destino: function()
     {
-        Eproc.colorirTabela(2, 'Tabela de Processos.');
+        Eproc.colorirTabela('Tabela de Processos.');
     },
-    // }}}
-    // {{{ intimacao_bloco_listar_destino()
     intimacao_bloco_listar_destino: function()
     {
-        Eproc.colorirTabela(2, 'Tabela de Processos.');
+        Eproc.colorirTabela('Tabela de Processos.');
     },
-    // }}}
-    // {{{ colorirTabela()
-    colorirTabela: function(col, summary)
+    colorirTabela: function(summary)
     {
-        var noCheckbox = (arguments.length <= 2 ? false : arguments[2]);
-        for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
-            if (table.getAttribute('summary') == summary) {
-                table.setAttribute('width', '');
-                for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
-                    th.setAttribute('width', '');
-                    if (th.textContent == 'Classe') {
-                        col = h;
-                    }
+        var tables = document.querySelectorAll('table[summary="' + summary + '"]');
+        if (tables.length == 1) {
+            var table = tables[0];
+            table.setAttribute('width', '');
+            var col;
+            Array.prototype.forEach.call(table.getElementsByTagName('th'), function(th, h)
+            {
+                th.setAttribute('width', '');
+                if (th.textContent == 'Classe') {
+                    col = h;
                 }
-                for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
-                    if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
-                    tr.cells[noCheckbox ? 0 : 1].getElementsByTagName('a')[0].setAttribute('target', '_blank');
-                    if (col) {
-                        var classe = tr.cells[col].innerHTML.split('<')[0];
-                        if (Classes[classe])
-                            tr.style.backgroundColor = Classes[classe];
-                    }
+            });
+            Array.prototype.forEach.call(table.getElementsByTagName('tr'), function(tr)
+            {
+                if (!tr.className.match(/infraTr(Clara|Escura)/)) return;
+                tr.querySelectorAll('a[href]')[0].setAttribute('target', '_blank');
+                if (col) {
+                    var classe = tr.cells[col].innerHTML.split('<')[0];
+                    if (Classes[classe])
+                        tr.style.backgroundColor = Classes[classe];
                 }
-            }
+            });
         }
     },
-    // }}}
-    // {{{ digitar_documento()
     digitar_documento: function()
     {
         if (null == document.getElementById('txt_fck___Frame')) return;
@@ -302,8 +286,6 @@ var Eproc = {
         criaBotao('Certidão', 'CERTIDÃO', 'CERTIFICO que .', '16', document.body.firstChild);
         criaBotao('Ato', 'ATO DE SECRETARIA', 'De ordem do MM. Juiz Federal, a Secretaria da Vara .', '18', document.body.firstChild);
     },
-    // }}}
-    // {{{ digitar_documento_oncomplete()
     digitar_documento_oncomplete: function(ed)
     {
         ed.Events.AttachEvent('OnAfterSetHTML', function(e) { e.ResetIsDirty(); });
@@ -319,8 +301,6 @@ var Eproc = {
         ];
         ed.ToolbarSet.Load('eProcv2');
     },
-    // }}}
-    // {{{ entrar()
     entrar: function()
     {
         function Perfil(perfil)
@@ -358,7 +338,7 @@ var Eproc = {
                 var me = this;
                 button.addEventListener('click', function(e)
                 {
-                    if (confirm('Deseja tornar o perfil "' + me + '" o padrão para os próximos logins?')) {
+                    if (confirm('Deseja tornar o perfil "' + me + '" o padrão para os próximos logins neste computador?')) {
                         me.definirComoPadrao();
                     } else {
                         e.preventDefault();
@@ -376,6 +356,10 @@ var Eproc = {
             definirComoPadrao: function()
             {
                 GM_setValue('v2.perfil', this.id);
+            },
+            removerNome: function()
+            {
+                this.row.cells[1].textContent = this.sigla;
             },
             selecionar: function()
             {
@@ -521,15 +505,11 @@ var Eproc = {
             }
             perfis.forEach(function(perfil)
             {
+                perfil.removerNome();
                 perfil.addButton();
             });
         }
     },
-    // }}}
-    // {{{ getDocsGedpro()
-    /**
-     * Obtém os documentos do Gedpro
-     */
     getDocsGedpro: function()
     {
       if (arguments.length == 0) {
@@ -702,11 +682,6 @@ var Eproc = {
         });
       }
     },
-    // }}}
-    // {{{ reloginGedpro()
-    /**
-     * Tenta fazer novo login no Gedpro
-     */
     reloginGedpro: function(e)
     {
         var isEvent = false;
@@ -758,8 +733,6 @@ var Eproc = {
             times: 0,
         }
     },
-    // }}}
-    // {{{ getProcessoF()
     getProcessoF: function()
     {
         while (String(this.processo).length < 20)
@@ -776,8 +749,6 @@ var Eproc = {
              + '.'
              + this.processo.substr(16, 4);
     },
-    // }}}
-    // {{{ init()
     init: function()
     {
         this.pagina = location.pathname.split('/eprocV2/')[1];
@@ -860,32 +831,22 @@ var Eproc = {
             unsafeWindow.parent.FCKeditor_OnComplete = this.digitar_documento_oncomplete;
         }
     },
-    // }}}
-    // {{{ localizador_listar()
     localizador_listar: function()
     {
         this.setLastProcesso();
     },        
-    // }}}
-    // {{{ localizador_processos_alterar_destino()
     localizador_processos_alterar_destino: function()
     {
-        Eproc.colorirTabela(5, 'Tabela de Processos por Localizador.');
+        Eproc.colorirTabela('Tabela de Processos por Localizador.');
     },
-    // }}}
-    // {{{ localizador_processos_lista()
     localizador_processos_lista: function()
     {
-        Eproc.colorirTabela(5, 'Tabela de Processos por Localizador.');
+        Eproc.colorirTabela('Tabela de Processos por Localizador.');
     },
-    // }}}
-    // {{{ localizador_processos_lista_destino()
     localizador_processos_lista_destino: function()
     {
-        Eproc.colorirTabela(5, 'Tabela de Processos por Localizador.');
+        Eproc.colorirTabela('Tabela de Processos por Localizador.');
     },
-    // }}}
-    // {{{ mudaFundo()
     mudaFundo: function(background)
     {
         GM_setValue('v2.fundo', background);
@@ -922,7 +883,6 @@ var Eproc = {
 + '    background-color: transparent;'
 + '}'
 + '.infraTable th, .infraTable td {'
-//+ '    border-spacing: 0;'
 + '    border: solid #ccc;'
 + '    border-width: 0 1px 1px 0;'
 + '}'
@@ -1001,14 +961,14 @@ var Eproc = {
                 div.style.backgroundColor = background;
 	});
     },
-    // }}}
-    // {{{ painel_orgao_processo_listar()
     painel_orgao_processo_listar: function()
     {
-        Eproc.colorirTabela(3, 'Tabela de Processos.');
+        Eproc.colorirTabela('Tabela de Processos.');
     },
-    // }}}
-    // {{{ prevencao_judicial()
+    painel_secretaria_listar: function()
+    {
+        document.getElementById('divInfraAreaDados').style.height = 'auto';
+    },
     prevencao_judicial: function()
     {
         this.setLastProcesso();
@@ -1020,8 +980,6 @@ var Eproc = {
             });
         }
     },        
-    // }}}
-    // {{{ prevencao_judicial_bloco()
     prevencao_judicial_bloco: function()
     {
         var buscarForm = document.querySelector('#frmProcessoLista');
@@ -1127,44 +1085,32 @@ var Eproc = {
             }
         }
     },
-    // }}}
-    // {{{ processo_consulta_listar()
     processo_consulta_listar: function()
     {
         var form = document.getElementById('frmProcessoEventoLista');
         form.action = location.pathname + location.search;
-        Eproc.colorirTabela(3, 'Tabela de Processos.');
+        Eproc.colorirTabela('Tabela de Processos.');
     },
-    // }}}
-    // {{{ processo_consultar()
     processo_consultar: function()
     {
         this.setLastProcesso();
         Array.forEach(document.getElementsByTagName('table'), function(table)
         {
-            if (table.rows[0].cells.length == 5) Eproc.colorirTabela(3, '', true);
+            if (table.rows[0].cells.length == 5) Eproc.colorirTabela('');
         });
     },        
-    // }}}
-    // {{{ processo_consultar_nome_parte()
     processo_consultar_nome_parte: function()
     {
-        Eproc.colorirTabela(3, '', true);
+        Eproc.colorirTabela('');
     },
-    // }}}
-    // {{{ processo_localizador_listar()
     processo_localizador_listar: function()
     {
         this.setLastProcesso();
     },        
-    // }}}
-    // {{{ processo_movimentar()
     processo_movimentar: function()
     {
         this.setLastProcesso();
     },        
-    // }}}
-    // {{{ processo_selecionar()
     processo_selecionar: function()
     {
         document.title = Eproc.getProcessoF();
@@ -1256,26 +1202,12 @@ var Eproc = {
                 }
             }
         }
-        if (document.getElementById('lblProcRel')) {
-            var link = null, relacionado = document.getElementById('lblProcRel').nextSibling;
-            if (relacionado.tagName && relacionado.tagName.toLowerCase() == 'br') {
-                relacionado = relacionado.nextSibling.nextSibling;
-            }
-            if (relacionado.tagName && relacionado.tagName.toLowerCase() == 'a') {
-                link = relacionado;
-            }
-            var processo = relacionado.textContent.match(/[\d\.\-]+\/([PRS][RSC])?/)[0].replace(/[\.-]/g, '');
-            if (!link) {
-                link = document.createElement('a'), tmp = relacionado.textContent.split('  '), numprocf = tmp[0], relacao = tmp[1];
-                link.textContent = numprocf;
-                relacionado.textContent = '  ' + relacao;
-                relacionado.parentNode.insertBefore(link, relacionado);
-            }
-            link.target = '_blank';
-            if (processo[0] != '5' & !link.href.match(/txtValor/)) {
-                var tmp = processo.split('/'), numproc = tmp[0], origem = tmp[1];
-                link.href = 'http://www.trf4.jus.br/trf4/processos/acompanhamento/resultado_pesquisa.php?selForma=NU&selOrigem=' + origem + '&txtValor=' + numproc;
-            }
+        if (document.getElementById('tableRelacionado')) {
+            var links = document.querySelectorAll('#tableRelacionado td:nth-of-type(1) a');
+            Array.prototype.forEach.call(links, function(link)
+            {
+                link.target = '_blank';
+            });
         }
         for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
             if (table.getAttribute('summary') == 'Lembretes') {
@@ -1422,20 +1354,18 @@ var Eproc = {
             delete Eproc;
         }, false);
     },
-    // }}}
-    // {{{ relatorio_geral_listar()
     relatorio_geral_listar: function()
     {
-        Eproc.colorirTabela(5, 'Lista de Processos');
+        Eproc.colorirTabela('Lista de Processos');
     },
-    // }}}
-    // {{{ relatorio_sem_movimentacao_consultar()
+    relatorio_geral_consultar: function()
+    {
+        Eproc.colorirTabela('Lista de Processos');
+    },
     relatorio_sem_movimentacao_consultar: function()
     {
-        Eproc.colorirTabela(4, 'Processos');
+        Eproc.colorirTabela('Processos');
     },
-    // }}}
-    // {{{ setLastProcesso()
     setLastProcesso: function()
     {
         var before = document.referrer.match(/\&(txtNumProcesso|num_processo)=([0-9]{20})/);
@@ -1542,9 +1472,6 @@ var Eproc = {
         }
         return numprocF;
     }
-    // }}}
 }
-// }}}
-// {{{ Início do programa
 Eproc.init();
-// }}}
+
