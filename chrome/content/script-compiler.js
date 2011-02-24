@@ -78,19 +78,31 @@ contentLoad: function(e) {
     if (eproc_gmCompiler.isGreasemonkeyable(href)) {
         var prefs = new eproc_PrefManager();
         var script = false;
-        if (/^https?:\/\/((eproc|jef)[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc(V2|v2_(homologacao|apresentacao))|eproc2?.trf4.(gov|jus).br\/eproc(2trf4|trf4_apresentacao)|eproc2d-(um|dois|tres)\.trf4\.(jus|gov)\.br\/.*|homologa-[12]g1\.trf4\.(jus|gov)\.br\/homologa_[12]g)\/controlador\.php\?acao=acessar_documento/.test(href)) {
-        } else if (prefs.getValue('v2.enable') && /^https?:\/\/((eproc|jef)[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc(V2|v2_(homologacao|apresentacao))|eproc2?.trf4.(gov|jus).br\/eproc(2trf4|trf4_apresentacao)|eproc2d-(um|dois|tres)\.trf4\.(jus|gov)\.br)\/|homologa-[12]g1\.trf4\.(jus|gov)\.br\/homologa_[12]g/.test(href)) {
-            script = eproc_gmCompiler.getUrlContents('chrome://eproc/content/eprocV2.js');
-        } else if (prefs.getValue('v1.enable') && /^https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\//.test(href)) {
-            if (prefs.getValue('v1.consulta_processo.enable') && /^https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/consulta_processo.php\?.*/.test(href)) {
-                script = eproc_gmCompiler.getUrlContents('chrome://eproc/content/consulta_processo.js');
-            } else if (prefs.getValue('v1.html_to_pdf.enable') && /^https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/html_to_pdf\.php/.test(href)) {
-                script = eproc_gmCompiler.getUrlContents('chrome://eproc/content/html_to_pdf.js');
-            } else if (prefs.getValue('v1.alteracao_assunto.enable') && /^https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/alteracao_assunto.php\?.*/.test(href)) {
-                script = eproc_gmCompiler.getUrlContents('chrome://eproc/content/alteracao_assunto.js');
-            } else if (/^https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/(class\/|download_documento\.php|download\/|arvore\.php)/.test(href)) {
-            } else if (prefs.getValue('v1.eproc.enable')) {
+        var parts = new RegExp('^(https?)' + // scheme
+            '://(jef[23]?|eproc(?:|2(?:d-(?:um|dois|tres))|3|teste|-(?:apresentacao|[12]g-desenv))|homologa-[12]g1)' + // subdominio
+            '\\.(jf(pr|rs|sc)|trf4)' + // dominio, estado
+            '\\.(?:gov|jus)\\.br/(eproc(?:|V1|V2|2trf4|(?:trf4|v2)_[^/]+)|(?:homologa|apresenta)_[12]g)/' + // sistema
+            '(|([^.]+)(?:\\.php)?[^?#]*)' + // arquivo, controlador
+            '(?:\\?([^#]*))?' + // query
+            '(?:#(.*))?' + // hash
+            '$').exec(href);
+        var scheme, subdominio, dominio, estado, sistema, arquivo, controlador, query, hash;
+        [parts, scheme, subdominio, dominio, estado, sistema, arquivo, controlador, query, hash] = parts;
+        if (parts) {
+            if (/^eproc(V1)?$/.test(sistema)) {
+                if (prefs.getValue('v1.enable')) {
+                    if (['consulta_processo', 'html_to_pdf', 'alteracao_assunto'].indexOf(controlador) > -1 && prefs.getValue('v1.' + controlador + '.enable')) {
+                        script = eproc_gmCompiler.getUrlContents('chrome://eproc/content/' + controlador + '.js');
+                    } else if (['download_documento', 'arvore'].indexOf(controlador) > -1 || /^(class|download)\//.test(arquivo)) {
+                    } else if (prefs.getValue('v1.eproc.enable')) {
                 script = eproc_gmCompiler.getUrlContents('chrome://eproc/content/eproc.js');
+                    }
+                }
+            } else {
+                if (controlador == 'controlador' && /^acao=acessar_documento/.test(query)) {
+                } else if (prefs.getValue('v2.enable')) {
+                    script = eproc_gmCompiler.getUrlContents('chrome://eproc/content/eprocV2.js');
+                }
             }
         }
         if (script)

@@ -199,47 +199,84 @@ var Eproc = {
     pagina: '',
     processo: 0,
     windows: [],
-    citacao_bloco_filtrar_destino: function()
+    colorirLembretes: function()
     {
-        Eproc.colorirTabela('Tabela de Processos.');
+        var tables = document.querySelectorAll('.infraTable[summary="Lembretes"]');
+        var table = (tables.length == 1) ? tables[0] : null;
+        if (!table) return;
+        var separator = document.createElement('div');
+        separator.className = 'extraSeparador';
+        table.parentNode.insertBefore(separator, table);
+        Array.prototype.forEach.call(table.querySelectorAll('tr.infraTrClara, tr.infraTrEscura'), function(tr, r)
+        {
+            var destino = tr.cells[3].textContent, classes = ['extraLembrete'];
+            var pessoa = document.querySelector('#lblInfraUnidades');
+            if (!pessoa) {
+                pessoa = window.parent.document.querySelector('#lblInfraUnidades');
+            }
+            if (new RegExp(destino + '$').test(pessoa.textContent)) {
+                destino = 'VOCÊ';
+                classes.push('extraLembreteVoce');
+            }
+            var inicio = tr.cells[6].textContent == ' - ' ? null : tr.cells[6].textContent;
+            var fim = tr.cells[7].textContent == ' - ' ? null : tr.cells[7].textContent;
+            var floater = document.createElement('div');
+            floater.innerHTML =
+                '<div class="extraLembretePara">Para: '
+                    + destino
+                    + (tr.cells[8].textContent == 'N' ? ' (<abbr '
+                        + 'onmouseover="return infraTooltipMostrar('
+                        + '\'Este lembrete não será exibido na movimentação processual\','
+                        + '\'Movimentação processual\',' + '400);" '
+                        + 'onmouseout="return infraTooltipOcultar();">N</abbr>)' : '')
+                    + (inicio ? ' (<abbr ' + 'onmouseover="return infraTooltipMostrar('
+                        + '\'Visível de ' + inicio + '<br/>até ' + fim + '\','
+                        + '\'Prazo de exibição\',' + '400);" '
+                        + 'onmouseout="return infraTooltipOcultar();">P</abbr>)' : '')
+                    + '</div>' + tr.cells[4].textContent
+                    + '<div class="extraLembreteData">' + tr.cells[5].textContent
+                    + '<br/>' + tr.cells[1].textContent + '</div>';
+            floater.className = classes.join(' ');
+            floater.childNodes[0].appendChild(tr.cells[9].childNodes[0]);
+            table.parentNode.insertBefore(floater, separator);
+        }, this);
+        table.parentNode.removeChild(table);
     },
-    citacao_bloco_listar_destino: function()
+    colorirTabela: function()
     {
-        Eproc.colorirTabela('Tabela de Processos.');
-    },
-    intimacao_bloco_filtrar_destino: function()
-    {
-        Eproc.colorirTabela('Tabela de Processos.');
-    },
-    intimacao_bloco_listar_destino: function()
-    {
-        Eproc.colorirTabela('Tabela de Processos.');
-    },
-    colorirTabela: function(summary)
-    {
-        var tables = document.querySelectorAll('table[summary="' + summary + '"]');
-        if (tables.length == 1) {
-            var table = tables[0];
-            table.setAttribute('width', '');
-            var col;
-            Array.prototype.forEach.call(table.getElementsByTagName('th'), function(th, h)
-            {
-                th.setAttribute('width', '');
-                if (th.textContent == 'Classe') {
-                    col = h;
-                }
+        var setas = document.querySelectorAll('a[onclick="infraAcaoOrdenar(\'DesClasseJudicial\',\'ASC\');"]');
+        if (setas.length != 1) {
+            var th = null;
+            Array.prototype.forEach.call(document.querySelectorAll('.infraTh'), function(possibleTh){
+                if (possibleTh.textContent == 'Classe') th = possibleTh;
             });
-            Array.prototype.forEach.call(table.getElementsByTagName('tr'), function(tr)
-            {
-                if (!tr.className.match(/infraTr(Clara|Escura)/)) return;
-                tr.querySelectorAll('a[href]')[0].setAttribute('target', '_blank');
-                if (col) {
-                    var classe = tr.cells[col].innerHTML.split('<')[0];
-                    if (Classes[classe])
-                        tr.style.backgroundColor = Classes[classe];
-                }
-            });
+            if (!th) return;
+        } else {
+            var th = setas[0].parentNode;
+            while (th.tagName.toLowerCase() != 'th') {
+                th = th.parentNode;
+            }
         }
+        var table = th.parentNode.parentNode;
+        while (table.tagName.toLowerCase() != 'table') {
+            table = table.parentNode;
+        }
+        table.setAttribute('width', '');
+        Array.prototype.forEach.call(table.querySelectorAll('th'), function(th, h)
+        {
+            th.setAttribute('width', '');
+        });
+        Array.prototype.forEach.call(table.rows, function(tr)
+        {
+            if (!tr.className.match(/infraTr(Clara|Escura)/)) return;
+            tr.querySelectorAll('a[href]')[0].setAttribute('target', '_blank');
+            var col = th.cellIndex;
+            var classe = tr.cells[col].innerHTML.split('<')[0];
+            var cor = Classes[classe];
+            if (cor) {
+                tr.style.backgroundColor = cor;
+            }
+        });
     },
     digitar_documento: function()
     {
@@ -823,6 +860,10 @@ var Eproc = {
         if (pesquisaRapida) {
             pesquisaRapida.addEventListener('change', this.onNumProcessoChange, false);
         }
+        this.colorirLembretes();
+        this.colorirTabela();
+        this.setCorCapa();
+        this.setLastProcesso();
         if (this.acao && this[this.acao]) {
             this[this.acao]();
         } else if (this.parametros.acao_origem && this[this.parametros.acao_origem + '_destino']) {
@@ -833,22 +874,6 @@ var Eproc = {
         if (location.pathname.match(/\/class\/fckeditor\/editor\/fckeditor\.html/)) {
             unsafeWindow.parent.FCKeditor_OnComplete = this.digitar_documento_oncomplete;
         }
-    },
-    localizador_listar: function()
-    {
-        this.setLastProcesso();
-    },        
-    localizador_processos_alterar_destino: function()
-    {
-        Eproc.colorirTabela('Tabela de Processos por Localizador.');
-    },
-    localizador_processos_lista: function()
-    {
-        Eproc.colorirTabela('Tabela de Processos por Localizador.');
-    },
-    localizador_processos_lista_destino: function()
-    {
-        Eproc.colorirTabela('Tabela de Processos por Localizador.');
     },
     mudaFundo: function(background)
     {
@@ -951,6 +976,41 @@ var Eproc = {
 + '    background-color: #eee;'
 + '}'
 + 'div.infraAjaxAutoCompletar { max-height: 30em; overflow-y: scroll; } div.infraAjaxAutoCompletar li a { display: block; margin-left: 3ex; text-indent: -3ex; } div.infraAjaxAutoCompletar li.selected { background-color: Highlight; } div.infraAjaxAutoCompletar li.selected a, div.infraAjaxAutoCompletar li.selected b { color: HighlightText; }'
++ '.extraLembrete {'
++ '    float: left;'
++ '    font-size: 12px;'
++ '    min-width: 20ex;'
++ '    max-width: 60ex;'
++ '    margin-bottom: 0.5em;'
++ '    margin-right: 1ex;'
++ '    padding: 0 1ex;'
++ '    text-align: center;'
++ '    background-color: hsl(60, 100%, 80%);'
++ '    color: hsl(0, 0%, 0%);'
++ '}'
++ '.extraLembreteVoce {'
++ '    background-color: hsl(60, 100%, 70%);'
++ '}'
++ '.extraLembrete a {'
++ '    float: right;'
++ '    margin: -0.5em 0.5ex 0;'
++ '}'
++ '.extraLembretePara, .extraLembreteData {'
++ '    margin-left: -1ex;'
++ '    margin-right: -1ex;'
++ '    color: hsl(0, 0%, 33%);'
++ '}'
++ '.extraLembretePara {'
++ '    margin-bottom: 0.5em;'
++ '}'
++ '.extraLembreteData {'
++ '    margin-top: 0.5em;'
++ '    text-align: right;'
++ '}'
++ '.extraLembrete abbr {'
++ '    color: hsl(240, 50%, 25%);'
++ '    border-bottom: 1pt dotted;'
++ '}'
 );
 	Array.prototype.forEach.call(document.querySelectorAll('label[onclick^="listarTodos"], label[onclick^="listarEventos"], #txtEntidade, #txtPessoaEntidade'), function(auto)
         {
@@ -964,17 +1024,12 @@ var Eproc = {
                 div.style.backgroundColor = background;
 	});
     },
-    painel_orgao_processo_listar: function()
-    {
-        Eproc.colorirTabela('Tabela de Processos.');
-    },
     painel_secretaria_listar: function()
     {
         document.getElementById('divInfraAreaDados').style.height = 'auto';
     },
     prevencao_judicial: function()
     {
-        this.setLastProcesso();
         if (document.referrer.match(/\?acao=processo_selecionar&/)) {
             var voltarem = document.querySelectorAll('button[id=btnVoltar]');
             Array.prototype.forEach.call(voltarem, function(voltar)
@@ -1092,35 +1147,10 @@ var Eproc = {
     {
         var form = document.getElementById('frmProcessoEventoLista');
         form.action = location.pathname + location.search;
-        Eproc.colorirTabela('Tabela de Processos.');
     },
-    processo_consultar: function()
-    {
-        this.setLastProcesso();
-        Array.forEach(document.getElementsByTagName('table'), function(table)
-        {
-            if (table.rows[0].cells.length == 5) Eproc.colorirTabela('');
-        });
-    },        
-    processo_consultar_nome_parte: function()
-    {
-        Eproc.colorirTabela('');
-    },
-    processo_localizador_listar: function()
-    {
-        this.setLastProcesso();
-    },        
-    processo_movimentar: function()
-    {
-        this.setLastProcesso();
-    },        
     processo_selecionar: function()
     {
         document.title = Eproc.getProcessoF();
-        var assuntos = document.getElementById('fldAssuntos');
-        var classe = document.getElementById('txtClasse').textContent;
-        if (Classes[classe])
-            assuntos.style.backgroundColor = Classes[classe];
         for (var links = document.querySelectorAll('a'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
             if (!link.href && link.textContent.match(/GEDPRO/)) {
                 if (link.getAttribute('onclick')) {
@@ -1213,17 +1243,7 @@ var Eproc = {
             });
         }
         for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
-            if (table.getAttribute('summary') == 'Lembretes') {
-                Lembretes = 'eea eaa eae aae aee aea'.split(' ');
-                table.setAttribute('width', '');
-                for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
-                    th.setAttribute('width', '');
-                }
-                for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
-                    if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
-                    tr.cells[4].style.backgroundColor = '#' + Lembretes[(r - 1) % Lembretes.length];
-                }
-            } else if (table.getAttribute('summary') == 'Eventos') {
+            if (table.getAttribute('summary') == 'Eventos') {
                 for (var ths = table.getElementsByTagName('th'), h = 1, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
                     th.setAttribute('width', '');
                 }
@@ -1361,23 +1381,22 @@ var Eproc = {
             delete Eproc;
         }, false);
     },
-    relatorio_geral_listar: function()
+    setCorCapa: function()
     {
-        Eproc.colorirTabela('Lista de Processos');
-    },
-    relatorio_geral_consultar: function()
-    {
-        Eproc.colorirTabela('Lista de Processos');
-    },
-    relatorio_sem_movimentacao_consultar: function()
-    {
-        Eproc.colorirTabela('Processos');
+        var assuntos = document.querySelector('#fldAssuntos');
+        if (assuntos) var classe = assuntos.querySelector('#txtClasse');
+        if (classe) {
+            var cor = Classes[classe.textContent];
+            if (cor) {
+                assuntos.style.backgroundColor = cor;
+            }
+        }
     },
     setLastProcesso: function()
     {
-        var before = document.referrer.match(/\&(txtNumProcesso|num_processo)=([0-9]{20})/);
         var txtNumProcesso = document.getElementById('txtNumProcesso');
-        if (txtNumProcesso) {
+        if (txtNumProcesso && txtNumProcesso.tagName.toLowerCase() == 'input' && txtNumProcesso.type == 'text') {
+            var before = document.referrer.match(/\&(txtNumProcesso|num_processo)=([0-9]{20})/);
             if (before) {
                 txtNumProcesso.value = before[2];
             }
