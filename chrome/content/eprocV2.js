@@ -1041,34 +1041,33 @@ var Eproc = {
     prevencao_judicial_bloco: function()
     {
         var buscarForm = document.querySelector('#frmProcessoLista');
-        var buscar = document.querySelectorAll('#btnBuscar');
-        var submeteForm = function(processos, hashes)
-        {
-            var oldAction = buscarForm.action;
-            var oldValue = document.getElementById('hdnInfraItensSelecionados').value;
-            buscarForm.action = oldAction + '&num_processo=' + processos.join(',') + '&hashes=' + hashes.join(',');
-            buscarForm.target = '_blank';
-            document.getElementById('hdnInfraItensSelecionados').value = processos.join(',');
-            unsafeWindow.submeterFrm('buscar');
-            buscarForm.action = oldAction;
-            buscarForm.target = '';
-            document.getElementById('hdnInfraItensSelecionados').value = oldValue;
-            unsafeWindow.infraAvisoCancelar();
-        };
-        [].forEach.call(buscar, function(buscar)
-        {
-            buscar.setAttribute('onclick', '');
-            buscar.addEventListener('click', function(e)
-            {
-                var processos = [], hashes = [];
-                [].forEach.call(document.querySelectorAll('tr.infraTrMarcada a[href]'), function(link)
+        var selecionados = document.getElementById('hdnInfraItensSelecionados');
+        if (selecionados) {
+            Array.prototype.forEach.call(document.querySelectorAll('#btnConsultar, .infraTdSetaOrdenacao a, #divInfraAreaPaginacao a, #divInfraAreaPaginacao select'), function(el) {
+                var attr = el.hasAttribute('onclick') ? 'onclick' : 'onchange';
+                var action = el.getAttribute(attr);
+                el.setAttribute(attr, '');
+                el.addEventListener(attr.replace(/^on/, ''), (function(action) { return function(e)
                 {
-                    var match = link.search.match(/\&num_processo=(.*)\&hash=(.*)$/) 
-                    processos.push(match[1]);
-                    hashes.push(match[2]);
-                });
-                submeteForm(processos, hashes);
-            }, false);
+                    selecionados.value = '';
+                    eval('unsafeWindow.' + action);
+                }; })(action), true);
+            });
+        }
+        var botoes = document.querySelectorAll('button[onclick^="submeterFrm("]');
+        Array.prototype.forEach.call(botoes, function(botao)
+        {
+            var onclick = botao.getAttribute('onclick');
+            botao.setAttribute('onclick', '');
+            var action = onclick.match(/'([^']*)'/)[1];
+            var newWindow = action == 'buscar' ? true : false;
+            botao.addEventListener('click', (function(newWindow, action) { return function(e)
+            {
+                buscarForm.target = newWindow ? '_blank' : '';
+                unsafeWindow.submeterFrm(action);
+                unsafeWindow.infraOcultarAviso();
+                buscarForm.target = '';
+            }; })(newWindow, action), false);
         });
         if (document.getElementById('btnConsultar')) {
             var paginacao = document.getElementById('selPaginacao');
@@ -1077,70 +1076,50 @@ var Eproc = {
             option.textContent = '10 processos por página';
             if (paginacao.querySelectorAll('option[selected]').length == 0) option.selected = true;
             paginacao.insertBefore(option, paginacao.firstChild);
-        }
-        if (document.getElementById('btnBuscar')) {
-            for (var hh = document.querySelectorAll('#btnConsultar, .infraTdSetaOrdenacao a, #divInfraAreaPaginacao a, #divInfraAreaPaginacao select'), h = 0, link; link = hh[h]; h++) {
-                var attr = link.hasAttribute('onclick') ? 'onclick' : 'onchange';
-                var action = link.getAttribute(attr);
-                link.setAttribute(attr, '');
-                link.addEventListener(attr.replace(/^on/, ''), (function(action) { return function(e)
+            Array.prototype.forEach.call(document.querySelectorAll('.infraTable[summary="Tabela de Processos."]'), function(table)
+            {
+                table.setAttribute('width', '');
+                Array.prototype.forEach.call(table.getElementsByTagName('th'), function(th)
                 {
-                    document.getElementById('hdnInfraItensSelecionados').value = '';
-                    eval('unsafeWindow.' + action);
-                }; })(action), false);
-            }
-            for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
-                if (table.getAttribute('summary') == 'Tabela de Processos.') {
-                    table.setAttribute('width', '');
-                    for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
-                        th.setAttribute('width', '');
+                    th.setAttribute('width', '');
+                });
+                Array.prototype.forEach.call(table.querySelectorAll('tr[class^="infraTr"] td:nth-of-type(2) a'), function(link, l)
+                {
+                    link.target = '_blank';
+                    var tr = link.parentNode.parentNode;
+                    var button = document.createElement('button');
+                    button.className = 'infraButton';
+                    button.textContent = 'Buscar Preventos';
+                    button.style.fontSize = '.8em';
+                    if (l == 0) {
+                        var th = table.querySelector('th:nth-of-type(2)');
+                        var newTh = document.createElement('th');
+                        newTh.className = 'infraTh';
+                        newTh.textContent = 'Buscar Preventos';
+                        th.parentNode.insertBefore(newTh, th);
                     }
-                    for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
-                        if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
-                        tr.cells[1].getElementsByTagName('a')[0].addEventListener('click', function(e)
-                        {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            var match = this.search.match(/\&num_processo=(.*)\&hash=(.*)$/);
-                            submeteForm([match[1]], [match[2]]);
-                        }, false);
-                    }
-                }
-            }
-        } else {
-            for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
-                if (table.getAttribute('summary') == 'Tabela de Preventos.') {
-                    table.setAttribute('width', '');
-                    for (var ths = table.getElementsByTagName('th'), h = 0, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
-                        th.setAttribute('width', '');
-                    }
-                    for (var links = table.getElementsByTagName('a'), l = 0, ll = links.length, link; (l < ll) && (link = links[l]); l++) {
-                        link.target = '_blank';
-                    }
-                    if (table.rows[1].cells[0].textContent == 'Eproc2' && table.rows[table.rows.length - 1].cells[0].textContent == 'Siapro') {
-                        var qtdProcessos = (table.rows.length - 1) / 3;
-                        for (var i = 0; i < qtdProcessos; i++) {
-                            var eproc2 = table.rows[3*i + 1], eproc = table.rows[2*i + 1 + qtdProcessos], siapro = table.rows[i + 1 + 2*qtdProcessos];
-                            eproc2.insertBefore(eproc2.cells[0], eproc2.cells[2]);
-                            eproc2.parentNode.insertBefore(eproc, eproc2.nextSibling);
-                            eproc.deleteCell(1);
-                            eproc.parentNode.insertBefore(siapro, eproc.nextSibling);
-                            siapro.deleteCell(1);
-                            eproc2.cells[0].rowSpan = 3;
-                        }
-                    }
-                    if (location.search.match(/num_processo/)) {
-                        var match = location.search.match(/\&num_processo=(.*)\&hashes=(.*)$/);
-                        var processos = match[1].split(',');
-                        var hashes = match[2].split(',');
-                        for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
-                            if (!tr.className.match(/infraTr(Clara|Escura)/) || tr.cells.length < 3) continue;
-                            var cell = tr.getElementsByTagName('table')[0].rows[0].cells[0];
-                            cell.innerHTML = '<b>Processo: <a href="controlador.php?acao=processo_selecionar&acao_origem=prevencao_judicial_bloco&num_processo=' + processos.shift() + '&hash=' + hashes.shift() + '" target="_blank">' + cell.innerHTML.match(/[0-9\.\-]{24}/) + '</a></b>';
-                        }
-                    }
-                }
-            }
+                    var cell = tr.insertCell(1);
+                    button.addEventListener('click', function(e)
+                    {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        var oldSelecionados = selecionados.value;
+                        var match, processo;
+                        [match, processo] = link.search.match(/\&num_processo=(\d{20})\&/);
+                        var box = document.getElementById('lnkInfraID-' + processo).nextSibling;
+                        var checked = box.checked;
+                        selecionados.value = processo;
+                        buscarForm.target = '_blank';
+                        box.checked = true;
+                        unsafeWindow.submeterFrm('buscar');
+                        unsafeWindow.infraOcultarAviso();
+                        box.checked = checked;
+                        buscarForm.target = '';
+                        selecionados.value = oldSelecionados;
+                    }, false);
+                    cell.appendChild(button);
+                });
+            });
         }
     },
     processo_consulta_listar: function()
