@@ -561,7 +561,7 @@ EprocSandbox.V2 = {
                                             {
                                                 informacoesEndereco[indiceInformacaoEndereco] = informacaoEndereco.textContent;
                                             });
-                                            informacoesEndereco = informacoesEndereco.join(' - ').replace(' - NÃO INFORMADO.', '');
+                                            informacoesEndereco = informacoesEndereco.join(' - ').replace(' - NÃO INFORMADO.', '').replace(/(\d{5})(\d{3})/, '$1-$2');
                                             $('#extraEndereco').value = informacoesEndereco;
                                         }
                                     });
@@ -589,6 +589,10 @@ EprocSandbox.V2 = {
                 switch (reg.getAttribute('codigoTipoDocumento')) {
                     case '56':
                         criarLink('Editar campos da carta de citação', '0000004');
+                        break;
+
+                    case '55':
+                        criarLink('Editar campos da Decisão PARTES', '0000007');
                         break;
 
                     case '33':
