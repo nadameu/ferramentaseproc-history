@@ -202,45 +202,87 @@ var Eproc = {
     colorirLembretes: function()
     {
         var tables = document.querySelectorAll('.infraTable[summary="Lembretes"]');
-        var table = (tables.length == 1) ? tables[0] : null;
-        if (!table) return;
-        var separator = document.createElement('div');
-        separator.className = 'extraSeparador';
-        table.parentNode.insertBefore(separator, table);
-        Array.prototype.forEach.call(table.querySelectorAll('tr.infraTrClara, tr.infraTrEscura'), function(tr, r)
+        if (tables.length == 0) return;
+        Array.prototype.forEach.call(tables, function(table)
         {
-            var destino = tr.cells[3].textContent, classes = ['extraLembrete'];
-            var pessoa = document.querySelector('#lblInfraUnidades');
-            if (!pessoa) {
-                pessoa = window.parent.document.querySelector('#lblInfraUnidades');
-            }
-            if (new RegExp(destino + '$').test(pessoa.textContent)) {
-                destino = 'VOCÊ';
-                classes.push('extraLembreteVoce');
-            }
-            var inicio = tr.cells[6].textContent == ' - ' ? null : tr.cells[6].textContent;
-            var fim = tr.cells[7].textContent == ' - ' ? null : tr.cells[7].textContent;
-            var floater = document.createElement('div');
-            floater.innerHTML =
-                '<div class="extraLembretePara">Para: '
-                    + destino
-                    + (tr.cells[8].textContent == 'N' ? ' (<abbr '
-                        + 'onmouseover="return infraTooltipMostrar('
-                        + '\'Este lembrete não será exibido na movimentação processual\','
-                        + '\'Movimentação processual\',' + '400);" '
-                        + 'onmouseout="return infraTooltipOcultar();">N</abbr>)' : '')
-                    + (inicio ? ' (<abbr ' + 'onmouseover="return infraTooltipMostrar('
-                        + '\'Visível de ' + inicio + '<br/>até ' + fim + '\','
-                        + '\'Prazo de exibição\',' + '400);" '
-                        + 'onmouseout="return infraTooltipOcultar();">P</abbr>)' : '')
-                    + '</div>' + tr.cells[4].textContent
-                    + '<div class="extraLembreteData">' + tr.cells[5].textContent
-                    + '<br/>' + tr.cells[1].textContent + '</div>';
-            floater.className = classes.join(' ');
-            floater.childNodes[0].appendChild(tr.cells[9].childNodes[0]);
-            table.parentNode.insertBefore(floater, separator);
-        }, this);
-        table.parentNode.removeChild(table);
+            var separator = document.createElement('div');
+            separator.className = 'extraSeparador';
+            table.parentNode.insertBefore(separator, table);
+            Array.prototype.forEach.call(table.querySelectorAll('tr.infraTrClara, tr.infraTrEscura'), function(tr, r)
+            {
+                var destino = tr.cells[3].textContent, classes = ['extraLembrete'];
+                var pessoa = document.querySelector('#lblInfraUnidades');
+                if (!pessoa) {
+                    pessoa = window.parent.document.querySelector('#lblInfraUnidades');
+                }
+                if (new RegExp(destino + '$').test(pessoa.textContent)) {
+                    destino = 'VOCÊ';
+                    classes.push('extraLembreteVoce');
+                }
+                var inicio = tr.cells[6].textContent == ' - ' ? null : tr.cells[6].textContent;
+                var fim = tr.cells[7].textContent == ' - ' ? null : tr.cells[7].textContent;
+                var floater = document.createElement('div');
+                floater.innerHTML =
+                    '<div class="extraLembretePara">Para: '
+                        + destino
+                        + (tr.cells[8].textContent == 'N' ? ' (<abbr '
+                            + 'onmouseover="return infraTooltipMostrar('
+                            + '\'Este lembrete não será exibido na movimentação processual\','
+                            + '\'Movimentação processual\',' + '400);" '
+                            + 'onmouseout="return infraTooltipOcultar();">N</abbr>)' : '')
+                        + (inicio ? ' (<abbr ' + 'onmouseover="return infraTooltipMostrar('
+                            + '\'Visível de ' + inicio + '<br/>até ' + fim + '\','
+                            + '\'Prazo de exibição\',' + '400);" '
+                            + 'onmouseout="return infraTooltipOcultar();">P</abbr>)' : '')
+                        + '</div>' + tr.cells[4].textContent
+                        + '<div class="extraLembreteData">' + tr.cells[5].textContent
+                        + '<br/>' + tr.cells[1].textContent + '</div>';
+                floater.className = classes.join(' ');
+                floater.childNodes[0].appendChild(tr.cells[9].childNodes[0]);
+                table.parentNode.insertBefore(floater, separator);
+            });
+            table.parentNode.removeChild(table);
+        });
+        GM_addStyle(
+'.extraLembrete {'
++ '    float: left;'
++ '    font-size: 12px;'
++ '    min-width: 20ex;'
++ '    max-width: 60ex;'
++ '    margin-bottom: 0.5em;'
++ '    margin-right: 1ex;'
++ '    padding: 0 1ex;'
++ '    text-align: center;'
++ '    background-color: hsl(60, 100%, 80%);'
++ '    color: hsl(0, 0%, 0%);'
++ '}'
++ '.extraLembreteVoce {'
++ '    background-color: hsl(60, 100%, 70%);'
++ '}'
++ '.extraLembrete a {'
++ '    float: right;'
++ '    margin: -0.5em 0.5ex 0;'
++ '}'
++ '.extraLembretePara, .extraLembreteData {'
++ '    margin-left: -1ex;'
++ '    margin-right: -1ex;'
++ '    color: hsl(0, 0%, 33%);'
++ '}'
++ '.extraLembretePara {'
++ '    margin-bottom: 0.5em;'
++ '}'
++ '.extraLembreteData {'
++ '    margin-top: 0.5em;'
++ '    text-align: right;'
++ '}'
++ '.extraLembrete abbr {'
++ '    color: hsl(240, 50%, 25%);'
++ '    border-bottom: 1pt dotted;'
++ '}'
++ '.extraSeparador {'
++ '    clear: both;'
++ '}'
+);
     },
     colorirTabela: function()
     {
@@ -976,41 +1018,6 @@ var Eproc = {
 + '    background-color: #eee;'
 + '}'
 + 'div.infraAjaxAutoCompletar { max-height: 30em; overflow-y: scroll; } div.infraAjaxAutoCompletar li a { display: block; margin-left: 3ex; text-indent: -3ex; } div.infraAjaxAutoCompletar li.selected { background-color: Highlight; } div.infraAjaxAutoCompletar li.selected a, div.infraAjaxAutoCompletar li.selected b { color: HighlightText; }'
-+ '.extraLembrete {'
-+ '    float: left;'
-+ '    font-size: 12px;'
-+ '    min-width: 20ex;'
-+ '    max-width: 60ex;'
-+ '    margin-bottom: 0.5em;'
-+ '    margin-right: 1ex;'
-+ '    padding: 0 1ex;'
-+ '    text-align: center;'
-+ '    background-color: hsl(60, 100%, 80%);'
-+ '    color: hsl(0, 0%, 0%);'
-+ '}'
-+ '.extraLembreteVoce {'
-+ '    background-color: hsl(60, 100%, 70%);'
-+ '}'
-+ '.extraLembrete a {'
-+ '    float: right;'
-+ '    margin: -0.5em 0.5ex 0;'
-+ '}'
-+ '.extraLembretePara, .extraLembreteData {'
-+ '    margin-left: -1ex;'
-+ '    margin-right: -1ex;'
-+ '    color: hsl(0, 0%, 33%);'
-+ '}'
-+ '.extraLembretePara {'
-+ '    margin-bottom: 0.5em;'
-+ '}'
-+ '.extraLembreteData {'
-+ '    margin-top: 0.5em;'
-+ '    text-align: right;'
-+ '}'
-+ '.extraLembrete abbr {'
-+ '    color: hsl(240, 50%, 25%);'
-+ '    border-bottom: 1pt dotted;'
-+ '}'
 );
 	Array.prototype.forEach.call(document.querySelectorAll('label[onclick^="listarTodos"], label[onclick^="listarEventos"], #txtEntidade, #txtPessoaEntidade'), function(auto)
         {
