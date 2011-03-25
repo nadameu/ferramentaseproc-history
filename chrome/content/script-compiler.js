@@ -87,8 +87,8 @@ contentLoad: function(e) {
             '(?:#(.*))?' + // hash
             '$').exec(href);
         var scheme, subdominio, dominio, estado, sistema, arquivo, controlador, query, hash;
-        [parts, scheme, subdominio, dominio, estado, sistema, arquivo, controlador, query, hash] = parts;
         if (parts) {
+            [parts, scheme, subdominio, dominio, estado, sistema, arquivo, controlador, query, hash] = parts;
             if (/^eproc(V1)?$/.test(sistema)) {
                 if (prefs.getValue('v1.enable')) {
                     if (['consulta_processo', 'html_to_pdf', 'alteracao_assunto'].indexOf(controlador) > -1 && prefs.getValue('v1.' + controlador + '.enable')) {
