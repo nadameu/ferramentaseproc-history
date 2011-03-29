@@ -1222,7 +1222,6 @@ var Eproc = {
                 newCell.appendChild(doc.link);
                 row.parentNode.removeChild(row);
             });
-            docsGedpro.parentNode.removeChild(docsGedpro);
         }
     },
     processo_selecionar: function()
