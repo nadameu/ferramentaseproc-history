@@ -1441,35 +1441,32 @@ var Eproc = {
         while (numproc.length < 7) {
             numproc = '5' + numproc;
         }
-        var se = '04', maxSu = 0;
+        var secoesMaxSu = {};
         var linkSecao = document.getElementById('divInfraBarraTribunalE').getElementsByTagName('a')[0];
         var estado = linkSecao.hostname.match(/\.jf(pr|rs|sc)\.(?:gov|jus)\.br/);
-        if (estado) {
-            switch (estado[1]) {
-                case 'pr':
-                    se = '70';
-                    maxSu = 17;
-                    break;
-                    
-                case 'rs':
-                    se = '71';
-                    maxSu = 20;
-                    break;
-                    
-                case 'sc':
-                    se = '72';
-                    maxSu = 16;
-                    break;
-                    
-            }
+        if (!estado) {
+            secoesMaxSu['00'] = 0;
         }
-        for (var su = 0; su < maxSu; su++) {
-            if (su.toString().length == 1) su = '0' + su;
-            for (var a = 2009; a <= anoAtual; a++) {
-                var r1 = numproc % 97;
-                var r2 = ('' + r1 + a + '404') % 97;
-                var r3 = ('' + r2 + se + su + dd) % 97;
-                if (r3 == 1) possibilidades.push(numproc + dd + a + '404' + se + su);
+        if (!estado || estado[1] == 'pr') {
+            secoesMaxSu['70'] = 17;
+        }
+        if (!estado || estado[1] == 'rs') {
+            secoesMaxSu['71'] = 20;
+        }
+        if (!estado || estado[1] == 'sc') {
+            secoesMaxSu['72'] = 16;
+        }
+        var se;
+        for (se in secoesMaxSu) {
+            var maxSu = secoesMaxSu[se];
+            for (var su = 0; su <= maxSu; su++) {
+                if (su.toString().length == 1) su = '0' + su;
+                for (var a = 2009; a <= anoAtual; a++) {
+                    var r1 = numproc % 97;
+                    var r2 = ('' + r1 + a + '404') % 97;
+                    var r3 = ('' + r2 + se + su + dd) % 97;
+                    if (r3 == 1) possibilidades.push(numproc + dd + a + '404' + se + su);
+                }
             }
         }
         return possibilidades;
