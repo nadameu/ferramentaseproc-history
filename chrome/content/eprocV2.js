@@ -916,6 +916,39 @@ var Eproc = {
         if (location.pathname.match(/\/class\/fckeditor\/editor\/fckeditor\.html/)) {
             unsafeWindow.parent.FCKeditor_OnComplete = this.digitar_documento_oncomplete;
         }
+        window.addEventListener('beforeunload', function(e)
+        {
+            var windows = [];
+            var gedpro = [];
+            for (w in Eproc.windows) {
+                var win = Eproc.windows[w];
+                if (typeof win == 'object') {
+                    try {
+                        if (win.document) {
+                            windows.push(win);
+                        }
+                    } catch (ex) {
+                        try {
+                            var x = win.window;
+                        } catch (ex2) {
+                            windows.push(win);
+                        }
+                    }
+                }
+            }
+            if (windows.length) {
+                var resposta = GM_yesNo('Janelas abertas', 'Este processo possui ' + windows.length + ' ' + (windows.length > 1 ? 'janelas abertas' : 'janela aberta') + '.\nDeseja fechá-' + (windows.length > 1 ? 'las' : 'la') + '?');
+                if (resposta == 0) {
+                    for (var w = windows.length - 1; w >= 0; w--) {
+                        windows[w].close();
+                    }
+                } else {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            }
+            delete Eproc;
+        }, false);
     },
     mudaFundo: function(background)
     {
@@ -1133,6 +1166,64 @@ var Eproc = {
     {
         var form = document.getElementById('frmProcessoEventoLista');
         form.action = location.pathname + location.search;
+        var docsGedpro = document.getElementById('divDocumentosGedpro');
+        if (docsGedpro) {
+            var linkSecao = document.getElementById('divInfraBarraTribunalE').getElementsByTagName('a')[0];
+            var estado = linkSecao.hostname.match(/\.jf(pr|rs|sc)\.(?:gov|jus)\.br/);
+            var linkGedpro = (estado && 'sc' == estado[1]) ? 'http://gedpro.jfsc.jus.br/visualizarDocumentos.asp?codigoDocumento=' : '';
+            var Doc = function(processo, numero, tipo)
+            {
+                this.toString = function() { return [tipo, numero].join(' '); };
+                if (!linkGedpro) {
+                    this.link = '';
+                } else {
+                    this.link = document.createElement('a');
+                    this.link.textContent = this.toString();
+                    this.link.href = linkGedpro + numero;
+                    this.link.target='_blank';
+                    this.link.addEventListener('click', (function(processo, numero) {
+                        return function(e)
+                        {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            var win = Eproc.windows['' + processo + numero];
+                            var isClosed = typeof win == 'undefined';
+                            if (!isClosed && win.focus) {
+                                try {
+                                    win.window;
+                                    isClosed = true;
+                                } catch (ex) {
+                                    return win.focus();
+                                }
+                            }
+                            if (isClosed) {
+                                Eproc.windows['' + processo + numero] = window.open(e.target.href, '' + processo + numero, 'menubar=0,resizable=1,status=0,toolbar=0,location=0,menubar=0,directories=0,scrollbars=1');
+                            }
+                        };
+                    })(processo, numero), false);
+                }
+            };
+            Doc.fromRow = function(row) {
+                var processo = row.cells[0].textContent;
+                var numero = row.cells[1].textContent.replace(/^ged_/, '');
+                var tipo = row.cells[2].textContent;
+                return new Doc(processo, numero, tipo);
+            }
+            var thead = form.querySelector('.infraTable > tbody > tr:first-child');
+            var th = document.createElement('th');
+            th.className = 'infraTh';
+            th.textContent = 'Documento Gedpro';
+            thead.appendChild(th);
+            var processos = form.querySelectorAll('.infraTable > tbody > tr[class^=infraTr]');
+            Array.prototype.forEach.call(docsGedpro.querySelectorAll('tr[class^=infraTr]'), function(row, r)
+            {
+                var doc = Doc.fromRow(row);
+                var newCell = processos[r].insertCell(processos[r].cells.length);
+                newCell.appendChild(doc.link);
+                row.parentNode.removeChild(row);
+            });
+            docsGedpro.parentNode.removeChild(docsGedpro);
+        }
     },
     processo_selecionar: function()
     {
@@ -1333,39 +1424,6 @@ var Eproc = {
 		}
             }
         }
-        window.addEventListener('beforeunload', function(e)
-        {
-            var windows = [];
-            var gedpro = [];
-            for (w in Eproc.windows) {
-                var win = Eproc.windows[w];
-                if (typeof win == 'object') {
-                    try {
-                        if (win.document) {
-                            windows.push(win);
-                        }
-                    } catch (ex) {
-                        try {
-                            var x = win.window;
-                        } catch (ex2) {
-                            windows.push(win);
-                        }
-                    }
-                }
-            }
-            if (windows.length) {
-                var resposta = GM_yesNo('Janelas abertas', 'Este processo possui ' + windows.length + ' ' + (windows.length > 1 ? 'janelas abertas' : 'janela aberta') + '.\nDeseja fechá-' + (windows.length > 1 ? 'las' : 'la') + '?');
-                if (resposta == 0) {
-                    for (var w = windows.length - 1; w >= 0; w--) {
-                        windows[w].close();
-                    }
-                } else {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-            }
-            delete Eproc;
-        }, false);
     },
     setCorCapa: function()
     {
