@@ -949,6 +949,10 @@ var Eproc = {
             }
             delete Eproc;
         }, false);
+        Array.prototype.forEach.call(document.querySelectorAll('a[href]'), function(link)
+        {
+            link.addEventListener('click', Eproc.setLastClicked, false);
+        });
     },
     mudaFundo: function(background)
     {
@@ -1051,6 +1055,9 @@ var Eproc = {
 + '    background-color: #eee;'
 + '}'
 + 'div.infraAjaxAutoCompletar { max-height: 30em; overflow-y: scroll; } div.infraAjaxAutoCompletar li a { display: block; margin-left: 3ex; text-indent: -3ex; } div.infraAjaxAutoCompletar li.selected { background-color: Highlight; } div.infraAjaxAutoCompletar li.selected a, div.infraAjaxAutoCompletar li.selected b { color: HighlightText; }'
++ '.lastClicked {'
++ '    border: 1px dotted red;'
++ '}'
 );
 	Array.prototype.forEach.call(document.querySelectorAll('label[onclick^="listarTodos"], label[onclick^="listarEventos"], #txtEntidade, #txtPessoaEntidade'), function(auto)
         {
@@ -1435,6 +1442,22 @@ var Eproc = {
                 assuntos.style.backgroundColor = cor;
             }
         }
+    },
+    setLastClicked: function(e)
+    {
+        Array.prototype.forEach.call(document.querySelectorAll('.lastClicked'), function(link)
+        {
+            var classes = link.className.split(' '), novasClasses = [];
+            classes.forEach(function(classe)
+            {
+                if (classe != 'lastClicked') novasClasses.push(classe);
+            });
+            link.className = novasClasses.join(' ');
+        });
+        var link = e.target;
+        var classes = link.className.split(' ');
+        classes.push('lastClicked');
+        link.className = classes.join(' ');
     },
     setLastProcesso: function()
     {
