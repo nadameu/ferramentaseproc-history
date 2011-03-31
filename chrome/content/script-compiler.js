@@ -1,4 +1,4 @@
-var IE = function()
+var IELauncher = function(url)
 {
         // create an nsILocalFile for the executable
         var file = Components.classes["@mozilla.org/file/local;1"]
@@ -7,20 +7,17 @@ var IE = function()
         file.initWithPath(prefs.getValue('v2.ielocation'));
 
         // create an nsIProcess
-        this.process = Components.classes["@mozilla.org/process/util;1"]
+        var process = Components.classes["@mozilla.org/process/util;1"]
                                 .createInstance(Components.interfaces.nsIProcess);
-        this.process.init(file);
+        process.init(file);
 
         // Run the process.
         // If first param is true, calling thread will be blocked until
         // called process terminates.
         // Second and third params are used to pass command-line arguments
         // to the process.
-}
-IE.prototype.launch = function(url)
-{
-    var args = [url];
-    this.process.run(false, args, args.length);
+        var args = [url];
+        return process.run(false, args, args.length);
 }
 
 var eproc_gmCompiler={
@@ -136,7 +133,7 @@ injectScript: function(script, url, unsafeContentWin) {
     sandbox.GM_xmlhttpRequest=eproc_gmCompiler.hitch(
         xmlhttpRequester, "contentStartRequest"
     );
-    sandbox.IE = IE;
+    sandbox.IELauncher = IELauncher;
     //unsupported
     sandbox.GM_registerMenuCommand=function(){};
     sandbox.GM_log=myDump; //function(){};

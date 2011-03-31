@@ -774,43 +774,20 @@ var Eproc = {
         var iframe = document.createElement('iframe');
         iframe.src = Eproc.loginGedpro.url;
         iframe.style.display = 'none';
+        iframe.addEventListener('load', function(e)
+        {
+            if (isEvent) {
+                document.getElementById('loginGedpro').textContent = 'Falta de permissão de acesso?';
+            } else {
+                document.getElementById('cargaDocsGedpro').getElementsByTagName('a')[0].textContent = 'Carregando documentos do GEDPRO...';
+            }
+            if (isEvent) {
+                alert('Feche o documento e tente novamente agora.');
+            } else {
+                Eproc.getDocsGedpro('arvore');
+            }
+        }, false);
         document.getElementById('divInfraAreaTelaE').appendChild(iframe);
-        Eproc.tester = {
-            ev: isEvent,
-            id: window.setInterval(function()
-            {
-                var limit = 30;
-                var success = false;
-                try {
-                    var x = frames[0].window;
-                    Eproc.tester.times++;
-                } catch (ex) {
-                    success = true;
-                }
-                if (success || Eproc.tester.times >= limit) {
-                    window.clearInterval(Eproc.tester.id);
-                    var ev = Eproc.tester.ev;
-                    delete Eproc.tester;
-                    var iframe = document.getElementsByTagName('iframe')[0];
-                    iframe.parentNode.removeChild(iframe);
-                    if (ev) {
-                        document.getElementById('loginGedpro').textContent = 'Falta de permissão de acesso?';
-                    } else {
-                        document.getElementById('cargaDocsGedpro').getElementsByTagName('a')[0].textContent = 'Carregando documentos do GEDPRO...';
-                    }
-                    if (success) {
-                        if (ev) {
-                            alert('Feche o documento e tente novamente agora.');
-                        } else {
-                            Eproc.getDocsGedpro('arvore');
-                        }
-                    } else {
-                        alert('Não foi possível fazer login no GEDPRO.');
-                    }
-                }
-            }, 500),
-            times: 0,
-        }
     },
     getProcessoF: function()
     {
@@ -1243,8 +1220,7 @@ var Eproc = {
                     {
                         e.preventDefault();
                         e.stopPropagation();
-                        var x = new IE();
-                        x.launch(link.href);
+                        var x = IELauncher(link.href);
                     }; })(link), false);
                     var processo = document.getElementById('divInfraAreaProcesso');
                     var tabelas = processo.getElementsByClassName('infraTable');
