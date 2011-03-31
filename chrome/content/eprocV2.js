@@ -896,21 +896,10 @@ var Eproc = {
         window.addEventListener('beforeunload', function(e)
         {
             var windows = [];
-            var gedpro = [];
             for (w in Eproc.windows) {
                 var win = Eproc.windows[w];
-                if (typeof win == 'object') {
-                    try {
-                        if (win.document) {
-                            windows.push(win);
-                        }
-                    } catch (ex) {
-                        try {
-                            var x = win.window;
-                        } catch (ex2) {
-                            windows.push(win);
-                        }
-                    }
+                if (typeof win == 'object' && !win.closed) {
+                    windows.push(win);
                 }
             }
             if (windows.length) {
