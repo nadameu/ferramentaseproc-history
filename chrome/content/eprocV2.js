@@ -999,6 +999,7 @@ var Eproc = {
 + '}'
 + 'div.infraBarraTribunal {'
 + '    -moz-background-size: 1px 80px;'
++ '    background-size: 1px 80px;'
 + '}'
 + '.infraTable td label {'
 + '    font-size: 1em;'
