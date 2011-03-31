@@ -10,39 +10,40 @@
     onload="Options.init();">
     <script type="application/x-javascript" src="chrome://eproc/content/prefman.js"/>
     <script type="application/x-javascript" src="chrome://eproc/content/options.js"/>
-    <tabbox selectedIndex="1">
+    <tabbox selectedIndex="0">
         <tabs>
+            <tab label="Cabeçalho padrão"/>
             <tab label="e-Proc V1 (JEF)"/>
             <tab label="e-Proc V2 (Rito Ordinário)"/>
         </tabs>
         <tabpanels>
             <tabpanel>
-                <groupbox>
-                    <caption><checkbox id="v1_enable" label="Habilitar alterações" oncommand="Commands.on_v1_enable();"/></caption>
-                    <checkbox id="v1_consulta_processo_enable" label="Tela de consulta de processos"/>
-                    <groupbox>
-                        <caption><checkbox id="v1_html_to_pdf_enable" label="Digitação de documento" oncommand="Commands.on_v1_html_to_pdf_enable();"/></caption>
-                        <grid>
+                        <grid width="300">
                             <columns>
                                 <column flex="1"/>
-                                <column flex="2"/>
+                                <column flex="3"/>
                             </columns>
                             <rows>
                                 <row align="center">
-                                    <label control="v1_secao" value="Seção Judiciária:"/>
+                                    <label control="v1_secao" value="1ª linha:"/>
                                     <textbox id="v1_secao"/>
                                 </row>
                                 <row align="center">
-                                    <label control="v1_subsecao" value="Subseção Judiciária:"/>
+                                    <label control="v1_subsecao" value="2ª linha:"/>
                                     <textbox id="v1_subsecao"/>
                                 </row>
                                 <row align="center">
-                                    <label control="v1_vara" value="Vara:"/>
+                                    <label control="v1_vara" value="3ª linha:"/>
                                     <textbox id="v1_vara"/>
                                 </row>
                             </rows>
                         </grid>
-                    </groupbox>
+            </tabpanel>
+            <tabpanel>
+                <groupbox>
+                    <caption><checkbox id="v1_enable" label="Habilitar alterações" oncommand="Commands.on_v1_enable();"/></caption>
+                    <checkbox id="v1_consulta_processo_enable" label="Tela de consulta de processos"/>
+                    <checkbox id="v1_html_to_pdf_enable" label="Digitação de documento"/>
                     <checkbox id="v1_alteracao_assunto_enable" label="Alteração de tipo de ação/assunto"/>
                     <checkbox id="v1_eproc_enable" label="Demais alterações"/>
                 </groupbox>
@@ -52,25 +53,17 @@
                     <caption><checkbox id="v2_enable" label="Habilitar alterações" oncommand="Commands.on_v2_enable();"/></caption>
                     <grid>
                         <columns>
-                            <column flex="1"/>
                             <column flex="2"/>
+                            <column flex="2"/>
+                            <column flex="1"/>
                         </columns>
                         <rows>
-                            <!-- row align="center">
-                                <label control="v2_fundo" value="Cor de fundo:"/>
-                                <textbox id="v2_fundo"/>
-                            </row -->
+                            <row align="center">
+                                <checkbox id="v2_semdestaque" label="Sem destaque para eventos fechados"/>
+                            </row>
                             <row align="center">
                                 <label control="v2_perfil" value="Perfil padrão:"/>
                                 <textbox id="v2_perfil"/>
-                            </row>
-                            <row align="center">
-                                <label control="v2_secao" value="Código da Seção Judiciária:"/>
-                                <textbox id="v2_secao" maxlength="2"/>
-                            </row>
-                            <row align="center">
-                                <label control="v2_subsecao" value="Código da Subseção Judiciária:"/>
-                                <textbox id="v2_subsecao" maxlength="2"/>
                             </row>
                             <row align="center">
                                 <label control="v2_ielocation" value="Localização do Internet Explorer:"/>
@@ -82,10 +75,4 @@
             </tabpanel>
         </tabpanels>
     </tabbox>
-    <!-- script type="application/x-javascript" src="chrome://rotateimage/content/util.js"/>
-    <script type="application/x-javascript" src="chrome://rotateimage/content/options.js"/-->
-
-    <!--
-    vim:enc=utf-8
-    -->
 </dialog>

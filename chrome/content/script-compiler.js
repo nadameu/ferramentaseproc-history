@@ -1,4 +1,4 @@
-var IE = function()
+var IELauncher = function(url)
 {
         // create an nsILocalFile for the executable
         var file = Components.classes["@mozilla.org/file/local;1"]
@@ -7,20 +7,17 @@ var IE = function()
         file.initWithPath(prefs.getValue('v2.ielocation'));
 
         // create an nsIProcess
-        this.process = Components.classes["@mozilla.org/process/util;1"]
+        var process = Components.classes["@mozilla.org/process/util;1"]
                                 .createInstance(Components.interfaces.nsIProcess);
-        this.process.init(file);
+        process.init(file);
 
         // Run the process.
         // If first param is true, calling thread will be blocked until
         // called process terminates.
         // Second and third params are used to pass command-line arguments
         // to the process.
-}
-IE.prototype.launch = function(url)
-{
-    var args = [url];
-    this.process.run(false, args, args.length);
+        var args = [url];
+        return process.run(false, args, args.length);
 }
 
 var eproc_gmCompiler={
@@ -78,19 +75,31 @@ contentLoad: function(e) {
     if (eproc_gmCompiler.isGreasemonkeyable(href)) {
         var prefs = new eproc_PrefManager();
         var script = false;
-        if (/^https?:\/\/((eproc|jef)[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc(V2|v2_(homologacao|apresentacao))|eproc2?.trf4.(gov|jus).br\/eproc(2trf4|trf4_apresentacao)|eproc2d-(um|dois|tres)\.trf4\.(jus|gov)\.br\/.*)\/controlador\.php\?acao=acessar_documento/.test(href)) {
-        } else if (prefs.getValue('v2.enable') && /^https?:\/\/((eproc|jef)[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc(V2|v2_(homologacao|apresentacao))|eproc2?.trf4.(gov|jus).br\/eproc(2trf4|trf4_apresentacao)|eproc2d-(um|dois|tres)\.trf4\.(jus|gov)\.br)\//.test(href)) {
-            script = eproc_gmCompiler.getUrlContents('chrome://eproc/content/eprocV2.js');
-        } else if (prefs.getValue('v1.enable') && /^https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\//.test(href)) {
-            if (prefs.getValue('v1.consulta_processo.enable') && /^https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/consulta_processo.php\?.*/.test(href)) {
-                script = eproc_gmCompiler.getUrlContents('chrome://eproc/content/consulta_processo.js');
-            } else if (prefs.getValue('v1.html_to_pdf.enable') && /^https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/html_to_pdf\.php/.test(href)) {
-                script = eproc_gmCompiler.getUrlContents('chrome://eproc/content/html_to_pdf.js');
-            } else if (prefs.getValue('v1.alteracao_assunto.enable') && /^https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/alteracao_assunto.php\?.*/.test(href)) {
-                script = eproc_gmCompiler.getUrlContents('chrome://eproc/content/alteracao_assunto.js');
-            } else if (/^https:\/\/jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc\/(class\/|download_documento\.php|download\/|arvore\.php)/.test(href)) {
-            } else if (prefs.getValue('v1.eproc.enable')) {
+        var parts = new RegExp('^(https?)' + // scheme
+            '://(jef[23]?|eproc(?:|2(?:d-(?:um|dois|tres))|3|teste|-(?:apresentacao|[12]g-desenv))|homologa-[12]g1)' + // subdominio
+            '\\.(jf(pr|rs|sc)|trf4)' + // dominio, estado
+            '\\.(?:gov|jus)\\.br/(eproc(?:|V1|V2|2trf4|(?:trf4|v2)_[^/]+)|(?:homologa|apresenta)_[12]g)/' + // sistema
+            '(|([^.]+)(?:\\.php)?[^?#]*)' + // arquivo, controlador
+            '(?:\\?([^#]*))?' + // query
+            '(?:#(.*))?' + // hash
+            '$').exec(href);
+        var scheme, subdominio, dominio, estado, sistema, arquivo, controlador, query, hash;
+        if (parts) {
+            [parts, scheme, subdominio, dominio, estado, sistema, arquivo, controlador, query, hash] = parts;
+            if (/^eproc(V1)?$/.test(sistema)) {
+                if (prefs.getValue('v1.enable')) {
+                    if (['consulta_processo', 'html_to_pdf', 'alteracao_assunto'].indexOf(controlador) > -1 && prefs.getValue('v1.' + controlador + '.enable')) {
+                        script = eproc_gmCompiler.getUrlContents('chrome://eproc/content/' + controlador + '.js');
+                    } else if (['download_documento', 'arvore'].indexOf(controlador) > -1 || /^(class|download)\//.test(arquivo)) {
+                    } else if (prefs.getValue('v1.eproc.enable')) {
                 script = eproc_gmCompiler.getUrlContents('chrome://eproc/content/eproc.js');
+                    }
+                }
+            } else {
+                if (controlador == 'controlador' && /^acao=acessar_documento/.test(query)) {
+                } else if (prefs.getValue('v2.enable')) {
+                    script = eproc_gmCompiler.getUrlContents('chrome://eproc/content/eprocV2.js');
+                }
             }
         }
         if (script)
@@ -124,13 +133,28 @@ injectScript: function(script, url, unsafeContentWin) {
     sandbox.GM_xmlhttpRequest=eproc_gmCompiler.hitch(
         xmlhttpRequester, "contentStartRequest"
     );
-    sandbox.IE = IE;
+    sandbox.IELauncher = IELauncher;
     //unsupported
     sandbox.GM_registerMenuCommand=function(){};
     sandbox.GM_log=myDump; //function(){};
     sandbox.GM_getResourceURL=function(){};
     sandbox.GM_getResourceText=function(){};
-
+    sandbox.GM_confirmCheck=function(title, text, chkMsg, chkState)
+    {
+        var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+            .getService(Components.interfaces.nsIPromptService);
+        var result = prompts.confirmCheck(null, title, text, chkMsg, chkState);
+        return result;
+    };
+    sandbox.GM_yesNo=function(title, text)
+    {
+        var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+            .getService(Components.interfaces.nsIPromptService);
+        var flags = prompts.BUTTON_POS_0 * prompts.BUTTON_TITLE_YES  +
+                    prompts.BUTTON_POS_1 * prompts.BUTTON_TITLE_NO;
+        var button = prompts.confirmEx(null, title, text, flags, '', '', '', '', {value: false});
+        return button;
+    };
     sandbox.__proto__=sandbox.window;
 
     try {
@@ -290,7 +314,7 @@ var httpRequestObserver =
       if (typeof Components == 'undefined') return;
       var httpChannel = subject.QueryInterface(Components.interfaces.nsIHttpChannel);
 
-      if (/https?:\/\/(jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc(V2|v2_(homologacao|apresentacao))|eproc2?.trf4.(gov|jus).br\/eproc(2trf4|trf4_apresentacao)|eproc2d-(um|dois|tres)\.trf4\.(jus|gov)\.br\/.*)\/controlador\.php\?acao=acessar_documento/.test(httpChannel.name)) {
+      if (/https?:\/\/(jef[23]?\.jf(pr|rs|sc)\.(gov|jus)\.br\/eproc(V2|v2_(homologacao|apresentacao))|eproc2?.trf4.(gov|jus).br\/eproc(2trf4|trf4_apresentacao)|eproc2d-(um|dois|tres)\.trf4\.(jus|gov)\.br\/.*|homologa-[12]g1\.trf4\.(gov|jus)\.br\/homologa_[12]g)\/controlador\.php\?acao=acessar_documento/.test(httpChannel.name)) {
 //          httpChannel.setResponseHeader("Content-Disposition", httpChannel.getResponseHeader("Content-Disposition").replace('attachment', 'inline'), false);
           httpChannel.contentType = httpChannel.contentType.replace(/^application\/(.*)$/, function(match, type) {
               return {
