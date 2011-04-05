@@ -76,7 +76,7 @@ contentLoad: function(e) {
         var prefs = new eproc_PrefManager();
         var script = false;
         var parts = new RegExp('^(https?)' + // scheme
-            '://(jef[23]?|eproc(?:|2(?:d-(?:um|dois|tres))|3|teste|-(?:apresentacao|[12]g-desenv))|homologa-[12]g1)' + // subdominio
+            '://(jef[23]?|eproc(?:[34]?|2(?:d-(?:um|dois|tres))?|teste|-(?:apresentacao|[12]g-desenv))|homologa-[12]g1)' + // subdominio
             '\\.(jf(pr|rs|sc)|trf4)' + // dominio, estado
             '\\.(?:gov|jus)\\.br/(eproc(?:|V1|V2|2trf4|(?:trf4|v2)_[^/]+)|(?:homologa|apresenta)_[12]g)/' + // sistema
             '(|([^.]+)(?:\\.php)?[^?#]*)' + // arquivo, controlador
