@@ -1,4 +1,4 @@
-pref('general.useragent.extra.eproc', 'eproc-0.8');
+pref('general.useragent.extra.eproc', 'eproc-0.8.1');
 pref('eproc.v1.enable', true);
 pref('eproc.v1.consulta_processo.enable', true);
 pref('eproc.v1.html_to_pdf.enable', true);
