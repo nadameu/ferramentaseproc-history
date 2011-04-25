@@ -322,6 +322,7 @@ var Eproc = {
     },
     digitar_documento: function()
     {
+        unsafeWindow.FCKeditor_OnComplete = this.digitar_documento_oncomplete;
         if (null == document.getElementById('txt_fck___Frame')) return;
         var infoWindow = unsafeWindow.opener;
         if (infoWindow) {
@@ -369,7 +370,7 @@ var Eproc = {
     {
         ed.Events.AttachEvent('OnAfterSetHTML', function(e) { e.ResetIsDirty(); });
         ed.Config.FullPage = true;
-        ed.Config.ToolbarSets['eProcv2'] = [
+        ed.Config.ToolbarSets['eProcv2custom'] = [
             ['Cut','Copy','Paste','PasteText','PasteWord'],
             ['Undo','Redo'],
             ['Bold','Italic','Underline'],
@@ -378,7 +379,7 @@ var Eproc = {
             ['TextColor'],
             ['Source']
         ];
-        ed.ToolbarSet.Load('eProcv2');
+        ed.ToolbarSet.Load('eProcv2custom');
     },
     entrar: function()
     {
@@ -889,9 +890,6 @@ var Eproc = {
             this[this.parametros.acao_origem + '_destino']();
         } else if (location.pathname.match(/\/eproc(V2|v2_homologacao|v2_apresentacao)\/(index.php)?/)) {
             document.createElement('img').src = '/infra_css/imagens/fndtransp.gif';
-        }
-        if (location.pathname.match(/\/class\/fckeditor\/editor\/fckeditor\.html/)) {
-            unsafeWindow.parent.FCKeditor_OnComplete = this.digitar_documento_oncomplete;
         }
         window.addEventListener('beforeunload', function(e)
         {
