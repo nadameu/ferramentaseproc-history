@@ -2,7 +2,7 @@ unsafeWindow._eproc = 0.3;
 if ((tabelas = document.getElementsByTagName('table')).length > 0 && (tabela = tabelas[0]).getAttribute('height') == 30) {
     tabela.setAttribute('height', 0);
     tabela.setAttribute('cellpadding', 2);
-    if ((celula2 = (tabela2 = document.getElementsByTagName('table')[1]).rows[0].cells[0]).getAttribute('bgcolor') == '#cccccc' && celula2.getAttribute('width') == 760) {
+    if ((celula2 = (tabela2 = document.getElementsByTagName('table')[1]).rows[0].cells[0]).getAttribute('bgcolor').toUpperCase() == '#CCCCCC' && celula2.getAttribute('width') == 760) {
         var submenu = document.createElement('div');
         with (submenu.style) {
             display = 'none';
