@@ -44,10 +44,16 @@ Eproc = {
                     li {
                         margin: 5px 0;
                     }
-                ]]></style>);
+                ]]></style>.toString());
                 ul = $('#body ul');
                 div = $('<ul></ul>').insertBefore('#body ul');
-                ul.find('font font:eq(0)').wrap('<li></li>').closest('li').appendTo(div).append('<ul></ul>');
+                var fonts = ul.find('font font'), font, delay = 250;
+                if (fonts.size() > 0) {
+                    font = fonts.eq(0);
+                } else {
+                    font = ul.find('font:eq(0)');
+                }
+                font.wrap('<li></li>').closest('li').appendTo(div).append('<ul></ul>');
                 ul.find('li').each(function(li)
                 {
                     if ((p = $(this).find('p > font[face=verdana][size=2][color=green] > b')).size()) {
