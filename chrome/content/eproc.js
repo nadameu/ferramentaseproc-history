@@ -30,8 +30,9 @@ Eproc = {
         this.fixMenu();
         this.fixSubmenu();
         this.fixTopic();
-        this.page = location.pathname.split(/(\/eproc\/|\.php)/)[2];
+        this.page = location.pathname.split(/(\/eproc(?:V1)?\/|\.php)/)[2];
         switch(this.page) {
+            case 'menu_diretor':
             case 'menu_vara':
                 GM_addStyle(<style><![CDATA[
                     ul {
@@ -114,8 +115,11 @@ Eproc = {
                 if (this.processos.filters.cod_localizador && this.processos.filters.cod_evento_com && this.processos.filters.cod_assunto_com) {
                     $('center:has(b > font) > font > b').append(' <font color="black">com Localizador:</font> ' + $('select[name=cod_localizador] option[value=' + this.processos.filters.cod_localizador + ']').text());
                 }
-                if (this.processos.filters.magistrados != 'T') {
+                if (this.processos.filters.magistrados && this.processos.filters.magistrados != 'T') {
                     $('center:has(b > font) > font > b').append(' <font color="black">e Magistrado:</font> ' + this.processos.filters.magistrados);
+                }
+                if (this.processos.filters.relatores && this.processos.filters.relatores != 'T') {
+                    $('center:has(b > font) > font > b').append(' <font color="black">e Relator:</font> ' + this.processos.filters.relatores);
                 }
                 if (this.processos.filters.tipoacao != 'NOK') {
                     $('center:has(b > font) > font > b').append(' <font color="black">e Tipo de ação:</font> ' + ['','REVISÃO','CONCESSÃO','CÍVEL','REVISÃO / MATÉRIA DE FATO'][this.processos.filters.tipoacao]);
@@ -270,21 +274,21 @@ Processo.prototype = {
     {
         var fields = {
             numproc: [0, /value="(\d+)"/],
-            advogados: [1, /<\/a> ?(Sem ADV\.|.* )(\&nbsp;)+<\/font>/, function(v) { return v[1].replace(/Sem ADV./, '').replace(/ $/, '').split(' '); }],
-            lembrete: [1, (row.cells.length == 10 ? /(Ver Lembrete)/ : /<TABLE><TR>.*<\/TR><TR>.*<\/TR><TR><TD><font .*>     (.*)<\/font><\/TD><\/TR><TR>.*<\/TR><\/TABLE>/), true],
+            advogados: [1, /<\/a> ?(Sem ADV\.|.* )(\&nbsp;)+<\/font>/, function(v) { if (v) return v[1].replace(/Sem ADV./, '').replace(/ $/, '').split(' '); else return []; }],
+            lembrete: [1, (Eproc.page == 'localizacao_bloco' ? /(Ver Lembrete)/ : /<TABLE><TR>.*<\/TR><TR>.*<\/TR><TR><TD><font .*>     (.*)<\/font><\/TD><\/TR><TR>.*<\/TR><\/TABLE>/), true],
             materia: [1, /<font .*><b>(.*)<\/b><\/font>/],
             localizador: [2, />([^<]+)</],
-            juizo: [3, />([^<]+)</],
+            juizo: [3, />([^<&]+)</],
             gratuita: [4, />([^<]+)</],
-            mp: (row.cells.length == 10 ? '?' : [5, />([^<]+)</]),
-            tutela: [(row.cells.length == 10 ? 5 : 6), />([^<]+)</],
-            autor: [(row.cells.length == 10 ? 6 : 7), /blue[^>]*>([^<]+)</],
-            al: [(row.cells.length == 10 ? 6 : 7), /brown[^>]*><b>([^<]+)</, true],
-            reus: [(row.cells.length == 10 ? 6 : 7), /red[^>]*> ([^<]+)</, function(v) { if (v) return v[1].split(' '); else return ['N/D']; }],
-            assunto: [(row.cells.length == 10 ? 7 : 8), />([^<]+)</],
-            data: [(row.cells.length == 10 ? 8 : 9), />(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})</, function(data) { return new Date(data[3], data[2] - 1, data[1], data[4], data[5], 0, 0); }],
-            evento: [(row.cells.length == 10 ? 9 : 10), /blue[^>]*>([^<]+)</, true],
-            documentos: [(row.cells.length == 10 ? 9 : 10), />([^<]+)<\/a>/g, function(docs)
+            mp: (Eproc.page == 'localizacao_bloco' ? '?' : [5, />([^<]+)</]),
+            tutela: [(Eproc.page == 'localizacao_bloco' ? 5 : 6), />([^<]+)</],
+            autor: [(Eproc.page == 'localizacao_bloco' ? 6 : 7), /blue[^>]*>([^<]+)</],
+            al: [(Eproc.page == 'localizacao_bloco' ? 6 : 7), /brown[^>]*><b>([^<]+)</, true],
+            reus: [(Eproc.page == 'localizacao_bloco' ? 6 : 7), /red[^>]*> ([^<]+)</, function(v) { if (v) return v[1].split(' '); else return ['N/D']; }],
+            assunto: [(Eproc.page == 'localizacao_bloco' ? 7 : 8), />([^<]+)</],
+            data: [(Eproc.page == 'localizacao_bloco' ? 8 : 9), />(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})</, function(data) { return new Date(data[3], data[2] - 1, data[1], data[4], data[5], 0, 0); }],
+            evento: [(Eproc.page == 'localizacao_bloco' ? 9 : 10), /blue[^>]*>([^<]+)</, true],
+            documentos: [(Eproc.page == 'localizacao_bloco' ? 9 : 10), />([^<]+)<\/a>/g, function(docs)
             {
                 if (docs) {
                     for (d = 0; d < docs.length && (doc = docs[d]); d++) {
@@ -313,9 +317,17 @@ Processo.prototype = {
                 this[n] = field;
             }
         }
-        if (docs = row.cells[(row.cells.length == 10 ? 9 : 10)].innerHTML.match(/"download_documento\.php\?num_protocolo=(\d+)&amp;seq_documento=(\d+)&amp;cod_seg=([0-9a-f]+)"/g)) {
+        if (relator = row.cells[3].getAttribute('onmouseover')) {
+            this.relator = relator;
+        }
+        if (docs = row.cells[(Eproc.page == 'localizacao_bloco' ? 9 : 10)].innerHTML.match(/"download_documento\.php\?num_protocolo=(\d+)&amp;seq_documento=(\d+)&amp;cod_seg=([0-9a-f]+)"/g)) {
             for (d = 0; d < docs.length && (doc = docs[d]); d++) {
                 this.documentos[d].link = doc.match(/"download_documento\.php\?num_protocolo=(\d+)&amp;seq_documento=(\d+)&amp;cod_seg=([0-9a-f]+)"/).splice(1);
+            }
+        }
+        if (relator) {
+            if (row.cells.length + (Eproc.page == 'localizacao_bloco' ? 1 : 0) == 12) {
+                this.sentenca = row.cells[row.cells.length - 1].innerHTML;
             }
         }
     },
@@ -360,7 +372,36 @@ Table.prototype = {
             $(row.insertCell(3)).html('<a style="text-decoration: none;" href="altera_lembrete.php?num_processo_lembrete=' + processo.numproc + '">' + (processo.lembrete ? '<span  onMouseover="ddrivetip(\'' + processo.lembrete + '\', 250);" onMouseout="hideddrivetip();" ><img border="0" src="imagens/bt_lupa_off.gif" width="16" height="13"></span>' : '...') + '</a>');
             $(row.insertCell(4)).html('<font color="brown"><b>' + processo.materia + '</b></font>');
             $(row.insertCell(5)).html('<a style="text-decoration: none; color: black;" href="altera_localizador.php?num_processo_localizador=' + processo.numproc + '">' + processo.localizador + '</a>');
-            $(row.insertCell(6)).html('<font color="' + (processo.juizo == 'F' ? 'brown' : 'orange') + '"><b>' + processo.juizo + '</b></font>');
+            if (processo.relator) {
+                var color = 'black';
+                switch (processo.juizo) {
+                    case 'A':
+                    case 'F':
+                        color = 'black';
+                        break;
+
+                    case 'B':
+                    case 'G':
+                        color = 'green';
+                        break;
+
+                    case 'C':
+                    case 'H':
+                        color = 'red';
+                        break;
+
+                    case 'D':
+                        color = 'brown';
+                        break;
+
+                    case 'E':
+                        color = 'orange';
+                        break;
+                }
+                $(row.insertCell(6)).html('<font onmouseover="' + processo.relator + '" onmouseout="hideddrivetip();" color="' + color + '"><b>' + processo.juizo + '</b></font>');
+            } else {
+                $(row.insertCell(6)).html('<font color="' + (processo.juizo == 'F' ? 'brown' : 'orange') + '"><b>' + processo.juizo + '</b></font>');
+            }
             $(row.insertCell(7)).html('<a style="text-decoration: none; color: black;" href="status_justica_gratuita.php?num_processo=' + processo.numproc + '">' + processo.gratuita + '</a>');
             $(row.insertCell(8)).html('<a style="text-decoration: none; color: black;" href="status_manifestacao_mp.php?num_processo=' + processo.numproc + '">' + processo.mp + '</a>');
             $(row.insertCell(9)).html('<a style="text-decoration: none; color: ' + (processo.tutela == 'S' ? 'red' : (processo.tutela == 'I' ? 'orange' : (processo.tutela == 'D' ? 'blue' : 'black'))) + ';" href="status_tutela.php?num_processo=' + processo.numproc + '"><b>' + processo.tutela + '</b></a>');
@@ -400,13 +441,16 @@ Table.prototype = {
                 }
             }
             cell.hover(function(e) { $(this).find('div').show(); $(this).find('small').css({visibility: 'visible'}); }, function(e) { $(this).find('div').hide(); $(this).find('small').css({visibility: 'hidden'}); });
+            if (processo.sentenca) {
+                $(row.insertCell(row.cells.length)).html(processo.sentenca);
+            }
         }
         $('<thead><tr></tr></thead>').insertBefore(this.table.firstChild);
         (this.unhide = $('<span>Reexibir colunas ocultas</span>').css({fontWeight: 'bold', color: 'red', cursor: 'pointer'}).hide().click(this.unhideCols)).insertBefore(this.table.firstChild).wrap('<caption></caption>');
         this.unhide.parent().css({textAlign: 'right'});
         row = $(this.table).find('thead tr');
         this.cols = {};
-        for (c in cols = {
+        var cols = {
             checkbox: '<a href="javascript:marcar_itens(0);">Todos</a><br /><a href="javascript:desmarcar_itens();">LIMPAR</a>',
             numproc: 'Processo / Ação',
             advogados: 'Advogado',
@@ -423,7 +467,11 @@ Table.prototype = {
             assunto: 'Assunto',
             data: 'Data/Hora<br />do Evento',
             evento: 'Documentos<br />Último<br />Evento',
-        }) {
+        };
+        if (processo.sentenca) {
+            cols.sentenca = 'Sentenças e Recursos';
+        }
+        for (c in cols) {
             row.append(th = $('<th>' + cols[c] + '</th>'));
             this.cols[c] = th;
             th.get(0).setUserData('name', c, null);
@@ -563,9 +611,11 @@ Table.prototype = {
     replace: function(table)
     {
         table.parentNode.replaceChild(this.table, table); //$(table).replaceWith(this.table);
+        if (Eproc.processos.filters.relatores) this.hideCol('advogados');
         if (Eproc.processos.filters.cod_localizador) this.hideCol('localizador');
         if (Eproc.processos.filters.cod_assunto_com) this.hideCol('assunto');
-        if (Eproc.processos.filters.magistrados != 'T') this.hideCol('juizo');
+        if (Eproc.processos.filters.magistrados && Eproc.processos.filters.magistrados != 'T') this.hideCol('juizo');
+        if (Eproc.processos.filters.relatores && Eproc.processos.filters.relatores != 'T') this.hideCol('juizo');
         if (Eproc.processos.filters.tipoacao != 'NOK') this.hideCol('materia');
         if ($(this.table).width() > $(window).width()) this.hideCol('advogados');
         if ($(this.table).width() > $(window).width()) this.hideCol('materia');
