@@ -32,7 +32,6 @@ Eproc = {
         this.fixTopic();
         this.page = location.pathname.split(/(\/eproc(?:V1)?\/|\.php)/)[2];
         switch(this.page) {
-            case 'menu_diretor':
             case 'menu_vara':
                 GM_addStyle(<style><![CDATA[
                     ul {
