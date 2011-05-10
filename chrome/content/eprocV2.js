@@ -675,16 +675,9 @@ var Eproc = {
                                 e.preventDefault();
                                 e.stopPropagation();
                                 var win = Eproc.windows['' + Eproc.processo + reg.getAttribute('codigoNodo')];
-                                var isClosed = typeof win == 'undefined';
-                                if (!isClosed && win.focus) {
-                                    try {
-                                        win.window;
-                                        isClosed = true;
-                                    } catch (ex) {
-                                        return win.focus();
-                                    }
-                                }
-                                if (isClosed) {
+                                if (typeof win == 'object' && !win.closed) {
+                                    return win.focus();
+                                } else {
                                     Eproc.windows['' + Eproc.processo + reg.getAttribute('codigoNodo')] = window.open('http://' + Eproc.loginGedpro.host + '/visualizarDocumentos.asp?codigoDocumento=' + reg.getAttribute('codigoDocumento'), '' + Eproc.processo + reg.getAttribute('codigoNodo'), 'menubar=0,resizable=1,status=0,toolbar=0,location=0,menubar=0,directories=0,scrollbars=1');
                                 }
                             };
@@ -1152,16 +1145,9 @@ var Eproc = {
                             e.preventDefault();
                             e.stopPropagation();
                             var win = Eproc.windows['' + processo + numero];
-                            var isClosed = typeof win == 'undefined';
-                            if (!isClosed && win.focus) {
-                                try {
-                                    win.window;
-                                    isClosed = true;
-                                } catch (ex) {
-                                    return win.focus();
-                                }
-                            }
-                            if (isClosed) {
+                            if (typeof win == 'object' && !win.closed) {
+                                return win.focus();
+                            } else {
                                 Eproc.windows['' + processo + numero] = window.open(e.target.href, '' + processo + numero, 'menubar=0,resizable=1,status=0,toolbar=0,location=0,menubar=0,directories=0,scrollbars=1');
                             }
                         };
@@ -1337,11 +1323,11 @@ var Eproc = {
                             {
                                 e.stopPropagation();
                                 e.preventDefault();
-                                if (Eproc.windows[id] && typeof Eproc.windows[id] == 'object' && Eproc.windows[id].document) {
-                                    Eproc.windows[id].focus();
+                                var win = Eproc.windows[id];
+                                if (typeof win == 'object' && !win.closed) {
+                                    win.focus();
                                 } else {
-                                    var x = Eproc.windows[id] = window.open(link.href,id,'menubar=0,resizable=1,status=0,toolbar=0,location=0,menubar=0,directories=0,scrollbars=1');
-                                    x.focus();
+                                    Eproc.windows[id] = window.open(link.href,id,'menubar=0,resizable=1,status=0,toolbar=0,location=0,menubar=0,directories=0,scrollbars=1');
                                 }
                             };
                         })('' + Eproc.processo + r + link.innerHTML.replace(/<[^>]*>/g, ''), link), false);
