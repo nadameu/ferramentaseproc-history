@@ -971,6 +971,9 @@ var Eproc = {
 + '.infraTrClara a:visited, .infraTrEscura a:visited {'
 + '    color: #666;'
 + '}'
++ 'a.docLink {'
++ '    font-size: 11px;'
++ '}'
 + 'a.docLink:visited {'
 + '    color: #666;'
 + '}'
@@ -1175,6 +1178,10 @@ var Eproc = {
             });
         }
     },
+    processo_seleciona_publica: function()
+    {
+        this.processo_selecionar();
+    },
     processo_selecionar: function()
     {
         document.title = Eproc.getProcessoF();
@@ -1269,7 +1276,7 @@ var Eproc = {
             });
         }
         for (var tables = document.getElementsByClassName('infraTable'), t = 0, tl = tables.length; (t < tl) && (table = tables[t]); t++) {
-            if (table.getAttribute('summary') == 'Eventos') {
+            if (table.getAttribute('summary') == 'Eventos' || table.rows[0].cells[0].textContent == 'Evento') {
                 for (var ths = table.getElementsByTagName('th'), h = 1, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
                     th.setAttribute('width', '');
                 }
@@ -1283,8 +1290,9 @@ var Eproc = {
                             tr.cells[2].className = 'prazoAberto';
                         } else if (match[1] == 'FECHADO') {
                             haPrazosFechados = true;
-                            var extraContent = '', fechamento = tr.cells[0].getElementsByTagName('a')[0].getAttribute('onmouseover').match(/Fechamento do Prazo:.*?\d+ - ([^<]+)/);
-                            if (fechamento) {
+                            var extraContent = '', fechamento = tr.cells[0].getElementsByTagName('a');
+                            if (fechamento.length) {
+                                fechamento = fechamento[0].getAttribute('onmouseover').match(/Fechamento do Prazo:.*?\d+ - ([^<]+)/);
                                 var evento = fechamento[1]
                                 if (evento != 'Decurso de Prazo') {
                                     evento = '<span class="prazoEvento">' + evento + '</span>';
@@ -1308,15 +1316,15 @@ var Eproc = {
                         tr.cells[4].removeChild(tr.cells[4].getElementsByTagName('table')[0]);
                     } else {
                         for (var children = tr.cells[4].childNodes, c = children.length - 1; (c >= 0) && (child = children[c]); c--) {
-                            if (!child.tagName || (child.tagName == 'BR')) {
+                            if (!child.tagName || (child.tagName.toUpperCase() == 'BR')) {
                                 child.parentNode.removeChild(child);
-                            } else {
+                            } else if (child.tagName.toUpperCase() == 'A' && /^\?acao=acessar_documento/.test(child.search)) {
                                 child.parentNode.insertBefore(document.createElement('br'), child.nextSibling);
                             }
                         }
                     }
                     for (var links = tr.cells[4].getElementsByTagName('a'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
-                        if (!/\?acao=acessar_documento\&/.test(link.href)) continue;
+                        if (!/^\?acao=acessar_documento/.test(link.search)) continue;
                         link.className = link.className.split(' ').concat(['docLink']).join(' ');
                         link.addEventListener('click', (function(id, link) {
                             return function(e)
