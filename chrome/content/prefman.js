@@ -1,4 +1,4 @@
-function eproc_PrefManager() {
+function EprocPreferences() {
     var startPoint="eproc.";
 
     var pref=Components.classes["@mozilla.org/preferences-service;1"].

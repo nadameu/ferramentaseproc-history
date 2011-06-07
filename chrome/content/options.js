@@ -50,7 +50,7 @@ var Options = {
     },
     
     init: function() {
-        this.prefs = new eproc_PrefManager();
+        this.prefs = new EprocPreferences();
         this.options = [
             'v1.enable',
             'v1.consulta_processo.enable',
