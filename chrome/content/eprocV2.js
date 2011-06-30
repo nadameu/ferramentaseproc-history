@@ -313,7 +313,8 @@ var Eproc = {
         Array.prototype.forEach.call(table.rows, function(tr)
         {
             if (!tr.className.match(/infraTr(Clara|Escura)/)) return;
-            tr.querySelectorAll('a[href]')[0].setAttribute('target', '_blank');
+            var links = tr.querySelectorAll('a[href]');
+            if (links.length) links[0].setAttribute('target', '_blank');
             var col = th.cellIndex;
             var classe = tr.cells[col].innerHTML.split('<')[0];
             var cor = Classes[classe];
