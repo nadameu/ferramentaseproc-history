@@ -22,7 +22,7 @@ var EprocUri = function(uri)
 {
     var parts = new RegExp(
         '^(https?)' // scheme
-        + '://(jef[23]?|eproc(?:[34]?|2(?:d-(?:um|dois|tres))?|teste|-(?:apresentacao|[12]g-desenv))|homologa-[12]g1)' // subdominio
+        + '://(jef[23]?|eproc(?:[34]?|2(?:d-(?:um|dois|tres))?|teste|-(?:apresentacao|[12]g-desenv|ws))|homologa-[12]g1)' // subdominio
         + '\\.(jf(pr|rs|sc)|trf4)' // dominio, estado
         + '\\.(?:gov|jus)\\.br/(eproc(?:|V1|V2|2trf4|(?:trf4|v2)_[^/]+)|(?:homologa|apresenta)_[12]g)/' // sistema
         + '(|([^.]+)(?:\\.php)?[^?#]*)' // arquivo, controlador
@@ -138,7 +138,7 @@ var EprocGmCompiler = {
             } else if (uri.isV2()) {
                 var controlador = uri.getControlador();
                 var query = uri.getQuery();
-                if (controlador == 'controlador' && /^acao=acessar_documento/.test(query)) {
+                if (controlador == 'controlador' && /^acao=acessar_documento_implementacao/.test(query)) {
                 } else if (prefs.getValue('v2.enable')) {
                     script = EprocGmCompiler.getUrlContents('chrome://eproc/content/eprocV2.js');
                 }
@@ -352,14 +352,14 @@ var httpRequestObserver = {
             if (typeof Components == 'undefined') return;
             var httpChannel = subject.QueryInterface(Components.interfaces.nsIHttpChannel);
             var uri = new EprocUri(httpChannel.name);
-            if (uri.isV2() && uri.getControlador() == 'controlador' && /^acao=acessar_documento/.test(uri.getQuery())) {
+            if (uri.isV2() && uri.getControlador() == 'controlador' && /^acao=acessar_documento_(implementacao|publico)/.test(uri.getQuery())) {
                 var types = {
                     'jpeg': 'image/jpeg',
                     'jpg' : 'image/jpeg',
                     'png' : 'image/png',
                     'pdf' : 'application/pdf',
                     'odt' : 'application/x-vnd.oasis.opendocument.text',
-                    'html': 'text/html'
+                    'html': 'text/html; charset=ISO-8859-1'
                 };
                 httpChannel.contentType = httpChannel.contentType.replace(
                     /^application\/(.*)$/,
@@ -368,6 +368,7 @@ var httpRequestObserver = {
                         return types[type];
                     }
                 );
+                httpChannel.setResponseHeader('Content-Disposition', httpChannel.getResponseHeader('Content-Disposition').replace(/filename=([^"]*)$/, 'filename="$1"'), false);
             }
         }
     },
