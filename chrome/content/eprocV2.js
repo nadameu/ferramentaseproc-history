@@ -240,6 +240,7 @@ var Eproc = {
                         + '<div class="extraLembreteData">' + tr.cells[5].textContent
                         + '<br/>' + tr.cells[1].textContent + '</div>';
                 floater.className = classes.join(' ');
+                floater.childNodes[0].appendChild(tr.cells[9].childNodes[2]);
                 floater.childNodes[0].appendChild(tr.cells[9].childNodes[0]);
                 table.parentNode.insertBefore(floater, separator);
             });
