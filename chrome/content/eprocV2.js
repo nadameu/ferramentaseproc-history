@@ -201,6 +201,17 @@ var Eproc = {
     pagina: '',
     processo: 0,
     windows: [],
+    acessar_documento: function()
+    {
+        var m;
+        if (m = location.search.match(/\&titulo_janela=([^\&]*)$/)) {
+            document.title = unescape(m[1]);
+        }
+    },
+    acessar_documento_publico: function()
+    {
+        this.acessar_documento();
+    },
     colorirLembretes: function()
     {
         var tables = document.querySelectorAll('.infraTable[summary="Lembretes"]');
@@ -289,40 +300,84 @@ var Eproc = {
     },
     colorirTabela: function()
     {
-        var setas = document.querySelectorAll('a[onclick="infraAcaoOrdenar(\'DesClasseJudicial\',\'ASC\');"]');
-        if (setas.length != 1) {
-            var th = null;
-            Array.prototype.forEach.call(document.querySelectorAll('.infraTh'), function(possibleTh){
-                if (possibleTh.textContent == 'Classe') th = possibleTh;
+        var findTh = function(campo, texto)
+        {
+            var th = null, setas = document.querySelectorAll('a[onclick="infraAcaoOrdenar(\'' + campo + '\',\'ASC\');"]');
+            if (setas.length != 1) {
+                Array.prototype.forEach.call(document.querySelectorAll('.infraTh'), function(possibleTh){
+                    if (possibleTh.textContent == texto) th = possibleTh;
+                });
+            } else {
+                var th = setas[0].parentNode;
+                while (th.tagName.toLowerCase() != 'th') {
+                    th = th.parentNode;
+                }
+            }
+            return th;
+        };
+        var classeTh = findTh('DesClasseJudicial', 'Classe');
+        var juizoTh = findTh('SigOrgaoJuizo', 'Juízo');
+        var th = (classeTh !== null) ? classeTh : juizoTh;
+        if (th !== null) {
+            var table = th.parentNode.parentNode;
+            while (table.tagName.toLowerCase() != 'table') {
+                table = table.parentNode;
+            }
+            table.setAttribute('width', '');
+            Array.prototype.forEach.call(table.querySelectorAll('th'), function(th, h)
+            {
+                th.setAttribute('width', '');
             });
-            if (!th) return;
-        } else {
-            var th = setas[0].parentNode;
-            while (th.tagName.toLowerCase() != 'th') {
-                th = th.parentNode;
-            }
+            Array.prototype.forEach.call(table.rows, function(tr)
+            {
+                if (!tr.className.match(/infraTr(Clara|Escura)/)) return;
+                var links = tr.querySelectorAll('a[href]');
+                if (links.length) links[0].setAttribute('target', '_blank');
+                if (classeTh) {
+                    var classeIndex = classeTh.cellIndex;
+                    var classe = tr.cells[classeIndex].innerHTML.split('<')[0];
+                    var cor = Classes[classe];
+                    if (cor) {
+                        tr.style.backgroundColor = cor;
+                    }
+                }
+                if (juizoTh) {
+                    var color = null, juizoIndex = juizoTh.cellIndex, juizoCell = tr.cells[juizoIndex], juizoText = juizoCell.textContent, juizo = juizoText[juizoText.length - 1];
+                    if (/^\s*[A-Z]{5}TR/.test(juizoText)) {
+                        switch (juizo) {
+                            case 'A':
+                            case 'F':
+                                color = 'black';
+                                break;
+
+                            case 'B':
+                            case 'G':
+                                color = 'green';
+                                break;
+
+                            case 'C':
+                            case 'H':
+                                color = 'red';
+                                break;
+
+                            case 'D':
+                                color = 'brown';
+                                break;
+
+                            case 'E':
+                                color = 'orange';
+                                break;
+
+                            default:
+                                color = 'black';
+                        }
+                    }
+                    if (color) {
+                        juizoCell.style.color = color;
+                    }
+                }
+            });
         }
-        var table = th.parentNode.parentNode;
-        while (table.tagName.toLowerCase() != 'table') {
-            table = table.parentNode;
-        }
-        table.setAttribute('width', '');
-        Array.prototype.forEach.call(table.querySelectorAll('th'), function(th, h)
-        {
-            th.setAttribute('width', '');
-        });
-        Array.prototype.forEach.call(table.rows, function(tr)
-        {
-            if (!tr.className.match(/infraTr(Clara|Escura)/)) return;
-            var links = tr.querySelectorAll('a[href]');
-            if (links.length) links[0].setAttribute('target', '_blank');
-            var col = th.cellIndex;
-            var classe = tr.cells[col].innerHTML.split('<')[0];
-            var cor = Classes[classe];
-            if (cor) {
-                tr.style.backgroundColor = cor;
-            }
-        });
     },
     digitar_documento: function()
     {
@@ -392,6 +447,11 @@ var Eproc = {
     },
     entrar: function()
     {
+	var barrasSistema = document.getElementById('divInfraBarraTribunalD').getElementsByClassName('infraAcaoBarraSistema');
+	while (barrasSistema.length > 1) {
+	    var barra = barrasSistema[0];
+	    barra.parentNode.removeChild(barra);
+	}
         function Perfil(perfil)
         {
             for (n in perfil) {
@@ -994,6 +1054,24 @@ var Eproc = {
 + 'a.docLink {'
 + '    font-size: 11px;'
 + '}'
++ 'a.sigilo1 {'
++ '    background: #fee;'
++ '}'
++ 'a.sigilo2 {'
++ '    background: #fdd;'
++ '}'
++ 'a.sigilo3 {'
++ '    background: #fcc;'
++ '}'
++ 'a.sigilo4 {'
++ '    background: #fbb;'
++ '}'
++ 'a.sigilo5 {'
++ '    background: #faa;'
++ '}'
++ '#lastClicked {'
++ '    color: red;'
++ '}'
 + '.infraBarraComandos, .infraAreaTelaD, .infraAreaDados {'
 + '    border-color: ' + background + ' !important;'
 + '}'
@@ -1220,7 +1298,7 @@ var Eproc = {
     processo_selecionar: function()
     {
         document.title = Eproc.getProcessoF();
-        for (var links = document.querySelectorAll('a'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
+        for (var links = document.querySelectorAll('a, #legInfAdicional'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
             if (!link.href && link.textContent.match(/GEDPRO/)) {
                 if (link.getAttribute('onclick')) {
                     link.textContent = 'GEDPRO';
@@ -1336,6 +1414,15 @@ var Eproc = {
                     };
                     link.addEventListener('click', onLinkPrevencaoClick, false);
                 }
+            } else if (link.id == 'legInfAdicional') {
+                if (GM_getValue('v2.mostrarinfadic')) {
+                    unsafeWindow.infraAbrirFecharElementoHTML('conteudoInfAdicional', 'imgStatusInfAdicional');
+                    unsafeWindow.adicionaRemoveLabelInfAdicional();
+                }
+                link.addEventListener('click', function(e)
+                {
+                    GM_setValue('v2.mostrarinfadic', ! GM_getValue('v2.mostrarinfadic'));
+                }, false);
             }
         }
         if (document.getElementById('tableRelacionado')) {
@@ -1350,7 +1437,7 @@ var Eproc = {
                 for (var ths = table.getElementsByTagName('th'), h = 1, hl = ths.length; (h < hl) && (th = ths[h]); h++) {
                     th.setAttribute('width', '');
                 }
-		var haPrazosFechados = false;
+                var haPrazosFechados = false;
                 for (var trs = table.getElementsByTagName('tr'), r = 0, rl = trs.length; (r < rl) && (tr = trs[r]); r++) {
                     if (!tr.className.match(/infraTr(Clara|Escura)/)) continue;
                     if (match = tr.cells[2].innerHTML.match(/Prazo: .* Status:([^<]+)/)) {
@@ -1372,7 +1459,10 @@ var Eproc = {
                             tr.cells[2].className = 'prazoFechado';
                             tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(/Prazo: .* Status:FECHADO/, '$&' + extraContent);
                         }
-                    }
+                    } else if (/Intimação Eletrônica - Expedida\/Certificada - Pauta/.test(tr.cells[2].innerHTML)) {
+                        haPrazosFechados = true;
+                        tr.cells[2].className = 'prazoFechado';
+                    } 
                     if (tr.cells[4].getElementsByTagName('table').length) {
                         for (var subtrs = tr.cells[4].getElementsByTagName('tr'), subr = 0, subrl = subtrs.length; (subr < subrl) && (subtr = subtrs[subr]); subr++) {
                             for (var subtds = subtr.cells, subc = 0, subcl = subtds.length; (subc < subcl) && (subtd = subtds[subc]); subc++) {
@@ -1395,12 +1485,26 @@ var Eproc = {
                     }
                     for (var links = tr.cells[4].getElementsByTagName('a'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
                         if (!/^\?acao=acessar_documento/.test(link.search)) continue;
-                        link.className = link.className.split(' ').concat(['docLink']).join(' ');
+                        link.href += '&titulo_janela=' + escape(tr.cells[0].textContent.trim() + ' - ' + link.textContent);
+                        var sigilos = [
+                            'Sem Sigilo',
+                            'Segredo de Justiça',
+                            'Sigiloso (Interno Nível 2)',
+                            'Sigiloso (Interno Nível 3)',
+                            'Sigiloso (Interno Nível 4)',
+                            'Restrito Juiz'
+                        ];
+                        link.className = ['docLink', 'sigilo' + sigilos.indexOf(link.getAttribute('onmouseover').match(/Sigilo:([^<]+)/)[1])].join(' ');
                         link.addEventListener('click', (function(id, link) {
                             return function(e)
                             {
                                 e.stopPropagation();
                                 e.preventDefault();
+                                var lastClicked = document.getElementById('lastClicked');
+                                if (lastClicked) {
+                                    lastClicked.id = '';
+                                }
+                                link.id = 'lastClicked';
                                 var win = Eproc.windows[id];
                                 if (typeof win == 'object' && !win.closed) {
                                     win.focus();
@@ -1411,7 +1515,7 @@ var Eproc = {
                         })('' + Eproc.processo + r + link.innerHTML.replace(/<[^>]*>/g, ''), link), false);
                     }
                 }
-		if (haPrazosFechados) {
+                if (haPrazosFechados) {
                     var check = document.createElement('input');
                     check.type = 'checkbox';
                     check.id = 'extraSemDestaque';
@@ -1448,7 +1552,7 @@ var Eproc = {
                         }
                         thisTable.className = thisTableClasses.join(' ');
                     }, false);
-		}
+                }
             }
         }
     },
