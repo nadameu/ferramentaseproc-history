@@ -247,7 +247,7 @@ var Eproc = {
                             + '\'Visível de ' + inicio + '<br/>até ' + fim + '\','
                             + '\'Prazo de exibição\',' + '400);" '
                             + 'onmouseout="return infraTooltipOcultar();">P</abbr>)' : '')
-                        + '</div>' + tr.cells[4].textContent
+                        + '</div>' + tr.cells[4].textContent.replace(/\n/g, '<br/>')
                         + '<div class="extraLembreteData">' + tr.cells[5].textContent
                         + '<br/>' + tr.cells[1].textContent + '</div>';
                 floater.className = classes.join(' ');
