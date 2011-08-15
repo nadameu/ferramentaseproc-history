@@ -247,7 +247,7 @@ var Eproc = {
                             + '\'Visível de ' + inicio + '<br/>até ' + fim + '\','
                             + '\'Prazo de exibição\',' + '400);" '
                             + 'onmouseout="return infraTooltipOcultar();">P</abbr>)' : '')
-                        + '</div>' + tr.cells[4].textContent
+                        + '</div>' + tr.cells[4].textContent.replace(/\n/g, '<br/>')
                         + '<div class="extraLembreteData">' + tr.cells[5].textContent
                         + '<br/>' + tr.cells[1].textContent + '</div>';
                 floater.className = classes.join(' ');
@@ -1494,7 +1494,11 @@ var Eproc = {
                             'Sigiloso (Interno Nível 4)',
                             'Restrito Juiz'
                         ];
-                        link.className = ['docLink', 'sigilo' + sigilos.indexOf(link.getAttribute('onmouseover').match(/Sigilo:([^<]+)/)[1])].join(' ');
+                        var sigilo = link.getAttribute('onmouseover');
+                        if (!sigilo) sigilo = link.getAttribute('title');
+                        if (sigilo) {
+                            link.className = ['docLink', 'sigilo' + sigilos.indexOf(sigilo.match(/Sigilo: ?([^<]+)/)[1])].join(' ');
+                        }
                         link.addEventListener('click', (function(id, link) {
                             return function(e)
                             {
