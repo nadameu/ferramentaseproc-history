@@ -1,3 +1,11 @@
+var getModule = function(module)
+{
+    Cu['import']('resource://eproc/' + module + '.jsm');
+}
+
+getModule('EprocUri');
+getModule('httpRequestObserver');
+
 var IELauncher = function(url)
 {
     // create an nsILocalFile for the executable
@@ -16,63 +24,6 @@ var IELauncher = function(url)
     // to the process.
     var args = [url];
     return process.run(false, args, args.length);
-};
-
-var EprocUri = function(uri)
-{
-    var parts = new RegExp(
-        '^(https?)' // scheme
-        + '://(jef[23]?|eproc(?:[34]?|2(?:d-(?:um|dois|tres))?|teste|-(?:apresentacao|[12]g-desenv|ws))|homologa-[12]g1)' // subdominio
-        + '\\.(jf(pr|rs|sc)|trf4)' // dominio, estado
-        + '\\.(?:gov|jus)\\.br/(eproc(?:|V1|V2|2trf4|(?:trf4|v2)_[^/]+)|(?:homologa|apresenta)_[12]g)/' // sistema
-        + '(|([^.]+)(?:\\.php)?[^?#]*)' // arquivo, controlador
-        + '(?:\\?([^#]*))?' // query
-        + '(?:#(.*))?' // hash
-        + '$'
-    ).exec(uri);
-
-    this.isValid = function()
-    {
-        return (parts != null);
-    };
-
-    if (this.isValid()) {
-        var scheme, subdominio, dominio, estado, sistema, arquivo, controlador, query, hash;
-        [parts, scheme, subdominio, dominio, estado, sistema, arquivo, controlador, query, hash] = parts;
-    }
-
-    var that = this;
-    var ifValidElse = function(retIfValid, retOtherwise)
-    {
-        if (that.isValid()) return retIfValid;
-        else return retOtherwise;
-    };
-
-    this.isV1 = function()
-    {
-        return ifValidElse(/^eproc(V1)?$/.test(sistema), false);
-    };
-
-    this.isV2 = function()
-    {
-        return ifValidElse(! /^eproc(V1)?$/.test(sistema), false);
-    };
-
-    this.getArquivo = function()
-    {
-        return ifValidElse(arquivo, null);
-    }
-
-    this.getControlador = function()
-    {
-        return ifValidElse(controlador, null);
-    }
-
-    this.getQuery = function()
-    {
-        return ifValidElse(query, null);
-    }
-
 };
 
 var EprocGmCompiler = {
@@ -344,50 +295,6 @@ function EprocScriptStorage()
 window.addEventListener('load', EprocGmCompiler.onLoad, false);
 window.addEventListener('unload', EprocGmCompiler.onUnLoad, false);
 
-var httpRequestObserver = {
-
-    observe: function(subject, topic, data)
-    {
-        if (topic == "http-on-examine-response") {
-            if (typeof Components == 'undefined') return;
-            var httpChannel = subject.QueryInterface(Components.interfaces.nsIHttpChannel);
-            var uri = new EprocUri(httpChannel.name);
-            if (uri.isV2() && uri.getControlador() == 'controlador' && /^acao=acessar_documento_(implementacao|publico)/.test(uri.getQuery())) {
-                var types = {
-                    'jpeg': 'image/jpeg',
-                    'jpg' : 'image/jpeg',
-                    'png' : 'image/png',
-                    'pdf' : 'application/pdf',
-                    'odt' : 'application/x-vnd.oasis.opendocument.text',
-                    'html': 'text/html; charset=ISO-8859-1'
-                };
-                httpChannel.contentType = httpChannel.contentType.replace(
-                    /^application\/(.*)$/,
-                    function(match, type)
-                    {
-                        return types[type];
-                    }
-                );
-                httpChannel.setResponseHeader('Content-Disposition', httpChannel.getResponseHeader('Content-Disposition').replace(/filename=([^"]*)$/, 'filename="$1"'), false);
-            }
-        }
-    },
-
-    get observerService() {
-        return Components.classes["@mozilla.org/observer-service;1"].getService(Components.interfaces.nsIObserverService);
-    },
-
-    register: function()
-    {
-        this.observerService.addObserver(this, "http-on-examine-response", false);
-    },
-
-    unregister: function()
-    {
-        this.observerService.removeObserver(this, "http-on-examine-response");
-    }
-};
-httpRequestObserver.register();
 function myDump(aMessage)
 {
     var consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
