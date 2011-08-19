@@ -1428,15 +1428,23 @@ var Eproc = {
             if (linkPrevencao && /NÃO executada/.test(linkPrevencao.textContent)) return linkPrevencao;
             else return false;
         }
-        if (link = document.querySelector('#legInfAdicional')) {
+        var linkAdicional = getLinkAdicional();
+        if (linkAdicional) {
             if (GM_getValue('v2.mostrarinfadic')) {
-                unsafeWindow.infraAbrirFecharElementoHTML('conteudoInfAdicional', 'imgStatusInfAdicional');
-                unsafeWindow.adicionaRemoveLabelInfAdicional();
+                var evento = document.createEvent('MouseEvents');
+                evento.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                linkAdicional.dispatchEvent(evento);
             }
-            link.addEventListener('click', function(e)
+            linkAdicional.addEventListener('click', function(e)
             {
                 GM_setValue('v2.mostrarinfadic', ! GM_getValue('v2.mostrarinfadic'));
             }, false);
+        }
+        function getLinkAdicional()
+        {
+            var linkAdicional = document.querySelector('#legInfAdicional');
+            if (linkAdicional) return linkAdicional;
+            else return false;
         }
         function VirtualLink(texto, funcao)
         {
@@ -1605,8 +1613,8 @@ var Eproc = {
     },
     setLastProcesso: function()
     {
-        var txtNumProcesso = document.getElementById('txtNumProcesso');
-        if (txtNumProcesso && txtNumProcesso.tagName.toLowerCase() == 'input' && txtNumProcesso.type == 'text') {
+        var txtNumProcesso = document.querySelector('input#txtNumProcesso[type="text"]');
+        if (txtNumProcesso) {
             var before = document.referrer.match(/\&(txtNumProcesso|num_processo)=([0-9]{20})/);
             if (before) {
                 txtNumProcesso.value = before[2];
