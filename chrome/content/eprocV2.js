@@ -251,8 +251,9 @@ var Eproc = {
                         + '<div class="extraLembreteData">' + tr.cells[5].textContent
                         + '<br/>' + tr.cells[1].textContent + '</div>';
                 floater.className = classes.join(' ');
-                floater.childNodes[0].appendChild(tr.cells[9].childNodes[2]);
-                floater.childNodes[0].appendChild(tr.cells[9].childNodes[0]);
+                var celulaBotoes = tr.cells[tr.cells.length - 1];
+                floater.childNodes[0].appendChild(celulaBotoes.childNodes[2]);
+                floater.childNodes[0].appendChild(celulaBotoes.childNodes[0]);
                 table.parentNode.insertBefore(floater, separator);
             });
             table.parentNode.removeChild(table);
