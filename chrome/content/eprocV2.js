@@ -560,13 +560,13 @@ var Eproc = {
                 if (perfil.isPadrao) padrao = perfil;
             });
             if (padrao) return padrao;
-        }
+        };
         Perfis.prototype.createAviso = function()
         {
             var aviso = new Aviso();
             aviso.inserir(this.fieldset);
             return aviso;
-        }
+        };
         Perfis.fromFieldset = function(fieldset)
         {
             var perfis = [];
@@ -606,7 +606,7 @@ var Eproc = {
             },
             createTimer: function(padrao)
             {
-                var timer = new Timer(this, padrao.id);
+                var timer = new Timer(this, padrao);
                 padrao.selecionar();
                 this.cancelar.addEventListener('click', function(e)
                 {
@@ -617,7 +617,7 @@ var Eproc = {
                 return timer;
             }
         }
-        function Timer(aviso, id)
+        function Timer(aviso, perfil)
         {
             var timer;
             var timeRemaining = 3;
@@ -630,7 +630,9 @@ var Eproc = {
                     aviso.atualizar(timeRemaining);
                 } else {
                     me.cancelar();
-                    unsafeWindow.acaoLogar(id);
+                    var evento = document.createEvent('MouseEvents');
+                    evento.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                    perfil.row.dispatchEvent(evento);
                 }
             };
             this.cancelar = function()
