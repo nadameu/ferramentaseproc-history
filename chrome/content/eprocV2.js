@@ -1,3 +1,18 @@
+function $(selector, baseElement)
+{
+    if (typeof baseElement == 'undefined') {
+        baseElement = document;
+    }
+    return baseElement.querySelector(selector);
+}
+function $$(selector, baseElement)
+{
+    if (typeof baseElement == 'undefined') {
+        baseElement = document;
+    }
+    var elements = baseElement.querySelectorAll(selector);
+    return Array.prototype.slice.call(elements);
+}
 var Cores = {
     AMARELA: '#efef8f',
     AZUL: '#8fbfef',
@@ -383,19 +398,24 @@ var Eproc = {
     digitar_documento: function()
     {
         unsafeWindow.FCKeditor_OnComplete = this.digitar_documento_oncomplete;
-        if (null == document.getElementById('txt_fck___Frame')) return;
+        if (null == $('#txt_fck___Frame')) return;
         var infoWindow = unsafeWindow.opener;
         if (infoWindow) {
-            var info = infoWindow.document.getElementById('tbInfoProcesso');
+            var info = $('#tbInfoProcesso', infoWindow.document);
             if (info) {
                 var processo;
-                for (var labels = info.getElementsByTagName('label'), i = 0, label; label = labels[i]; i++) {
+                $$('label', info).forEach(function(label)
+                {
                     if (label.textContent == 'Processo:') {
                         processo = label.nextSibling.textContent;
                     }
+                });
+                function getCellContent(cellIndex)
+                {
+                    return info.rows[1].cells[cellIndex].innerHTML.replace(/<br[^>]*>/g, ' ');
                 }
-                var autor = info.rows[1].cells[2].innerHTML.replace(/<br[^>]*>/g, ' ');
-                var reu = info.rows[1].cells[3].innerHTML.replace(/<br[^>]*>/g, ' ');
+                var autor = getCellContent(2);
+                var reu = getCellContent(3);
             }
         }
         function criaBotao (sTexto, sTitulo, sConteudo, iTipo, oElemento)
@@ -412,7 +432,7 @@ var Eproc = {
                     imgUrl.push('brasao_pb.jpg');
                     imgUrl = imgUrl.join('/');
                     oTexto.SetHTML('<html lang="pt-BR" dir="ltr"><head><title>' + sTitulo.replace(/<[^>]+>/g, '') + '</title><style type="text/css">.header { font-family: Helvetica; font-size: 10pt; } .title { font-family: Times; font-size: 14pt; font-weight: bold; } .text { font-family: Times; font-size: 13pt; } .signature { font-family: Times; font-size: 12pt; font-weight: bold; font-style: italic; } .dados { font-family: Times; font-size: 13pt; font-weight: bold; }</style></head><body bgcolor="white"><div class="header" align="center"><img width="85" height="86" src="' + imgUrl + '"></div><div class="header" align="center">PODER JUDICIÁRIO</div><div class="header" align="center"><strong>JUSTIÇA FEDERAL</div><div class="header" align="center"></strong>' + GM_getValue('v1.secao') + '</div><div class="header" align="center">' + GM_getValue('v1.subsecao') + '</div><div class="header" align="center">' + GM_getValue('v1.vara') + '</div><p class="text" align="justify">&nbsp;</p>' + (info ? '<div class="dados" align="left">PROCESSO: ' + processo + '</div><div class="dados" align="left">AUTOR: ' + autor + '</div><div class="dados" align="left">RÉU: ' + reu + '</div><p class="text" align="justify">&nbsp;</p>' : '') + '<p class="title" align="center">' + sTitulo + '</p><p class="text" align="justify">&nbsp;</p><p class="text" align="justify">' + sConteudo + '</p><p class="text" align="justify">&nbsp;</p><p class="text" align="justify">&nbsp;</p><p class="text" align="justify">&nbsp;</p><p class="signature" align="center">documento assinado eletronicamente</p></body></html>');
-                    document.getElementById('selTipoArquivo').value = iTipo;
+                    $('#selTipoArquivo').value = iTipo;
                 }
             }, true);
             document.body.insertBefore(oBotao, oElemento);
@@ -420,7 +440,7 @@ var Eproc = {
         if (screen.availWidth >= 780 && screen.availHeight >= 630) {
             var w = 780;
             var h = Math.floor((screen.availHeight - 30) / 100) * 100 + 30;
-            document.getElementById('txt_fck___Frame').height = h - 330;
+            $('#txt_fck___Frame').height = h - 330;
             window.moveTo((screen.availWidth - w) / 2, (screen.availHeight - h) / 2);
             window.resizeTo(w, h);
         }
@@ -901,53 +921,64 @@ var Eproc = {
             this.processo = this.parametros.num_processo;
             delete this.parametros.num_processo;
         }
-        if (document.getElementsByClassName('infraMenu').length) {
-            var menu = document.getElementById('infraMenuRaizes');
+        var menu = getMenu();
+        if (menu) {
             var cores = document.createElement('li');
             cores.innerHTML = '<a class="infraMenuRaiz"  title="Cor de fundo" ><div class="infraItemMenu"><div class="infraRotuloMenu">Cor de fundo</div><div class="infraSetaMenu">&raquo;</div></div></a><ul></ul>';
-            [-30, 0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330, 360]
-                .forEach(function(cl, c)
+            var coresMenu = cores.querySelector('ul');
+            function Cor(c, h, s, l)
             {
-                var h = 0, s = 0, l = 96;
-                if (cl < 0) {
-                    l = 100;
-                } else if (cl >= 360) {
-                    l = 96;
-                } else {
-                    h = cl;
-                    s = 66;
-                }
                 var cor = document.createElement('a');
                 cor.className = 'infraMenuFilho';
-                cor.style.backgroundColor = 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
-                cor.style.color = 'hsl(' + h + ', ' + s + '%, 25%)';
-                cor.style.border = '1px solid #888';
-                cor.textContent = 'Cor ' + (c + 1);
+                with (cor.style) {
+                    backgroundColor = 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
+                    color = 'hsl(' + h + ', ' + s + '%, 25%)';
+                    border = '1px solid #888';
+                }
+                cor.textContent = 'Cor ' + c;
                 cor.addEventListener('click', (function() { return function()
                 {
                     Eproc.mudaFundo(this.style.backgroundColor);
                 }; })(), false);
-                cores.getElementsByTagName('ul')[0].appendChild(cor);
-            });
+                return cor;
+            }
+            for (var c = 1; c <= 14; c++) {
+                var h = 0, s = 0, l = 96;
+                if (c == 1) {
+                    l = 100;
+                } else if (c == 14) {
+                    // do nothing
+                } else {
+                    h = (c - 2) * 30;
+                    s = 66;
+                }
+                var cor = new Cor(c, h, s, l);
+                coresMenu.appendChild(cor);
+            }
             menu.appendChild(cores);
         }
-        if (document.getElementsByClassName('infraBarraSistema').length) {
+        function getMenu()
+        {
+            var menu = document.querySelector('#infraMenuRaizes');
+            if (menu) return menu;
+            else return false;
+        }
+        if (document.querySelectorAll('.infraBarraSistema').length) {
             Eproc.mudaFundo(GM_getValue('v2.fundo') || '#ffffff');
         }
         var unidades = document.querySelector('#selInfraUnidades');
         if (unidades) {
-            unidades.setAttribute('onchange', '');
+            unidades.removeAttribute('onchange');
             unidades.addEventListener('change', function(e)
             {
-                for (var options = this.getElementsByTagName('option'), ol = options.length, option, o = 0; (o < ol) && (option = options[o]); o++) {
-                    if (option.getAttribute('selected')) break;
-                }
-                var padrao = {value: false};
+                var options = Array.prototype.slice.call(this.querySelectorAll('option')), previousOption = null;
+                options.forEach(function(option) { if (option.getAttribute('selected')) previousOption = option; });
+                var msg = 'Perfil selecionado: ' + options[this.selectedIndex].textContent;
                 var msgPadrao = (this.value != GM_getValue('v2.perfil')) ? 'Definir este perfil como padrão' : '';
-                var mudanca = GM_confirmCheck('Mudança de perfil',
-                    'Perfil selecionado: ' + options[this.selectedIndex].textContent, msgPadrao, padrao);
+                var padrao = {value: false};
+                var mudanca = GM_confirmCheck('Mudança de perfil', msg, msgPadrao, padrao);
                 if (!mudanca) {
-                    this.value = option.value;
+                    this.value = previousOption.value;
                     return;
                 } else if (padrao.value == true) {
                     GM_setValue('v2.perfil', this.value);
@@ -955,7 +986,7 @@ var Eproc = {
                 this.form.submit();
             }, false);
         }
-        var pesquisaRapida = document.getElementById('txtNumProcessoPesquisaRapida');
+        var pesquisaRapida = document.querySelector('#txtNumProcessoPesquisaRapida');
         if (pesquisaRapida) {
             pesquisaRapida.addEventListener('change', this.onNumProcessoChange, false);
         }
@@ -974,8 +1005,6 @@ var Eproc = {
             this[this.acao]();
         } else if (this.parametros.acao_origem && this[this.parametros.acao_origem + '_destino']) {
             this[this.parametros.acao_origem + '_destino']();
-        } else if (location.pathname.match(/\/eproc(V2|v2_homologacao|v2_apresentacao)\/(index.php)?/)) {
-            document.createElement('img').src = '/infra_css/imagens/fndtransp.gif';
         }
         window.addEventListener('beforeunload', function(e)
         {
@@ -1137,8 +1166,8 @@ var Eproc = {
     prevencao_judicial: function()
     {
         if (document.referrer.match(/\?acao=processo_selecionar&/)) {
-            var voltarem = document.querySelectorAll('button[id=btnVoltar]');
-            Array.prototype.forEach.call(voltarem, function(voltar)
+            var voltarem = Array.prototype.slice.call(document.querySelectorAll('button[id=btnVoltar]'));
+            voltarem.forEach(function(voltar)
             {
                 voltar.setAttribute('onclick', 'location.href="' + document.referrer + '";');
             });
