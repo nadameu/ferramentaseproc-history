@@ -1093,23 +1093,8 @@ var Eproc = {
 + 'a.docLink {'
 + '    font-size: 11px;'
 + '}'
-+ 'a.sigilo1 {'
-+ '    background: #fee;'
-+ '}'
-+ 'a.sigilo2 {'
-+ '    background: #fdd;'
-+ '}'
-+ 'a.sigilo3 {'
-+ '    background: #fcc;'
-+ '}'
-+ 'a.sigilo4 {'
-+ '    background: #fbb;'
-+ '}'
-+ 'a.sigilo5 {'
-+ '    background: #faa;'
-+ '}'
 + '#lastClicked {'
-+ '    color: red;'
++ '    background: #ff0;'
 + '}'
 + '.infraBarraComandos, .infraAreaTelaD, .infraAreaDados {'
 + '    border-color: ' + background + ' !important;'
@@ -1557,27 +1542,15 @@ var Eproc = {
                     for (var links = tr.cells[4].getElementsByTagName('a'), l = 0, ll = links.length; (l < ll) && (link = links[l]); l++) {
                         if (!/^\?acao=acessar_documento/.test(link.search)) continue;
                         link.href += '&titulo_janela=' + escape(tr.cells[0].textContent.trim() + ' - ' + link.textContent);
-                        var sigilos = [
-                            'Sem Sigilo',
-                            'Segredo de Justiça',
-                            'Sigiloso (Interno Nível 2)',
-                            'Sigiloso (Interno Nível 3)',
-                            'Sigiloso (Interno Nível 4)',
-                            'Restrito Juiz'
-                        ];
-                        var sigilo = link.getAttribute('onmouseover');
-                        if (!sigilo) sigilo = link.getAttribute('title');
-                        if (sigilo) {
-                            link.className = ['docLink', 'sigilo' + sigilos.indexOf(sigilo.match(/Sigilo: ?([^<]+)/)[1])].join(' ');
-                        }
+                        link.className = 'docLink';
                         link.addEventListener('click', (function(id, link) {
                             return function(e)
                             {
                                 e.stopPropagation();
                                 e.preventDefault();
-                                var lastClicked = document.getElementById('lastClicked');
+                                var lastClicked = $('#lastClicked');
                                 if (lastClicked) {
-                                    lastClicked.id = '';
+                                    lastClicked.removeAttribute('id');
                                 }
                                 link.id = 'lastClicked';
                                 var win = Eproc.windows[id];
@@ -1636,7 +1609,7 @@ var Eproc = {
         var assuntos = document.querySelector('#fldAssuntos');
         if (assuntos) var classe = assuntos.querySelector('#txtClasse');
         if (classe) {
-            var cor = Classes[classe.textContent];
+            var cor = Classes[classe.textContent.trim()];
             if (cor) {
                 assuntos.style.backgroundColor = cor;
             }
