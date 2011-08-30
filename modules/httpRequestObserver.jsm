@@ -12,21 +12,31 @@ var httpRequestObserver = {
             var uri = new EprocUri(httpChannel.name);
             if (uri.isV2() && uri.getControlador() == 'controlador' && /^acao=acessar_documento_(implementacao|publico)/.test(uri.getQuery())) {
                 var types = {
+                    'doc' : 'application/msword',
                     'jpeg': 'image/jpeg',
                     'jpg' : 'image/jpeg',
+                    'mp3' : 'audio/mpeg',
                     'png' : 'image/png',
                     'pdf' : 'application/pdf',
                     'odt' : 'application/x-vnd.oasis.opendocument.text',
                     'html': 'text/html; charset=ISO-8859-1'
                 };
+                var extension;
                 httpChannel.contentType = httpChannel.contentType.replace(
                     /^application\/(.*)$/,
                     function(match, type)
                     {
+                        extension = type;
                         return types[type];
                     }
                 );
-                httpChannel.setResponseHeader('Content-Disposition', httpChannel.getResponseHeader('Content-Disposition').replace(/filename=([^"]*)$/, 'filename="$1"'), false);
+                var titulo = uri.getQuery().match(/&titulo_janela=([^&]+)/);
+                if (titulo) {
+                    replacePattern = 'filename="' + decodeURIComponent(titulo[1]).replace(/ /g, '_') + '.' + extension + '"';
+                } else {
+                    replacePattern = 'filename="$1"';
+                }
+                httpChannel.setResponseHeader('Content-Disposition', httpChannel.getResponseHeader('Content-Disposition').replace(/filename=([^"]*)$/, replacePattern), false);
             }
         }
     },
