@@ -1556,45 +1556,6 @@ var Eproc = {
                     th.setAttribute('width', '');
                 });
                 var haPrazosFechados = false;
-                if (linkArvore) {
-                    var thisTable = table;
-                    var xhr = new XMLHttpRequest();
-                    xhr.open('GET', linkArvore.href);
-                    xhr.onreadystatechange = function()
-                    {
-                        if (xhr.readyState == 4 && xhr.status == 200) {
-                            var link = document.createElement('a');
-                            link.href = xhr.responseText.match(/controlador\.php\?acao=arvore_documento_menu&num_processo=[^"]+/)[0];
-                            var xhr2 = new XMLHttpRequest();
-                            xhr2.open('GET', xhr.responseText.match(/controlador\.php\?acao=arvore_documento_menu&num_processo=[^"]+/)[0]);
-                            xhr2.onreadystatechange = function()
-                            {
-                                if (xhr2.readyState == 4 && xhr.status == 200) {
-                                    var icones = $$('img[alt="Consultar"]', thisTable), i = 0;
-                                    var tree_items = xhr2.responseText.split('var TREE_ITEMS = [')[1].split('];')[0];
-                                    var eventos = tree_items.split(' ],').reverse().join(' ],');
-                                    eventos.replace(/\['[^|]*\|[^|]*\|([^|]*)(?:\|[^|]*){4}\|([^|]*)(?:\|[^|]*){2}','[^']*'\],/g, function(match, ext, size)
-                                    {
-                                        if (! (ext in iconTrueColor)) {
-                                            ext = 'N/A';
-                                        }
-                                        icones[i].src = iconTrueColor[ext];
-                                        var link = icones[i].parentNode;
-                                        link.setAttribute('data-type', ext);
-                                        if (link.hasAttribute('onmouseover')) {
-                                            link.setAttribute('onmouseover', link.getAttribute('onmouseover').replace(/(Sigilo: ?[^<]+<br\/>)/, '$1[' + formatSize(size) + ']'));
-                                        } else if (link.hasAttribute('title')) {
-                                            link.setAttribute('title', link.getAttribute('title').replace(/(Sigilo:.*)$/, '$1 [' + formatSize(size) + ']'));
-                                        }
-                                        i++;
-                                    });
-                                }
-                            };
-                            xhr2.send('');
-                        }
-                    };
-                    xhr.send('');
-                }
                 $$('tr[class^="infraTr"]', table).forEach(function(tr, r, trs)
                 {
                     if (match = tr.cells[2].innerHTML.match(/Prazo: .* Status:([^<]+)/)) {
