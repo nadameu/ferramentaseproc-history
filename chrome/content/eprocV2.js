@@ -1338,7 +1338,6 @@ var Eproc = {
             var linkCargaDocs = document.createElement('a');
             linkGedpro.addEventListener('click', function(e)
             {
-                var linkGedpro = e.target;
                 e.preventDefault();
                 e.stopPropagation();
                 if (Eproc.loginGedpro.host == null) {
@@ -1375,6 +1374,7 @@ var Eproc = {
                         {
                             Eproc.loginGedpro.url = linkGedpro.href = url;
                             Eproc.loginGedpro.host = linkGedpro.host;
+                            alert(Eproc.loginGedpro.host);
                             self.textContent = 'Tentando fazer login no GEDPRO...';
                             self.href = 'http://' + Eproc.loginGedpro.host + '/XMLInterface.asp?processo=' + Eproc.processo + '&ProcessoVisual=PV&grupos=0&pgtree=1';
                             Eproc.getDocsGedpro();
@@ -1397,7 +1397,7 @@ var Eproc = {
         }
         function getLinkGedpro()
         {
-            var linkGedpro = document.querySelectorAll('a[onclick^="window.open(\'processo/acessar_processo_gedpro.php?acao=acessar_processo_gedpro"]');
+            var linkGedpro = $$('a[onclick^="window.open(\'processo/acessar_processo_gedpro.php?acao=acessar_processo_gedpro"]');
             if (linkGedpro.length == 1) return linkGedpro[0];
             else return false;
         }
