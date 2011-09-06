@@ -1207,7 +1207,7 @@ var Eproc = {
                 {
                     th.setAttribute('width', '');
                 });
-                Array.prototype.forEach.call(table.querySelectorAll('tr[class^="infraTr"] td:nth-of-type(2) a'), function(link, l)
+                Array.prototype.forEach.call(table.querySelectorAll('tr[class^="infraTr"] td:nth-of-type(2) a:first-of-type'), function(link, l)
                 {
                     link.target = '_blank';
                     var tr = link.parentNode.parentNode;
