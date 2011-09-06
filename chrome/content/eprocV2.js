@@ -1633,8 +1633,9 @@ var Eproc = {
                     {
                         docLink.href += '&titulo_janela=' + escape(tr.cells[0].textContent.trim() + ' - ' + docLink.textContent);
                         docLink.className = 'docLink';
-                        var ext = docLink.getAttribute('data-mimetype').toUpperCase();
+                        var ext = docLink.getAttribute('data-mimetype');
                         if (ext) {
+                            ext = ext.toUpperCase();
                             if (! (ext in iconTrueColor)) {
                                 ext = 'N/A';
                             }
@@ -1689,8 +1690,8 @@ var Eproc = {
                 });
                 function getLinkMimeType(docLink)
                 {
-                    var type = docLink.getAttribute('data-mimetype').toUpperCase();;
-                    return type ? type : 'PDF';
+                    var type = docLink.getAttribute('data-mimetype');
+                    return type ? type.toUpperCase() : 'PDF';
                 }
                 function isEmbeddable(mime)
                 {
