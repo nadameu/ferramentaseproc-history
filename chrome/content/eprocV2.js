@@ -15,7 +15,7 @@ function $$(selector, baseElement)
 }
 var Cores = {
     AMARELA: '#efef8f',
-    AZUL: '#8fbfef',
+    AZUL: '#60a0d2',
     AZUL_CLARA: '#c4dffb',
     AZUL_OU_MARROM: '#bf8040',
     BRANCA: '#fff',
@@ -334,6 +334,22 @@ var Eproc = {
         var classeTh = findTh('DesClasseJudicial', 'Classe');
         var juizoTh = findTh('SigOrgaoJuizo', 'Juízo');
         var th = (classeTh !== null) ? classeTh : juizoTh;
+        if (th == null) {
+            var tr = $$('tr[data-classe]');
+            if (tr.length > 0) {
+                var table = tr[0].parentNode;
+                while (table.tagName.toUpperCase() != 'TABLE') {
+                    table = table.parentNode;
+                }
+                $$('.infraTh', table).forEach(function(th)
+                {
+                    if (/^Classe( Judicial)?$/.test(th.textContent)) {
+                        classeTh = th;
+                    }
+                });
+            }
+            th = classeTh;
+        }
         if (th !== null) {
             var table = th.parentNode.parentNode;
             while (table.tagName.toLowerCase() != 'table') {
@@ -353,6 +369,13 @@ var Eproc = {
                     var classeIndex = classeTh.cellIndex;
                     var classe = tr.cells[classeIndex].innerHTML.split('<')[0];
                     var cor = Classes[classe];
+                    if (tr.getAttribute('data-classe') == '000169') {
+                        if (tr.getAttribute('data-competencia') == '10') {
+                            cor = Cores.AZUL;
+                        } else {
+                            cor = Cores.AZUL_OU_MARROM;
+                        }
+                    }
                     if (cor) {
                         tr.style.backgroundColor = cor;
                     }
@@ -1699,10 +1722,21 @@ var Eproc = {
     },
     setCorCapa: function()
     {
-        var assuntos = document.querySelector('#fldAssuntos');
-        if (assuntos) var classe = assuntos.querySelector('#txtClasse');
+        var assuntos = $('#fldAssuntos');
+        if (assuntos) var classe = $('#txtClasse', assuntos);
         if (classe) {
-            var cor = Classes[classe.textContent.trim()];
+            var nomeClasse = classe.textContent.trim();
+            var cor = Classes[nomeClasse];
+            if (classe.getAttribute('data-classe') == '000169') {
+                var competencia = $('#txtCompetencia')
+                if (competencia.hasAttribute('data-competencia')) {
+                    if (competencia.getAttribute('data-competencia') == '10') {
+                        cor = Cores.AZUL;
+                    } else {
+                        cor = Cores.AZUL_OU_MARROM;
+                    }
+                }
+            }
             if (cor) {
                 assuntos.style.backgroundColor = cor;
             }
