@@ -1546,13 +1546,6 @@ var Eproc = {
             var processosRelacionados = $$('#tableRelacionado td:nth-of-type(1) a');
             return (processosRelacionados.length > 0) ? processosRelacionados : false;
         }
-        var linkArvore = getLinkArvore();
-        function getLinkArvore()
-        {
-            var processo = location.search.match(/num_processo=(\d+)/)[1];
-            var linkArvore = $('a[href*="?acao=arvore_documento_listar&txtNumProcesso=' + processo + '"]');
-            return linkArvore ? linkArvore : false;
-        }
         var iconTrueColor = {};
         iconTrueColor['DOC' ] = 'imagens/tree_icons/page_word.gif';
         iconTrueColor['RTF' ] = 'imagens/tree_icons/page_word.gif';
@@ -1640,6 +1633,21 @@ var Eproc = {
                     {
                         docLink.href += '&titulo_janela=' + escape(tr.cells[0].textContent.trim() + ' - ' + docLink.textContent);
                         docLink.className = 'docLink';
+                        var ext = docLink.getAttribute('data-mimetype').toUpperCase();
+                        if (ext) {
+                            if (! (ext in iconTrueColor)) {
+                                ext = 'N/A';
+                            }
+                            $('img', docLink).src = iconTrueColor[ext];
+                        }
+                        var size = docLink.getAttribute('data-bytes');
+                        if (size) {
+                            if (docLink.hasAttribute('onmouseover')) {
+                                docLink.setAttribute('onmouseover', docLink.getAttribute('onmouseover').replace(/(Sigilo: ?[^<]+<br\/>)/, '$1[' + formatSize(size) + ']'));
+                            } else if (docLink.hasAttribute('title')) {
+                                docLink.setAttribute('title', docLink.getAttribute('title').replace(/(Sigilo:.*)$/, '$1 [' + formatSize(size) + ']'));
+                            }
+                        }
                         var id = Eproc.processo + r + docLink.innerHTML.replace(/<[^>]*>/g, '');
                         docLink.addEventListener('click', function(e)
                         {
@@ -1681,7 +1689,7 @@ var Eproc = {
                 });
                 function getLinkMimeType(docLink)
                 {
-                    var type = docLink.getAttribute('data-type');
+                    var type = docLink.getAttribute('data-mimetype').toUpperCase();;
                     return type ? type : 'PDF';
                 }
                 function isEmbeddable(mime)
