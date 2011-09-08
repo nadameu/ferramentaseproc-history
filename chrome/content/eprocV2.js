@@ -1406,7 +1406,6 @@ var Eproc = {
                         {
                             Eproc.loginGedpro.url = linkGedpro.href = url;
                             Eproc.loginGedpro.host = linkGedpro.host;
-                            alert(Eproc.loginGedpro.host);
                             self.textContent = 'Tentando fazer login no GEDPRO...';
                             self.href = 'http://' + Eproc.loginGedpro.host + '/XMLInterface.asp?processo=' + Eproc.processo + '&ProcessoVisual=PV&grupos=0&pgtree=1';
                             Eproc.getDocsGedpro();
