@@ -1166,6 +1166,9 @@ var Eproc = {
 + 'button {'
 + '    background-color: #eee;'
 + '}'
++ 'a img {'
++ '    border: none;'
++ '}'
 + 'div.infraAjaxAutoCompletar { max-height: 30em; overflow-y: scroll; } div.infraAjaxAutoCompletar li a { display: block; margin-left: 3ex; text-indent: -3ex; } div.infraAjaxAutoCompletar li.selected { background-color: Highlight; } div.infraAjaxAutoCompletar li.selected a, div.infraAjaxAutoCompletar li.selected b { color: HighlightText; }'
 );
 	Array.prototype.forEach.call(document.querySelectorAll('label[onclick^="listarTodos"], label[onclick^="listarEventos"], #txtEntidade, #txtPessoaEntidade'), function(auto)
@@ -1653,7 +1656,7 @@ var Eproc = {
                         {
                             e.stopPropagation();
                             e.preventDefault();
-                            var docLink = e.target;
+                            for (var docLink = e.target; docLink.tagName.toUpperCase() != 'A'; docLink = docLink.parentNode);
                             var mime = getLinkMimeType(docLink);
                             if (! isEmbeddable(mime)) {
                                 window.open(docLink.href.replace('?acao=acessar_documento&', '?acao=acessar_documento_implementacao&'), id, 'menubar=0');
