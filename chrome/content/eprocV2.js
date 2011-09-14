@@ -229,14 +229,14 @@ var Eproc = {
     },
     colorirLembretes: function()
     {
-        var tables = document.querySelectorAll('.infraTable[summary="Lembretes"]');
+        var tables = $$('.infraTable[summary="Lembretes"]');
         if (tables.length == 0) return;
-        Array.prototype.forEach.call(tables, function(table)
+        tables.forEach(function(table)
         {
             var separator = document.createElement('div');
             separator.className = 'extraSeparador';
             table.parentNode.insertBefore(separator, table);
-            Array.prototype.forEach.call(table.querySelectorAll('tr.infraTrClara, tr.infraTrEscura'), function(tr, r)
+            $$('tr.infraTrClara, tr.infraTrEscura', table).forEach(function(tr, r)
             {
                 var destino = tr.cells[3].textContent, classes = ['extraLembrete'];
                 var pessoa = document.querySelector('#lblInfraUnidades');
@@ -320,7 +320,7 @@ var Eproc = {
         {
             var th = null, setas = document.querySelectorAll('a[onclick="infraAcaoOrdenar(\'' + campo + '\',\'ASC\');"]');
             if (setas.length != 1) {
-                Array.prototype.forEach.call(document.querySelectorAll('.infraTh'), function(possibleTh){
+                $$('.infraTh').forEach(function(possibleTh){
                     if (possibleTh.textContent == texto) th = possibleTh;
                 });
             } else {
@@ -337,10 +337,7 @@ var Eproc = {
         if (th == null) {
             var tr = $$('tr[data-classe]');
             if (tr.length > 0) {
-                var table = tr[0].parentNode;
-                while (table.tagName.toUpperCase() != 'TABLE') {
-                    table = table.parentNode;
-                }
+                for (var table = tr[0].parentNode; table.tagName.toUpperCase() != 'TABLE'; table = table.parentNode);
                 $$('.infraTh', table).forEach(function(th)
                 {
                     if (/^Classe( Judicial)?$/.test(th.textContent)) {
@@ -350,13 +347,22 @@ var Eproc = {
             }
             th = classeTh;
         }
+        if (th == null) {
+            $$('.infraTh').forEach(function(th)
+            {
+                if (/^Classe( Judicial)?$/.test(th.textContent.trim())) {
+                    classeTh = th;
+                }
+            });
+            th = classeTh;
+        }
         if (th !== null) {
             var table = th.parentNode.parentNode;
             while (table.tagName.toLowerCase() != 'table') {
                 table = table.parentNode;
             }
             table.setAttribute('width', '');
-            Array.prototype.forEach.call(table.querySelectorAll('th'), function(th, h)
+            $$('th', table).forEach(function(th, h)
             {
                 th.setAttribute('width', '');
             });
@@ -1171,7 +1177,7 @@ var Eproc = {
 + '}'
 + 'div.infraAjaxAutoCompletar { max-height: 30em; overflow-y: scroll; } div.infraAjaxAutoCompletar li a { display: block; margin-left: 3ex; text-indent: -3ex; } div.infraAjaxAutoCompletar li.selected { background-color: Highlight; } div.infraAjaxAutoCompletar li.selected a, div.infraAjaxAutoCompletar li.selected b { color: HighlightText; }'
 );
-	Array.prototype.forEach.call(document.querySelectorAll('label[onclick^="listarTodos"], label[onclick^="listarEventos"], #txtEntidade, #txtPessoaEntidade'), function(auto)
+	$$('label[onclick^="listarTodos"], label[onclick^="listarEventos"], #txtEntidade, #txtPessoaEntidade').forEach(function(auto)
         {
           var id = auto.id.replace('lblListar', 'txt');
           auto = document.querySelector('#' + id);
@@ -1179,8 +1185,8 @@ var Eproc = {
             auto.style.width = auto.clientWidth + 'px';
           }
         }, this);
-	Array.prototype.forEach.call(document.querySelectorAll('div[class^=infraLegend], div[id^=divDes]'), function(div) {
-                div.style.backgroundColor = background;
+	$$('div[class^=infraLegend], div[id^=divDes]').forEach(function(div) {
+        div.style.backgroundColor = background;
 	});
     },
     painel_secretaria_listar: function()
@@ -1202,7 +1208,7 @@ var Eproc = {
         var buscarForm = document.querySelector('#frmProcessoLista');
         var selecionados = document.getElementById('hdnInfraItensSelecionados');
         if (selecionados) {
-            Array.prototype.forEach.call(document.querySelectorAll('#btnConsultar, .infraTdSetaOrdenacao a, #divInfraAreaPaginacao a, #divInfraAreaPaginacao select'), function(el) {
+            $$('#btnConsultar, .infraTdSetaOrdenacao a, #divInfraAreaPaginacao a, #divInfraAreaPaginacao select').forEach(function(el) {
                 var attr = el.hasAttribute('onclick') ? 'onclick' : 'onchange';
                 var action = el.getAttribute(attr);
                 el.setAttribute(attr, '');
@@ -1213,8 +1219,8 @@ var Eproc = {
                 }; })(action), true);
             });
         }
-        var botoes = document.querySelectorAll('button[onclick^="submeterFrm("]');
-        Array.prototype.forEach.call(botoes, function(botao)
+        var botoes = $$('button[onclick^="submeterFrm("]');
+        botoes.forEach(function(botao)
         {
             var onclick = botao.getAttribute('onclick');
             botao.setAttribute('onclick', '');
@@ -1235,14 +1241,14 @@ var Eproc = {
             option.textContent = '10 processos por página';
             if (paginacao.querySelectorAll('option[selected]').length == 0) option.selected = true;
             paginacao.insertBefore(option, paginacao.firstChild);
-            Array.prototype.forEach.call(document.querySelectorAll('.infraTable[summary="Tabela de Processos."]'), function(table)
+            $$('.infraTable[summary="Tabela de Processos."]').forEach(function(table)
             {
                 table.setAttribute('width', '');
-                Array.prototype.forEach.call(table.getElementsByTagName('th'), function(th)
+                $$('th', table).forEach(function(th)
                 {
                     th.setAttribute('width', '');
                 });
-                Array.prototype.forEach.call(table.querySelectorAll('tr[class^="infraTr"] td:nth-of-type(2) a:first-of-type'), function(link, l)
+                $$('tr[class^="infraTr"] td:nth-of-type(2) a:first-of-type', table).forEach(function(link, l)
                 {
                     link.target = '_blank';
                     var tr = link.parentNode.parentNode;
@@ -1327,7 +1333,7 @@ var Eproc = {
             th.textContent = 'Documento Gedpro';
             thead.appendChild(th);
             var processos = form.querySelectorAll('.infraTable > tbody > tr[class^=infraTr]');
-            Array.prototype.forEach.call(docsGedpro.querySelectorAll('tr[class^=infraTr]'), function(row, r)
+            $$('tr[class^=infraTr]', docsGedpro).forEach(function(row, r)
             {
                 var doc = Doc.fromRow(row);
                 var newCell = processos[r].insertCell(processos[r].cells.length);
