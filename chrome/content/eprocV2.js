@@ -928,9 +928,7 @@ var Eproc = {
              + '.'
              + this.processo.substr(9, 4)
              + '.'
-             + this.processo.substr(13, 1)
-             + '.'
-             + this.processo.substr(14, 2)
+             + this.processo.substr(13, 3)
              + '.'
              + this.processo.substr(16, 4);
     },
@@ -1045,7 +1043,8 @@ var Eproc = {
                 }
             }
             if (windows.length) {
-                var resposta = GM_yesNo('Janelas abertas', 'Este processo possui ' + windows.length + ' ' + (windows.length > 1 ? 'janelas abertas' : 'janela aberta') + '.\nDeseja fechá-' + (windows.length > 1 ? 'las' : 'la') + '?');
+                var tela = /^\d{7}-\d{2}\.\d{4}\.\d{3}\.\d{4}$/.test(document.title) ? 'Este processo' : 'Esta tela';
+                var resposta = GM_yesNo('Janelas abertas', tela + ' possui ' + windows.length + ' ' + (windows.length > 1 ? 'janelas abertas' : 'janela aberta') + '.\nDeseja fechá-' + (windows.length > 1 ? 'las' : 'la') + '?');
                 if (resposta == 0) {
                     for (var w = windows.length - 1; w >= 0; w--) {
                         windows[w].close();
@@ -1866,7 +1865,7 @@ var Eproc = {
         var numprocF = '';
         for (var i = 0, d; d = numproc.substr(i, 1); i++) {
             if (i == 7) numprocF += '-';
-            if (i == 9 || i == 13 || i == 14 || i == 16) numprocF += '.';
+            if (i == 9 || i == 13 || i == 16) numprocF += '.';
             numprocF += d;
         }
         return numprocF;
