@@ -1016,6 +1016,16 @@ var Eproc = {
         var pesquisaRapida = document.querySelector('#txtNumProcessoPesquisaRapida');
         if (pesquisaRapida) {
             pesquisaRapida.addEventListener('change', this.onNumProcessoChange, false);
+            var div = document.createElement('div');
+            div.className = 'infraAcaoBarraSistema';
+            var a = document.createElement('a');
+            var img = document.createElement('img');
+            img.className = 'infraImg'
+            img.src = 'data:image/png;base64,' + GM_getBase64('chrome://eproc/content/stapler-16.png');
+            a.appendChild(img);
+            div.appendChild(a);
+            for (var upperDiv = pesquisaRapida.parentNode; upperDiv.className != 'infraAcaoBarraSistema'; upperDiv = upperDiv.parentNode);
+            upperDiv.parentNode.insertBefore(div, upperDiv.nextSibling.nextSibling.nextSibling);
         }
         switch (this.acao) {
             case 'processo_lembrete_destino_listar_subfrm':

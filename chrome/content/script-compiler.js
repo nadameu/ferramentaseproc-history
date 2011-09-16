@@ -3,6 +3,7 @@ var getModule = function(module)
     Cu['import']('resource://eproc/' + module + '.jsm');
 }
 
+getModule('Base64');
 getModule('EprocUri');
 getModule('httpRequestObserver');
 
@@ -36,25 +37,47 @@ var EprocGmCompiler = {
     // http://greasemonkey.devjavu.com/
     // used under GPL permission
 
-    getUrlContents: function(aUrl)
+    getContents: function(aUrl, binary)
     {
+        if (typeof binary == 'undefined') binary = false;
         var ioService = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
         var scriptableStream = Components.classes["@mozilla.org/scriptableinputstream;1"].getService(Components.interfaces.nsIScriptableInputStream);
-        var unicodeConverter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"].createInstance(Components.interfaces.nsIScriptableUnicodeConverter);
-        unicodeConverter.charset = "UTF-8";
-
         var channel = ioService.newChannel(aUrl, null, null);
         var input = channel.open();
         scriptableStream.init(input);
         var str = scriptableStream.read(input.available());
         scriptableStream.close();
         input.close();
+        return str;
+    },
+
+    getUrlContents: function(aUrl)
+    {
+        var str = this.getContents(aUrl);
+        var unicodeConverter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"].createInstance(Components.interfaces.nsIScriptableUnicodeConverter);
+        unicodeConverter.charset = "UTF-8";
 
         try {
             return unicodeConverter.ConvertToUnicode(str);
         } catch (e) {
             return str;
         }
+    },
+
+    getUrlContentsAsBase64: function(aUrl)
+    {
+//        var str = this.getContents(aUrl, true);
+
+        var ioService = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
+        var scriptableStream = Components.classes["@mozilla.org/binaryinputstream;1"].getService(Components.interfaces.nsIBinaryInputStream);
+        var channel = ioService.newChannel(aUrl, null, null);
+        var input = channel.open();
+        scriptableStream.setInputStream(input);
+        var str = scriptableStream.readBytes(input.available());
+        scriptableStream.close();
+        input.close();
+
+        return base64_encode(str);
     },
 
     isGreasemonkeyable: function(url)
@@ -146,6 +169,7 @@ var EprocGmCompiler = {
             var button = prompts.confirmEx(null, title, text, flags, '', '', '', '', {value: false});
             return button;
         };
+        sandbox.GM_getBase64 = function(aUrl) { return EprocGmCompiler.getUrlContentsAsBase64(aUrl); };
         sandbox.__proto__ = sandbox.window;
 
         try {
