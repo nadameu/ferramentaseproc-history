@@ -76,6 +76,7 @@ var Classes = {
     'CANCELAMENTO DE NATURALIZAÇÃO': Cores.BRANCA,
     'CARTA DE ORDEM': Cores.CINZA,
     'CARTA PRECATÓRIA': Cores.CINZA,
+    'CARTA PRECATÓRIA JEF': Cores.CINZA,
     'CARTA ROGATÓRIA': Cores.CINZA,
     'CARTA TESTEMUNHÁVEL': Cores.AMARELA,
     'COMUNICAÇÃO DE PRISÃO EM FLAGRANTE': Cores.BRANCA,
@@ -145,6 +146,7 @@ var Classes = {
     'MANDADO DE SEGURANÇA': Cores.PALHA,
     'Mandado de Segurança (Seção)': Cores.AMARELO,
     'MANDADO DE SEGURANÇA COLETIVO': Cores.PALHA,
+    'MANDADO DE SEGURANÇA TR': Cores.PALHA,
     'MEDIDA CAUTELAR DE ALIMENTOS PROVISIONAIS': Cores.AZUL,
     'MEDIDA CAUTELAR DE APREENSÃO DE TÍTULOS': Cores.CINZA,
     'MEDIDA CAUTELAR DE ARRESTO': Cores.BRANCA,
@@ -1841,18 +1843,17 @@ var Eproc = {
             numproc = '5' + numproc;
         }
         var secoesMaxSu = {};
-        var linkSecao = document.getElementById('divInfraBarraTribunalE').getElementsByTagName('a')[0];
-        var estado = linkSecao.hostname.match(/\.jf(pr|rs|sc)\.(?:gov|jus)\.br/);
-        if (!estado) {
+        var estado = this.getEstado(), segundoGrau = this.isSegundoGrau();
+        if (segundoGrau) {
             secoesMaxSu['00'] = 0;
         }
-        if (!estado || estado[1] == 'pr') {
+        if (segundoGrau || estado == 'pr') {
             secoesMaxSu['70'] = 17;
         }
-        if (!estado || estado[1] == 'rs') {
+        if (segundoGrau || estado == 'rs') {
             secoesMaxSu['71'] = 22;
         }
-        if (!estado || estado[1] == 'sc') {
+        if (segundoGrau || estado == 'sc') {
             secoesMaxSu['72'] = 16;
         }
         var se;
@@ -1869,6 +1870,17 @@ var Eproc = {
             }
         }
         return possibilidades;
+    },
+    isSegundoGrau: function()
+    {
+        return this.getEstado() == null;
+    },
+    getEstado: function()
+    {
+        var linkSecao = document.getElementById('divInfraBarraTribunalE').getElementsByTagName('a')[0];
+        var estado = linkSecao.hostname.match(/\.jf(pr|rs|sc)\.(?:gov|jus)\.br/);
+        if (estado) return estado[1];
+        else return null;
     },
     getNumprocF: function(numproc)
     {
