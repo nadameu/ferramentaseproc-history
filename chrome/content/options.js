@@ -1,3 +1,13 @@
+var showAbout = function()
+{
+    Components.utils['import']('resource://gre/modules/AddonManager.jsm');
+    AddonManager.getAddonByID("eproc@nadameu.com.br", function(addon)
+    {
+        openDialog('chrome://mozapps/content/extensions/about.xul', '', 'chrome,centerscreen,modal', addon);
+    });
+    
+};
+
 var Options = {
 
     action: function(act) {

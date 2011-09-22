@@ -7,6 +7,11 @@ getModule('Base64');
 getModule('EprocUri');
 getModule('httpRequestObserver');
 
+var showPreferences = function()
+{
+    openDialog('chrome://eproc/content/options.xul', 'eproc-options', 'chrome,centerscreen,modal');
+};
+
 var IELauncher = function(url)
 {
     // create an nsILocalFile for the executable
