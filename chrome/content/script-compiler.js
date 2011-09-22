@@ -4,6 +4,7 @@ var getModule = function(module)
 }
 
 getModule('Base64');
+getModule('MD5');
 getModule('EprocUri');
 getModule('httpRequestObserver');
 
@@ -175,6 +176,7 @@ var EprocGmCompiler = {
             return button;
         };
         sandbox.GM_getBase64 = function(aUrl) { return EprocGmCompiler.getUrlContentsAsBase64(aUrl); };
+        sandbox.GM_MD5 = function(word) { return MD5(word); };
         sandbox.GM_showPreferences = function() { return showPreferences(); };
         sandbox.__proto__ = sandbox.window;
 

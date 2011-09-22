@@ -79,7 +79,6 @@ var Options = {
             'v1.eproc.enable',
             'v2.semdestaque',
 			'v2.enable',
-			'v2.perfil',
             'v2.ielocation'
         ];
         this.action('get');
@@ -107,7 +106,7 @@ var Commands = {
 
     on_v2_enable: function()
     {
-        Commands.process('v2_enable', 'v2_perfil v2_semdestaque');
+        Commands.process('v2_enable', 'v2_semdestaque');
     },
 
     on_v2_ielocation: function()

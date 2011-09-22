@@ -17,7 +17,7 @@ function EprocPreferences() {
     }
 
     // returns the named preference, or defaultValue if it does not exist
-    this.getValue=function(prefName) {
+    this.getValue=function(prefName, defaultValue) {
         if (pref.prefHasUserValue(prefName)) {
             var prefType=pref.getPrefType(prefName);
             switch (prefType) {
@@ -27,18 +27,18 @@ function EprocPreferences() {
                 case pref.PREF_INVALID: window.alert('Valor inválido para a preferência "' + prefName + '"!');
             }
         } else {
-            return this.getDefaultValue(prefName);
+            return this.getDefaultValue(prefName, defaultValue);
         }
     }
 
 
     // returns the default value or the preference
-    this.getDefaultValue=function(prefName) {
+    this.getDefaultValue=function(prefName, defaultValue) {
         switch (defaults.getPrefType(prefName)) {
             case defaults.PREF_STRING: return defaults.getCharPref(prefName);
             case defaults.PREF_BOOL: return defaults.getBoolPref(prefName);
             case defaults.PREF_INT: return defaults.getIntPref(prefName);
-            case defaults.PREF_INVALID: window.alert('Valor inválido para a preferência "' + prefName + '"!');
+            case defaults.PREF_INVALID: return (typeof defaultValue != 'undefined') ? defaultValue : window.alert('Valor inválido para a preferência "' + prefName + '"!');
         }
     }
 

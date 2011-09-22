@@ -499,11 +499,10 @@ var Eproc = {
     },
     entrar: function()
     {
-	var barrasSistema = document.getElementById('divInfraBarraTribunalD').getElementsByClassName('infraAcaoBarraSistema');
-	while (barrasSistema.length > 1) {
-	    var barra = barrasSistema[0];
-	    barra.parentNode.removeChild(barra);
-	}
+	    $$('#divInfraBarraTribunalD .infraAcaoBarraSistema').forEach(function(barra, b, barras)
+        {
+            if (b < (barras.length - 1)) barra.parentNode.removeChild(barra);
+    	});
         function Perfil(perfil)
         {
             for (n in perfil) {
@@ -513,7 +512,7 @@ var Eproc = {
         Perfil.prototype = {
             get isPadrao()
             {
-                var idPadrao = GM_getValue('v2.perfil');
+                var idPadrao = GM_getValue('v2.perfil.' + GM_MD5(this.nome), '');
                 return this.id == idPadrao;
             },
             id: null,
@@ -556,7 +555,7 @@ var Eproc = {
             },
             definirComoPadrao: function()
             {
-                GM_setValue('v2.perfil', this.id);
+                GM_setValue('v2.perfil.' + GM_MD5(this.nome), this.id);
             },
             removerNome: function()
             {
@@ -1003,31 +1002,43 @@ var Eproc = {
                 var options = $$('option'), previousOption = null;
                 options.forEach(function(option) { if (option.getAttribute('selected')) previousOption = option; });
                 var msg = 'Perfil selecionado: ' + options[this.selectedIndex].textContent;
-                var msgPadrao = (this.value != GM_getValue('v2.perfil')) ? 'Definir este perfil como padrão' : '';
+                var nome = $('#lblInfraUnidades').textContent.match(/ - Nome: (PAULO ROBERTO MAURICI JUNIOR) \(.*\)$/)[1];
+                var msgPadrao = (this.value != GM_getValue('v2.perfil.' + GM_MD5(nome), '')) ? 'Definir este perfil como padrão' : '';
                 var padrao = {value: false};
                 var mudanca = GM_confirmCheck('Mudança de perfil', msg, msgPadrao, padrao);
                 if (!mudanca) {
                     this.value = previousOption.value;
                     return;
                 } else if (padrao.value == true) {
-                    GM_setValue('v2.perfil', this.value);
+                    GM_setValue('v2.perfil.' + GM_MD5(nome), this.value);
                 }
                 this.form.submit();
             }, false);
         }
-        var pesquisaRapida = document.querySelector('#txtNumProcessoPesquisaRapida');
+        var pesquisaRapida = $('#txtNumProcessoPesquisaRapida');
         if (pesquisaRapida) {
             pesquisaRapida.addEventListener('change', this.onNumProcessoChange, false);
+        }
+        var barra = $('#divInfraBarraTribunalD');
+        if (barra) {
             var div = document.createElement('div');
             div.className = 'infraAcaoBarraSistema';
             var a = document.createElement('a');
+            a.addEventListener('click', function(e)
+            {
+                GM_showPreferences();
+            }, false);
             var img = document.createElement('img');
             img.className = 'infraImg'
             img.src = 'data:image/png;base64,' + GM_getBase64('chrome://eproc/content/stapler-16.png');
             a.appendChild(img);
             div.appendChild(a);
-            for (var upperDiv = pesquisaRapida.parentNode; upperDiv.className != 'infraAcaoBarraSistema'; upperDiv = upperDiv.parentNode);
-            upperDiv.parentNode.insertBefore(div, upperDiv.nextSibling.nextSibling.nextSibling);
+            if (pesquisaRapida) {
+                for (var upperDiv = pesquisaRapida.parentNode; upperDiv.className != 'infraAcaoBarraSistema'; upperDiv = upperDiv.parentNode);
+                upperDiv.parentNode.insertBefore(div, upperDiv.nextSibling.nextSibling.nextSibling);
+            } else {
+                barra.appendChild(div);
+            }
         }
         switch (this.acao) {
             case 'processo_lembrete_destino_listar_subfrm':
