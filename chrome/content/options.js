@@ -1,10 +1,17 @@
 var showAbout = function()
 {
-    Components.utils['import']('resource://gre/modules/AddonManager.jsm');
-    AddonManager.getAddonByID("eproc@nadameu.com.br", function(addon)
-    {
-        openDialog('chrome://mozapps/content/extensions/about.xul', '', 'chrome,centerscreen,modal', addon);
-    });
+    try {
+        var extensionManager = Components.classes["@mozilla.org/extensions/manager;1"].getService(Components.interfaces.nsIExtensionManager);
+          opener.openDialog("chrome://mozapps/content/extensions/about.xul", "", "chrome,centerscreen,modal", "urn:mozilla:item:eproc@nadameu.com.br", extensionManager.datasource);
+   
+
+    } catch(e) {
+        Components.utils['import']('resource://gre/modules/AddonManager.jsm');
+        AddonManager.getAddonByID("eproc@nadameu.com.br", function(addon)
+        {
+            openDialog('chrome://mozapps/content/extensions/about.xul', '', 'chrome,centerscreen,modal', addon);
+        });
+    }
     
 };
 

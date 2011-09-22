@@ -175,6 +175,7 @@ var EprocGmCompiler = {
             return button;
         };
         sandbox.GM_getBase64 = function(aUrl) { return EprocGmCompiler.getUrlContentsAsBase64(aUrl); };
+        sandbox.GM_showPreferences = function() { return showPreferences(); };
         sandbox.__proto__ = sandbox.window;
 
         try {
