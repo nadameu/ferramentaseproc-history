@@ -1651,7 +1651,15 @@ var Eproc = {
                             if (! (ext in iconTrueColor)) {
                                 ext = 'N/A';
                             }
-                            $('img', docLink).src = iconTrueColor[ext];
+                            var img = $('img', docLink);
+                            if (img) {
+                                img.src = iconTrueColor[ext];
+                            } else {
+                                img = docLink.previousSibling;
+                                if (('tagName' in img) && (img.tagName.toUpperCase() == 'IMG')) { 
+                                    img.src = iconTrueColor[ext];
+                                }
+                            }
                         }
                         var size = docLink.getAttribute('data-bytes');
                         if (size) {
