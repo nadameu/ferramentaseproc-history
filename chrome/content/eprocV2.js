@@ -1364,6 +1364,10 @@ var Eproc = {
             });
         }
     },
+    processo_evento_paginacao_listar: function()
+    {
+        this.processo_selecionar();
+    },
     processo_seleciona_publica: function()
     {
         this.processo_selecionar();
