@@ -229,6 +229,32 @@ var Eproc = {
     {
         this.acessar_documento();
     },
+    closeAllWindows: function(e)
+    {
+        var windows = [];
+        for (w in Eproc.windows) {
+            var win = Eproc.windows[w];
+            if (typeof win == 'object' && !win.closed) {
+                windows.push(win);
+            }
+        }
+        if (windows.length) {
+            var tela = /^\d{7}-\d{2}\.\d{4}\.\d{3}\.\d{4}$/.test(document.title) ? 'Este processo' : 'Esta tela';
+            var resposta = GM_yesNo('Janelas abertas', tela + ' possui ' + windows.length + ' ' + (windows.length > 1 ? 'janelas abertas' : 'janela aberta') + '.\nDeseja fechá-' + (windows.length > 1 ? 'las' : 'la') + '?');
+            if (resposta == 0) {
+                for (var w = windows.length - 1; w >= 0; w--) {
+                    windows[w].close();
+                }
+                var menuFechar = $('#extraFechar');
+                if (menuFechar) {
+                    menuFechar.style.visibility = 'hidden';
+                }
+            } else if (typeof e != 'undefined') {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }
+    },
     colorirLembretes: function()
     {
         var tables = $$('.infraTable[summary="Lembretes"]');
@@ -919,6 +945,12 @@ var Eproc = {
         }, false);
         document.getElementById('divInfraAreaTelaE').appendChild(iframe);
     },
+    getMenu: function()
+    {
+        var menu = document.querySelector('#infraMenuRaizes');
+        if (menu) return menu;
+        else return false;
+    },
     getProcessoF: function()
     {
         while (String(this.processo).length < 20)
@@ -949,7 +981,7 @@ var Eproc = {
             this.processo = this.parametros.num_processo;
             delete this.parametros.num_processo;
         }
-        var menu = getMenu();
+        var menu = Eproc.getMenu();
         if (menu) {
             var cores = document.createElement('li');
             cores.innerHTML = '<a class="infraMenuRaiz"  title="Cor de fundo" ><div class="infraItemMenu"><div class="infraRotuloMenu">Cor de fundo</div><div class="infraSetaMenu">&raquo;</div></div></a><ul></ul>';
@@ -984,12 +1016,6 @@ var Eproc = {
                 coresMenu.appendChild(cor);
             }
             menu.appendChild(cores);
-        }
-        function getMenu()
-        {
-            var menu = document.querySelector('#infraMenuRaizes');
-            if (menu) return menu;
-            else return false;
         }
         if (document.querySelectorAll('.infraBarraSistema').length) {
             Eproc.mudaFundo(GM_getValue('v2.fundo') || '#ffffff');
@@ -1058,25 +1084,7 @@ var Eproc = {
         }
         window.addEventListener('beforeunload', function(e)
         {
-            var windows = [];
-            for (w in Eproc.windows) {
-                var win = Eproc.windows[w];
-                if (typeof win == 'object' && !win.closed) {
-                    windows.push(win);
-                }
-            }
-            if (windows.length) {
-                var tela = /^\d{7}-\d{2}\.\d{4}\.\d{3}\.\d{4}$/.test(document.title) ? 'Este processo' : 'Esta tela';
-                var resposta = GM_yesNo('Janelas abertas', tela + ' possui ' + windows.length + ' ' + (windows.length > 1 ? 'janelas abertas' : 'janela aberta') + '.\nDeseja fechá-' + (windows.length > 1 ? 'las' : 'la') + '?');
-                if (resposta == 0) {
-                    for (var w = windows.length - 1; w >= 0; w--) {
-                        windows[w].close();
-                    }
-                } else {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-            }
+            Eproc.closeAllWindows(e);
             delete Eproc;
         }, false);
     },
@@ -1690,6 +1698,10 @@ var Eproc = {
                                 lastClicked.removeAttribute('id');
                             }
                             docLink.id = 'lastClicked';
+                            var menuFechar = $('#extraFechar');
+                            if (menuFechar) {
+                                menuFechar.style.visibility = 'visible';
+                            }
                             var win = Eproc.windows[id];
                             if (typeof win == 'object' && !win.closed) {
                                 win.focus();
@@ -1767,6 +1779,18 @@ var Eproc = {
                 }
             }
         });
+        var menu = Eproc.getMenu();
+        if (menu) {
+            var fechar = document.createElement('li');
+            fechar.id = 'extraFechar';
+            fechar.style.visibility = 'hidden';
+            fechar.style.position = 'fixed';
+            fechar.style.width = '19%';
+            var fecharLink = new VirtualLink('Fechar as janelas abertas', Eproc.closeAllWindows);
+            fecharLink.className = 'infraMenuRaiz';
+            fechar.appendChild(fecharLink);
+            menu.appendChild(fechar);
+        }
     },
     setCorCapa: function()
     {
