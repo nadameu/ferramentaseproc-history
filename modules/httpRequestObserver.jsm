@@ -11,28 +11,10 @@ var httpRequestObserver = {
             var httpChannel = subject.QueryInterface(Components.interfaces.nsIHttpChannel);
             var uri = new EprocUri(httpChannel.name);
             if (uri.isV2() && uri.getControlador() == 'controlador' && /^acao=acessar_documento_(implementacao|publico)/.test(uri.getQuery())) {
-                var types = {
-                    'doc' : 'application/msword',
-                    'jpeg': 'image/jpeg',
-                    'jpg' : 'image/jpeg',
-                    'mp3' : 'audio/mpeg',
-                    'png' : 'image/png',
-                    'pdf' : 'application/pdf',
-                    'odt' : 'application/x-vnd.oasis.opendocument.text',
-                    'html': 'text/html; charset=ISO-8859-1'
-                };
-                var extension;
-                httpChannel.contentType = httpChannel.contentType.replace(
-                    /^application\/(.*)$/,
-                    function(match, type)
-                    {
-                        extension = type;
-                        return types[type];
-                    }
-                );
                 var titulo = uri.getQuery().match(/&titulo_janela=([^&]+)/);
-                if (titulo) {
-                    replacePattern = 'filename="' + decodeURIComponent(titulo[1]).replace(/ /g, '_') + '.' + extension + '"';
+                var extension = uri.getQuery().match(/&tipo_doc=([^&]+)/);
+                if (titulo && extension) {
+                    replacePattern = 'filename="' + decodeURIComponent(titulo[1]).replace(/ /g, '_') + '.' + extension[1] + '"';
                 } else {
                     replacePattern = 'filename="$1"';
                 }

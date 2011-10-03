@@ -1651,6 +1651,7 @@ var Eproc = {
                         docLink.className = 'docLink';
                         var ext = docLink.getAttribute('data-mimetype');
                         if (ext) {
+                            docLink.href += '&tipo_doc=' + ext;
                             ext = ext.toUpperCase();
                             if (! (ext in iconTrueColor)) {
                                 ext = 'N/A';
