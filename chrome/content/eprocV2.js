@@ -221,8 +221,8 @@ var Eproc = {
     acessar_documento: function()
     {
         var m;
-        if (m = location.search.match(/\&titulo_janela=([^\&]*)$/)) {
-            document.title = unescape(m[1]);
+        if (m = location.search.match(/\&titulo_janela=([^&]+)/)) {
+            document.title = decodeURIComponent(m[1]);
         }
     },
     acessar_documento_publico: function()
@@ -1647,7 +1647,7 @@ var Eproc = {
                     }
                     $$('a[href*="?acao=acessar_documento"]', colunaDocumentos).forEach(function(docLink, l, docLinks)
                     {
-                        docLink.href += '&titulo_janela=' + escape(tr.cells[0].textContent.trim() + ' - ' + docLink.textContent);
+                        docLink.href += '&titulo_janela=' + encodeURIComponent(tr.cells[0].textContent.trim() + ' - ' + docLink.textContent);
                         docLink.className = 'docLink';
                         var ext = docLink.getAttribute('data-mimetype');
                         if (ext) {
@@ -1720,6 +1720,11 @@ var Eproc = {
                 }
                 function isEmbeddable(mime)
                 {
+                    if (mime == 'PDF') {
+                        var mimetype = navigator.mimeTypes["application/pdf"];
+                        if (mimetype) return mimetype.enabledPlugin;
+                        return false;
+                    }
                     return /^(TXT|PDF|GIF|JPEG|JPG|PNG|HTM|HTML)$/.exec(mime);
                 }
                 if (haPrazosFechados) {
