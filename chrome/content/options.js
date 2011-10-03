@@ -1,3 +1,20 @@
+var showAbout = function()
+{
+    try {
+        var extensionManager = Components.classes["@mozilla.org/extensions/manager;1"].getService(Components.interfaces.nsIExtensionManager);
+          opener.openDialog("chrome://mozapps/content/extensions/about.xul", "", "chrome,centerscreen,modal", "urn:mozilla:item:eproc@nadameu.com.br", extensionManager.datasource);
+   
+
+    } catch(e) {
+        Components.utils['import']('resource://gre/modules/AddonManager.jsm');
+        AddonManager.getAddonByID("eproc@nadameu.com.br", function(addon)
+        {
+            openDialog('chrome://mozapps/content/extensions/about.xul', '', 'chrome,centerscreen,modal', addon);
+        });
+    }
+    
+};
+
 var Options = {
 
     action: function(act) {
@@ -50,7 +67,7 @@ var Options = {
     },
     
     init: function() {
-        this.prefs = new eproc_PrefManager();
+        this.prefs = new EprocPreferences();
         this.options = [
             'v1.enable',
             'v1.consulta_processo.enable',
@@ -62,7 +79,6 @@ var Options = {
             'v1.eproc.enable',
             'v2.semdestaque',
 			'v2.enable',
-			'v2.perfil',
             'v2.ielocation'
         ];
         this.action('get');
@@ -90,7 +106,7 @@ var Commands = {
 
     on_v2_enable: function()
     {
-        Commands.process('v2_enable', 'v2_perfil v2_semdestaque');
+        Commands.process('v2_enable', 'v2_semdestaque');
     },
 
     on_v2_ielocation: function()

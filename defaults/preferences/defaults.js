@@ -1,4 +1,3 @@
-pref('general.useragent.extra.eproc', 'eproc-0.8');
 pref('eproc.v1.enable', true);
 pref('eproc.v1.consulta_processo.enable', true);
 pref('eproc.v1.html_to_pdf.enable', true);
@@ -9,6 +8,5 @@ pref('eproc.v1.alteracao_assunto.enable', true);
 pref('eproc.v1.eproc.enable', true);
 pref('eproc.v2.enable', true);
 pref('eproc.v2.fundo', '#ffffff');
-pref('eproc.v2.perfil', '');
 pref('eproc.v2.ielocation', 'C:\\Arquivos de programas\\Internet Explorer\\iexplore.exe');
 pref('eproc.v2.semdestaque', false);
