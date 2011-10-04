@@ -1798,11 +1798,10 @@ var Eproc = {
             fecharLink.innerHTML = '<div class="infraItemMenu"><div class="infraRotuloMenu">' + fecharLink.textContent + '</div></div>'; 
             fechar.appendChild(fecharLink);
             menu.appendChild(fechar);
-
-            window.addEventListener('scroll', function(e)
+            var fecharOffsetTop = fechar.offsetTop;
+            var fecharHeight = fechar.clientHeight;
+            var onWindowScroll = function(e)
             {
-                var fecharOffsetTop = fechar.offsetTop;
-                var fecharHeight = fechar.clientHeight;
                 var minimumOffset = (window.innerHeight - fecharHeight) / 2;
                 if (fecharOffsetTop - window.pageYOffset < minimumOffset) {
                     fechar.style.position = 'fixed';
@@ -1813,6 +1812,19 @@ var Eproc = {
                     fechar.style.top = '';
                     fechar.style.width = '';
                 }
+            };
+            window.addEventListener('scroll', onWindowScroll, false);
+            window.addEventListener('resize', function(e)
+            {
+                var fecharOldPosition = fechar.style.position;
+                var fecharOldTop = fechar.style.top;
+                fechar.style.position = '';
+                fechar.style.top = '';
+                fecharOffsetTop = fechar.offsetTop;
+                fecharHeight = fechar.clientHeight;
+                fechar.style.position = fecharOldPosition;
+                fechar.style.top = fecharOldTop;
+                onWindowScroll();
             }, false);
         }
     },
