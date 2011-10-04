@@ -1558,7 +1558,7 @@ var Eproc = {
         {
             var vLink = document.createElement('a');
             vLink.href = '#';
-            vLink.textContent = texto;
+            vLink.innerHTML = texto;
             vLink.addEventListener('click', function(e)
             {
                 e.preventDefault();
@@ -1793,39 +1793,32 @@ var Eproc = {
             var fechar = document.createElement('li');
             fechar.id = 'extraFechar';
             fechar.style.visibility = 'hidden';
-            var fecharLink = new VirtualLink('Fechar as janelas abertas', Eproc.closeAllWindows);
+            var fecharLink = new VirtualLink('<div class="infraItemMenu"><div class="infraRotuloMenu">Fechar as janelas abertas</div></div>', Eproc.closeAllWindows);
             fecharLink.className = 'infraMenuRaiz';
-            fecharLink.innerHTML = '<div class="infraItemMenu"><div class="infraRotuloMenu">' + fecharLink.textContent + '</div></div>'; 
             fechar.appendChild(fecharLink);
             menu.appendChild(fechar);
-            var fecharOffsetTop = fechar.offsetTop;
-            var fecharHeight = fechar.clientHeight;
+            var setFecharProperties = function(pos, y, w)
+            {
+                var staticArgs = Array.prototype.slice.call(arguments);
+                ['position', 'top', 'width'].forEach(function(property, p)
+                {
+                    fechar.style[property] = staticArgs[p];
+                });
+            };
             var onWindowScroll = function(e)
             {
+                setFecharProperties('', '', '');
+                var fecharOffsetTop = fechar.offsetTop;
+                var fecharHeight = fechar.clientHeight;
                 var minimumOffset = (window.innerHeight - fecharHeight) / 2;
                 if (fecharOffsetTop - window.pageYOffset < minimumOffset) {
-                    fechar.style.position = 'fixed';
-                    fechar.style.top = minimumOffset + 'px';
-                    fechar.style.width = menu.clientWidth + 'px';
-                } else {
-                    fechar.style.position = '';
-                    fechar.style.top = '';
-                    fechar.style.width = '';
+                    setFecharProperties('fixed', minimumOffset + 'px', menu.clientWidth + 'px');
                 }
             };
-            window.addEventListener('scroll', onWindowScroll, false);
-            window.addEventListener('resize', function(e)
+            ['scroll', 'resize'].forEach(function(eventName)
             {
-                var fecharOldPosition = fechar.style.position;
-                var fecharOldTop = fechar.style.top;
-                fechar.style.position = '';
-                fechar.style.top = '';
-                fecharOffsetTop = fechar.offsetTop;
-                fecharHeight = fechar.clientHeight;
-                fechar.style.position = fecharOldPosition;
-                fechar.style.top = fecharOldTop;
-                onWindowScroll();
-            }, false);
+                window.addEventListener(eventName, onWindowScroll, false);
+            });
         }
     },
     setCorCapa: function()
