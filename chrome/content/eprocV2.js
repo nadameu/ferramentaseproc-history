@@ -986,6 +986,10 @@ var Eproc = {
             this.processo = this.parametros.num_processo;
             delete this.parametros.num_processo;
         }
+        var brasao = $('#imgBrasao');
+        if (brasao) {
+            brasao.src = 'data:image/png;base64,' + GM_getBase64('chrome://eproc/content/brasao.png');
+        }
         var menu = Eproc.getMenu();
         if (menu) {
             var cores = document.createElement('li');
