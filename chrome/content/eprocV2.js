@@ -253,6 +253,11 @@ var Eproc = {
                 e.preventDefault();
                 e.stopPropagation();
             }
+        } else {
+            var menuFechar = $('#extraFechar');
+            if (menuFechar) {
+                menuFechar.style.visibility = 'hidden';
+            }
         }
     },
     colorirLembretes: function()
@@ -1784,12 +1789,27 @@ var Eproc = {
             var fechar = document.createElement('li');
             fechar.id = 'extraFechar';
             fechar.style.visibility = 'hidden';
-            fechar.style.position = 'fixed';
-            fechar.style.width = '19%';
             var fecharLink = new VirtualLink('Fechar as janelas abertas', Eproc.closeAllWindows);
             fecharLink.className = 'infraMenuRaiz';
+            fecharLink.innerHTML = '<div class="infraItemMenu"><div class="infraRotuloMenu">' + fecharLink.textContent + '</div></div>'; 
             fechar.appendChild(fecharLink);
             menu.appendChild(fechar);
+
+            window.addEventListener('scroll', function(e)
+            {
+                var fecharOffsetTop = fechar.offsetTop;
+                var fecharHeight = fechar.clientHeight;
+                var minimumOffset = (window.innerHeight - fecharHeight) / 2;
+                if (fecharOffsetTop - window.pageYOffset < minimumOffset) {
+                    fechar.style.position = 'fixed';
+                    fechar.style.top = minimumOffset + 'px';
+                    fechar.style.width = menu.clientWidth + 'px';
+                } else {
+                    fechar.style.position = '';
+                    fechar.style.top = '';
+                    fechar.style.width = '';
+                }
+            }, false);
         }
     },
     setCorCapa: function()
