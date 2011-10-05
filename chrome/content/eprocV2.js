@@ -1806,6 +1806,21 @@ var Eproc = {
                 }
             }
         });
+        var tableRelacionado = $('#tableRelacionado');
+        if (tableRelacionado) {
+            var labelRelacionado = $('#lblRelac');
+            var div = document.createElement('div');
+            labelRelacionado.parentNode.insertBefore(div, labelRelacionado);
+            div.appendChild(labelRelacionado);
+            div.appendChild(tableRelacionado);
+            tableRelacionado.style.display = 'none';
+            div.addEventListener('mouseover', function(e) { tableRelacionado.style.display = ''; }, false);
+            div.addEventListener('mouseout', function(e) { tableRelacionado.style.display = 'none'; }, false);
+            var br = div.previousSibling.previousSibling;
+            if ('tagName' in br && br.tagName.toUpperCase() == 'BR') {
+                br.parentNode.removeChild(br);
+            }
+        }
         var menu = Eproc.getMenu();
         if (menu) {
             var fechar = document.createElement('li');
