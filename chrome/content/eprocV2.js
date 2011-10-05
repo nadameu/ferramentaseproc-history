@@ -988,7 +988,7 @@ var Eproc = {
         }
         var brasao = $('#imgBrasao');
         if (brasao) {
-            brasao.src = 'data:image/png;base64,' + GM_getBase64('chrome://eproc/content/brasao.png');
+            brasao.src = 'data:image/png;base64,' + GM_getBase64('chrome://eproc/skin/brasao.png');
         }
         var menu = Eproc.getMenu();
         if (menu) {
@@ -1065,7 +1065,7 @@ var Eproc = {
             }, false);
             var img = document.createElement('img');
             img.className = 'infraImg'
-            img.src = 'data:image/png;base64,' + GM_getBase64('chrome://eproc/content/stapler-16.png');
+            img.src = 'data:image/png;base64,' + GM_getBase64('chrome://eproc/skin/stapler-16.png');
             a.appendChild(img);
             div.appendChild(a);
             if (pesquisaRapida) {

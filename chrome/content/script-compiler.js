@@ -16,12 +16,12 @@ var showPreferences = function()
 var IELauncher = function(url)
 {
     // create an nsILocalFile for the executable
-    var file = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+    var file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
     var prefs = new EprocPreferences();
     file.initWithPath(prefs.getValue('v2.ielocation'));
 
     // create an nsIProcess
-    var process = Components.classes["@mozilla.org/process/util;1"].createInstance(Components.interfaces.nsIProcess);
+    var process = Cc["@mozilla.org/process/util;1"].createInstance(Ci.nsIProcess);
     process.init(file);
 
     // Run the process.
@@ -46,12 +46,21 @@ var EprocGmCompiler = {
     getContents: function(aUrl, binary)
     {
         if (typeof binary == 'undefined') binary = false;
-        var ioService = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
-        var scriptableStream = Components.classes["@mozilla.org/scriptableinputstream;1"].getService(Components.interfaces.nsIScriptableInputStream);
+        var ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+        if (binary) {
+            var scriptableStream = Cc["@mozilla.org/binaryinputstream;1"].getService(Ci.nsIBinaryInputStream);
+        } else {
+            var scriptableStream = Cc["@mozilla.org/scriptableinputstream;1"].getService(Ci.nsIScriptableInputStream);
+        }
         var channel = ioService.newChannel(aUrl, null, null);
         var input = channel.open();
-        scriptableStream.init(input);
-        var str = scriptableStream.read(input.available());
+        if (binary) {
+            scriptableStream.setInputStream(input);
+            var str = scriptableStream.readBytes(input.available());
+        } else {
+            scriptableStream.init(input);
+            var str = scriptableStream.read(input.available());
+        }
         scriptableStream.close();
         input.close();
         return str;
@@ -60,7 +69,7 @@ var EprocGmCompiler = {
     getUrlContents: function(aUrl)
     {
         var str = this.getContents(aUrl);
-        var unicodeConverter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"].createInstance(Components.interfaces.nsIScriptableUnicodeConverter);
+        var unicodeConverter = Cc["@mozilla.org/intl/scriptableunicodeconverter"].createInstance(Ci.nsIScriptableUnicodeConverter);
         unicodeConverter.charset = "UTF-8";
 
         try {
@@ -72,23 +81,13 @@ var EprocGmCompiler = {
 
     getUrlContentsAsBase64: function(aUrl)
     {
-//        var str = this.getContents(aUrl, true);
-
-        var ioService = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
-        var scriptableStream = Components.classes["@mozilla.org/binaryinputstream;1"].getService(Components.interfaces.nsIBinaryInputStream);
-        var channel = ioService.newChannel(aUrl, null, null);
-        var input = channel.open();
-        scriptableStream.setInputStream(input);
-        var str = scriptableStream.readBytes(input.available());
-        scriptableStream.close();
-        input.close();
-
+        var str = this.getContents(aUrl, true);
         return base64_encode(str);
     },
 
     isGreasemonkeyable: function(url)
     {
-        var scheme = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService).extractScheme(url);
+        var scheme = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService).extractScheme(url);
         return ((scheme == "http" || scheme == "https" || scheme == "file") && !/hiddenWindow\.html$/.test(url));
     },
 
@@ -132,7 +131,7 @@ var EprocGmCompiler = {
         var sandbox, script, logger, storage, xmlhttpRequester;
         var safeWin = new XPCNativeWrapper(unsafeContentWin);
 
-        sandbox = new Components.utils.Sandbox(safeWin);
+        sandbox = new Cu.Sandbox(safeWin);
 
         var storage = new EprocScriptStorage();
         xmlhttpRequester = new EprocXmlhttpRequester(
@@ -145,7 +144,7 @@ var EprocGmCompiler = {
         sandbox.unsafeWindow = unsafeContentWin;
 
         // patch missing properties on xpcnw
-        sandbox.XPathResult = Components.interfaces.nsIDOMXPathResult;
+        sandbox.XPathResult = Ci.nsIDOMXPathResult;
 
         // add our own APIs
         sandbox.GM_addStyle = function(css)
@@ -164,13 +163,13 @@ var EprocGmCompiler = {
         sandbox.GM_getResourceText = function(){};
         sandbox.GM_confirmCheck = function(title, text, chkMsg, chkState)
         {
-            var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
+            var prompts = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
             var result = prompts.confirmCheck(null, title, text, chkMsg, chkState);
             return result;
         };
         sandbox.GM_yesNo = function(title, text)
         {
-            var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
+            var prompts = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
             var flags = prompts.BUTTON_POS_0 * prompts.BUTTON_TITLE_YES + prompts.BUTTON_POS_1 * prompts.BUTTON_TITLE_NO;
             var button = prompts.confirmEx(null, title, text, flags, '', '', '', '', {value: false});
             return button;
@@ -196,12 +195,12 @@ var EprocGmCompiler = {
 
     evalInSandbox: function(code, codebase, sandbox)
     {
-        if (Components.utils && Components.utils.Sandbox) {
+        if (Cu && Cu.Sandbox) {
             // DP beta+
-            Components.utils.evalInSandbox(code, sandbox);
-        } else if (Components.utils && Components.utils.evalInSandbox) {
+            Cu.evalInSandbox(code, sandbox);
+        } else if (Cu && Cu.evalInSandbox) {
             // DP alphas
-            Components.utils.evalInSandbox(code, codebase, sandbox);
+            Cu.evalInSandbox(code, codebase, sandbox);
         } else if (Sandbox) {
             // 1.0.x
             evalInSandbox(code, sandbox, codebase);
@@ -224,7 +223,7 @@ var EprocGmCompiler = {
         loadInBackground = tabBrowser.mPrefs.getBoolPref("browser.tabs.loadInBackground");
         sendReferrer = tabBrowser.mPrefs.getIntPref("network.http.sendRefererHeader");
         if (sendReferrer) {
-            var ios = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);
+            var ios = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
             referrer = ios.newURI(content.document.location.href, null, null);
         }
         tabBrowser.loadOneTab(url, referrer, null, null, loadInBackground);
@@ -329,7 +328,7 @@ window.addEventListener('unload', EprocGmCompiler.onUnLoad, false);
 
 function myDump(aMessage)
 {
-    var consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
+    var consoleService = Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService);
     consoleService.logStringMessage("e-Proc: " + aMessage);
 }
 
