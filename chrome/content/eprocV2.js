@@ -1808,17 +1808,26 @@ var Eproc = {
         });
         var tableRelacionado = $('#tableRelacionado');
         if (tableRelacionado) {
-            var labelRelacionado = $('#lblRelac');
-            var div = document.createElement('div');
-            labelRelacionado.parentNode.insertBefore(div, labelRelacionado);
-            div.appendChild(labelRelacionado);
-            div.appendChild(tableRelacionado);
-            tableRelacionado.style.display = 'none';
-            div.addEventListener('mouseover', function(e) { tableRelacionado.style.display = ''; }, false);
-            div.addEventListener('mouseout', function(e) { tableRelacionado.style.display = 'none'; }, false);
-            var br = div.previousSibling.previousSibling;
-            if ('tagName' in br && br.tagName.toUpperCase() == 'BR') {
-                br.parentNode.removeChild(br);
+            if (tableRelacionado.rows.length > 2) {
+                var labelRelacionado = $('#lblRelac');
+                var div = document.createElement('div');
+                labelRelacionado.parentNode.insertBefore(div, labelRelacionado);
+                div.appendChild(labelRelacionado);
+                div.appendChild(tableRelacionado);
+                tableRelacionado.appendChild(document.createElement('tfoot'));
+                tableRelacionado.tFoot.insertRow(0).insertCell(0).innerHTML = 'E OUTROS (' + (tableRelacionado.tBodies[0].rows.length - 1) + ')...';
+                div.className = 'extraRelacionados';
+                var br = div.previousSibling.previousSibling;
+                if ('tagName' in br && br.tagName.toUpperCase() == 'BR') {
+                    br.parentNode.removeChild(br);
+                }
+                Eproc.addCssRule('#tableRelacionado { display: table; }');
+                Eproc.addCssRule('#labelRelacionado { display: block; }');
+                Eproc.addCssRule('.extraRelacionados tr { display: none; }');
+                Eproc.addCssRule('.extraRelacionados tr:first-of-type { display: inherit; }');
+                Eproc.addCssRule('.extraRelacionados tfoot tr { display: inherit; }');
+                Eproc.addCssRule('.extraRelacionados:hover tfoot tr { display: none; }');
+                Eproc.addCssRule('.extraRelacionados:hover tr { display: inherit; }');
             }
         }
         var menu = Eproc.getMenu();
