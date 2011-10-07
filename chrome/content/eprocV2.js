@@ -950,6 +950,10 @@ var Eproc = {
                 Eproc.addCssRule(rule);
             });
         }
+        document.body.setAttribute('onload', document.body.getAttribute('onload').replace('infraProcessarResize();', ''));
+        if (unsafeWindow.infraResize instanceof Function) {
+            window.removeEventListener('resize', unsafeWindow.infraResize, false);
+        }
         resetStyles();
         this.pagina = location.pathname.split('/eprocV2/')[1];
         this.parametros = {};
