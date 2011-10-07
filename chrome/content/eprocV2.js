@@ -1665,54 +1665,6 @@ var Eproc = {
                 Eproc.addCssRule('.extraRelacionados:hover tr { display: inherit; }');
             }
         }
-        $$('legend').forEach(function(legend)
-        {
-            if (legend.textContent.trim() == 'Assuntos') {
-                var fieldsetAssuntos = legend.parentNode;
-                var tabelaAssuntos = $('table', fieldsetAssuntos);
-                if (tabelaAssuntos.rows.length > 3) {
-                    tabelaAssuntos.className += ' extraAssuntos';
-                    var rowAssuntos = tabelaAssuntos.insertRow(2);
-                    rowAssuntos.className = 'infraTrEscura';
-                    var cellAssuntos = rowAssuntos.insertCell(0);
-                    cellAssuntos.colSpan = 3;
-                    cellAssuntos.innerHTML = 'E OUTROS (' + (tabelaAssuntos.tBodies[0].rows.length - 3) + ')...';
-                }
-                Eproc.addCssRule('.extraAssuntos tr { display: none; }');
-                Eproc.addCssRule('.extraAssuntos tr:nth-of-type(-n+3) { display: inherit; }');
-                Eproc.addCssRule('.extraAssuntos:hover tr:nth-of-type(3) { display: none; }');
-                Eproc.addCssRule('.extraAssuntos:hover tr { display: inherit; }');
-            } else if (legend.textContent.trim() == 'Partes e Representantes') {
-                var fieldsetPartes = legend.parentNode;
-                var tabelaPartes = $('table', fieldsetPartes);
-                if (tabelaPartes.rows.length > 3) {
-                    tabelaPartes.className += ' extraPartes';
-                    var numAutores = numReus = 0;
-                    $$('tr', tabelaPartes).forEach(function(row, r)
-                    {
-                        if (r < 1) return;
-                        if (! numAutores && ! row.cells[0].textContent) numAutores = r - 1;
-                        if (! numReus && ! row.cells[1].textContent) numReus = r - 1;
-                    });
-                    if (! numAutores) numAutores = tabelaPartes.rows.length - 1;
-                    if (! numReus) numReus = tabelaPartes.rows.length - 1;
-                    var rowPartes = tabelaPartes.insertRow(2);
-                    rowPartes.className = 'infraTrEscura';
-                    var cellAutores = rowPartes.insertCell(0);
-                    var cellReus = rowPartes.insertCell(1);
-                    if (numAutores > 1) {
-                        cellAutores.innerHTML = (numAutores > 2 ? 'E OUTROS (' + (numAutores - 1) + ')' : 'E OUTRO') + '...';
-                    }
-                    if (numReus > 1) {
-                        cellReus.innerHTML = (numReus > 2 ? 'E OUTROS (' + (numReus - 1) + ')' : 'E OUTRO') + '...';
-                    }
-                }
-                Eproc.addCssRule('.extraPartes tr { display: none; }');
-                Eproc.addCssRule('.extraPartes tr:nth-of-type(-n+3) { display: inherit; }');
-                Eproc.addCssRule('.extraPartes:hover tr:nth-of-type(3) { display: none; }');
-                Eproc.addCssRule('.extraPartes:hover tr { display: inherit; }');
-            }
-        });
         var menu = Eproc.getMenu();
         if (menu) {
             var fechar = document.createElement('li');
