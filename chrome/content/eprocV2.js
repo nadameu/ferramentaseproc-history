@@ -950,7 +950,9 @@ var Eproc = {
                 Eproc.addCssRule(rule);
             });
         }
-        document.body.setAttribute('onload', document.body.getAttribute('onload').replace('infraProcessarResize();', ''));
+        if (document.body.hasAttribute('onload')) {
+            document.body.setAttribute('onload', document.body.getAttribute('onload').replace('infraProcessarResize();', ''));
+        }
         if (unsafeWindow.infraResize instanceof Function) {
             window.removeEventListener('resize', unsafeWindow.infraResize, false);
         }
