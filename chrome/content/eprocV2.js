@@ -1648,13 +1648,19 @@ var Eproc = {
             }
         });
         var tableRelacionado = $('#tableRelacionado');
-        if (tableRelacionado) {
+        var labelRelacionado = $('#lblRelac') || $('#lblProcRel');
+        if (tableRelacionado && labelRelacionado) {
             if (tableRelacionado.rows.length > 2) {
-                var labelRelacionado = $('#lblRelac');
                 var div = document.createElement('div');
                 labelRelacionado.parentNode.insertBefore(div, labelRelacionado);
                 div.appendChild(labelRelacionado);
                 div.appendChild(tableRelacionado);
+                $$('tr', tableRelacionado).forEach(function(row)
+                {
+                    if (row.cells.length == 0) {
+                        tableRelacionado.deleteRow(row.rowIndex);
+                    }
+                });
                 tableRelacionado.appendChild(document.createElement('tfoot'));
                 tableRelacionado.tFoot.insertRow(0).insertCell(0).innerHTML = 'E OUTROS (' + (tableRelacionado.tBodies[0].rows.length - 1) + ')...';
                 div.className = 'extraRelacionados';
