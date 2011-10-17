@@ -950,7 +950,7 @@ var Eproc = {
                 Eproc.addCssRule(rule);
             });
         }
-        if (document.body.hasAttribute('onload')) {
+        if (document.body && document.body.hasAttribute('onload')) {
             document.body.setAttribute('onload', document.body.getAttribute('onload').replace('infraProcessarResize();', ''));
         }
         if (unsafeWindow.infraResize instanceof Function) {
