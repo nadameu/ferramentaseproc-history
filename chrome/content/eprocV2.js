@@ -1016,7 +1016,7 @@ var Eproc = {
         if (barraSistema) {
             Eproc.mudaFundo(GM_getValue('v2.fundo') || '#ffffff');
         } else if (lembretes.length) {
-            Eproc.mudaFundo('#ffffff');
+            Eproc.mudaEstilos();
         }
         var unidades = $('#selInfraUnidades');
         if (unidades) {
@@ -1086,9 +1086,9 @@ var Eproc = {
             delete Eproc;
         }, false);
     },
-    mudaFundo: function(background)
+    mudaEstilos: function(background)
     {
-        GM_setValue('v2.fundo', background);
+        if (typeof background == 'undefined') background = '#ffffff';
         var css = atob(GM_getBase64('chrome://eproc/skin/eprocV2.css'));
         css = css.replace(/\$background/g, background);
         GM_addStyle(css);
@@ -1100,6 +1100,11 @@ var Eproc = {
             auto.style.width = auto.clientWidth + 'px';
           }
         }, this);
+    },
+    mudaFundo: function(background)
+    {
+        GM_setValue('v2.fundo', background);
+        Eproc.mudaEstilos(background);
     },
     painel_secretaria_listar: function()
     {
