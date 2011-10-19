@@ -279,7 +279,7 @@ var Eproc = {
                 var destino = tr.cells[3].textContent, classes = ['extraLembrete'];
                 var pessoa = $('#lblInfraUnidades');
                 if (!pessoa) {
-                    pessoa = window.parent.$('#lblInfraUnidades');
+                    pessoa = $('#lblInfraUnidades', window.parent.document);
                 }
                 if (new RegExp(destino + '$').test(pessoa.textContent)) {
                     destino = 'VOCÊ';
@@ -1012,8 +1012,11 @@ var Eproc = {
             }
             menu.appendChild(cores);
         }
-        if ($$('.infraBarraSistema').length) {
+        var barraSistema = $('.infraBarraSistema'), lembretes = $$('.infraTable[summary="Lembretes"]');
+        if (barraSistema) {
             Eproc.mudaFundo(GM_getValue('v2.fundo') || '#ffffff');
+        } else if (lembretes.length) {
+            Eproc.mudaFundo('#ffffff');
         }
         var unidades = $('#selInfraUnidades');
         if (unidades) {
