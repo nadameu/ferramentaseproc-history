@@ -14,7 +14,7 @@ var httpRequestObserver = {
                 var titulo = uri.getQuery().match(/&titulo_janela=([^&]+)/);
                 var extension = uri.getQuery().match(/&tipo_doc=([^&]+)/);
                 if (titulo && extension) {
-                    replacePattern = 'filename="' + decodeURIComponent(titulo[1]).replace(/ /g, '_') + '.' + extension[1] + '"';
+                    replacePattern = 'filename="' + decodeURIComponent(titulo[1]).replace(/ /g, '_').replace('_-_', '-') + '.' + extension[1] + '"';
                 } else {
                     replacePattern = 'filename="$1"';
                 }
