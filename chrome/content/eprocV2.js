@@ -1606,14 +1606,16 @@ var Eproc = {
                             tr.cells[2].className = 'prazoAberto';
                         } else if (match[1] == 'FECHADO') {
                             haPrazosFechados = true;
-                            var extraContent = '', fechamento = tr.cells[0].getElementsByTagName('a');
+                            var extraContent = '', fechamento = $$('a', tr.cells[0]);
                             if (fechamento.length) {
                                 fechamento = fechamento[0].getAttribute('onmouseover').match(/Fechamento do Prazo:.*?\d+ - ([^<]+)/);
-                                var evento = fechamento[1]
-                                if (evento != 'Decurso de Prazo') {
-                                    evento = '<span class="prazoEvento">' + evento + '</span>';
+                                if (fechamento) {
+                                    var evento = fechamento[1];
+                                    if (evento != 'Decurso de Prazo') {
+                                        evento = '<span class="prazoEvento">' + evento + '</span>';
+                                    }
+                                    extraContent = '<span class="prazoExtra"> (' + evento + ')</span>';
                                 }
-                                extraContent = '<span class="prazoExtra"> (' + evento + ')</span>';
                             }
                             tr.cells[2].className = 'prazoFechado';
                             tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(/Prazo: .* Status:FECHADO/, '$&' + extraContent);
