@@ -906,58 +906,11 @@ var Eproc = {
     },
     init: function()
     {
-        function resetStyles()
-        {
-            var styleClasses = [], styleRules = [], styleElements = [], extraUnique = 0;
-            $$('*').forEach(function(element)
-            {
-                if (element.hasAttribute('style')) {
-                    var rules = element.getAttribute('style');
-                    var classIndex = styleRules.indexOf(rules);
-                    if (classIndex == -1) {
-                        var className = 'extraUnique' + (++extraUnique);
-                        classIndex = styleClasses.push(className) - 1;
-                        styleRules.push(rules);
-                        styleElements.push([]);
-                    } else {
-                        var className = styleClasses[classIndex];
-                    }
-                    styleElements[classIndex].push(element);
-                }
-            });
-            styleClasses.forEach(function(className, i)
-            {
-                var selector = '.' + className;
-                var elements = styleElements[i];
-                if (elements.length == 1) {
-                    var element = elements[0];
-                    if (! element.hasAttribute('id')) {
-                        element.setAttribute('id', className);
-                    }
-                    selector = '#' + element.getAttribute('id');
-                    element.removeAttribute('style');
-                } else {
-                    elements.forEach(function(element)
-                    {
-                        if (element.hasAttribute('id')) selector += ', #' + element.getAttribute('id');
-                        var classes = (element.className.trim() == '') ? [] : element.className.split(' ');
-                        classes.push(className);
-                        element.className = classes.join(' ');
-                        element.removeAttribute('style');
-                    });
-                }
-                var rule = selector + ' { ' + styleRules[i] + ' }';
-                Eproc.addCssRule(rule);
-            });
-        }
         if (document.body && document.body.hasAttribute('onload')) {
             document.body.setAttribute('onload', document.body.getAttribute('onload').replace('infraProcessarResize();', ''));
         }
         if (unsafeWindow.infraResize instanceof Function) {
             window.removeEventListener('resize', unsafeWindow.infraResize, false);
-        }
-        if (! $('#containerDocumentos')) {
-            resetStyles();
         }
         this.pagina = location.pathname.split('/eprocV2/')[1];
         this.parametros = {};
