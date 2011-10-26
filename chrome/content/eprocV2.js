@@ -956,7 +956,9 @@ var Eproc = {
         if (unsafeWindow.infraResize instanceof Function) {
             window.removeEventListener('resize', unsafeWindow.infraResize, false);
         }
-        resetStyles();
+        if (! $('#containerDocumentos')) {
+            resetStyles();
+        }
         this.pagina = location.pathname.split('/eprocV2/')[1];
         this.parametros = {};
         for (var p = 0, params = location.search.split('?').splice(0).join('').split('&'), param; (p < params.length) && (param = params[p]); p++) {
@@ -980,7 +982,7 @@ var Eproc = {
             var cores = document.createElement('li');
             cores.innerHTML = '<a class="infraMenuRaiz"  title="Cor de fundo" ><div class="infraItemMenu"><div class="infraRotuloMenu">Cor de fundo</div><div class="infraSetaMenu">&raquo;</div></div></a><ul></ul>';
             var coresMenu = cores.querySelector('ul');
-            var extraStyle = $('#extraStyle');
+            var extraStyle = Eproc.getExtraStyle();
             function Cor(c, h, s, l)
             {
                 var cor = document.createElement('a');
