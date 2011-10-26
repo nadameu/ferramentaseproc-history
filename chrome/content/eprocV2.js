@@ -1674,6 +1674,51 @@ var Eproc = {
                 window.addEventListener(eventName, onWindowScroll, false);
             });
         }
+        var capa = $('#fldAssuntos');
+        if (capa) {
+            Eproc.addCssRule('#fldAssuntos { position: relative; }');
+            Eproc.addCssRule('.extraMarker { position: absolute; top: 0; width: 15%; font-size: 1.2em; color: white; text-align: center; }');
+            var sigilo = getSigilo();
+            if (sigilo) {
+                var nivel = /[2345]/.exec(sigilo) || (sigilo == 'Segredo de Justiça' ? 1 : 0);
+                if (nivel > 0) {
+                    var marker = document.createElement('div');
+                    marker.className = 'extraMarker extraMarkerSigilo';
+                    marker.textContent = sigilo;
+                    Eproc.addCssRule('.extraMarkerSigilo { left: 85%; background-color: red; -moz-transform: skewX(-15deg) skewY(15deg); }');
+                    capa.appendChild(marker);
+                }
+            }
+            var prioridade = getPrioridade();
+            if (prioridade == 'Sim') {
+                var marker = document.createElement('div');
+                marker.className = 'extraMarker extraMarkerPrioridade';
+                marker.textContent = 'PRIORIDADE';
+                Eproc.addCssRule('.extraMarkerPrioridade { left: 0; background-color: orange; -moz-transform: skewX(15deg) skewY(-15deg); }');
+                capa.appendChild(marker);
+            }
+        }
+        function getSigilo()
+        {
+            return getLabelValue('Nível de Sigilo do Processo: ');
+        }
+        function getPrioridade()
+        {
+            return getLabelValue('Prioridade Atendimento: ');
+        }
+        function getLabelValue(text)
+        {
+            var labelFound = null;
+            $$('#conteudoInfAdicional td label').forEach(function(label)
+            {
+                if (label.textContent == text) {
+                    labelFound = label;
+                }
+            });
+            if (! labelFound) return null;
+            var label = labelFound.parentNode.nextSibling.childNodes[0];
+            return label.textContent;
+        }
     },
     reloginGedpro: function(e)
     {
