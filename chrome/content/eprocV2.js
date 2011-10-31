@@ -1766,6 +1766,22 @@ var Eproc = {
             var label = labelFound.parentNode.nextSibling.childNodes[0];
             return label.textContent;
         }
+        var acoes = getAcoes();
+        if (acoes) {
+            var classeLinkAcao = 'extraAcaoClara';
+            acoes.forEach(function(acao)
+            {
+                if (acao.className != '') acao.className += ' ';
+                acao.className += classeLinkAcao;
+                classeLinkAcao = (classeLinkAcao == 'extraAcaoClara') ? 'extraAcaoEscura' : 'extraAcaoClara';
+            });
+        }
+        function getAcoes()
+        {
+            var acoes = $$('#fldAcoes a');
+            if (acoes.length == 0) return false;
+            return acoes;
+        }
     },
     reloginGedpro: function(e)
     {

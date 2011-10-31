@@ -178,3 +178,9 @@ button.infraButton[class~=extraBuscarPreventosButton] { font-size: .8em; }
         display: block;
     }
 }
+a.extraAcaoClara, a.extraAcaoClara u {
+    color: #888;
+}
+a.extraAcaoEscura, a.extraAcaoEscura u {
+    color: #555;
+}
