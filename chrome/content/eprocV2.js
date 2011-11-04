@@ -15,9 +15,9 @@ function $$(selector, baseElement)
 }
 var Cores = {
     AMARELA: '#efef8f',
-    AZUL: '#60a0d2',
+    AZUL: '#87adcd',
     AZUL_CLARA: '#c4dffb',
-    AZUL_OU_MARROM: '#bf8040',
+    AZUL_OU_MARROM: '#bf936a',
     BRANCA: '#fff',
     CINZA: '#bfbfbf',
     DESCONHECIDA: '#fff',
@@ -26,7 +26,7 @@ var Cores = {
     ROSA: '#fbc4df',
     SALMAO: '#efa88f',
     VERDE: '#a7eda7',
-    VERMELHA: '#db6464'
+    VERMELHA: '#db8080'
 }
 var Classes = {
     'AÇÃO CIVIL PÚBLICA': Cores.VERDE,
@@ -190,6 +190,7 @@ var Classes = {
     'PROCEDIMENTO ESP.DA LEI DE COMBATE ÀS ORGANIZAÇÕES': Cores.BRANCA,
     'PROCEDIMENTO ESP.DA LEI DE IMPRENSA': Cores.BRANCA,
     'PROCEDIMENTO ESP.DO JUIZADO ESPECIAL CRIMINAL': Cores.VERMELHA,
+    'PROCEDIMENTO ESP.DO JUIZADO ESPECIAL CRIMINAL - PORTARIA': Cores.VERMELHA,
     'PROCEDIMENTO ESP.DOS CRIMES CONTRA A PROPRIEDADE I': Cores.BRANCA,
     'PROCEDIMENTO ESP.DOS CRIMES DE ABUSO DE AUTORIDADE': Cores.VERDE,
     'PROCEDIMENTO ESP.DOS CRIMES DE CALÚNIA E INJÚRIA': Cores.VERDE,
