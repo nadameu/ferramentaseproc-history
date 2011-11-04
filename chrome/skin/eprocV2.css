@@ -53,12 +53,6 @@ tr.infraTrSelecionada td td {
 tr.infraTrMarcada td {
     background-color: hsla(0, 0%, 50%, 0.375);
 }
-tr[data-classe="000169"] {
-    background-color: #bf8040;
-}
-tr[data-classe="000169"][data-competencia="10"] {
-    background-color: #60a0d2;
-}
 div.infraMenu a {
     background-color: $background;
     border-color: $background;
