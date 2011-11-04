@@ -907,58 +907,11 @@ var Eproc = {
     },
     init: function()
     {
-        function resetStyles()
-        {
-            var styleClasses = [], styleRules = [], styleElements = [], extraUnique = 0;
-            $$('*').forEach(function(element)
-            {
-                if (element.hasAttribute('style')) {
-                    var rules = element.getAttribute('style');
-                    var classIndex = styleRules.indexOf(rules);
-                    if (classIndex == -1) {
-                        var className = 'extraUnique' + (++extraUnique);
-                        classIndex = styleClasses.push(className) - 1;
-                        styleRules.push(rules);
-                        styleElements.push([]);
-                    } else {
-                        var className = styleClasses[classIndex];
-                    }
-                    styleElements[classIndex].push(element);
-                }
-            });
-            styleClasses.forEach(function(className, i)
-            {
-                var selector = '.' + className;
-                var elements = styleElements[i];
-                if (elements.length == 1) {
-                    var element = elements[0];
-                    if (! element.hasAttribute('id')) {
-                        element.setAttribute('id', className);
-                    }
-                    selector = '#' + element.getAttribute('id');
-                    element.removeAttribute('style');
-                } else {
-                    elements.forEach(function(element)
-                    {
-                        if (element.hasAttribute('id')) selector += ', #' + element.getAttribute('id');
-                        var classes = (element.className.trim() == '') ? [] : element.className.split(' ');
-                        classes.push(className);
-                        element.className = classes.join(' ');
-                        element.removeAttribute('style');
-                    });
-                }
-                var rule = selector + ' { ' + styleRules[i] + ' }';
-                Eproc.addCssRule(rule);
-            });
-        }
         if (document.body && document.body.hasAttribute('onload')) {
             document.body.setAttribute('onload', document.body.getAttribute('onload').replace('infraProcessarResize();', ''));
         }
         if (unsafeWindow.infraResize instanceof Function) {
             window.removeEventListener('resize', unsafeWindow.infraResize, false);
-        }
-        if (! $('#containerDocumentos') && ! /InstanceName=txt_fck/.test(location.search)) {
-            resetStyles();
         }
         this.pagina = location.pathname.split('/eprocV2/')[1];
         this.parametros = {};
@@ -1204,6 +1157,13 @@ var Eproc = {
                     cell.appendChild(button);
                 });
             });
+        }
+    },
+    processo_cadastrar_2: function()
+    {
+        var auto = $('#txtDesAssunto');
+        if (auto) {
+            auto.style.width = auto.clientWidth + 'px';
         }
     },
     processo_consulta_listar: function()
@@ -1603,7 +1563,7 @@ var Eproc = {
                     })
                 });
                 table.className += ' extraTabelaEventos';
-                Eproc.addCssRule('.extraTabelaEventos img, .extraTabelaEventos img.infraImg, .extraTabelaEventos img.infraImgNormal, .extraTabelaEventos img.infraImg:hover, .extraTabelaEventos img.infraImgNormal:hover { position: inherit; margin-top: inherit; margin-left: 1px; width: 13px; height: inherit; }');
+                Eproc.addCssRule('.extraTabelaEventos img, .extraTabelaEventos img.infraImg, .extraTabelaEventos img.infraImgNormal, .extraTabelaEventos img.infraImg:hover, .extraTabelaEventos img.infraImgNormal:hover { position: inherit !important; margin-top: inherit !important; margin-left: 1px !important; width: 13px; height: inherit; }');
                 Eproc.addCssRule('.extraTabelaEventos a { display: inline-block; }');
                 Eproc.addCssRule('.extraTabelaEventos td:first-of-type, .extraTabelaEventos td:nth-of-type(2), .extraTabelaEventos td:last-of-type { white-space: nowrap; }');
                 function getLinkMimeType(docLink)
