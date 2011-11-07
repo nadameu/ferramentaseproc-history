@@ -1064,7 +1064,7 @@ var Eproc = {
     },
     painel_secretaria_listar: function()
     {
-        Eproc.addCssRule('#divInfraAreaDados { height: auto; }');
+        Eproc.addCssRule('#divInfraAreaDados { height: auto !important; }');
     },
     prevencao_judicial: function()
     {
