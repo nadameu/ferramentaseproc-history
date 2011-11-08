@@ -1682,35 +1682,104 @@ var Eproc = {
                 window.addEventListener(eventName, onWindowScroll, false);
             });
         }
-        var capa = $('#fldAssuntos');
-        if (capa) {
-            Eproc.addCssRule('#fldAssuntos { position: relative; }');
-            Eproc.addCssRule('.extraMarker { position: absolute; top: 0; width: 15%; font-size: 1.2em; color: white; text-align: center; }');
-            var sigilo = getSigilo();
+
+        function MarkersContainer(container)
+        {
+            var cssRules = {};
+
+            this.setSelectorRules = function(selector, rules)
+            {
+                if (! (selector in cssRules)) {
+                    Eproc.addCssRule('.' + selector + ' { ' + rules + ' }');
+                    cssRules[selector] = rules;
+                }
+            };
+            this.add = function(marker)
+            {
+                this.setSelectorRules(marker.selector, marker.cssRules);
+                marker.appendTo(container);
+            };
+
+            this.setSelectorRules('extraMarker', 'float: left; padding: 5px; -moz-border-radius: 5px; font-size: 1.2em; color: white; margin-left: 5px;');
+        }
+
+        function Marker()
+        {
+            var marker;
+
+            this.create = function (text)
+            {
+                marker = document.createElement('div');
+                marker.className = 'extraMarker ' + this.selector;
+                marker.textContent = text;
+            };
+            this.appendTo = function(container)
+            {
+                container.appendChild(marker);
+            };
+        }
+
+        function ReuPresoMarker()
+        {
+            this.create('RÉU PRESO');
+        }
+        ReuPresoMarker.prototype = new Marker();
+        ReuPresoMarker.prototype.selector = 'extraMarkerReuPreso';
+        ReuPresoMarker.prototype.cssRules = 'background-color: red; font-weight: bold;';
+
+        function PrioridadeMarker()
+        {
+            this.create('Tramitação prioritária');
+        }
+        PrioridadeMarker.prototype = new Marker();
+        PrioridadeMarker.prototype.selector = 'extraMarkerPrioridade';
+        PrioridadeMarker.prototype.cssRules = 'background-color: orange;';
+
+        function SigiloMarker(texto)
+        {
+            this.create(texto);
+        }
+        SigiloMarker.prototype = new Marker();
+        SigiloMarker.prototype.selector = 'extraMarkerSigilo';
+        SigiloMarker.prototype.cssRules = 'background-color: white; color: red; font-weight: bold;';
+
+        var comandos = $('#divInfraBarraComandosSuperior');
+        if (comandos) {
+            var markers = new MarkersContainer(comandos);
+            var reuPreso = getReuPreso();
+            if (reuPreso) {
+                markers.add(new ReuPresoMarker());
+                removeReuPreso(reuPreso);
+            }
+            var prioridade = getPrioridadeText();
+            if (prioridade == 'Sim') {
+                markers.add(new PrioridadeMarker());
+            }
+            var sigilo = getSigiloText();
             if (sigilo) {
                 var nivel = /[2345]/.exec(sigilo) || (sigilo == 'Segredo de Justiça' ? 1 : 0);
                 if (nivel > 0) {
-                    var marker = document.createElement('div');
-                    marker.className = 'extraMarker extraMarkerSigilo';
-                    marker.textContent = sigilo;
-                    Eproc.addCssRule('.extraMarkerSigilo { left: 85%; background-color: red; -moz-transform: skewX(-15deg) skewY(15deg); }');
-                    capa.appendChild(marker);
+                    markers.add(new SigiloMarker(sigilo));
                 }
             }
-            var prioridade = getPrioridade();
-            if (prioridade == 'Sim') {
-                var marker = document.createElement('div');
-                marker.className = 'extraMarker extraMarkerPrioridade';
-                marker.textContent = 'PRIORIDADE';
-                Eproc.addCssRule('.extraMarkerPrioridade { left: 0; background-color: orange; -moz-transform: skewX(15deg) skewY(-15deg); }');
-                capa.appendChild(marker);
+        }
+
+        function removeReuPreso(reuPreso)
+        {
+            var container = reuPreso.parentNode;
+            if (/^(FIELDSET|DIV)$/.test(container.tagName.toUpperCase())) {
+                var next = container.nextSibling;
+                if ('tagName' in next && next.tagName.toUpperCase() == 'BR') {
+                    container.parentNode.removeChild(next);
+                }
+                container.parentNode.removeChild(container);
             }
         }
-        function getSigilo()
+        function getSigiloText()
         {
             return getLabelValue('Nível de Sigilo do Processo: ');
         }
-        function getPrioridade()
+        function getPrioridadeText()
         {
             return getLabelValue('Prioridade Atendimento: ');
         }
@@ -1723,9 +1792,18 @@ var Eproc = {
                     labelFound = label;
                 }
             });
-            if (! labelFound) return null;
-            var label = labelFound.parentNode.nextSibling.childNodes[0];
-            return label.textContent;
+            try {
+                var label = labelFound.parentNode.nextSibling.childNodes[0];
+	            return label.textContent;
+            } catch (e) {
+                return null;
+            }
+        }
+        function getReuPreso()
+        {
+            var lblTextoAtencao = $('#lblTextoAtencao');
+            if (lblTextoAtencao && lblTextoAtencao.textContent == 'PROCESSO COM RÉU PRESO') return lblTextoAtencao;
+            return null;
         }
         var acoes = getAcoes();
         if (acoes) {
