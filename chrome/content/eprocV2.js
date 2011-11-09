@@ -1563,7 +1563,7 @@ var Eproc = {
                     })
                 });
                 table.className += ' extraTabelaEventos';
-                Eproc.addCssRule('.extraTabelaEventos img, .extraTabelaEventos img.infraImg, .extraTabelaEventos img.infraImgNormal, .extraTabelaEventos img.infraImg:hover, .extraTabelaEventos img.infraImgNormal:hover { position: inherit !important; margin-top: inherit !important; margin-left: 1px !important; width: 13px; height: inherit; }');
+                Eproc.addCssRule('.extraTabelaEventos img, .extraTabelaEventos img.infraImg, .extraTabelaEventos img.infraImgNormal, .extraTabelaEventos img.infraImg:hover, .extraTabelaEventos img.infraImgNormal:hover { position: inherit !important; margin-top: inherit !important; margin-left: 1px !important; width: 13px !important; height: inherit !important; }');
                 Eproc.addCssRule('.extraTabelaEventos a { display: inline-block; }');
                 Eproc.addCssRule('.extraTabelaEventos td:first-of-type, .extraTabelaEventos td:nth-of-type(2), .extraTabelaEventos td:last-of-type { white-space: nowrap; }');
                 function getLinkMimeType(docLink)
