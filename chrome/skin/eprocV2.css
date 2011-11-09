@@ -172,9 +172,17 @@ button.infraButton[class~=extraBuscarPreventosButton] { font-size: .8em; }
         display: block;
     }
 }
-a.extraAcaoClara, a.extraAcaoClara u {
-    color: #888;
+a.extraLinkAcao {
+    display: inline-block;
+    text-decoration: none;
+    margin: 0 .25ex .5em;
+    background-color: #ddd;
+    border: 1px outset #ddd;
+    padding: 2px;
+    -moz-border-radius: 5px;
+    color: #333;
 }
-a.extraAcaoEscura, a.extraAcaoEscura u {
-    color: #555;
+a.extraLinkAcao:hover {
+    background-color: #eee;
+    border-color: #eee;
 }

@@ -1807,12 +1807,22 @@ var Eproc = {
         }
         var acoes = getAcoes();
         if (acoes) {
-            var classeLinkAcao = 'extraAcaoClara';
             acoes.forEach(function(acao)
             {
-                if (acao.className != '') acao.className += ' ';
-                acao.className += classeLinkAcao;
-                classeLinkAcao = (classeLinkAcao == 'extraAcaoClara') ? 'extraAcaoEscura' : 'extraAcaoClara';
+                var classes = (acao.className == '') ? [] : acao.className.split(' ');
+                classes.push('extraLinkAcao');
+                acao.className = classes.join(' ');
+                if (acao.children.length == 1) {
+                    var u = acao.childNodes[0];
+                    acao.textContent = u.textContent;
+                }
+                if (! acao.href) {
+                    acao.href = '#';
+                    acao.addEventListener('click', function(e) { e.preventDefault(); }, false);
+                }
+                if (acao.nextSibling.nodeType == document.TEXT_NODE) {
+                    acao.parentNode.removeChild(acao.nextSibling);
+                }
             });
         }
         function getAcoes()
