@@ -1252,6 +1252,11 @@ var Eproc = {
         document.title = Eproc.getProcessoF();
         var linkGedpro = getLinkGedpro();
         if (linkGedpro) {
+            var icone = document.createElement('img');
+            icone.src = 'data:image/png;base64,' + GM_getBase64('chrome://eproc/skin/ie.png');
+            icone.style.verticalAlign = 'middle';
+            icone.style.marginRight = '2px';
+            linkGedpro.insertBefore(icone, linkGedpro.firstChild);
             linkGedpro.href = linkGedpro.getAttribute('onclick').match(/window.open\('([^']+)'/)[1];
             Eproc.loginGedpro = {
                 host: null,
@@ -1813,9 +1818,10 @@ var Eproc = {
                 var classes = (acao.className == '') ? [] : acao.className.split(' ');
                 classes.push('extraLinkAcao');
                 acao.className = classes.join(' ');
-                if (acao.children.length == 1) {
-                    var u = acao.childNodes[0];
-                    acao.textContent = u.textContent;
+                var sublinhados = $$('u', acao);
+                if (sublinhados.length == 1) {
+                    var u = sublinhados[0];
+                    u.parentNode.replaceChild(u.childNodes[0], u);
                 }
                 if (! acao.href) {
                     acao.href = '#';
