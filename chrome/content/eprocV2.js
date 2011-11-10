@@ -1574,7 +1574,7 @@ var Eproc = {
                 function isEmbeddable(mime)
                 {
                     if (mime == 'PDF') {
-                        var mimetype = navigator.mimeTypes["application/pdf"];
+                        var mimetype = navigator.mimeTypes.namedItem('application/pdf');
                         if (mimetype) return mimetype.enabledPlugin;
                         return false;
                     }
@@ -1656,6 +1656,7 @@ var Eproc = {
             fechar.id = 'extraFechar';
             fechar.style.visibility = 'hidden';
             var fecharLink = new VirtualLink('<div class="infraItemMenu"><div class="infraRotuloMenu">Fechar as janelas abertas</div></div>', Eproc.closeAllWindows);
+            $('.infraRotuloMenu', fecharLink).textContent = 'Fechar as janelas abertas';
             fecharLink.className = 'infraMenuRaiz';
             fechar.appendChild(fecharLink);
             menu.appendChild(fechar);
