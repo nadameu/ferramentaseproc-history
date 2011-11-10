@@ -181,6 +181,7 @@ a.extraLinkAcao {
     padding: 2px;
     -moz-border-radius: 5px;
     color: #333;
+    line-height: 16px;
 }
 a.extraLinkAcao:hover {
     background-color: #eee;

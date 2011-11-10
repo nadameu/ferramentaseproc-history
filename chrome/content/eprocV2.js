@@ -1252,11 +1252,6 @@ var Eproc = {
         document.title = Eproc.getProcessoF();
         var linkGedpro = getLinkGedpro();
         if (linkGedpro) {
-            var icone = document.createElement('img');
-            icone.src = 'data:image/png;base64,' + GM_getBase64('chrome://eproc/skin/ie.png');
-            icone.style.verticalAlign = 'middle';
-            icone.style.marginRight = '2px';
-            linkGedpro.insertBefore(icone, linkGedpro.firstChild);
             linkGedpro.href = linkGedpro.getAttribute('onclick').match(/window.open\('([^']+)'/)[1];
             Eproc.loginGedpro = {
                 host: null,
@@ -1826,6 +1821,30 @@ var Eproc = {
                 if (! acao.href) {
                     acao.href = '#';
                     acao.addEventListener('click', function(e) { e.preventDefault(); }, false);
+                } else {
+                    var acaoControlador = /\?acao=([^&]+)/.exec(acao.href);
+                    switch (acaoControlador[1]) {
+                        case 'acessar_processo_gedpro':
+                            inserirIcone('chrome://eproc/skin/ie.png', acao);
+                            break;
+
+                        case 'arvore_documento_listar':
+                            inserirIcone('../infra_css/imagens/hierarquia.gif', acao);
+                            break;
+
+                        case 'processo_expedir_carta_subform':
+                            inserirIcone('imagens/tree_icons/report.gif', acao);
+                            break;
+
+                        case 'processo_lembrete_destino_cadastrar':
+                            inserirIcone('../infra_css/imagens/tooltip.gif', acao);
+                            break;
+
+                        case 'procurador_parte_listar':
+                            inserirIcone('../infra_css/imagens/mais.gif', acao);
+                            break;
+                    }
+
                 }
                 if (acao.nextSibling.nodeType == document.TEXT_NODE) {
                     acao.parentNode.removeChild(acao.nextSibling);
@@ -1838,6 +1857,21 @@ var Eproc = {
             if (acoes.length == 0) return false;
             return acoes;
         }
+
+        function inserirIcone(endereco, link)
+        {
+            var icone = document.createElement('img');
+            if (/^chrome:/.test(endereco)) {
+                var mime = 'image/' + /...$/.exec(endereco);
+                icone.src = 'data:' + mime + ';base64,' + GM_getBase64(endereco);
+            } else {
+                icone.src = endereco;
+            }
+            icone.style.verticalAlign = 'middle';
+            icone.style.marginRight = '2px';
+            link.insertBefore(icone, link.firstChild);
+        }
+        
     },
     reloginGedpro: function(e)
     {
