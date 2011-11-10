@@ -186,3 +186,13 @@ a.extraLinkAcao:hover {
     background-color: #eee;
     border-color: #eee;
 }
+fieldset.infraFieldset {
+    border-style: groove;
+    border-color: $background;
+    border-width: 2px;
+}
+fieldset.extraFieldset {
+    border-style: outset;
+    border-color: $background;
+    border-width: 1px;
+}
