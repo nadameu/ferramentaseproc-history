@@ -187,6 +187,10 @@ a.extraLinkAcao:hover {
     background-color: #eee;
     border-color: #eee;
 }
+.extraIconeAcao {
+    vertical-align: middle;
+    margin: auto 2px;
+}
 fieldset.infraFieldset {
     border-style: groove;
     border-color: $background;

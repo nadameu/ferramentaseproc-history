@@ -1819,10 +1819,15 @@ var Eproc = {
                     u.parentNode.replaceChild(u.childNodes[0], u);
                 }
                 if (! acao.href) {
-                    acao.href = '#';
+                    if (/window\.open/.test(acao.onclick)) {
+                        acao.href = /window\.open\(['"]([^'"]+)/.exec(acao.onclick)[1];
+                    } else {
+                        acao.href = '#';
+                    }
                     acao.addEventListener('click', function(e) { e.preventDefault(); }, false);
-                } else {
-                    var acaoControlador = /\?acao=([^&]+)/.exec(acao.href);
+                }
+                var acaoControlador = /\?acao=([^&]+)/.exec(acao.href);
+                if (acaoControlador.length == 2) {
                     switch (acaoControlador[1]) {
                         case 'acessar_processo_gedpro':
                             inserirIcone('chrome://eproc/skin/ie.png', acao);
@@ -1832,19 +1837,46 @@ var Eproc = {
                             inserirIcone('../infra_css/imagens/hierarquia.gif', acao);
                             break;
 
+                        case 'criar_mandado':
+                            inserirIcone('../infra_css/imagens/receber.gif', acao);
+                            break;
+
+                        case 'gerenciamento_partes_listar':
+                            inserirIcone('../infra_css/imagens/grupo.gif', acao);
+                            break;
+
+                        case 'gerenciamento_partes_situacao_listar':
+                            inserirIcone('../infra_css/imagens/check.gif', acao);
+                            break;
+
+                        case 'gerenciamento_peritos_listar':
+                            inserirIcone('chrome://eproc/skin/lupa.png', acao);
+                            break;
+
+                        case 'processo_agravar':
+                            inserirIcone('../infra_css/imagens/atualizar.gif', acao);
+                            break;
+
+                        case 'processo_edicao':
+                            inserirIcone('../infra_css/imagens/verificado.gif', acao);
+                            break;
+
                         case 'processo_expedir_carta_subform':
-                            inserirIcone('imagens/tree_icons/report.gif', acao);
+                            inserirIcone('../infra_css/imagens/relatorio.gif', acao);
                             break;
 
                         case 'processo_lembrete_destino_cadastrar':
                             inserirIcone('../infra_css/imagens/tooltip.gif', acao);
                             break;
 
+                        case 'processo_movimento_consultar':
+                            inserirIcone('chrome://eproc/skin/move.png', acao);
+                            break;
+
                         case 'procurador_parte_listar':
                             inserirIcone('../infra_css/imagens/mais.gif', acao);
                             break;
                     }
-
                 }
                 if (acao.nextSibling.nodeType == document.TEXT_NODE) {
                     acao.parentNode.removeChild(acao.nextSibling);
@@ -1861,14 +1893,15 @@ var Eproc = {
         function inserirIcone(endereco, link)
         {
             var icone = document.createElement('img');
+            icone.width = 16;
+            icone.height = 16;
             if (/^chrome:/.test(endereco)) {
                 var mime = 'image/' + /...$/.exec(endereco);
                 icone.src = 'data:' + mime + ';base64,' + GM_getBase64(endereco);
             } else {
                 icone.src = endereco;
             }
-            icone.style.verticalAlign = 'middle';
-            icone.style.marginRight = '2px';
+            icone.className = 'extraIconeAcao';
             link.insertBefore(icone, link.firstChild);
         }
         
