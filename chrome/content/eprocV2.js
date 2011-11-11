@@ -1041,6 +1041,104 @@ var Eproc = {
             Eproc.closeAllWindows(e);
             delete Eproc;
         }, false);
+        var acoes = getAcoes();
+        if (acoes) {
+            acoes.forEach(function(acao)
+            {
+                var classes = (acao.className == '') ? [] : acao.className.split(' ');
+                classes.push('extraLinkAcao');
+                acao.className = classes.join(' ');
+                var sublinhados = $$('u', acao);
+                if (sublinhados.length == 1) {
+                    var u = sublinhados[0];
+                    u.parentNode.replaceChild(u.childNodes[0], u);
+                }
+                if (! acao.href) {
+                    if (/window\.open/.test(acao.onclick)) {
+                        acao.href = /window\.open\(['"]([^'"]+)/.exec(acao.onclick)[1];
+                    } else {
+                        acao.href = '#';
+                    }
+                    acao.addEventListener('click', function(e) { e.preventDefault(); }, false);
+                }
+                var acaoControlador = /\?acao=([^&]+)/.exec(acao.href);
+                if (acaoControlador.length == 2) {
+                    switch (acaoControlador[1]) {
+                        case 'acessar_processo_gedpro':
+                            inserirIcone('chrome://eproc/skin/ie.png', acao);
+                            break;
+
+                        case 'arvore_documento_listar':
+                            inserirIcone('../infra_css/imagens/hierarquia.gif', acao);
+                            break;
+
+                        case 'criar_mandado':
+                            inserirIcone('../infra_css/imagens/receber.gif', acao);
+                            break;
+
+                        case 'gerenciamento_partes_listar':
+                            inserirIcone('../infra_css/imagens/grupo.gif', acao);
+                            break;
+
+                        case 'gerenciamento_partes_situacao_listar':
+                            inserirIcone('../infra_css/imagens/check.gif', acao);
+                            break;
+
+                        case 'gerenciamento_peritos_listar':
+                            inserirIcone('chrome://eproc/skin/lupa.png', acao);
+                            break;
+
+                        case 'processo_agravar':
+                            inserirIcone('../infra_css/imagens/atualizar.gif', acao);
+                            break;
+
+                        case 'processo_edicao':
+                            inserirIcone('../infra_css/imagens/verificado.gif', acao);
+                            break;
+
+                        case 'processo_expedir_carta_subform':
+                            inserirIcone('../infra_css/imagens/relatorio.gif', acao);
+                            break;
+
+                        case 'processo_lembrete_destino_cadastrar':
+                            inserirIcone('../infra_css/imagens/tooltip.gif', acao);
+                            break;
+
+                        case 'processo_movimento_consultar':
+                            inserirIcone('chrome://eproc/skin/move.png', acao);
+                            break;
+
+                        case 'procurador_parte_listar':
+                            inserirIcone('../infra_css/imagens/mais.gif', acao);
+                            break;
+                    }
+                }
+                if (acao.nextSibling.nodeType == document.TEXT_NODE) {
+                    acao.parentNode.removeChild(acao.nextSibling);
+                }
+            });
+        }
+        function getAcoes()
+        {
+            var acoes = $$('#fldAcoes a');
+            if (acoes.length == 0) return false;
+            return acoes;
+        }
+
+        function inserirIcone(endereco, link)
+        {
+            var icone = document.createElement('img');
+            icone.width = 16;
+            icone.height = 16;
+            if (/^chrome:/.test(endereco)) {
+                var mime = 'image/' + /...$/.exec(endereco);
+                icone.src = 'data:' + mime + ';base64,' + GM_getBase64(endereco);
+            } else {
+                icone.src = endereco;
+            }
+            icone.className = 'extraIconeAcao';
+            link.insertBefore(icone, link.firstChild);
+        }
     },
     mudaEstilos: function(background)
     {
@@ -1806,105 +1904,6 @@ var Eproc = {
             if (lblTextoAtencao && lblTextoAtencao.textContent == 'PROCESSO COM RÉU PRESO') return lblTextoAtencao;
             return null;
         }
-        var acoes = getAcoes();
-        if (acoes) {
-            acoes.forEach(function(acao)
-            {
-                var classes = (acao.className == '') ? [] : acao.className.split(' ');
-                classes.push('extraLinkAcao');
-                acao.className = classes.join(' ');
-                var sublinhados = $$('u', acao);
-                if (sublinhados.length == 1) {
-                    var u = sublinhados[0];
-                    u.parentNode.replaceChild(u.childNodes[0], u);
-                }
-                if (! acao.href) {
-                    if (/window\.open/.test(acao.onclick)) {
-                        acao.href = /window\.open\(['"]([^'"]+)/.exec(acao.onclick)[1];
-                    } else {
-                        acao.href = '#';
-                    }
-                    acao.addEventListener('click', function(e) { e.preventDefault(); }, false);
-                }
-                var acaoControlador = /\?acao=([^&]+)/.exec(acao.href);
-                if (acaoControlador.length == 2) {
-                    switch (acaoControlador[1]) {
-                        case 'acessar_processo_gedpro':
-                            inserirIcone('chrome://eproc/skin/ie.png', acao);
-                            break;
-
-                        case 'arvore_documento_listar':
-                            inserirIcone('../infra_css/imagens/hierarquia.gif', acao);
-                            break;
-
-                        case 'criar_mandado':
-                            inserirIcone('../infra_css/imagens/receber.gif', acao);
-                            break;
-
-                        case 'gerenciamento_partes_listar':
-                            inserirIcone('../infra_css/imagens/grupo.gif', acao);
-                            break;
-
-                        case 'gerenciamento_partes_situacao_listar':
-                            inserirIcone('../infra_css/imagens/check.gif', acao);
-                            break;
-
-                        case 'gerenciamento_peritos_listar':
-                            inserirIcone('chrome://eproc/skin/lupa.png', acao);
-                            break;
-
-                        case 'processo_agravar':
-                            inserirIcone('../infra_css/imagens/atualizar.gif', acao);
-                            break;
-
-                        case 'processo_edicao':
-                            inserirIcone('../infra_css/imagens/verificado.gif', acao);
-                            break;
-
-                        case 'processo_expedir_carta_subform':
-                            inserirIcone('../infra_css/imagens/relatorio.gif', acao);
-                            break;
-
-                        case 'processo_lembrete_destino_cadastrar':
-                            inserirIcone('../infra_css/imagens/tooltip.gif', acao);
-                            break;
-
-                        case 'processo_movimento_consultar':
-                            inserirIcone('chrome://eproc/skin/move.png', acao);
-                            break;
-
-                        case 'procurador_parte_listar':
-                            inserirIcone('../infra_css/imagens/mais.gif', acao);
-                            break;
-                    }
-                }
-                if (acao.nextSibling.nodeType == document.TEXT_NODE) {
-                    acao.parentNode.removeChild(acao.nextSibling);
-                }
-            });
-        }
-        function getAcoes()
-        {
-            var acoes = $$('#fldAcoes a');
-            if (acoes.length == 0) return false;
-            return acoes;
-        }
-
-        function inserirIcone(endereco, link)
-        {
-            var icone = document.createElement('img');
-            icone.width = 16;
-            icone.height = 16;
-            if (/^chrome:/.test(endereco)) {
-                var mime = 'image/' + /...$/.exec(endereco);
-                icone.src = 'data:' + mime + ';base64,' + GM_getBase64(endereco);
-            } else {
-                icone.src = endereco;
-            }
-            icone.className = 'extraIconeAcao';
-            link.insertBefore(icone, link.firstChild);
-        }
-        
     },
     reloginGedpro: function(e)
     {
