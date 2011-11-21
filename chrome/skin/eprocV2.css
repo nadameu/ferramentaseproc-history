@@ -179,7 +179,7 @@ a.extraLinkAcao {
     background-color: #ddd;
     border: 1px outset #ddd;
     padding: 2px;
-    -moz-border-radius: 5px;
+    -moz-border-radius: 3px;
     color: #333;
     line-height: 16px;
 }
