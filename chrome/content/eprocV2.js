@@ -1081,6 +1081,11 @@ var Eproc = {
             var fieldset = $('#fldAcoes');
             var legend = $('legend', fieldset);
             if (legend) {
+                var span = document.createElement('span');
+                span.className = 'extraAcoesLegend';
+                span.textContent = legend.textContent;
+                legend.textContent = '';
+                legend.appendChild(span);
                 var mostrar = GM_getValue('v2.mostraricones');
                 if (! mostrar) {
                     fieldset.className += ' extraNaoMostrar';

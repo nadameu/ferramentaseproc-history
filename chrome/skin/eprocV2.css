@@ -218,4 +218,8 @@ fieldset.extraFieldset {
 #fldAcoes:hover .extraNaoMostrarIcones {
     display: inline-block;
 }
+#fldAcoes .extraAcoesLegend {
+    font-weight: bold;
+    float: left;
+}
 
