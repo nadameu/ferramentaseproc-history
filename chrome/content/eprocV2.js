@@ -1120,8 +1120,8 @@ var Eproc = {
                     u.parentNode.replaceChild(u.childNodes[0], u);
                 }
                 if (! acao.href) {
-                    if (/window\.open/.test(acao.onclick)) {
-                        acao.href = /window\.open\(['"]([^'"]+)/.exec(acao.onclick)[1];
+                    if (/window\.open/.test(acao.getAttribute('onclick'))) {
+                        acao.href = /window\.open\(['"]([^'"]+)/.exec(acao.getAttribute('onclick'))[1];
                     } else {
                         acao.href = '#';
                     }
