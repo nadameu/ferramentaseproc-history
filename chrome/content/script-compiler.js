@@ -1,13 +1,26 @@
-var getModule = function(module)
+var EprocChrome = {};
+
+(function(){
+    function defineLazyGetter(moduleName)
+    {
+        var ec = EprocChrome;
+        ec.__defineGetter__(moduleName, function()
+        {
+            myDump('importando ' + moduleName + '...');
+            delete ec[moduleName];
+            Cu['import']('resource://eproc/' + moduleName + '.jsm', ec);
+            return ec[moduleName];
+        });
+    }
+    defineLazyGetter('Base64');
+    defineLazyGetter('MD5');
+    defineLazyGetter('Uri');
+    setLazyGetter('httpRequestObserver');
+})();
+function setLazyGetter(module)
 {
     Cu['import']('resource://eproc/' + module + '.jsm');
 }
-
-getModule('Base64');
-getModule('MD5');
-getModule('EprocUri');
-getModule('httpRequestObserver');
-
 var showPreferences = function()
 {
     openDialog('chrome://eproc/content/options.xul', 'eproc-options', 'chrome,centerscreen,modal');
@@ -82,7 +95,7 @@ var EprocGmCompiler = {
     getUrlContentsAsBase64: function(aUrl)
     {
         var str = this.getContents(aUrl, true);
-        return base64_encode(str);
+        return EprocChrome.Base64.encode(str);
     },
 
     isGreasemonkeyable: function(url)
@@ -102,7 +115,7 @@ var EprocGmCompiler = {
         if (EprocGmCompiler.isGreasemonkeyable(href)) {
             var prefs = new EprocPreferences();
             var script = false;
-            var uri = new EprocUri(href);
+            var uri = new EprocChrome.Uri(href);
             if (uri.isV1()) {
                 if (prefs.getValue('v1.enable')) {
                     var controlador = uri.getControlador();
@@ -175,7 +188,7 @@ var EprocGmCompiler = {
             return button;
         };
         sandbox.GM_getBase64 = function(aUrl) { return EprocGmCompiler.getUrlContentsAsBase64(aUrl); };
-        sandbox.GM_MD5 = function(word) { return MD5(word); };
+        sandbox.GM_MD5 = function(word) { return EprocChrome.MD5(word); };
         sandbox.GM_showPreferences = function() { return showPreferences(); };
         sandbox.__proto__ = sandbox.window;
 

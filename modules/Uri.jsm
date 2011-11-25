@@ -1,6 +1,6 @@
-var EXPORTED_SYMBOLS = ['EprocUri'];
+var EXPORTED_SYMBOLS = ['Uri'];
 
-var EprocUri = function(uri)
+var Uri = function(uri)
 {
     var parts = new RegExp(
         '^(https?)' // scheme
