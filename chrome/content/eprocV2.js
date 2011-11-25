@@ -1041,6 +1041,41 @@ var Eproc = {
             Eproc.closeAllWindows(e);
             delete Eproc;
         }, false);
+        function Icone()
+        {
+            var getIcone = function()
+            {
+                var icone = document.createElement('img');
+                icone.width = 16;
+                icone.height = 16;
+                icone.className = 'extraIconeAcao';
+                getIcone = function() { return icone; };
+                return getIcone();
+            }
+            
+            this.addToLink = function(link)
+            {
+                link.insertBefore(getIcone(), link.firstChild);
+            };
+
+            this.setSrc = function(src)
+            {
+                getIcone().src = src;
+            };
+        }
+        function InfraIcone (arquivo)
+        {
+            Icone.call(this);
+            this.setSrc('../infra_css/imagens/' + arquivo);
+        }
+        InfraIcone.prototype = new Icone;
+        function ChromeIcone (arquivo)
+        {
+            Icone.call(this);
+            var mime = 'image/' + /...$/.exec(arquivo);
+            this.setSrc('data:' + mime + ';base64,' + GM_getBase64('chrome://eproc/skin/' + arquivo));
+        }
+        ChromeIcone.prototype = new Icone;
         var acoes = getAcoes();
         if (acoes) {
             var fieldset = $('#fldAcoes');
@@ -1199,7 +1234,7 @@ var Eproc = {
                             icone = new InfraIcone('pdf.gif');
                             break;
                     }
-                    if (icone) {
+                    if (icone instanceof Icone) {
                         icone.addToLink(acao);
                     }
                 }
@@ -1213,47 +1248,6 @@ var Eproc = {
             var acoes = $$('#fldAcoes a');
             if (acoes.length == 0) return false;
             return acoes;
-        }
-
-        Icone.prototype.addToLink = null;
-        Icone.prototype.setSrc = null;
-        function Icone()
-        {
-            var getIcone = function()
-            {
-                var icone = document.createElement('img');
-                icone.width = 16;
-                icone.height = 16;
-                icone.className = 'extraIconeAcao';
-                getIcone = function() { return icone; };
-                return getIcone();
-            }
-            
-            this.addToLink = function(link)
-            {
-                link.insertBefore(getIcone(), link.firstChild);
-            };
-
-            this.setSrc = function(src)
-            {
-                getIcone().src = src;
-            };
-        }
-
-        InfraIcone.prototype = new Icone;
-        InfraIcone.prototype.constructor = InfraIcone;
-        function InfraIcone (arquivo)
-        {
-            Icone.call(this);
-            this.setSrc('../infra_css/imagens/' + arquivo);
-        }
-        ChromeIcone.prototype = new Icone;
-        ChromeIcone.prototype.constructor = ChromeIcone;
-        function ChromeIcone (arquivo)
-        {
-            Icone.call(this);
-            var mime = 'image/' + /...$/.exec(arquivo);
-            this.setSrc('data:' + mime + ';base64,' + GM_getBase64('chrome://eproc/skin/' + arquivo));
         }
     },
     mudaEstilos: function(background)
