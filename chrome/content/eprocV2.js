@@ -1043,6 +1043,37 @@ var Eproc = {
         }, false);
         var acoes = getAcoes();
         if (acoes) {
+            var fieldset = $('#fldAcoes');
+            var legend = $('legend', fieldset);
+            if (legend) {
+                var mostrar = GM_getValue('v2.mostraricones');
+                if (! mostrar) {
+                    fieldset.className += ' extraNaoMostrar';
+                }
+                var label = document.createElement('label');
+                label.htmlFor = 'naoMostrarIcones';
+                label.className = 'extraNaoMostrarIcones';
+                var naoMostrar = document.createElement('input');
+                naoMostrar.id = 'naoMostrarIcones';
+                naoMostrar.type = 'checkbox';
+                naoMostrar.checked = ! mostrar;
+                naoMostrar.addEventListener('change', function(e)
+                {
+                    var naoMostrar = e.target, mostrar = (! naoMostrar.checked);
+                    GM_setValue('v2.mostraricones', mostrar);
+                    var fieldset = $('#fldAcoes');
+                    if (mostrar) {
+                        fieldset.className = fieldset.className.replace(/ ?extraNaoMostrar/, '');
+                    } else {
+                        var fieldsetClasses = (fieldset.className == '') ? [] : fieldset.className.split(/\s+/);
+                        fieldsetClasses.push('extraNaoMostrar');
+                        fieldset.className = fieldsetClasses.join(' ');
+                    }
+                }, false);
+                label.appendChild(naoMostrar);
+                label.appendChild(document.createTextNode(' Não mostrar ícones'));
+                legend.appendChild(label);
+            }
             acoes.forEach(function(acao)
             {
                 var classes = (acao.className == '') ? [] : acao.className.split(' ');

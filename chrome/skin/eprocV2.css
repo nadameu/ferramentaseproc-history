@@ -116,7 +116,7 @@ div.infraAjaxAutoCompletar { max-height: 30em; overflow-y: scroll; } div.infraAj
 .extraGedproRotuloBlue { color: blue; }
 .extraGedproRotuloGray { color: gray; cursor: inherit; }
 .extraGedproImg { cursor: inherit; }
-.extraFieldset { -moz-border-radius: 8px; }
+.extraFieldset { -moz-border-radius: 8px; border-radius: 8px; }
 button.infraButton[class~=extraBuscarPreventosButton] { font-size: .8em; }
 .extraLembrete {
     float: left;
@@ -180,6 +180,7 @@ a.extraLinkAcao {
     border: 1px outset #ddd;
     padding: 2px;
     -moz-border-radius: 3px;
+    border-radius: 3px;
     color: #333;
     line-height: 16px;
 }
@@ -191,6 +192,9 @@ a.extraLinkAcao:hover {
     vertical-align: middle;
     margin: auto 2px;
 }
+#fldAcoes.extraNaoMostrar .extraIconeAcao {
+    display: none;
+}
 fieldset.infraFieldset {
     border-style: groove;
     border-color: $background;
@@ -201,3 +205,17 @@ fieldset.extraFieldset {
     border-color: $background;
     border-width: 1px;
 }
+#fldAcoes .extraNaoMostrarIcones {
+    display: none;
+    float: right;
+    margin-left: 1ex;
+    font-size: 0.9em;
+    line-height: 1em;
+}
+#naoMostrarIcones {
+    margin: 0;
+}
+#fldAcoes:hover .extraNaoMostrarIcones {
+    display: inline-block;
+}
+
