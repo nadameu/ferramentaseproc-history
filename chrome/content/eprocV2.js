@@ -1113,7 +1113,7 @@ var Eproc = {
                             break;
 
                         case 'criar_mandado':
-                            icone = new ChromeIcone('shield.png');
+                            icone = new ChromeIcone('knight-crest.gif');
                             break;
 
                         case 'gerenciamento_partes_listar':
