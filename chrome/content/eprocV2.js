@@ -1654,6 +1654,53 @@ var Eproc = {
             }
             return size + kPowers[kPower];
         }
+        var USUARIOS_INTERNOS = [
+            'ADMINISTRADOR DO SISTEMA',
+            'ASSESSOR DESEMBARGADOR FEDERAL',
+            'CONCILIADOR',
+            'CONTADORIA',
+            'CORREGEDORIA',
+            'DESEMBARGADOR FEREDAL',
+            'DIREÇÃO DO FORO',
+            'DIRETOR DE SECRETARIA',
+            'DIRETOR DE SECRETARIA SUBST.',
+            'ESTAGIÁRIO',
+            'MAGISTRADO',
+            'OFICIAL DE GABINETE',
+            'OFICIAL DE JUSTIÇA',
+            'PLANTÃO',
+            'SERVIDOR CENTRAL DE MANDADOS',
+            'SERVIDOR DE SECRETARIA (TRF4)',
+            'SERVIDOR DE SECRETARIA (VARA)',
+            'SERVIDOR DISTRIBUIÇÃO'
+        ];
+        var USUARIOS_EXTERNOS = [
+            'ACESSO À CERTIDÃO',
+            'ACESSO AO ROL DE CULPADOS',
+            'ADVOGADO',
+            'ADVOGADO-CHEFE',
+            'CONSULTA TRF4',
+            'GERENTE DE ACESSO AO ROL/CERTIDÃO',
+            'GERENTE DE CADASTROS OAB',
+            'GERENTE DE ENTIDADES',
+            'GERENTE DE USUÁRIOS',
+            'IMPRENSA',
+            'PERITO'
+        ];
+        var USUARIOS_ENTIDADES = [
+            'AG. PREV. SOCIAL',
+            'ANALISTA AG. PREV. SOCIAL',
+            'ANALISTA PROCURADORIA',
+            'AUTORIDADE',
+            'DELEGADO CHEFE DA POLÍCIA FEDERAL',
+            'DELEGADO DA POLÍCIA FEDERAL',
+            'ESCRIVÃO CHEFE DA POL. FEDERAL',
+            'ESCRIVÃO DA POLÍCIA FEDERAL',
+            'GERENTE PROCURADORIA',
+            'MIGRA PROCESSOS PARA ENTIDADE',
+            'PROCURADOR',
+            'PROCURADOR PLANTÃO'
+        ];
         $$('.infraTable').forEach(function(table, t, tables)
         {
             if (table.getAttribute('summary') == 'Eventos' || table.rows[0].cells[0].textContent == 'Evento') {
@@ -1664,6 +1711,42 @@ var Eproc = {
                 var haPrazosFechados = false;
                 $$('tr[class^="infraTr"]', table).forEach(function(tr, r, trs)
                 {
+                    var usuario = $('label', tr.cells[3]), classeTipoUsuario = 'extraEventoInterno';
+                    if (usuario) {
+                        var tipo_usuario = ('' + usuario.getAttribute('onmouseover')).split('<br/>');
+                        if (tipo_usuario.length > 2) {
+                            tipo_usuario = tipo_usuario[1];
+                            if (USUARIOS_EXTERNOS.indexOf(tipo_usuario) > -1) {
+                                classeTipoUsuario = 'extraEventoExterno';
+                            } else if (USUARIOS_ENTIDADES.indexOf(tipo_usuario) > -1) {
+                                classeTipoUsuario = 'extraEventoEntidade';
+                            }
+                        }
+                        tr.className += ' ' + classeTipoUsuario;
+                        var nomeEvento = tr.cells[2].textContent;
+                        [
+                            /^Audiência Realizada/,
+                            /^Citação .* Confirmada/,
+                            /^Despacho\/Decisão/
+                        ].forEach(function(re)
+                        {
+                            if (re.test(nomeEvento)) tr.className += ' extraEventoImportante';
+                        });
+                        [
+                            /^Sentença /
+                        ].forEach(function(re)
+                        {
+                            if (re.test(nomeEvento)) tr.className += ' extraEventoDestaque';
+                        });
+                        var re = /((?: - )?)(Refer\.(?: aos?)? Eventos?:? \d+)/, referencia = re.exec(tr.cells[2].innerHTML);
+                        if (referencia) {
+                            tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '<br><span class="extraEventoSeparador">$1</span>$2');
+                        }
+                        var linhas = tr.cells[2].innerHTML.split('<br>');
+                        var primeira = linhas.splice(0, 1);
+                        primeira = '<span class="extraEventoTitulo">' + primeira + '</span>';
+                        tr.cells[2].innerHTML =  primeira + linhas.join('<br>');
+                    }
                     if (match = tr.cells[2].innerHTML.match(/Prazo: .* Status:([^<]+)/)) {
                         if (match[1] == 'AGUARD. ABERTURA') {
                             tr.cells[2].className = 'prazoAguardaAbertura';
@@ -1715,7 +1798,7 @@ var Eproc = {
                                         lembrete = document.createElement('div');
                                         lembrete.className = 'extraDocumentoLembrete';
                                         lembrete.appendChild(document.createTextNode(textoLembrete));
-                                        lembrete.innerHTML = lembrete.innerHTML.replace(/&lt;br \/&gt;/g, '<br />');
+                                        lembrete.innerHTML = lembrete.innerHTML.replace(/\\'/g, "'").replace(/&lt;br \/&gt;/g, '<br />');
                                     } else if (lembrete && child instanceof HTMLAnchorElement && /^\?acao=processo_evento_documento_tooltip_cadastrar/.test(child.search)) {
                                         child.setAttribute('onmouseover', onmouseover);
                                         child.setAttribute('onmouseout', onmouseout);
@@ -1828,14 +1911,14 @@ var Eproc = {
                     check.id = 'extraSemDestaque';
                     table.parentNode.insertBefore(check, table.nextSibling);
                     var label = document.createElement('label');
-                    label.textContent = ' Não destacar prazos fechados';
+                    label.textContent = ' Destacar prazos fechados';
                     label.htmlFor = 'extraSemDestaque';
                     check.parentNode.insertBefore(label, check.nextSibling);
                     if (GM_getValue('v2.semdestaque')) {
-                        check.checked = true;
+                        check.checked = false;
                         table.className += ' prazoSemDestaque';
                     } else {
-                        check.checked = false;
+                        check.checked = true;
                         table.className += ' prazoComDestaque';
                     }
                     var thisTable = table;
@@ -1850,7 +1933,7 @@ var Eproc = {
                                 thisTableClasses.splice(indexOfPrazo, 1);
                             }
                         });
-                        if (me.checked) {
+                        if (! me.checked) {
                             GM_setValue('v2.semdestaque', true);
                             thisTableClasses.push('prazoSemDestaque');
                         } else {
@@ -1860,6 +1943,37 @@ var Eproc = {
                         thisTable.className = thisTableClasses.join(' ');
                     }, false);
                 }
+                var check = document.createElement('input');
+                check.type = 'checkbox';
+                check.id = 'extraDestaqueEventos';
+                table.parentNode.insertBefore(check, table.nextSibling);
+                var label = document.createElement('label');
+                label.textContent = ' Destacar eventos por tipo de usuário';
+                label.htmlFor = 'extraDestaqueEventos';
+                check.parentNode.insertBefore(label, check.nextSibling);
+                if (GM_getValue('v2.eventosdestacados')) {
+                    check.checked = true;
+                    table.className += ' extraDestaqueEventos';
+                } else {
+                    check.checked = false;
+                }
+                var thisTable = table;
+                check.addEventListener('change', function(e)
+                {
+                    var me = e.target;
+                    var thisTableClasses = thisTable.className.split(' ');
+                    var indexOfPrazo = thisTableClasses.indexOf('extraDestaqueEventos');
+                    if (indexOfPrazo > -1) {
+                        thisTableClasses.splice(indexOfPrazo, 1);
+                    }
+                    if (me.checked) {
+                        GM_setValue('v2.eventosdestacados', true);
+                        thisTableClasses.push('extraDestaqueEventos');
+                    } else {
+                        GM_setValue('v2.eventosdestacados', false);
+                    }
+                    thisTable.className = thisTableClasses.join(' ');
+                }, false);
             }
         });
         var tableRelacionado = $('#tableRelacionado');

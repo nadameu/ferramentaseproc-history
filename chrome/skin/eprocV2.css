@@ -247,4 +247,39 @@ fieldset.extraFieldset {
 .extraDocumentoObservacao {
     margin-left: 34px;
 }
+.extraDestaqueEventos .extraEventoTitulo {
+    display: block;
+    font-size: 1.2em;
+    padding-bottom: 0.1em;
+}
+.extraDestaqueEventos .extraEventoExterno .extraEventoTitulo,
+.extraDestaqueEventos .extraEventoEntidade .extraEventoTitulo,
+.extraDestaqueEventos .extraEventoInterno.extraEventoImportante .extraEventoTitulo,
+.extraDestaqueEventos .extraEventoInterno.extraEventoDestaque .extraEventoTitulo {
+    font-weight: bold;
+}
+.extraDestaqueEventos .extraEventoInterno td:nth-of-type(4) label,
+.extraDestaqueEventos .extraEventoInterno .extraEventoTitulo {
+    color: green;
+}
+.extraDestaqueEventos .extraEventoExterno td:nth-of-type(4) label,
+.extraDestaqueEventos .extraEventoExterno .extraEventoTitulo {
+    color: blue;
+}
+.extraDestaqueEventos .extraEventoEntidade td:nth-of-type(4) label,
+.extraDestaqueEventos .extraEventoEntidade .extraEventoTitulo {
+    color: brown;
+}
+.extraDestaqueEventos .extraEventoSeparador {
+    display: none;
+}
+.extraDestaqueEventos .extraEventoInterno.extraEventoDestaque td:nth-of-type(3) {
+    border: 2px solid green;
+}
+.extraDestaqueEventos .extraEventoExterno.extraEventoDestaque td:nth-of-type(3) {
+    border: 2px solid blue;
+}
+.extraDestaqueEventos .extraEventoEntidade.extraEventoDestaque td:nth-of-type(3) {
+    border: 2px solid brown;
+}
 

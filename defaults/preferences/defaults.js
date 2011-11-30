@@ -11,3 +11,4 @@ pref('eproc.v2.fundo', '#ffffff');
 pref('eproc.v2.ielocation', 'C:\\Arquivos de programas\\Internet Explorer\\iexplore.exe');
 pref('eproc.v2.semdestaque', false);
 pref('eproc.v2.mostraricones', true);
+pref('eproc.v2.eventosdestacados', true);
