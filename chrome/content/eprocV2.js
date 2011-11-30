@@ -1694,32 +1694,31 @@ var Eproc = {
                     if (tabelaDocumentos) {
                         $$('td', colunaDocumentos).forEach(function(subtd, subc, subtds)
                         {
-                            var child = null, observacao = null, lembrete = null, onmouseover = null, onmouseout = null;
+                            var child = null, lembrete = null, onmouseover = null, onmouseout = null;
                             while (child = subtd.firstChild) {
                                 var append = true;
                                 if (child instanceof HTMLElement) {
                                     if (child.tagName.toUpperCase() == 'IMG') {
                                         onmouseover = child.getAttribute('onmouseover');
                                         onmouseout = child.getAttribute('onmouseout');
-                                        observacao = /'Obs: ([^']*) \/ [^']*'/.exec(onmouseover)[1];
+                                        var textoLembrete = /\('(Obs: .*)','',400\)/.exec(child.getAttribute('onmouseover'))[1];
+                                        textoLembrete = /^Obs: (.*) \/ .*\(.*\)(?:<br \/>)?$/.exec(textoLembrete)[1];
+                                        lembrete = document.createElement('div');
+                                        lembrete.className = 'extraDocumentoObservacao';
+                                        lembrete.appendChild(document.createTextNode(textoLembrete));
+                                        lembrete.innerHTML = lembrete.innerHTML.replace(/&lt;br \/&gt;/g, '<br />');
                                         append = false;
                                     } else if (child instanceof HTMLAnchorElement && /^\?acao=processo_evento_documento_tooltip_alterar/.test(child.search)) {
                                         var textoLembrete = /\('(Obs: .*)','',400\)/.exec(child.getAttribute('onmouseover'))[1];
                                         textoLembrete = textoLembrete.split('<div style="margin-bottom:0.3em;" class="infraTooltipTitulo"></div>')[0];
                                         textoLembrete = /^Obs: (.*) \/ .*\(.*\)(?:<br \/>)?$/.exec(textoLembrete)[1];
-                                        lembrete = document.createElement('span');
+                                        lembrete = document.createElement('div');
                                         lembrete.className = 'extraDocumentoLembrete';
                                         lembrete.appendChild(document.createTextNode(textoLembrete));
                                         lembrete.innerHTML = lembrete.innerHTML.replace(/&lt;br \/&gt;/g, '<br />');
-                                    } else if (observacao && child instanceof HTMLAnchorElement && /^\?acao=processo_evento_documento_tooltip_cadastrar/.test(child.search)) {
+                                    } else if (lembrete && child instanceof HTMLAnchorElement && /^\?acao=processo_evento_documento_tooltip_cadastrar/.test(child.search)) {
                                         child.setAttribute('onmouseover', onmouseover);
                                         child.setAttribute('onmouseout', onmouseout);
-                                    } else if (observacao && child instanceof HTMLAnchorElement && /^\?acao=acessar_documento/.test(child.search)) {
-                                        append = document.createElement('span');
-                                        append.className = 'extraDocumentoObservacao';
-                                        append.appendChild(child);
-                                        append.appendChild(document.createElement('br'));
-                                        append.appendChild(document.createTextNode(observacao));
                                     }
                                 }
                                 if (! append) {
@@ -1736,7 +1735,6 @@ var Eproc = {
                             colunaDocumentos.appendChild(document.createElement('br'));
                             if (lembrete) {
                                 colunaDocumentos.appendChild(lembrete);
-                                colunaDocumentos.appendChild(document.createElement('br'));
                             }
                         });
                         colunaDocumentos.removeChild(tabelaDocumentos);
@@ -1810,10 +1808,6 @@ var Eproc = {
                     })
                 });
                 table.className += ' extraTabelaEventos';
-                Eproc.addCssRule('.extraTabelaEventos img, .extraTabelaEventos img.infraImg, .extraTabelaEventos img.infraImgNormal, .extraTabelaEventos img.infraImg:hover, .extraTabelaEventos img.infraImgNormal:hover { position: inherit !important; margin-top: inherit !important; margin-left: 1px !important; width: 13px !important; height: inherit !important; }');
-                Eproc.addCssRule('.extraTabelaEventos a { display: inline-block; }');
-                Eproc.addCssRule('.extraTabelaEventos td:first-of-type, .extraTabelaEventos td:nth-of-type(2), .extraTabelaEventos td:last-of-type { white-space: nowrap; }');
-                Eproc.addCssRule('.extraDocumentoObservacao, .extraDocumentoLembrete { display: inline-block; vertical-align: top; margin-bottom: 0.5em; font-size: 11px; white-space: normal; max-width: 50ex; }');
                 function getLinkMimeType(docLink)
                 {
                     var type = docLink.getAttribute('data-mimetype');

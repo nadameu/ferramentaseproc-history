@@ -218,4 +218,33 @@ fieldset.extraFieldset {
 #fldAcoes:hover .extraNaoMostrarIcones {
     display: inline-block;
 }
+.extraTabelaEventos img,
+.extraTabelaEventos img.infraImg,
+.extraTabelaEventos img.infraImgNormal,
+.extraTabelaEventos img.infraImg:hover,
+.extraTabelaEventos img.infraImgNormal:hover {
+    position: inherit !important;
+    margin-top: inherit !important;
+    margin-left: 1px !important;
+    width: 13px !important;
+    height: inherit !important;
+}
+.extraTabelaEventos a {
+    display: inline-block;
+}
+.extraTabelaEventos td:first-of-type,
+.extraTabelaEventos td:nth-of-type(2),
+.extraTabelaEventos td:last-of-type {
+    white-space: nowrap;
+}
+.extraDocumentoObservacao,
+.extraDocumentoLembrete {
+    margin-bottom: 0.5em;
+    font-size: 11px;
+    white-space: normal;
+    max-width: 50ex;
+}
+.extraDocumentoObservacao {
+    margin-left: 34px;
+}
 
