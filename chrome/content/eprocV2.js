@@ -1965,7 +1965,6 @@ var Eproc = {
             e.stopPropagation();
         }
         var iframe = document.createElement('iframe');
-        iframe.src = Eproc.loginGedpro.url;
         iframe.style.display = 'none';
         iframe.addEventListener('load', function(e)
         {
@@ -1995,6 +1994,7 @@ var Eproc = {
             }
         }, false);
         $('#divInfraAreaTelaE').appendChild(iframe);
+        iframe.src = Eproc.loginGedpro.url;
     },
     setCorCapa: function()
     {
