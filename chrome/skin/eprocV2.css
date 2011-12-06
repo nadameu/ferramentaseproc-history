@@ -262,8 +262,7 @@ fieldset.extraFieldset {
 .extraDestaqueEventos .extraEventoInterno.extraEventoDestaque .extraEventoTitulo {
     font-weight: bold;
 }
-.extraDestaqueEventos .extraEventoInterno td:nth-of-type(4) label,
-.extraDestaqueEventos .extraEventoInterno .extraEventoTitulo {
+.extraDestaqueEventos .extraEventoInterno.extraEventoImportante .extraEventoTitulo {
     color: green;
 }
 .extraDestaqueEventos .extraEventoExterno td:nth-of-type(4) label,
