@@ -1592,7 +1592,7 @@ var Eproc = {
         }
         function getLinkLembrete()
         {
-            var linkLembrete = $$('a[href*="acao=processo_lembrete_destino_cadastrar"]');
+            var linkLembrete = $$('a[href*="?acao=processo_lembrete_destino_cadastrar"]');
             if (linkLembrete.length == 1) return linkLembrete[0];
             else return false;
         }
@@ -1764,20 +1764,20 @@ var Eproc = {
                                 fechamento = fechamento[0].getAttribute('onmouseover').match(/Fechamento do Prazo:.*?(\d+ - [^<]+)/);
                                 if (fechamento) {
                                     var evento = fechamento[1];
-                                    if (evento != 'Decurso de Prazo') {
+                                    if (/Decurso de Prazo/.test(evento)) {
+                                        tr.cells[2].className = 'prazoDecurso';
+                                    } else {
+                                        tr.cells[2].className = 'prazoFechado';
                                         evento = '<span class="prazoEvento">' + evento + '</span>';
                                     }
                                     extraContent = '<span class="prazoExtra"> (' + evento + ')</span>';
                                 }
                             }
-                            tr.cells[2].className = 'prazoFechado';
                             tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(/Prazo: .* Status:FECHADO/, '$&' + extraContent);
                         }
                     } else if (/Intimação Eletrônica - Expedida\/Certificada - Pauta/.test(tr.cells[2].innerHTML)) {
                         haPrazosFechados = true;
                         tr.cells[2].className = 'prazoFechado';
-                    } else if (/Decurso de Prazo/.test(tr.cells[2].innerHTML)) {
-                        tr.cells[2].className = 'prazoDecurso';
                     } else if ((re = /(<span[^>]*>)Sentença ([^-]*) - ([^<]*)<\/span><br>/).test(tr.cells[2].innerHTML)) {
                         tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1Sentença $2</span><br>$3');
                     } else if ((re = /(<span[^>]*>)Audiência Realizada (com|sem) ([^-]*) - ([^<]*)<\/span><br>/).test(tr.cells[2].innerHTML)) {
@@ -1995,9 +1995,20 @@ var Eproc = {
                     thisTable.className = thisTableClasses.join(' ');
                 }, false);
             } else if (table.getAttribute('summary') == 'Partes') {
-                $$('a[href*="substabelecimento_historico_listar_subfrm"] + span, a[href*="substabelecimento_historico_listar_subfrm"] + a', table).forEach(function(nomeParte)
+                $$('a[href*="?acao=substabelecimento_historico_listar_subfrm"]', table).forEach(function(linkSubstabelecimento)
                 {
-                    nomeParte.className = 'extraNomeParte';
+                    for (var celula = linkSubstabelecimento.parentNode; celula.tagName.toUpperCase() != 'TD'; celula = celula.parentNode);
+                    var nomeParte;
+                    if (linkSubstabelecimento.nextSibling instanceof HTMLAnchorElement) {
+                        nomeParte = linkSubstabelecimento.nextSibling;
+                    } else if (linkSubstabelecimento.nextSibling instanceof Text) {
+                        if (linkSubstabelecimento.nextSibling.nextSibling instanceof HTMLSpanElement && ! linkSubstabelecimento.nextSibling.nextSibling.hasAttribute('id')) {
+                            nomeParte = linkSubstabelecimento.nextSibling.nextSibling;
+                        }
+                    }
+                    if (nomeParte) {
+                        nomeParte.className = 'extraNomeParte';
+                    }
                 });
             }
         });
