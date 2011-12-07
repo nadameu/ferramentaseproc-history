@@ -1706,6 +1706,13 @@ var Eproc = {
             'PROCURADOR',
             'PROCURADOR PLANTÃO'
         ];
+        var TIPO_PARTE = {
+            DESCONHECIDO: 0,
+            EXTERNO: 1,
+            ENTIDADE: 2
+        };
+        var tipoAutor = TIPO_PARTE.DESCONHECIDO;
+        var tipoReu = TIPO_PARTE.DESCONHECIDO;
         $$('.infraTable').forEach(function(table, t, tables)
         {
             if (table.getAttribute('summary') == 'Eventos' || table.rows[0].cells[0].textContent == 'Evento') {
@@ -1732,7 +1739,8 @@ var Eproc = {
                         [
                             /^Audiência/,
                             /^Citação .* Confirmada/,
-                            /^Despacho\/Decisão/
+                            /^Despacho\/Decisão/,
+                            /^Mandado.* Devolvido/
                         ].forEach(function(re)
                         {
                             if (re.test(nomeEvento)) tr.className += ' extraEventoImportante';
@@ -1746,7 +1754,8 @@ var Eproc = {
                         if (classeTipoUsuario == 'extraEventoExterno' || classeTipoUsuario == 'extraEventoEntidade') {
                             var importante = true;
                             [
-                                /^Intimação .* Confirmada/
+                                /^Intimação .* Confirmada/,
+                                /^ - SUBSTABELECIMENTO/
                             ].forEach(function(re)
                             {
                                 if (re.test(nomeEvento) || importante == false) importante = false;
@@ -1784,6 +1793,24 @@ var Eproc = {
                                 }
                             }
                             tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(/Prazo: .* Status:FECHADO/, '$&' + extraContent);
+                        }
+                        var intimadoRegExp = /\((AUTOR|RÉU|MPF|AGÊNCIA DA PREVIDÊNCIA SOCIAL) +- ([^\)]+)\)/;
+                        var intimado = intimadoRegExp.exec(tr.cells[2].innerHTML);
+                        if (intimado) {
+                            intimado = intimado[1];
+                            var classeIntimado = 'extraIntimacaoParte';
+                            var tipoIntimado = null;
+                            if (intimado == 'AUTOR') {
+                                tipoIntimado = tipoAutor;
+                            } else if (intimado == 'RÉU') {
+                                tipoIntimado = tipoReu;
+                            }
+                            if (tipoIntimado == TIPO_PARTE.ENTIDADE) {
+                                classeIntimado += ' extraIntimacaoEntidade';
+                            } else if (tipoIntimado == TIPO_PARTE.EXTERNO) {
+                                classeIntimado += ' extraIntimacaoExterno';
+                            }
+                            tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(intimadoRegExp, '<span class="' + classeIntimado + '">$1</span> - $2');
                         }
                     } else if (/Intimação Eletrônica - Expedida\/Certificada - Pauta/.test(tr.cells[2].innerHTML)) {
                         haPrazosFechados = true;
@@ -2010,9 +2037,19 @@ var Eproc = {
                     for (var celula = linkSubstabelecimento.parentNode; celula.tagName.toUpperCase() != 'TD'; celula = celula.parentNode);
                     var nomeParte;
                     if (linkSubstabelecimento.nextSibling instanceof HTMLAnchorElement) {
+                        if (celula.cellIndex == 0) {
+                            tipoAutor = TIPO_PARTE.EXTERNO;
+                        } else if (celula.cellIndex == 1) {
+                            tipoReu = TIPO_PARTE.EXTERNO;
+                        }
                         nomeParte = linkSubstabelecimento.nextSibling;
                     } else if (linkSubstabelecimento.nextSibling instanceof Text) {
-                        if (linkSubstabelecimento.nextSibling.nextSibling instanceof HTMLSpanElement && ! linkSubstabelecimento.nextSibling.nextSibling.hasAttribute('id')) {
+                        if (linkSubstabelecimento.nextSibling.nextSibling instanceof HTMLSpanElement && celula.colSpan == 1) {
+                            if (celula.cellIndex == 0) {
+                                tipoAutor = TIPO_PARTE.ENTIDADE;
+                            } else if (celula.cellIndex == 1) {
+                                tipoReu = TIPO_PARTE.ENTIDADE;
+                            }
                             nomeParte = linkSubstabelecimento.nextSibling.nextSibling;
                         }
                     }
