@@ -874,16 +874,24 @@ var Eproc = {
         });
       }
     },
-    getExtraStyle: function()
+    getStyle: function(id)
     {
-        var extraStyle = $('extraStyle');
+        var extraStyle = $('#' + id);
         if (! extraStyle) {
             var extraStyle = document.createElement('style');
-            extraStyle.id = 'extraStyle';
+            extraStyle.id = id;
             $('head').appendChild(extraStyle);
         }
-        Eproc.getExtraStyle = function() { return extraStyle; };
-        return Eproc.getExtraStyle();
+        this.caller = function() { return extraStyle; };
+        return this.caller();
+    },
+    getExtraStyle: function()
+    {
+        return Eproc.getStyle('extraStyle');
+    },
+    getExtraMainStyle: function()
+    {
+        return Eproc.getStyle('extraMainStyle');
     },
     getMenu: function()
     {
@@ -947,14 +955,14 @@ var Eproc = {
                 extraStyle.innerHTML += 'border: 1px solid #888;';
                 extraStyle.innerHTML += '}\n';
                 cor.textContent = 'Cor ' + c;
-                cor.addEventListener('click', (function() { return function()
+                cor.addEventListener('click', function()
                 {
-                    Eproc.mudaFundo(window.getComputedStyle(this, null).getPropertyValue('background-color'));
-                }; })(), false);
+                    Eproc.salvaFundo(h, s, l);
+                }, false);
                 return cor;
             }
             for (var c = 1; c <= 14; c++) {
-                var h = 0, s = 0, l = 96;
+                var h = 81, s = 0, l = 96;
                 if (c == 1) {
                     l = 100;
                 } else if (c == 14) {
@@ -969,10 +977,17 @@ var Eproc = {
             menu.appendChild(cores);
         }
         var barraSistema = $('.infraBarraSistema'), lembretes = $$('.infraTable[summary="Lembretes"]');
-        if (barraSistema) {
-            Eproc.mudaFundo(GM_getValue('v2.fundo') || '#ffffff');
-        } else if (lembretes.length) {
-            Eproc.mudaEstilos();
+        var getFundoUsuario = function()
+        {
+            var hsl = /^\d+\/\d+\/\d+$/.test(GM_getValue('v2.fundo')) ? GM_getValue('v2.fundo') : '81/0/100';
+            var h, s, l;
+            [h, s, l] = hsl.split('/');
+            var fundoUsuario = { hsl: hsl, h: h, s: s, l: l };
+            return fundoUsuario;
+        };
+        var fundoUsuario = getFundoUsuario();
+        if (barraSistema || lembretes.length) {
+            Eproc.mudaEstilos(fundoUsuario.h, fundoUsuario.s, fundoUsuario.l);
         }
         var unidades = $('#selInfraUnidades');
         if (unidades) {
@@ -1255,12 +1270,19 @@ var Eproc = {
             return acoes;
         }
     },
-    mudaEstilos: function(background)
+    mudaEstilos: function(h, s, l)
     {
-        if (typeof background == 'undefined') background = '#ffffff';
+        if (typeof h == 'undefined') {
+            h = 0, s = 0, l = 100;
+        }
+        var background = 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
         var css = atob(GM_getBase64('chrome://eproc/skin/eprocV2.css'));
         css = css.replace(/\$background/g, background);
-        GM_addStyle(css);
+        css = css.replace(/\$h/g, h);
+        css = css.replace(/\$s/g, s);
+        css = css.replace(/\$l/g, l);
+        var estilo = Eproc.getExtraMainStyle();
+        estilo.innerHTML = css;
         $$('label[onclick^="listarTodos"], label[onclick^="listarEventos"], #txtEntidade, #txtPessoaEntidade').forEach(function(auto)
         {
           var id = auto.id.replace('lblListar', 'txt');
@@ -1270,10 +1292,10 @@ var Eproc = {
           }
         }, this);
     },
-    mudaFundo: function(background)
+    salvaFundo: function(h, s, l)
     {
-        GM_setValue('v2.fundo', background);
-        Eproc.mudaEstilos(background);
+        GM_setValue('v2.fundo', h + '/' + s + '/' + l);
+        Eproc.mudaEstilos(h, s, l);
     },
     painel_secretaria_listar: function()
     {
