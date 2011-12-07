@@ -1730,7 +1730,7 @@ var Eproc = {
                         tr.className += ' ' + classeTipoUsuario;
                         var nomeEvento = tr.cells[2].textContent;
                         [
-                            /^Audiência Realizada/,
+                            /^Audiência/,
                             /^Citação .* Confirmada/,
                             /^Despacho\/Decisão/
                         ].forEach(function(re)
@@ -1738,7 +1738,7 @@ var Eproc = {
                             if (re.test(nomeEvento)) tr.className += ' extraEventoImportante';
                         });
                         [
-                            /^Sentença /
+                            /^Sentença/
                         ].forEach(function(re)
                         {
                             if (re.test(nomeEvento)) tr.className += ' extraEventoDestaque';
@@ -1749,7 +1749,7 @@ var Eproc = {
                         }
                         var linhas = tr.cells[2].innerHTML.split('<br>');
                         var primeira = linhas.splice(0, 1);
-                        primeira = '<span class="extraEventoTitulo">' + primeira + '</span>';
+                        primeira = '<span class="extraEventoTitulo">' + primeira + '</span><br>';
                         tr.cells[2].innerHTML =  primeira + linhas.join('<br>');
                     }
                     if (match = tr.cells[2].innerHTML.match(/Prazo: .* Status:([^<]+)/)) {
@@ -1761,7 +1761,7 @@ var Eproc = {
                             haPrazosFechados = true;
                             var extraContent = '', fechamento = $$('a', tr.cells[0]);
                             if (fechamento.length) {
-                                fechamento = fechamento[0].getAttribute('onmouseover').match(/Fechamento do Prazo:.*?\d+ - ([^<]+)/);
+                                fechamento = fechamento[0].getAttribute('onmouseover').match(/Fechamento do Prazo:.*?(\d+ - [^<]+)/);
                                 if (fechamento) {
                                     var evento = fechamento[1];
                                     if (evento != 'Decurso de Prazo') {
@@ -1776,6 +1776,16 @@ var Eproc = {
                     } else if (/Intimação Eletrônica - Expedida\/Certificada - Pauta/.test(tr.cells[2].innerHTML)) {
                         haPrazosFechados = true;
                         tr.cells[2].className = 'prazoFechado';
+                    } else if (/Decurso de Prazo/.test(tr.cells[2].innerHTML)) {
+                        tr.cells[2].className = 'prazoDecurso';
+                    } else if ((re = /(<span[^>]*>)Sentença ([^-]*) - ([^<]*)<\/span><br>/).test(tr.cells[2].innerHTML)) {
+                        tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1Sentença $2</span><br>$3');
+                    } else if ((re = /(<span[^>]*>)Audiência Realizada (com|sem) ([^-]*) - ([^<]*)<\/span><br>/).test(tr.cells[2].innerHTML)) {
+                        tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1Audiência Realizada</span><br>$2 $3 - $4');
+                    } else if ((re = /(<span[^>]*>)Audiência ([^-]*) - ([^<]*)<\/span><br>/).test(tr.cells[2].innerHTML)) {
+                        tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1Audiência $2</span><br>$3');
+                    } else if ((re = /(<span[^>]*>) - SUBSTABELECIMENTO ([^<]*)<\/span><br>/).test(tr.cells[2].innerHTML)) {
+                        tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1SUBSTABELECIMENTO</span><br>$2');
                     }
                     var colunaDocumentos = tr.cells[4];
                     var tabelaDocumentos = $('table', colunaDocumentos);
@@ -1979,6 +1989,11 @@ var Eproc = {
                     }
                     thisTable.className = thisTableClasses.join(' ');
                 }, false);
+            } else if (table.getAttribute('summary') == 'Partes') {
+                $$('a[href*="substabelecimento_historico_listar_subfrm"] + span, a[href*="substabelecimento_historico_listar_subfrm"] + a', table).forEach(function(nomeParte)
+                {
+                    nomeParte.className = 'extraNomeParte';
+                });
             }
         });
         var tableRelacionado = $('#tableRelacionado');
