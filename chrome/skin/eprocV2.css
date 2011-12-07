@@ -256,12 +256,11 @@ fieldset.extraFieldset {
     font-size: 1.2em;
     padding-bottom: 0.1em;
 }
-.extraDestaqueEventos .extraEventoExterno .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoEntidade .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoInterno.extraEventoImportante .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoInterno.extraEventoDestaque .extraEventoTitulo {
+.extraDestaqueEventos .extraEventoImportante .extraEventoTitulo,
+.extraDestaqueEventos .extraEventoDestaque .extraEventoTitulo {
     font-weight: bold;
 }
+.extraDestaqueEventos .extraEventoInterno.extraEventoImportante td:nth-of-type(4) label,
 .extraDestaqueEventos .extraEventoInterno.extraEventoImportante .extraEventoTitulo {
     color: green;
 }
