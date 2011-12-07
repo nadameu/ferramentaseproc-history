@@ -1786,6 +1786,11 @@ var Eproc = {
                         tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1Audiência $2</span><br>$3');
                     } else if ((re = /(<span[^>]*>) - SUBSTABELECIMENTO ([^<]*)<\/span><br>/).test(tr.cells[2].innerHTML)) {
                         tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1SUBSTABELECIMENTO</span><br>$2');
+                    } else if ((re = /Intimação Eletrônica/).test(tr.cells[2].innerHTML)) {
+                    } else if ((re = /(<span[^>]*>[^-]+) - ([^<]*)<\/span><br>(.+)/).test(tr.cells[2].innerHTML)) {
+                        tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1</span><br>$2 - $3');
+                    } else if ((re = /(<span[^>]*>[^-]+) - ([^<]*)<\/span><br>/).test(tr.cells[2].innerHTML)) {
+                        tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1</span><br>$2');
                     }
                     var colunaDocumentos = tr.cells[4];
                     var tabelaDocumentos = $('table', colunaDocumentos);
