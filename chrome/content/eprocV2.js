@@ -1743,6 +1743,16 @@ var Eproc = {
                         {
                             if (re.test(nomeEvento)) tr.className += ' extraEventoDestaque';
                         });
+                        if (classeTipoUsuario == 'extraEventoExterno' || classeTipoUsuario == 'extraEventoEntidade') {
+                            var importante = true;
+                            [
+                                /^Intimação .* Confirmada/
+                            ].forEach(function(re)
+                            {
+                                if (re.test(nomeEvento) || importante == false) importante = false;
+                            });
+                            if (importante) tr.className += ' extraEventoImportante';
+                        }
                         var re = /((?: - )?)(Refer\.(?: aos?)? Eventos?:? \d+)/, referencia = re.exec(tr.cells[2].innerHTML);
                         if (referencia) {
                             tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '<br><span class="extraEventoSeparador">$1</span>$2');
