@@ -15,19 +15,19 @@ function $$(selector, baseElement)
 }
 var Cores = {
     AMARELA: '#efef8f',
-    AZUL: '#87adcd',
-    AZUL_CLARA: '#c4dffb',
-    AZUL_OU_MARROM: '#bf936a',
+    AZUL: '#b8daf7',
+    AZUL_CLARA: '#daedff',
+    AZUL_OU_MARROM: '#d3a16f',
     BRANCA: '#fff',
     CINZA: '#bfbfbf',
     DESCONHECIDA: '#fff',
-    LARANJA: '#f5b574',
+    LARANJA: '#ffc95f',
     PALHA: '#efd88f',
     ROSA: '#fbc4df',
     SALMAO: '#efa88f',
-    VERDE: '#a7eda7',
-    VERMELHA: '#db8080'
-}
+    VERDE: '#b6e35b',
+    VERMELHA: '#da7c79'
+};
 var Classes = {
     'AÇÃO CIVIL PÚBLICA': Cores.VERDE,
     'AÇÃO CIVIL PÚBLICA DE IMPROBIDADE ADMINISTRATIVA': Cores.VERDE,
@@ -213,7 +213,7 @@ var Classes = {
     'Suspensão de Execução de Sentença': Cores.AMARELA,
     'Suspensão de Liminar ou Antecipação de Tutela': Cores.AMARELA,
     'TERMO CIRCUNSTANCIADO': Cores.BRANCA
-}
+};
 var Eproc = {
     acao: '',
     pagina: '',
@@ -2447,6 +2447,6 @@ var Eproc = {
         }
         return numprocF;
     }
-}
+};
 Eproc.init();
 
