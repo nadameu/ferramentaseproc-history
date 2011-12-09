@@ -1776,6 +1776,7 @@ var Eproc = {
                         if (classeTipoUsuario == 'extraEventoExterno' || classeTipoUsuario == 'extraEventoEntidade') {
                             var importante = true;
                             [
+                                /^Distribuição/,
                                 /^Intimação .* Confirmada/,
                                 /^ - SUBSTABELECIMENTO/
                             ].forEach(function(re)
@@ -2054,7 +2055,7 @@ var Eproc = {
                     thisTable.className = thisTableClasses.join(' ');
                 }, false);
             } else if (table.getAttribute('summary') == 'Partes') {
-                $$('a[href*="?acao=substabelecimento_historico_listar_subfrm"]', table).forEach(function(linkSubstabelecimento)
+                $$('a[href*="acao=substabelecimento_historico_listar_subfrm"]', table).forEach(function(linkSubstabelecimento)
                 {
                     for (var celula = linkSubstabelecimento.parentNode; celula.tagName.toUpperCase() != 'TD'; celula = celula.parentNode);
                     var nomeParte;
