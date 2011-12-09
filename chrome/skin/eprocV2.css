@@ -525,7 +525,7 @@ a[href*="?acao=acessar_processo_gedpro"]  {
   font-weight: bold;
   position: absolute;color: #444;
 }
-a[href*="?acao=processo_lembrete"] {
+a[href*="?acao=processo_lembrete_destino_cadastrar"] {
   bottom: 20px;
   left: 160px;
   font-size: 1.4em;
