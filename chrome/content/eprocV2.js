@@ -13,207 +13,6 @@ function $$(selector, baseElement)
     var elements = baseElement.querySelectorAll(selector);
     return Array.prototype.slice.call(elements);
 }
-var Cores = {
-    AMARELA: '#efef8f',
-    AZUL: '#b8daf7',
-    AZUL_CLARA: '#daedff',
-    AZUL_OU_MARROM: '#d3a16f',
-    BRANCA: '#fff',
-    CINZA: '#bfbfbf',
-    DESCONHECIDA: '#fff',
-    LARANJA: '#ffc95f',
-    PALHA: '#efd88f',
-    ROSA: '#fbc4df',
-    SALMAO: '#efa88f',
-    VERDE: '#b6e35b',
-    VERMELHA: '#da7c79'
-};
-var Classes = {
-    'AÇÃO CIVIL PÚBLICA': Cores.VERDE,
-    'AÇÃO CIVIL PÚBLICA DE IMPROBIDADE ADMINISTRATIVA': Cores.VERDE,
-    'AÇÃO CIVIL PÚBLICA DO CÓDIGO DE DEFESA DO CONSUMID': Cores.VERDE,
-    'AÇÃO DE ALIMENTOS': Cores.VERDE,
-    'AÇÃO DE ANULAÇÃO E SUBSTITUIÇÃO DE TÍTULOS AO PORT': Cores.VERDE,
-    'AÇÃO DE APREENSÃO E DEPÓSITO DE COISA VENDIDA C/RE': Cores.VERDE,
-    'AÇÃO DE BUSCA E APREENSÃO EM ALIENAÇÃO FIDUCIÁRIA': Cores.VERDE,
-    'AÇÃO DE COBRANÇA DE CÉDULA DE CRÉDITO INDUSTRIAL': Cores.VERDE,
-    'AÇÃO DE COMPROMISSO ARBITRAL': Cores.VERDE,
-    'AÇÃO DE CONSIGNAÇÃO DE ALUGUEL': Cores.VERDE,
-    'AÇÃO DE CONSIGNAÇÃO EM PAGAMENTO': Cores.VERDE,
-    'AÇÃO DE DEPÓSITO': Cores.VERDE,
-    'AÇÃO DE DEPÓSITO DA LEI 8866/94': Cores.VERDE,
-    'AÇÃO DE DESAPROPRIAÇÃO': Cores.VERDE,
-    'AÇÃO DE DESAPROPRIAÇÃO P FINS DE REFORMA AGRÁRIA': Cores.VERDE,
-    'AÇÃO DE DESPEJO': Cores.VERDE,
-    'AÇÃO DE DISSOLUÇÃO E LIQUIDAÇÃO DE SOCIEDADE': Cores.VERDE,
-    'AÇÃO DE EXPROPRIAÇÃO DA LEI 8.257/91': Cores.VERDE,
-    'AÇÃO DE IMISSÃO NA POSSE': Cores.CINZA,
-    'AÇÃO DE NUNCIAÇÃO DE OBRA NOVA': Cores.VERDE,
-    'AÇÃO DE USUCAPIÃO': Cores.VERDE,
-    'AÇÃO DISCRIMINATÓRIA': Cores.VERDE,
-    'AÇÃO MONITÓRIA': Cores.VERDE,
-    'AÇÃO ORDINÁRIA (PROCEDIMENTO COMUM ORDINÁRIO)': Cores.ROSA,
-    'AÇÃO PENAL': Cores.AZUL_CLARA,
-    'AÇÃO POPULAR': Cores.VERDE,
-    'AÇÃO RENOVATÓRIA': Cores.VERDE,
-    'AÇÃO REVISIONAL DE ALUGUEL': Cores.VERDE,
-    'AÇÃO SUMÁRIA (PROCEDIMENTO COMUM SUMÁRIO)': Cores.VERDE,
-    'AGRAVO DE EXECUÇÃO PENAL': Cores.BRANCA,
-    'AGRAVO DE INSTRUMENTO': Cores.VERDE,
-    'Agravo de Instrumento': Cores.LARANJA,
-    'AGRAVO DE INSTRUMENTO DE DECISÃO DENEGAT.DE REC.EX': Cores.VERDE,
-    'ALIENAÇÃO JUDICIAL': Cores.BRANCA,
-    'ALIENAÇÃO JUDICIAL CRIMINAL': Cores.VERMELHA,
-    'ALVARÁ JUDICIAL': Cores.CINZA,
-    'APELAÇÃO CRIMINAL': Cores.AZUL,
-    'Apelação Cível': Cores.ROSA,
-    'Apelação/Reexame Necessário': Cores.ROSA,
-    'APREENSÃO DE EMBARCAÇÕES': Cores.BRANCA,
-    'ARRESTO / HIPOTECA LEGAL - MEDIDAS ASSECURATÓRIAS': Cores.BRANCA,
-    'ARRIBADAS FORÇADAS': Cores.BRANCA,
-    'AVARIA A CARGO DO SEGURADOR': Cores.BRANCA,
-    'AVARIAS': Cores.BRANCA,
-    'CANCELAMENTO DE NATURALIZAÇÃO': Cores.BRANCA,
-    'CARTA DE ORDEM': Cores.CINZA,
-    'CARTA PRECATÓRIA': Cores.CINZA,
-    'CARTA PRECATÓRIA JEF': Cores.CINZA,
-    'CARTA ROGATÓRIA': Cores.CINZA,
-    'CARTA TESTEMUNHÁVEL': Cores.AMARELA,
-    'COMUNICAÇÃO DE PRISÃO EM FLAGRANTE': Cores.BRANCA,
-    'CONFLITO DE COMPETÊNCIA': Cores.BRANCA,
-    'Conflito de Competência (Seção)': Cores.VERDE,
-    'Conflito de Jurisdição (Seção)': Cores.VERDE,
-    'CRIMES AMBIENTAIS': Cores.BRANCA,
-    'CRIMES AMBIENTAIS JEF': Cores.VERMELHA,
-    'CUMPRIMENTO DE SENTENÇA': Cores.AMARELA,
-    'DECLARAÇÃO DE AUSÊNCIA': Cores.BRANCA,
-    'DECLARAÇÃO DE DÚVIDA NO REGISTRO': Cores.BRANCA,
-    'DEMARCAÇÃO / DIVISÃO': Cores.CINZA,
-    'DESAFORAMENTO DE JULGAMENTO': Cores.BRANCA,
-    'DESPEJO P/FALTA DE PAGAMENTO CUMULADO C/COBRANÇA': Cores.VERDE,
-    'DESPEJO POR FALTA DE PAGAMENTO': Cores.VERDE,
-    'EMBARGOS À ADJUDICAÇÃO': Cores.VERDE,
-    'EMBARGOS À ARREMATAÇÃO': Cores.VERDE,
-    'EMBARGOS À EXECUÇÃO': Cores.VERDE,
-    'EMBARGOS À EXECUÇÃO FISCAL': Cores.VERDE,
-    'EMBARGOS DE RETENÇÃO POR BENFEITORIAS': Cores.VERDE,
-    'EMBARGOS DE TERCEIRO': Cores.VERDE,
-    'EMBARGOS DO ACUSADO': Cores.VERDE,
-    'ESPECIALIZAÇÃO DE HIPOTECA LEGAL': Cores.BRANCA,
-    'EXCEÇÃO DA VERDADE': Cores.BRANCA,
-    'EXCEÇÃO DE COISA JULGADA': Cores.BRANCA,
-    'EXCEÇÃO DE ILEGITIMIDADE DE PARTE': Cores.BRANCA,
-    'EXCEÇÃO DE IMPEDIMENTO': Cores.VERDE,
-    'EXCEÇÃO DE IMPEDIMENTO CRIMINAL': Cores.BRANCA,
-    'EXCEÇÃO DE INCOMPETÊNCIA': Cores.VERDE,
-    'EXCEÇÃO DE INCOMPETÊNCIA CRIMINAL': Cores.BRANCA,
-    'EXCEÇÃO DE LITISPENDÊNCIA': Cores.BRANCA,
-    'EXCEÇÃO DE SUSPEIÇÃO': Cores.VERDE,
-    'EXCEÇÃO DE SUSPEIÇÃO CRIMINAL': Cores.BRANCA,
-    'EXCESSO OU DESVIO-INCIDENTES EM EXECUÇÃO CRIMINAL': Cores.BRANCA,
-    'EXECUÇÃO DE SENTENÇA CONTRA FAZENDA PÚBL': Cores.AMARELA,
-    'EXECUÇÃO DE TÍTULO EXTRAJUDICIAL': Cores.AMARELA,
-    'EXECUÇÃO FISCAL': Cores.LARANJA,
-    'EXECUÇÃO HIPOTECÁRIA DO SISTEMA FINANCEIRO DA HABI': Cores.AMARELA,
-    'EXECUÇÃO PENAL': Cores.BRANCA,
-    'EXECUÇÃO PENAL PROVISÓRIA': Cores.AMARELA,
-    'EXECUÇÃO PROVISÓRIA DE SENTENÇA': Cores.AMARELA,
-    'EXIBIÇÃO DE DOCUMENTO OU COISA': Cores.LARANJA,
-    'HABEAS CORPUS': Cores.AMARELA,
-    'HABEAS DATA': Cores.BRANCA,
-    'HABILITAÇÃO': Cores.VERDE,
-    'HOMOLOGAÇÃO DE TRANSAÇÃO EXTRAJUDICIAL': Cores.VERDE,
-    'IMPUGNAÇÃO AO CUMPRIMENTO DE SENTENÇA': Cores.AZUL,
-    'IMPUGNAÇÃO AO PEDIDO DE ASSISTÊNCIA LITISCONSORCIA': Cores.BRANCA,
-    'IMPUGNAÇÃO AO VALOR DA CAUSA': Cores.BRANCA,
-    'IMPUGNAÇÃO DO DIREITO A ASSISTÊNCIA JUDICIÁRIA': Cores.VERDE,
-    'INCIDENTE DE AVALIAÇÃO DE DEPENDÊNCIA DE DROGAS': Cores.VERDE,
-    'INCIDENTE DE FALSIDADE': Cores.VERDE,
-    'INCIDENTE DE FALSIDADE CRIMINAL': Cores.BRANCA,
-    'INCIDENTE DE INSANIDADE MENTAL': Cores.AMARELA,
-    'INCIDENTE DE RESTITUIÇÃO DE COISAS APREENDIDAS': Cores.BRANCA,
-    'INCIDENTE DE TRANSF.ENTRE ESTABELECIMENTOS PENAIS': Cores.BRANCA,
-    'INCIDENTE DE UNIFORMIZAÇÃO DE JURISPRUDÊNCIA': Cores.VERDE,
-    'INQUÉRITO POLICIAL': Cores.VERDE,
-    'INQUÉRITO POLICIAL - PORTARIA': Cores.VERDE,
-    'INQUÉRITO POLICIAL - PRISAO EM FLAGRANTE': Cores.VERDE,
-    'INTERDITO PROIBITÓRIO': Cores.VERDE,
-    'JUSTIFICAÇÃO DE DINHEIRO A RISCO': Cores.VERDE,
-    'LIQUIDAÇÃO POR ARBITRAMENTO': Cores.BRANCA,
-    'LIQUIDAÇÃO POR ARTIGOS': Cores.BRANCA,
-    'LIQUIDAÇÃO PROVISÓRIA POR ARBITRAMENTO': Cores.BRANCA,
-    'LIQUIDAÇÃO PROVISÓRIA POR ARTIGOS': Cores.BRANCA,
-    'MANDADO DE SEGURANÇA': Cores.PALHA,
-    'Mandado de Segurança (Seção)': Cores.AMARELO,
-    'MANDADO DE SEGURANÇA COLETIVO': Cores.PALHA,
-    'MANDADO DE SEGURANÇA TR': Cores.PALHA,
-    'MEDIDA CAUTELAR DE ALIMENTOS PROVISIONAIS': Cores.AZUL,
-    'MEDIDA CAUTELAR DE APREENSÃO DE TÍTULOS': Cores.CINZA,
-    'MEDIDA CAUTELAR DE ARRESTO': Cores.BRANCA,
-    'MEDIDA CAUTELAR DE ARROLAMENTO DE BENS': Cores.BRANCA,
-    'MEDIDA CAUTELAR DE ATENTADO': Cores.BRANCA,
-    'MEDIDA CAUTELAR DE BUSCA E APREENSÃO': Cores.SALMAO,
-    'MEDIDA CAUTELAR DE CAUÇÃO': Cores.SALMAO,
-    'MEDIDA CAUTELAR DE EXIBIÇÃO': Cores.SALMAO,
-    'MEDIDA CAUTELAR DE HOMOLOGAÇÃO DO PENHOR LEGAL': Cores.SALMAO,
-    'MEDIDA CAUTELAR DE INTERPELAÇÃO': Cores.SALMAO,
-    'MEDIDA CAUTELAR DE JUSTIFICAÇÃO': Cores.SALMAO,
-    'MEDIDA CAUTELAR DE NOTIFICAÇÃO': Cores.SALMAO,
-    'MEDIDA CAUTELAR DE POSSE EM NOME DO NASCITURO': Cores.SALMAO,
-    'MEDIDA CAUTELAR DE PRODUÇÃO ANTECIPADA DE PROVAS': Cores.SALMAO,
-    'MEDIDA CAUTELAR DE PROTESTO': Cores.SALMAO,
-    'MEDIDA CAUTELAR DE SEQUESTRO': Cores.SALMAO,
-    'MEDIDA CAUTELAR FISCAL': Cores.SALMAO,
-    'MEDIDA CAUTELAR INOMINADA': Cores.SALMAO,
-    'NATURALIZAÇÃO': Cores.SALMAO,
-    'NOMEAÇÃO DE ADVOGADO': Cores.CINZA,
-    'NOTIFICAÇÃO PARA EXPLICAÇÕES': Cores.SALMAO,
-    'NOTIFICAÇÃO PARA EXPLICAÇÕES (LEI DE IMPRENSA)': Cores.AMARELA,
-    'OPÇÃO DE NACIONALIDADE': Cores.SALMAO,
-    'OPOSIÇÃO': Cores.SALMAO,
-    'ORGANIZAÇÃO E FISCALIZAÇÃO DE FUNDAÇÃO': Cores.SALMAO,
-    'OUTRAS MEDIDAS PROVISIONAIS': Cores.VERDE,
-    'OUTROS PROCEDIMENTOS DE JURISDIÇÃO VOLUNTÁRIA': Cores.VERDE,
-    'PEDIDO DE ASSISTÊNCIA JUDICIÁRIA': Cores.SALMAO,
-    'PEDIDO DE BUSCA E APREENSÃO CRIMINAL': Cores.CINZA,
-    'PEDIDO DE LIBERDADE PROVISÓRIA COM OU SEM FIANÇA': Cores.AMARELA,
-    'PEDIDO DE PRISÃO PREVENTIVA': Cores.VERDE,
-    'PEDIDO DE PRISÃO TEMPORÁRIA': Cores.BRANCA,
-    'PEDIDO DE QUEBRA DE SIGILO DE DADOS E/OU TELEFÔNIC': Cores.BRANCA,
-    'PEDIDO DE RESPOSTA OU RETIFICAÇÃO DA LEI DE IMPREN': Cores.VERDE,
-    'PEDIDO PRISÃO/LIBERDADE VIGIADA FINS DE EXPULSÃO': Cores.CINZA,
-    'Petição (Seção)': Cores.AMARELA,
-    'PRESTAÇÃO DE CONTAS - EXIGIDAS': Cores.VERDE,
-    'PRESTAÇÃO DE CONTAS - OFERECIDAS': Cores.VERDE,
-    'PROCED.INVESTIGATÓRIO DO MP (PEÇAS DE INFORMAÇÃO)': Cores.BRANCA,
-    'PROCEDIMENTO ESP.DA LEI ANTITÓXICOS': Cores.BRANCA,
-    'PROCEDIMENTO ESP.DA LEI DE COMBATE ÀS ORGANIZAÇÕES': Cores.BRANCA,
-    'PROCEDIMENTO ESP.DA LEI DE IMPRENSA': Cores.BRANCA,
-    'PROCEDIMENTO ESP.DO JUIZADO ESPECIAL CRIMINAL': Cores.VERMELHA,
-    'PROCEDIMENTO ESP.DO JUIZADO ESPECIAL CRIMINAL - PORTARIA': Cores.VERMELHA,
-    'PROCEDIMENTO ESP.DOS CRIMES CONTRA A PROPRIEDADE I': Cores.BRANCA,
-    'PROCEDIMENTO ESP.DOS CRIMES DE ABUSO DE AUTORIDADE': Cores.VERDE,
-    'PROCEDIMENTO ESP.DOS CRIMES DE CALÚNIA E INJÚRIA': Cores.VERDE,
-    'PROCEDIMENTO ESP.DOS CRIMES DE COMPETÊNCIA DO JÚRI': Cores.AZUL_OU_MARROM,
-    'PROCEDIMENTO ESP.DOS CRIMES DE RESPONSABILIDADE DE': Cores.AZUL,
-    'PROCEDIMENTO ESP.SUMÁRIO': Cores.AZUL,
-    'PROTESTO FORMADO A BORDO': Cores.AZUL,
-    'RECURSO CÍVEL': Cores.BRANCA,
-    'RECURSO DE MEDIDA CAUTELAR': Cores.BRANCA,
-    'RECURSO EM SENTIDO ESTRITO': Cores.ROSA,
-    'Reexame Necessário Cível': Cores.ROSA,
-    'REINT/MANUTENÇÃO POSSE PROCED.ESP.JURISD.CONTENC.': Cores.BRANCA,
-    'REMIÇÃO DO IMÓVEL HIPOTECADO': Cores.BRANCA,
-    'REPRESENTAÇÃO CRIMINAL': Cores.BRANCA,
-    'REQUERIMENTO DE REABILITAÇÃO': Cores.BRANCA,
-    'RESTAURAÇÃO DE AUTOS': Cores.AZUL,
-    'RETIFICAÇÃO DE REGISTRO DE IMÓVEL': Cores.ROSA,
-    'SEQÜESTRO - MEDIDAS ASSECURATÓRIAS': Cores.BRANCA,
-    'SUPERVENIÊNCIA DOENÇA MENTAL-INCID.EXEC.CRIMINAL': Cores.BRANCA,
-    'Suspensão de Execução de Sentença': Cores.AMARELA,
-    'Suspensão de Liminar ou Antecipação de Tutela': Cores.AMARELA,
-    'TERMO CIRCUNSTANCIADO': Cores.BRANCA
-};
 var Eproc = {
     acao: '',
     pagina: '',
@@ -370,21 +169,6 @@ var Eproc = {
                 if (!tr.className.match(/infraTr(Clara|Escura)/)) return;
                 var links = tr.querySelectorAll('a[href]');
                 if (links.length) links[0].setAttribute('target', '_blank');
-                if (classeTh) {
-                    var classeIndex = classeTh.cellIndex;
-                    var classe = tr.cells[classeIndex].innerHTML.split('<')[0];
-                    var cor = Classes[classe];
-                    if (tr.getAttribute('data-classe') == '000169') {
-                        if (tr.getAttribute('data-competencia') == '10') {
-                            cor = Cores.AZUL;
-                        } else {
-                            cor = Cores.AZUL_OU_MARROM;
-                        }
-                    }
-                    if (cor) {
-                        tr.style.backgroundColor = cor;
-                    }
-                }
                 if (juizoTh) {
                     var color = null, juizoIndex = juizoTh.cellIndex, juizoCell = tr.cells[juizoIndex], juizoText = juizoCell.textContent, juizo = juizoText[juizoText.length - 1];
                     if (/^\s*[A-Z]{5}TR/.test(juizoText)) {
@@ -1276,6 +1060,8 @@ var Eproc = {
             h = 0, s = 0, l = 100;
         }
         var background = 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
+        var css = atob(GM_getBase64('chrome://eproc/skin/cor-capa.css'));
+        GM_addStyle(css);
         var css = atob(GM_getBase64('chrome://eproc/skin/eprocV2.css'));
         css = css.replace(/\$background/g, background);
         css = css.replace(/\$h/g, h);
@@ -2280,7 +2066,6 @@ var Eproc = {
             e.stopPropagation();
         }
         var iframe = document.createElement('iframe');
-        iframe.src = Eproc.loginGedpro.url;
         iframe.style.display = 'none';
         iframe.addEventListener('load', function(e)
         {
@@ -2310,27 +2095,22 @@ var Eproc = {
             }
         }, false);
         $('#divInfraAreaTelaE').appendChild(iframe);
+        iframe.src = Eproc.loginGedpro.url;
     },
     setCorCapa: function()
     {
         var assuntos = $('#fldAssuntos');
-        if (assuntos) var classe = $('#txtClasse', assuntos);
+        if (assuntos) {
+            assuntos.className += ' extraFieldset';
+            var classe = $('#txtClasse', assuntos);
+        }
         if (classe) {
-            var nomeClasse = classe.textContent.trim();
-            var cor = Classes[nomeClasse];
-            if (classe.getAttribute('data-classe') == '000169') {
+            if (classe.hasAttribute('data-classe')) {
+                assuntos.setAttribute('data-classe', classe.getAttribute('data-classe'));
                 var competencia = $('#txtCompetencia')
-                if (competencia.hasAttribute('data-competencia')) {
-                    if (competencia.getAttribute('data-competencia') == '10') {
-                        cor = Cores.AZUL;
-                    } else {
-                        cor = Cores.AZUL_OU_MARROM;
-                    }
+                if (competencia && competencia.hasAttribute('data-competencia')) {
+                    assuntos.setAttribute('data-competencia', competencia.getAttribute('data-competencia'));
                 }
-            }
-            if (cor) {
-                assuntos.style.backgroundColor = cor;
-                assuntos.className += ' extraFieldset';
             }
         }
     },
