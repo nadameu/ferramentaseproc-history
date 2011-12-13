@@ -2,10 +2,10 @@ body {
     background-color: $background;
 }        
 #divInfraAreaTela input, select {
-    background-color: hsla(0, 0%, 80%, 0.25);
+    background-color: hsl($h, 42%, 91%);
 }
 #divInfraAreaTela input:focus {
-    background-color: hsla(0, 0%, 50%, 0.5);
+    background-color: #fff;
 }
 select:focus {
     background-color: hsla(0, 0%, 50%, 0.25);
@@ -51,7 +51,17 @@ tr.infraTrSelecionada td td {
     background-color: hsla(0, 0%, 50%, 0);
 }
 tr.infraTrMarcada td {
-    background-color: hsla(0, 0%, 50%, 0.375);
+    background-color: hsl($h, 78%, 38%);
+	color: #fff;
+	font-size: 14px;
+	font-weight: bold;
+	text-shadow: 0 1px 2px #666666;
+}
+tr[data-classe="000169"] {
+    background-color: #bf8040;
+}
+tr[data-classe="000169"][data-competencia="10"] {
+    background-color: #60a0d2;
 }
 div.infraMenu a {
     background-color: $background;
@@ -67,39 +77,47 @@ a.docLink {
     border-color: $background !important;
 }
 div.infraBarraTribunal {
-    -moz-background-size: 1px 80px;
-    background-size: 1px 80px;
+    box-shadow: 0 0 3px #000;
+	margin-top: -13px;
+	margin-bottom: 6px;
+	padding-bottom: 3px;
+	border-bottom: none;
 }
 div.infraBarraTribunalE, div.infraBarraTribunalD {
     width: inherit;
 }
 .infraTable td label {
     font-size: 1em;
+	padding: 3px;
 }
 label.infraLabelObrigatorio {
-    color: #555;
+    color: #333;
 }
 img.infraImg, img.infraImgNormal, img.infraImg:hover, img.infraImgNormal:hover {
     width: auto;
     height: auto;
 }
 .prazoAguardaAbertura {
-    background-color: hsl(0, 50%, 80%);
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAALPSURBVDjLjZNbSFNxHMcXm+BDBEFBvgRS9CBFrxJRoUlPs4ceJMiHsIshSTdSi7AI1K6KOfOSaZgXQmyic5u3TJ3zNue8TEvP5tl0czed7uy+nW//DV3ajQ58D+fh9/nwP/8fX85s9e1okkySVhKKhCEJqspvYKjoEnrykoOtD08zjbeOU++vxbYKUvdlFqbsjgbACYVDhgcWxfkwDApgVlbBOvUBFlUNVkYqsdxXCl1HIaiWfEzX5mCg6DKas0+BCAYiAnXtA9WWwKSoJHkHo7wcS18FWJS8BiV8htmGJ1BW3kXfy9SwoCg1RhURyCbpOIWsFwviCszUP8KIIA09+edBjg1ybFRfP4SytIOoyDiKhqcXUFFSgJI6cVxEEHr1zPskCr0XVocfbh8Lj5+FzRnAjMGNMdoFrdULyuJF27gFJe1ayRYcEYQiVbs+S9VOdpEMM54gDHY/Zo0eaAgo+76Bt1Id+0akbd4O7xCEIlSux7co7dQw5YBu1ReG2ydsKJXS88UiTfyv8G+CrdQPmvvHaQZjWgcEErrvTzP/FDQOmuQTegYKIihu0/T/t6BeZjohHDXTkzoHbEwAxnU/RGMmFDTNLYjTE0p7+XvorgQeK03i6kiydwhq+1eETUMmVmN2hzfhDbDYcAehs/nQXfYCynsn4Ra9AquWwNl4B6MZxwIdibybYbimzyjtnLJh2e6D0xuEj8CBIAuGfCv1LnRdPAwXgVHMB7L2AnmxsDw/A+lZrobT0DkVV9dvQK96DeYNfxgmbFhgdwXwbcWDrsQosIrQBn8+a7kHEPqdcBempWUYkMsgn7NCb3Fh3UlWaHSg/osWjz9OoCU5BkxVGkAgz30OVknodC7IPSztKNPfuqDI5WP46hEYsmJhzokCdWUXuvm8gCSJ+4Czvc6kwhSpMLNZ4XAXSIWDpMLMp5T9NtE5nnNzC0shOHR/PwBGKPcL7gZY5gAAAABJRU5ErkJggg%3D%3D) no-repeat scroll 99% 7% #FCDCDC;
 }
 .prazoAberto {
-    background-color: hsl(60, 50%, 80%);
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAxlJREFUeNqMU11Ik1EYfs73fduc35ZNbWlKOlsR/Rg2EcSULioioiIhDYyiguomuiiri25CiBDsB6IyF9KFTi9SyuhnuUxLxbIfxFJzVqYrf9JCt+W275zOttYP3nTg/Q7nPe/znvd9n+cjDcUZMVQJnGGMZTHAAhDMXizo7SSEdAiidJIIwvfIjUSp8i2r4Ah806OAbwyKd3IWXNQaAPU8i1pntHTUXjgk8kwg4Yek4DbRXQNDWiZiV+RClJP4g+wPmgcq7mFMOJ/ha/cjEPZvcqn/81SpV7/4mPrVTTD3VQRoOEIgf+cgUOnnwROzHK4vztKlyXMRaTX4NV688/6TaEpVWxKBZfxO4E77ECCrgGgpvIsUaGob8R7elJDadCxrFEQIt1duH3Q311cMmBcuzv9GYpAoTEHvH4LedQuG8QdgxAhJE4d3PW7cKDu+JeXAi9dP5g6jZc4QmrkJgt8N25WSekfNpSJlxOVt+0Tgcr6CXmeC57sCN0mDs29mtKxRh7yia3dVCmyaAKClYROClVjvvfHYys/W7V2blPOm1XG2w78ew5o8fEw4iabGtpJt2VHrVCJQmFOMnFQUBAKoZjTcKrHe7+VDp9BoomTO9mVBjt8VHyfD3rkdT9/WhWgSeGRAASr2ncaEpwf2riq098OmlrBTopIMEvCafH5lgMUvQnp0L9JlilPddag9fB5uv53LSAKllCeKRddIFTZa9kBQVRa290IlpdSvRt+Gx/XEkIRs8hAmmYuGGRAkc8L3Ds8/3vlNJ2W3QTgjXaOV2Jy5D6091nxegU7144eSHquPhjkhFcw/AyJFhbQ0SV9CNSfMdfBM/b+UyefR0GVFYBoOiQpqX6L4gXuXo19jRgLXAe8NuSt34kRFNUSODhlPsH8HQpV94Bp53IIHj0pwiDQcTWfmFUbEpqyCwZQBol3AqRF5FdF8elHceM3uceRdX4MDu4H+Pg52hMAHt57De8k55rvoffllo/q1awmjDWB8WBH5Ek5UkGct04AkAwODIbAjAo5IeT63OG5a/N8K/q4DkcNPAQYAZnEuH2sFut0AAAAASUVORK5CYII%3D) no-repeat scroll 99% 7% #FCFCBD;
+}
+.prazoDecurso {
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAs5JREFUeNq0UktIVFEY/s99zcydO47zaMZxSi0f+SLLnCKjlEAobGGLXosgLCiwRVmSQiCUQVCkhJtIC4IWNdRCskBCqE2ghLoQoqYi85Uzt0nndWfmnDudO2lOrtr0w8f5OY/v/7//O2iozQVakKTaI8+GdywFooJKUhDwA/gDALzApEwWntgcAgWPzTZ+jGXReVgOrh11/s4EGH3We2Lfl4WI7LIYDHaTYJsJxqZicYKUJEFETaE8u2g92v1oFDKCS6VSKzmCfwh6H/03AsYgsCIXm8J4bqgy6ixn5HcDeUuhJe0RZHkuTYrurSLNmUwCRjtcxkTD1b4ua04xxxQceY8YTkWcjiBOT6TqC5OO9eX8ga7+Lu1exhvgMsjGtfaO3X7Y8/LK6TZBlb4L1k8pW3n9nMVRYKD73aUW3wTFeGYHaEtrb6Y+UFW1mqbbXl872665IAqcvelG/53mssfFde63hfTsBcWDPxIURQEN8XgckslkekhrdYpsRFe17kNlaW3fHoS4elpHr41OA7NmyDW0g5qhzjOtKxtyKC7fb97QbnbWVej1Wc5sZ30ZUaEBEwANmQQeWtnz9PKplrCCF1d1YbQ46+VLivbmHz/5BKyu3SUqQU0EA0ex6gKt7HlzveXiwmJc/sv30HC2JOqMgP3I6/WCEp43C8aNFbR6XZIScNEZH+hdm9LziCVIVPp4ayfJcqCYs5T9MTbojuNXgnN7LTsbHIHB523gV0aBt+YU4cDnw6oKw8zMwF2ITPsAY5y2FEuFMjLl/2RFR4Q1CSGDWU8Y3TcQGBkaD94EIx8CyRi38XqpCmPYpc1AnB+850wkEjqNQHEd8jHu/V8Fe1UggaZIbh6PDMwcSHwEInJHepX4MOS4zYXUtGbtX9socs9VQkd2EkqCQQCV2hMIA2xuhDzbBuoiLcOyVC8Fw4JCdDDNcZAQOBj5JcAAxBZTOchnWusAAAAASUVORK5CYII%3D) no-repeat scroll 95% 7%, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAodJREFUeNqkk0tME0Ecxr/Z3b4ADZRqAqQ2hJJSmhAfxKjUqIlXLujJqAe96NGee+Bi4kE5edHIyRhOcsEY4sGDotGEgxEBCUQpTVqgD0262310dtaZlcL25MFJvs3M7P/37X+y8xHHcfA/QxEP8jwCyIRLLEgvCCb4bIwruleX5/oAB7NwnAJsvrIdODfKfw08Yzyo+DOJvkQ8FomGOwIdQdGfZqonNku59Fph/YrZMKf41lxLB034cODQ5MXUhaQCOUQtCtVSm+/a4t0DbdGuaPe7lfeTNd3dd02kvYLegOTPnB8aS1p1M6SqKgzDaNHLwWegeiN0Jn466Se+jGAODKgzMdgzEDdUI6RpGnRdb9GDgaxbNn98hpvQUCwcjQvGa3Au0h4J12o1mKbpSnSxvbuNO8Hr6Ky0I5/P4+bru1heWQYzWFgwXoNjMuSgbdv4fGkexUoRuZ0cYqQPZ7tGoSgKpjdf4FX5DRpSA4ZlBAXjNQC1KW73X8PS0hLmh2dwMjKCJyMPXfhteQGPC9NACK6oQl3mwKDhbJW1kpH9eh+yLMPn8+Hp0CP4FB/W6z9wbzML1sH4v4Ari5iGYLwdfNwuFatyWEb6+7j71aaurt8COrEPCxm1elUwXoPZ31uVDQlEJ30Ep75dduHUYho40gozZutmUd8QzIEBcwq2Rqcqn4qrDmU6iRGkvnA4hv1zC7EG1dXF6iqr21OCcWMgwkQIz0GMB2FUGpf65Yw/2R73J9rCcpcSFEX2L2pYa/WqtaptsJ8cXmRzyNlw2T0DcaW7uSLolXowjDSOIsXD5d42Hp4CdrGMFSygwHb4TomrzFnaNJA8J1X+kWCRRY2rzln2R4ABABpvPoBuuSpnAAAAAElFTkSuQmCC) no-repeat scroll 99% 7% #ebf2df;
 }
 table.prazoComDestaque .prazoFechado {
-    background-color: hsla(120, 50%, 50%, 0.2);
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAodJREFUeNqkk0tME0Ecxr/Z3b4ADZRqAqQ2hJJSmhAfxKjUqIlXLujJqAe96NGee+Bi4kE5edHIyRhOcsEY4sGDotGEgxEBCUQpTVqgD0262310dtaZlcL25MFJvs3M7P/37X+y8xHHcfA/QxEP8jwCyIRLLEgvCCb4bIwruleX5/oAB7NwnAJsvrIdODfKfw08Yzyo+DOJvkQ8FomGOwIdQdGfZqonNku59Fph/YrZMKf41lxLB034cODQ5MXUhaQCOUQtCtVSm+/a4t0DbdGuaPe7lfeTNd3dd02kvYLegOTPnB8aS1p1M6SqKgzDaNHLwWegeiN0Jn466Se+jGAODKgzMdgzEDdUI6RpGnRdb9GDgaxbNn98hpvQUCwcjQvGa3Au0h4J12o1mKbpSnSxvbuNO8Hr6Ky0I5/P4+bru1heWQYzWFgwXoNjMuSgbdv4fGkexUoRuZ0cYqQPZ7tGoSgKpjdf4FX5DRpSA4ZlBAXjNQC1KW73X8PS0hLmh2dwMjKCJyMPXfhteQGPC9NACK6oQl3mwKDhbJW1kpH9eh+yLMPn8+Hp0CP4FB/W6z9wbzML1sH4v4Ari5iGYLwdfNwuFatyWEb6+7j71aaurt8COrEPCxm1elUwXoPZ31uVDQlEJ30Ep75dduHUYho40gozZutmUd8QzIEBcwq2Rqcqn4qrDmU6iRGkvnA4hv1zC7EG1dXF6iqr21OCcWMgwkQIz0GMB2FUGpf65Yw/2R73J9rCcpcSFEX2L2pYa/WqtaptsJ8cXmRzyNlw2T0DcaW7uSLolXowjDSOIsXD5d42Hp4CdrGMFSygwHb4TomrzFnaNJA8J1X+kWCRRY2rzln2R4ABABpvPoBuuSpnAAAAAElFTkSuQmCC) no-repeat scroll 99% 7% #ebf2df;
 }
 .prazoExtra {
     display: none;
 }
 .prazoComDestaque .prazoExtra {
     display: inline;
+	background: #fff;
 }
 .prazoComDestaque .prazoFechado .prazoEvento {
-    background-color: hsl(60, 40%, 85%);
+    background-color: #fff;
 }
 *[disabled] {
     color: #aaa;
@@ -119,19 +137,23 @@ div.infraAjaxAutoCompletar { max-height: 30em; overflow-y: scroll; } div.infraAj
 .extraGedproRotuloBlue { color: blue; }
 .extraGedproRotuloGray { color: gray; cursor: inherit; }
 .extraGedproImg { cursor: inherit; }
-.extraFieldset { -moz-border-radius: 8px; border-radius: 8px; }
+.extraFieldset { -moz-border-radius: 8px; }
 button.infraButton[class~=extraBuscarPreventosButton] { font-size: .8em; }
 .extraLembrete {
-    float: left;
     font-size: 12px;
-    min-width: 20ex;
-    max-width: 60ex;
+	width: 450px;
     margin-bottom: 0.5em;
     margin-right: 1ex;
     padding: 0 1ex;
     text-align: center;
-    background-color: hsl(60, 100%, 80%);
-    color: hsl(0, 0%, 0%);
+    color: #333333;
+	margin: 0 auto;
+	border: 1px solid hsl(55, 100%, 41%);
+	padding: 5px;
+	border-radius: 3px;
+	font-weight: bold;
+background: #ffff70; /* Old browsers */
+background: -moz-linear-gradient(center top , hsl(60, 100%, 73%) 0%, hsl(62, 96%, 90%) 100%) repeat scroll 0 0 transparent;
 }
 .extraLembreteVoce {
     background-color: hsl(60, 100%, 70%);
@@ -144,6 +166,8 @@ button.infraButton[class~=extraBuscarPreventosButton] { font-size: .8em; }
     margin-left: -1ex;
     margin-right: -1ex;
     color: hsl(0, 0%, 33%);
+	padding: 6px;
+	
 }
 .extraLembretePara {
     margin-bottom: 0.5em;
@@ -255,36 +279,291 @@ fieldset.extraFieldset {
     margin-left: 34px;
 }
 .extraDestaqueEventos .extraEventoTitulo {
-    display: block;
-    font-size: 1.2em;
-    padding-bottom: 0.1em;
+	font-size: 1.2em; 
+	margin-right: 10px;
+	overflow: visible;	
+	text-decoration: none;
+	vertical-align: baseline;
+	padding: 3px 6px;
+	display: inline-block;
 }
-.extraDestaqueEventos .extraEventoImportante .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoDestaque .extraEventoTitulo {
+.extraDestaqueEventos .extraEventoExterno .extraEventoTitulo,
+.extraDestaqueEventos .extraEventoEntidade .extraEventoTitulo,
+.extraDestaqueEventos .extraEventoInterno.extraEventoImportante .extraEventoTitulo,
+.extraDestaqueEventos .extraEventoInterno.extraEventoDestaque .extraEventoTitulo {
     font-weight: bold;
 }
-.extraDestaqueEventos .extraEventoInterno.extraEventoImportante td:nth-of-type(4) label,
-.extraDestaqueEventos .extraEventoInterno.extraEventoImportante .extraEventoTitulo {
-    color: green;
+.extraDestaqueEventos .extraEventoInterno td:nth-of-type(4) label {color: #77AB13}
+.extraDestaqueEventos .extraEventoExterno td:nth-of-type(4) label {color: #058DC7}
+.extraDestaqueEventos .extraEventoEntidade td:nth-of-type(4) label {color:#AE432E} 
+
+.extraDestaqueEventos .extraEventoInterno .extraEventoTitulo {
+    color: #77AB13;
+	font-weight: bold;
+	padding-left: 0;
+	vertical-align: middle;
+	text-shadow: 1px 1px #fff;
 }
-.extraDestaqueEventos .extraEventoExterno td:nth-of-type(4) label,
+.extraDestaqueEventos .extraEventoInterno.extraEventoDestaque  .extraEventoTitulo,
+.extraDestaqueEventos .extraEventoInterno.extraEventoImportante  .extraEventoTitulo {
+    background-color: #77AB13;
+	color: #fff;		
+	box-shadow: 0 0 3px #999999; 
+	border-radius: 3px; 
+	text-shadow: 0 1px 2px #666666;
+	border-radius: 3px;
+	vertical-align: middle;
+	padding: 3px 6px;
+	margin-bottom: 5px;
+	border: 1px solid #337D33;
+}
+.prazoAguardaAbertura .extraEventoTitulo {color: #AE432E !important; } /* deixa o título vermelho mesmo sendo interno em intimações que o prazo ainda não abriu */
+
 .extraDestaqueEventos .extraEventoExterno .extraEventoTitulo {
-    color: blue;
-}
-.extraDestaqueEventos .extraEventoEntidade td:nth-of-type(4) label,
-.extraDestaqueEventos .extraEventoEntidade .extraEventoTitulo {
-    color: brown;
-}
-.extraDestaqueEventos .extraEventoSeparador {
-    display: none;
-}
-.extraDestaqueEventos .extraEventoInterno.extraEventoDestaque td:nth-of-type(3) {
-    border: 2px solid green;
-}
-.extraDestaqueEventos .extraEventoExterno.extraEventoDestaque td:nth-of-type(3) {
-    border: 2px solid blue;
-}
-.extraDestaqueEventos .extraEventoEntidade.extraEventoDestaque td:nth-of-type(3) {
-    border: 2px solid brown;
+    color: #058DC7;
+	font-weight: bold;
+	padding-left: 0;
+	vertical-align: middle;
+	text-shadow: 1px 1px #fff;
 }
 
+.extraDestaqueEventos .extraEventoExterno.extraEventoImportante .extraEventoTitulo,
+.extraDestaqueEventos .extraEventoExterno.extraEventoDestaque .extraEventoTitulo {
+    background-color: #058DC7;
+	color: #fff;		
+	box-shadow: 0 0 3px #999999; 
+	border-radius: 3px; 
+	text-shadow: 0 1px 2px #666666;
+	border-radius: 3px;
+	vertical-align: middle;
+	margin-bottom: 5px;
+	padding: 3px 6px;
+}
+
+.extraDestaqueEventos .extraEventoEntidade .extraEventoTitulo {
+    color: #AE432E;
+	font-weight: bold;
+	padding-left: 0;
+	vertical-align: middle;
+	text-shadow: 1px 1px #fff;
+}
+
+.extraDestaqueEventos .extraEventoEntidade.extraEventoImportante .extraEventoTitulo,
+.extraDestaqueEventos .extraEventoEntidade.extraEventoDestaque .extraEventoTitulo {
+    background-color: #AE432E;
+	color: #fff;		
+	box-shadow: 0 0 3px #999999; 
+	border-radius: 3px; 
+	text-shadow: 0 1px 2px #666666;
+	border-radius: 3px;
+	vertical-align: middle;
+	margin-bottom: 5px;
+	padding: 3px 6px; 	
+}
+
+.extraDestaqueEventos .extraEventoSeparador {
+    display: none;
+	clear:both;
+}
+
+a.extraNomeParte {
+  border-radius: 3px 3px 3px 3px;
+  padding: 1px 3px;
+  background-color: #058DC7;
+  vertical-align: top;
+  color: #fff;
+  display: inline-block;
+  margin-left: 2px;
+}
+span.extraNomeParte {
+  border-radius: 3px 3px 3px 3px;
+  padding: 1px 3px;
+  background-color: #AE432E;
+  vertical-align: top;
+  color: #fff;
+}
+
+.extraDestaqueEventos .extraEventoInterno.extraEventoDestaque td:nth-of-type(3) {
+    border: 2px solid #77AB13;
+}
+/*
+.extraDestaqueEventos .extraEventoExterno.extraEventoDestaque td:nth-of-type(3) {
+    border: 2px solid #058DC7;
+}
+.extraDestaqueEventos .extraEventoEntidade.extraEventoDestaque td:nth-of-type(3) {
+    border: 2px solid #AE432E;
+} */
+
+/* Felipe */
+fieldset.infraFieldset {background: hsl($h, 42%, 91%); border-radius: 4px; box-shadow: 0 0 3px #ABABAB inset; margin-bottom: 3px; margin-top: 4px; padding-top: 7px; border: 0.1em solid hsl($h, 80%, 37%)}
+select.infraSelect {background: hsl($h, 42%, 91%) !important; border-radius: 4px; padding: 2px;}
+#fldAcoes input {background: #fff}
+.extraTabelaEventos td:nth-of-type(3) {padding: 12px 8px 8px 11px}
+.infraTable th, .infraTable td {border-color: #EEEEEE} /* talvez retirar */
+div.infraAreaDados {overflow: visible; border: none;}
+input.infraButton, button.infraButton, input.infraButton:hover, button.infraButton:hover {font-size: 1.5em; padding: 8px; border-radius: 5px; background-image: none;}
+#divInfraBarraComandosSuperior {margin-bottom: 10px; margin-top: -12px}
+* {color: #333333}
+table {font-size: 1.2em}
+.extraResumo {margin-bottom: 5px}
+.extraResumo span {font-size: 9px}
+tr.infraTrClara, tr.infraTrEscura{background-color: #fff} /*alternativa é #F2F3FA */
+
+
+
+/*  Buttons  */
+button.infraButton, button {
+	display:inline-block;
+	-webkit-border-radius:3px;
+	-moz-border-radius:3px;
+	border-radius:3px;
+	text-decoration:none;
+	text-shadow:0 1px 2px #666;
+	white-space:nowrap;
+	cursor:pointer;
+	vertical-align:baseline;
+	-webkit-transition:all 400ms ease;
+	-moz-transition:all 400ms ease;
+	-o-transition:all 400ms ease;
+	transition:all 400ms ease;
+	overflow:visible;
+	width:auto;
+}
+.button-link {
+	background-color:#ae432e;
+	color:#fff;
+}
+.button-link.blue { background-color:#066d99; }
+.button-link.green { background-color:#6a9912; }
+.button-link.gray { background-color:#929494; }
+.button-link:hover {
+	background-color:#4c4c4c;
+	color:#fff;
+}
+button.infraButton {
+	border-color:#cb6652 #b74d39 #803121;
+	background:-moz-linear-gradient(top, #faa796, #d06c57 5%, #ae432e 100%);
+	background:-webkit-gradient(linear, left top, left bottom, from(#faa796), to(#ae432e), color-stop(0.05, #d06c57));
+	background:-o-linear-gradient(top, #faa796, #d06c57 5%, #ae432e 100%);
+	-webkit-box-shadow:0 1px 2px #999;
+	-moz-box-shadow:0 1px 2px #999;
+	box-shadow:0 1px 2px #999;
+	color:#fce8e3;
+}
+button.infraButton:hover {
+	background:-moz-linear-gradient(top, #faa796, #d06c57 5%, #943a28 100%);
+	background:-webkit-gradient(linear, left top, left bottom, from(#faa796), to(#943a28), color-stop(0.05, #d06c57));
+	background:-o-linear-gradient(top, #faa796, #d06c57 5%, #943a28 100%);
+	color:#fff;
+}
+
+/*  Buttons :: Button :: Green  */
+button.infraButton { 
+    border-color:hsl($h, 79%, 45%) hsl($h, 79%, 39%) hsl($h, 79%, 34%);
+        background:-moz-linear-gradient(top, hsl($h, 91%, 78%), hsl($h, 63%, 60%) 5%, hsl($h, 78%, 38%) 100%);
+        background:-webkit-gradient(linear, left top, left bottom, from(hsl($h, 91%, 78%)), to(hsl($h, 78%, 38%)), color-stop(0.05, hsl($h, 63%, 60%)));
+        background:-o-linear-gradient(top, hsl($h, 91%, 78%), hsl($h, 63%, 60%) 5%, hsl($h, 78%, 38%) 100%);
+        color:#f7ffe5;
+}
+button.infraButton:hover {
+        background:-moz-linear-gradient(top, hsl($h, 91%, 78%), hsl($h, 63%, 60%) 5%, hsl($h, 79%, 32%) 100%);
+        background:-webkit-gradient(linear, left top, left bottom, from(hsl($h, 91%, 78%)), to(hsl($h, 79%, 32%)), color-stop(0.05, hsl($h, 63%, 60%)));
+        background:-o-linear-gradient(top, hsl($h, 91%, 78%), hsl($h, 63%, 60%) 5%, hsl($h, 79%, 32%) 100%);
+        color:#fff;
+}
+
+.infraButton.disabled, button:disabled {
+        background:#fafafa;
+        border-color:#b1b1b1;
+        color:#a0a0a0;
+}
+button.infraButton span {color: #fff !important; font-weight: bold}
+button.infraButton {font-weight: bold}
+legend.infraLegendObrigatorio {margin-top: -12px; background: hsl($h, 42%, 91%); border-radius: 5px; border: 0.1em solid hsl($h, 80%, 37%); padding: 2px 8px}
+#divInfraAreaGlobal {border: 2px solid #EEEEEE; border-radius: 5px; }
+div.infraBarraComandos {border: none;}
+#divInfraBarraComandosMeio {margin-bottom: -11px; margin-top: -29px;}
+span.extraSeparadorTitulo {display: block; clear: both; margin-bottom: 7px;}
+.extraMarkerPrioridade {
+	background-color: #AE432E;
+	box-shadow: 0 0 3px #999999;
+	color: #FFFFFF;
+	margin-top: 5px;
+	vertical-align: middle;
+	margin-left:10px;
+	padding-left: 8px;
+	padding-right: 8px;
+}
+#btnDownloadCompletoRS {
+	background:-moz-linear-gradient(top, #d7fa96, #abd957 5%, #78ac15 100%);
+	background:-webkit-gradient(linear, left top, left bottom, from(#d7fa96), to(#78ac15), color-stop(0.05, #abd957));
+	background:-o-linear-gradient(top, #d7fa96, #abd957 5%, #78ac15 100%);
+	-webkit-box-shadow:0 1px 2px #999;
+	-moz-box-shadow:0 1px 2px #999;
+	box-shadow:0 1px 2px #999;
+}
+
+#btnDownloadCompletoRS:hover {
+	background:-moz-linear-gradient(top, #d7fa96, #abd957 5%, #659111 100%);
+	background:-webkit-gradient(linear, left top, left bottom, from(#d7fa96), to(#659111), color-stop(0.05, #abd957));
+	background:-o-linear-gradient(top, #d7fa96, #abd957 5%, #659111 100%);
+	color:#fff;
+}
+
+#divOrdenacao, #divPaginacao, #divCamposConsulta {background-color: hsl($h, 42%, 91%)}
+#divInfraBarraSistemaLocalizacao {margin-top: -6px}
+#fldPartes td {vertical-align: top; padding: 10px 1px 5px 8px}
+#tbInfoProcesso td {background-color:hsl($h, 42%, 91%)}
+
+span.extraIntimacaoParte {font-weight: bold; text-shadow: 1px 1px #fff;}
+span.extraIntimacaoEntidade {color: #AE432E;}
+span.extraIntimacaoExterno {color: #058DC7;}
+
+#fldAcoes {height: 10em; position: relative;}
+
+a[href*="?acao=acessar_processo_gedpro"]  {
+    bottom: 20px;
+  left: 253px;
+  font-size: 1.4em;
+  font-weight: bold;
+  position: absolute;color: #444;
+}
+a[href*="?acao=processo_lembrete_destino_cadastrar"] {
+  bottom: 20px;
+  left: 160px;
+  font-size: 1.4em;
+  font-weight: bold;
+  position: absolute;color: #444;
+}
+a[href*="?acao=processo_movimento_consultar"] {
+    bottom: 20px;
+  left: 614px;
+  font-size: 1.4em;
+  font-weight: bold;
+  position: absolute;color: #444;
+}
+
+a[href*="?acao=processo_intimacao"]{
+    bottom: 20px;
+  left: 540px;
+  font-size: 1.4em;
+  font-weight: bold;
+  position: absolute;color: #444;
+}
+a[href*="?acao=processo_intimacao_aps_bloco"] {
+    bottom: 20px;
+  left: 345px;
+  width: 8.9em;
+  font-size: 1.4em;
+  font-weight: bold;
+  position: absolute;color: #444;
+}
+a[href*="?acao=processo_citacao"]{
+    bottom: 20px;
+  left: 479px;
+  font-size: 1.4em;
+  font-weight: bold;
+  position: absolute;color: #444;
+}
+input:focus, button:focus, select:focus, textarea:focus {background-color: #fff}
+.infraTable button.infraButton, .infraTable button.infraButton:hover, #tbDocumentosCadastradas button.infraButton, #tbDocumentosCadastradas button.infraButton:hover {font-size: 1em; padding: 4px;}

@@ -658,16 +658,24 @@ var Eproc = {
         });
       }
     },
-    getExtraStyle: function()
+    getStyle: function(id)
     {
-        var extraStyle = $('extraStyle');
+        var extraStyle = $('#' + id);
         if (! extraStyle) {
             var extraStyle = document.createElement('style');
-            extraStyle.id = 'extraStyle';
+            extraStyle.id = id;
             $('head').appendChild(extraStyle);
         }
-        Eproc.getExtraStyle = function() { return extraStyle; };
-        return Eproc.getExtraStyle();
+        this.caller = function() { return extraStyle; };
+        return this.caller();
+    },
+    getExtraStyle: function()
+    {
+        return Eproc.getStyle('extraStyle');
+    },
+    getExtraMainStyle: function()
+    {
+        return Eproc.getStyle('extraMainStyle');
     },
     getMenu: function()
     {
@@ -731,14 +739,14 @@ var Eproc = {
                 extraStyle.innerHTML += 'border: 1px solid #888;';
                 extraStyle.innerHTML += '}\n';
                 cor.textContent = 'Cor ' + c;
-                cor.addEventListener('click', (function() { return function()
+                cor.addEventListener('click', function()
                 {
-                    Eproc.mudaFundo(window.getComputedStyle(this, null).getPropertyValue('background-color'));
-                }; })(), false);
+                    Eproc.salvaFundo(h, s, l);
+                }, false);
                 return cor;
             }
             for (var c = 1; c <= 14; c++) {
-                var h = 0, s = 0, l = 96;
+                var h = 81, s = 0, l = 96;
                 if (c == 1) {
                     l = 100;
                 } else if (c == 14) {
@@ -753,10 +761,17 @@ var Eproc = {
             menu.appendChild(cores);
         }
         var barraSistema = $('.infraBarraSistema'), lembretes = $$('.infraTable[summary="Lembretes"]');
-        if (barraSistema) {
-            Eproc.mudaFundo(GM_getValue('v2.fundo') || '#ffffff');
-        } else if (lembretes.length) {
-            Eproc.mudaEstilos();
+        var getFundoUsuario = function()
+        {
+            var hsl = /^\d+\/\d+\/\d+$/.test(GM_getValue('v2.fundo')) ? GM_getValue('v2.fundo') : '81/0/100';
+            var h, s, l;
+            [h, s, l] = hsl.split('/');
+            var fundoUsuario = { hsl: hsl, h: h, s: s, l: l };
+            return fundoUsuario;
+        };
+        var fundoUsuario = getFundoUsuario();
+        if (barraSistema || lembretes.length) {
+            Eproc.mudaEstilos(fundoUsuario.h, fundoUsuario.s, fundoUsuario.l);
         }
         var unidades = $('#selInfraUnidades');
         if (unidades) {
@@ -1039,14 +1054,21 @@ var Eproc = {
             return acoes;
         }
     },
-    mudaEstilos: function(background)
+    mudaEstilos: function(h, s, l)
     {
-        if (typeof background == 'undefined') background = '#ffffff';
+        if (typeof h == 'undefined') {
+            h = 0, s = 0, l = 100;
+        }
+        var background = 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
         var css = atob(GM_getBase64('chrome://eproc/skin/cor-capa.css'));
         GM_addStyle(css);
         var css = atob(GM_getBase64('chrome://eproc/skin/eprocV2.css'));
         css = css.replace(/\$background/g, background);
-        GM_addStyle(css);
+        css = css.replace(/\$h/g, h);
+        css = css.replace(/\$s/g, s);
+        css = css.replace(/\$l/g, l);
+        var estilo = Eproc.getExtraMainStyle();
+        estilo.innerHTML = css;
         $$('label[onclick^="listarTodos"], label[onclick^="listarEventos"], #txtEntidade, #txtPessoaEntidade').forEach(function(auto)
         {
           var id = auto.id.replace('lblListar', 'txt');
@@ -1056,10 +1078,10 @@ var Eproc = {
           }
         }, this);
     },
-    mudaFundo: function(background)
+    salvaFundo: function(h, s, l)
     {
-        GM_setValue('v2.fundo', background);
-        Eproc.mudaEstilos(background);
+        GM_setValue('v2.fundo', h + '/' + s + '/' + l);
+        Eproc.mudaEstilos(h, s, l);
     },
     painel_secretaria_listar: function()
     {
@@ -1378,7 +1400,7 @@ var Eproc = {
         }
         function getLinkLembrete()
         {
-            var linkLembrete = $$('a[href*="acao=processo_lembrete_destino_cadastrar"]');
+            var linkLembrete = $$('a[href*="?acao=processo_lembrete_destino_cadastrar"]');
             if (linkLembrete.length == 1) return linkLembrete[0];
             else return false;
         }
@@ -1492,6 +1514,13 @@ var Eproc = {
             'PROCURADOR',
             'PROCURADOR PLANTÃO'
         ];
+        var TIPO_PARTE = {
+            DESCONHECIDO: 0,
+            EXTERNO: 1,
+            ENTIDADE: 2
+        };
+        var nomeTipoAutor, tipoAutor = TIPO_PARTE.DESCONHECIDO;
+        var nomeTipoReu, tipoReu = TIPO_PARTE.DESCONHECIDO;
         $$('.infraTable').forEach(function(table, t, tables)
         {
             if (table.getAttribute('summary') == 'Eventos' || table.rows[0].cells[0].textContent == 'Evento') {
@@ -1516,15 +1545,16 @@ var Eproc = {
                         tr.className += ' ' + classeTipoUsuario;
                         var nomeEvento = tr.cells[2].textContent;
                         [
-                            /^Audiência Realizada/,
+                            /^Audiência/,
                             /^Citação .* Confirmada/,
-                            /^Despacho\/Decisão/
+                            /^Despacho\/Decisão/,
+                            /^Mandado.* Devolvido/
                         ].forEach(function(re)
                         {
                             if (re.test(nomeEvento)) tr.className += ' extraEventoImportante';
                         });
                         [
-                            /^Sentença /
+                            /^Sentença/
                         ].forEach(function(re)
                         {
                             if (re.test(nomeEvento)) tr.className += ' extraEventoDestaque';
@@ -1532,7 +1562,9 @@ var Eproc = {
                         if (classeTipoUsuario == 'extraEventoExterno' || classeTipoUsuario == 'extraEventoEntidade') {
                             var importante = true;
                             [
-                                /^Intimação .* Confirmada/
+                                /^Distribuição/,
+                                /^Intimação .* Confirmada/,
+                                /^ - SUBSTABELECIMENTO/
                             ].forEach(function(re)
                             {
                                 if (re.test(nomeEvento) || importante == false) importante = false;
@@ -1545,7 +1577,7 @@ var Eproc = {
                         }
                         var linhas = tr.cells[2].innerHTML.split('<br>');
                         var primeira = linhas.splice(0, 1);
-                        primeira = '<span class="extraEventoTitulo">' + primeira + '</span>';
+                        primeira = '<span class="extraEventoTitulo">' + primeira + '</span><br>';
                         tr.cells[2].innerHTML =  primeira + linhas.join('<br>');
                     }
                     if (match = tr.cells[2].innerHTML.match(/Prazo: .* Status:([^<]+)/)) {
@@ -1557,21 +1589,54 @@ var Eproc = {
                             haPrazosFechados = true;
                             var extraContent = '', fechamento = $$('a', tr.cells[0]);
                             if (fechamento.length) {
-                                fechamento = fechamento[0].getAttribute('onmouseover').match(/Fechamento do Prazo:.*?\d+ - ([^<]+)/);
+                                fechamento = fechamento[0].getAttribute('onmouseover').match(/Fechamento do Prazo:.*?(\d+ - [^<]+)/);
                                 if (fechamento) {
                                     var evento = fechamento[1];
-                                    if (evento != 'Decurso de Prazo') {
+                                    if (/Decurso de Prazo/.test(evento)) {
+                                        tr.cells[2].className = 'prazoDecurso';
+                                    } else {
+                                        tr.cells[2].className = 'prazoFechado';
                                         evento = '<span class="prazoEvento">' + evento + '</span>';
                                     }
                                     extraContent = '<span class="prazoExtra"> (' + evento + ')</span>';
                                 }
                             }
-                            tr.cells[2].className = 'prazoFechado';
                             tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(/Prazo: .* Status:FECHADO/, '$&' + extraContent);
+                        }
+                        var intimadoRegExp = new RegExp('\\((' + nomeTipoAutor + '|' + nomeTipoReu + '|MPF|AGÊNCIA DA PREVIDÊNCIA SOCIAL) +- ([^\\)]+)\\)');
+                        var intimado = intimadoRegExp.exec(tr.cells[2].innerHTML);
+                        if (intimado) {
+                            intimado = intimado[1];
+                            var classeIntimado = 'extraIntimacaoParte';
+                            var tipoIntimado = null;
+                            if (intimado == nomeTipoAutor) {
+                                tipoIntimado = tipoAutor;
+                            } else if (intimado == nomeTipoReu) {
+                                tipoIntimado = tipoReu;
+                            }
+                            if (tipoIntimado == TIPO_PARTE.ENTIDADE) {
+                                classeIntimado += ' extraIntimacaoEntidade';
+                            } else if (tipoIntimado == TIPO_PARTE.EXTERNO) {
+                                classeIntimado += ' extraIntimacaoExterno';
+                            }
+                            tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(intimadoRegExp, '<span class="' + classeIntimado + '">$1</span> - $2');
                         }
                     } else if (/Intimação Eletrônica - Expedida\/Certificada - Pauta/.test(tr.cells[2].innerHTML)) {
                         haPrazosFechados = true;
                         tr.cells[2].className = 'prazoFechado';
+                    } else if ((re = /(<span[^>]*>)Sentença ([^-]*) - ([^<]*)<\/span><br>/).test(tr.cells[2].innerHTML)) {
+                        tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1Sentença $2</span><br>$3');
+                    } else if ((re = /(<span[^>]*>)Audiência Realizada (com|sem) ([^-]*) - ([^<]*)<\/span><br>/).test(tr.cells[2].innerHTML)) {
+                        tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1Audiência Realizada</span><br>$2 $3 - $4');
+                    } else if ((re = /(<span[^>]*>)Audiência ([^-]*) - ([^<]*)<\/span><br>/).test(tr.cells[2].innerHTML)) {
+                        tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1Audiência $2</span><br>$3');
+                    } else if ((re = /(<span[^>]*>) - SUBSTABELECIMENTO ([^<]*)<\/span><br>/).test(tr.cells[2].innerHTML)) {
+                        tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1SUBSTABELECIMENTO</span><br>$2');
+                    } else if ((re = /Intimação Eletrônica/).test(tr.cells[2].innerHTML)) {
+                    } else if ((re = /(<span[^>]*>[^-]+) - ([^<]*)<\/span><br>(.+)/).test(tr.cells[2].innerHTML)) {
+                        tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1</span><br>$2 - $3');
+                    } else if ((re = /(<span[^>]*>[^-]+) - ([^<]*)<\/span><br>/).test(tr.cells[2].innerHTML)) {
+                        tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1</span><br>$2');
                     }
                     var colunaDocumentos = tr.cells[4];
                     var tabelaDocumentos = $('table', colunaDocumentos);
@@ -1775,6 +1840,36 @@ var Eproc = {
                     }
                     thisTable.className = thisTableClasses.join(' ');
                 }, false);
+            } else if (table.getAttribute('summary') == 'Partes') {
+                $$('a[href*="acao=substabelecimento_historico_listar_subfrm"]', table).forEach(function(linkSubstabelecimento)
+                {
+                    for (var celula = linkSubstabelecimento.parentNode; celula.tagName.toUpperCase() != 'TD'; celula = celula.parentNode);
+                    var nomeParte;
+                    if (linkSubstabelecimento.nextSibling instanceof HTMLAnchorElement) {
+                        if (celula.cellIndex == 0) {
+                            nomeTipoAutor = celula.parentNode.parentNode.rows[0].cells[0].textContent;
+                            tipoAutor = TIPO_PARTE.EXTERNO;
+                        } else if (celula.cellIndex == 1) {
+                            nomeTipoReu = celula.parentNode.parentNode.rows[0].cells[1].textContent;
+                            tipoReu = TIPO_PARTE.EXTERNO;
+                        }
+                        nomeParte = linkSubstabelecimento.nextSibling;
+                    } else if (linkSubstabelecimento.nextSibling instanceof Text) {
+                        if (linkSubstabelecimento.nextSibling.nextSibling instanceof HTMLSpanElement && celula.colSpan == 1) {
+                            if (celula.cellIndex == 0) {
+                                nomeTipoAutor = celula.parentNode.parentNode.rows[0].cells[0].textContent;
+                                tipoAutor = TIPO_PARTE.ENTIDADE;
+                            } else if (celula.cellIndex == 1) {
+                                nomeTipoReu = celula.parentNode.parentNode.rows[0].cells[1].textContent;
+                                tipoReu = TIPO_PARTE.ENTIDADE;
+                            }
+                            nomeParte = linkSubstabelecimento.nextSibling.nextSibling;
+                        }
+                    }
+                    if (nomeParte) {
+                        nomeParte.className = 'extraNomeParte';
+                    }
+                });
             }
         });
         var tableRelacionado = $('#tableRelacionado');
@@ -2136,6 +2231,6 @@ var Eproc = {
         }
         return numprocF;
     }
-}
+};
 Eproc.init();
 
