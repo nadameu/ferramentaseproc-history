@@ -1596,14 +1596,14 @@ var Eproc = {
                                         tr.cells[2].className = 'prazoDecurso';
                                     } else {
                                         tr.cells[2].className = 'prazoFechado';
-                                        evento = '<span class="prazoEvento">' + evento + '</span>';
                                     }
+                                    evento = '<span class="prazoEvento">' + evento + '</span>';
                                     extraContent = '<span class="prazoExtra"> (' + evento + ')</span>';
                                 }
                             }
                             tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(/Prazo: .* Status:FECHADO/, '$&' + extraContent);
                         }
-                        var intimadoRegExp = new RegExp('\\((' + nomeTipoAutor + '|' + nomeTipoReu + '|MPF|AGÊNCIA DA PREVIDÊNCIA SOCIAL) +- ([^\\)]+)\\)');
+                        var intimadoRegExp = new RegExp('\\((' + nomeTipoAutor + '|' + nomeTipoReu + '|MPF|AGÊNCIA DA PREVIDÊNCIA SOCIAL|PERITO) +- ([^\\)]+)\\)');
                         var intimado = intimadoRegExp.exec(tr.cells[2].innerHTML);
                         if (intimado) {
                             intimado = intimado[1];
@@ -1845,7 +1845,7 @@ var Eproc = {
                 {
                     for (var celula = linkSubstabelecimento.parentNode; celula.tagName.toUpperCase() != 'TD'; celula = celula.parentNode);
                     var nomeParte;
-                    if (linkSubstabelecimento.nextSibling instanceof HTMLAnchorElement) {
+                    if (linkSubstabelecimento.nextSibling instanceof HTMLAnchorElement && celula.colSpan == 1) {
                         if (celula.cellIndex == 0) {
                             nomeTipoAutor = celula.parentNode.parentNode.rows[0].cells[0].textContent;
                             tipoAutor = TIPO_PARTE.EXTERNO;
