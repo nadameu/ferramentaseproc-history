@@ -82,6 +82,7 @@ div.infraBarraTribunal {
     width: 2em;
     height: 4em;
     content: '';
+    -moz-border-radius-bottomright: 100%;
     border-bottom-right-radius: 100% 50%;
 }
 #divInfraBarraSistema + div:after {
@@ -99,6 +100,7 @@ div.infraBarraTribunal {
     height: 4em;
     content: '';
     background-color: $background;
+    -moz-border-radius-topleft: 100%;
     border-top-left-radius: 100% 50%;
 }
 #divInfraBarraSistema + div:after {
