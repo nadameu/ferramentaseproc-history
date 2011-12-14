@@ -1,6 +1,10 @@
 body {
     background-color: $background;
 }        
+#divInfraAreaGlobal, div.infraBarraTribunal {
+    border-color: hsl($h, 50%, 80%);
+    border-left-color: hsl($h, 94%, 39%);
+}
 #divInfraAreaTela input, select {
     background-color: hsl($h, 42%, 91%);
 }
@@ -54,9 +58,9 @@ tr.infraTrMarcada td {
     background-color: hsla(0, 0%, 50%, 0.375);
 }
 #tabLocalizadores tr.infraTrMarcada td {
-	background-color: hsl($h, 78%, 38%);
-	color: #fff;
-	text-shadow: 0 1px 2px #666666;
+    background-color: hsl($h, 78%, 38%);
+    color: #fff;
+    text-shadow: 0 1px 2px #666666;
 }
 div.infraMenu a {
     background-color: $background;
@@ -131,9 +135,8 @@ div.infraBarraSistemaD {
 }
 .infraTable td label {
     font-size: 1em;
-	padding: 3px;
 }
-label.infraLabelObrigatorio {
+#fldAssuntos label.infraLabelObrigatorio {
     color: #333;
 }
 img.infraImg, img.infraImgNormal, img.infraImg:hover, img.infraImgNormal:hover {
@@ -180,43 +183,46 @@ div.infraAjaxAutoCompletar { max-height: 30em; overflow-y: scroll; } div.infraAj
 .extraGedproRotuloBlue { color: blue; }
 .extraGedproRotuloGray { color: gray; cursor: inherit; }
 .extraGedproImg { cursor: inherit; }
-.extraFieldset { -moz-border-radius: 8px; }
 button.infraButton[class~=extraBuscarPreventosButton] { font-size: .8em; }
 .extraLembrete {
+    float: left;
     font-size: 12px;
-	width: 450px;
+    min-width: 20ex;
+    max-width: 40ex;
     margin-bottom: 0.5em;
     margin-right: 1ex;
-    padding: 0 1ex;
+    padding: 0.5em 1ex;
     text-align: center;
-    color: #333333;
-	margin: 0 auto;
-	border: 1px solid hsl(55, 100%, 41%);
-	padding: 5px;
-	border-radius: 3px;
-	font-weight: bold;
-background: #ffff70; /* Old browsers */
-background: -moz-linear-gradient(center top , hsl(60, 100%, 73%) 0%, hsl(62, 96%, 90%) 100%) repeat scroll 0 0 transparent;
+    -moz-border-radius: 0.5ex;
+    font-weight: bold;
+    border: 1px solid hsl(60, 100%, 40%);
+    background: -moz-linear-gradient(
+            hsl(60, 100%, 80%) 0%,
+            hsl(60, 96%, 90%) 100%
+        );
+    color: #333;
 }
 .extraLembreteVoce {
-    background-color: hsl(60, 100%, 70%);
+    border-color: hsl(60, 100%, 30%);
+    background: -moz-linear-gradient(
+            hsl(60, 100%, 70%) 0%,
+            hsl(60, 96%, 80%) 100%
+        );
 }
 .extraLembrete a {
     float: right;
-    margin: -0.5em 0.5ex 0;
+    vertical-align: middle;
+    margin-left: 0.5ex;
 }
-.extraLembretePara, .extraLembreteData {
-    margin-left: -1ex;
-    margin-right: -1ex;
-    color: hsl(0, 0%, 33%);
-	padding: 6px;
-	
+.extraLembrete a:last-of-type {
+    margin-left: 3ex;
 }
 .extraLembretePara {
-    margin-bottom: 0.5em;
+    margin-bottom: 1em;
+    line-height: 16px;
 }
 .extraLembreteData {
-    margin-top: 0.5em;
+    margin-top: 1em;
     text-align: right;
 }
 .extraLembrete abbr {
@@ -242,6 +248,7 @@ background: -moz-linear-gradient(center top , hsl(60, 100%, 73%) 0%, hsl(62, 96%
         display: block;
     }
 }
+#cargaDocsGedpro a[href="#"],
 a.extraLinkAcao {
     display: inline-block;
     text-decoration: none;
@@ -254,6 +261,7 @@ a.extraLinkAcao {
     color: #333;
     line-height: 16px;
 }
+#cargaDocsGedpro a[href="#"]:hover,
 a.extraLinkAcao:hover {
     background-color: #eee;
     border-color: #eee;
@@ -270,10 +278,21 @@ fieldset.infraFieldset {
     border-color: $background;
     border-width: 2px;
 }
+fieldset.infraFieldset {
+    background: hsl($h, 42%, 93%);
+    border-radius: 4px;
+    -moz-box-shadow: 1px 1px 2px hsla(0, 0%, 0%, 0.5) inset;
+    border: none;
+}
+legend.infraLegendObrigatorio {
+    background: $background;
+    -moz-border-radius: 5px;
+    -moz-box-shadow: 2px 2px 5px hsla(0, 0%, 0%, 0.5);
+    padding: 2px 8px;
+}
 fieldset.extraFieldset {
-    border-style: outset;
-    border-color: $background;
-    border-width: 1px;
+    border: 2px outset hsla(0, 0%, 50%, 0.5);
+    -moz-box-shadow: none;
 }
 #fldAcoes .extraNaoMostrarIcones {
     display: none;
@@ -322,247 +341,75 @@ fieldset.extraFieldset {
     margin-left: 34px;
 }
 .extraDestaqueEventos .extraEventoTitulo {
-	font-size: 1.2em; 
-	margin-right: 10px;
-	overflow: visible;	
-	text-decoration: none;
-	vertical-align: baseline;
-	padding: 3px 6px;
-	display: inline-block;
-}
-.extraDestaqueEventos .extraEventoExterno .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoEntidade .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoInterno.extraEventoImportante .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoInterno.extraEventoDestaque .extraEventoTitulo {
+    font-size: 1.1em; 
+    display: inline-block;
     font-weight: bold;
 }
-.extraDestaqueEventos .extraEventoInterno td:nth-of-type(4) label {color: #77AB13}
-.extraDestaqueEventos .extraEventoExterno td:nth-of-type(4) label {color: #058DC7}
-.extraDestaqueEventos .extraEventoEntidade td:nth-of-type(4) label {color:#AE432E} 
-
-.extraDestaqueEventos .extraEventoInterno .extraEventoTitulo {
-    color: #77AB13;
-	font-weight: bold;
-	padding-left: 0;
-	vertical-align: middle;
-	text-shadow: 1px 1px #fff;
+span.extraIntimacaoParte {
+    font-weight: bold;
 }
-.extraDestaqueEventos .extraEventoInterno.extraEventoDestaque  .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoInterno.extraEventoImportante  .extraEventoTitulo {
-    background-color: #77AB13;
-	color: #fff;		
-	box-shadow: 0 0 3px #999999; 
-	border-radius: 3px; 
-	text-shadow: 0 1px 2px #666666;
-	border-radius: 3px;
-	vertical-align: middle;
-	padding: 3px 6px;
-	margin-bottom: 5px;
-	border: 1px solid #337D33;
-}
-.prazoAguardaAbertura .extraEventoTitulo {color: #AE432E !important; } /* deixa o título vermelho mesmo sendo interno em intimações que o prazo ainda não abriu */
-
-.extraDestaqueEventos .extraEventoExterno .extraEventoTitulo {
-    color: #058DC7;
-	font-weight: bold;
-	padding-left: 0;
-	vertical-align: middle;
-	text-shadow: 1px 1px #fff;
-}
-
-.extraDestaqueEventos .extraEventoExterno.extraEventoImportante .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoExterno.extraEventoDestaque .extraEventoTitulo {
-    background-color: #058DC7;
-	color: #fff;		
-	box-shadow: 0 0 3px #999999; 
-	border-radius: 3px; 
-	text-shadow: 0 1px 2px #666666;
-	border-radius: 3px;
-	vertical-align: middle;
-	margin-bottom: 5px;
-	padding: 3px 6px;
-}
-
-.extraDestaqueEventos .extraEventoEntidade .extraEventoTitulo {
-    color: #AE432E;
-	font-weight: bold;
-	padding-left: 0;
-	vertical-align: middle;
-	text-shadow: 1px 1px #fff;
-}
-
-.extraDestaqueEventos .extraEventoEntidade.extraEventoImportante .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoEntidade.extraEventoDestaque .extraEventoTitulo {
-    background-color: #AE432E;
-	color: #fff;		
-	box-shadow: 0 0 3px #999999; 
-	border-radius: 3px; 
-	text-shadow: 0 1px 2px #666666;
-	border-radius: 3px;
-	vertical-align: middle;
-	margin-bottom: 5px;
-	padding: 3px 6px; 	
-}
-
-.extraDestaqueEventos .extraEventoSeparador {
-    display: none;
-	clear:both;
-}
-
-a.extraNomeParte {
-  border-radius: 3px 3px 3px 3px;
-  padding: 1px 3px;
-  background-color: #058DC7;
-  vertical-align: top;
-  color: #fff;
-  display: inline-block;
-  margin-left: 2px;
-}
-span.extraNomeParte {
-  border-radius: 3px 3px 3px 3px;
-  padding: 1px 3px;
-  background-color: #AE432E;
-  vertical-align: top;
-  color: #fff;
-}
-
 .extraDestaqueEventos .extraEventoInterno.extraEventoDestaque td:nth-of-type(3) {
-    border: 2px solid #77AB13;
+    border: 2px solid hsl(81, 60%, 35%);
+}
+.extraDestaqueEventos .extraEventoInterno .extraEventoTitulo,
+.extraDestaqueEventos .extraEventoInterno td:nth-of-type(4) label {
+    color: hsl(81, 60%, 35%);
+}
+.extraDestaqueEventos .extraEventoInterno.extraEventoDestaque .extraEventoTitulo,
+.extraDestaqueEventos .extraEventoInterno.extraEventoImportante .extraEventoTitulo {
+    background-color: hsl(81, 60%, 35%);
+}
+.extraDestaqueEventos .extraEventoExterno .extraEventoTitulo,
+.extraDestaqueEventos .extraEventoExterno td:nth-of-type(4) label,
+span.extraIntimacaoExterno {
+    color: hsl(198, 60%, 35%);
+}
+.extraDestaqueEventos .extraEventoExterno.extraEventoDestaque .extraEventoTitulo,
+.extraDestaqueEventos .extraEventoExterno.extraEventoImportante .extraEventoTitulo,
+a.extraNomeParte {
+    background-color: hsl(198, 60%, 35%);
+}
+.extraDestaqueEventos .extraEventoEntidade .extraEventoTitulo,
+.extraDestaqueEventos .extraEventoEntidade td:nth-of-type(4) label,
+span.extraIntimacaoEntidade {
+    color: hsl(10, 60%, 35%);
+}
+.extraDestaqueEventos .extraEventoEntidade.extraEventoDestaque .extraEventoTitulo,
+.extraDestaqueEventos .extraEventoEntidade.extraEventoImportante .extraEventoTitulo,
+span.extraNomeParte {
+    background-color: hsl(10, 60%, 35%);
+}
+.extraDestaqueEventos .extraEventoDestaque .extraEventoTitulo,
+.extraDestaqueEventos .extraEventoImportante .extraEventoTitulo {
+    color: #fff;        
+    padding: 3px;
+    margin-bottom: 5px;
+    -moz-border-radius: 0.5ex;
+}
+.extraNomeParte {
+    -moz-border-radius: 3px;
+    padding: 1px 3px;
+    vertical-align: top;
+    color: #fff;
+}
+a.extraNomeParte {
+    margin-left: 2px;
+}
+.extraTabelaEventos td:nth-of-type(3) {
+    padding: 0.25em 0.5ex;
+}
+.prazoAguardaAbertura .extraEventoTitulo {
+    color: #AE432E !important; /* deixa o título vermelho mesmo sendo interno em intimações que o prazo ainda não abriu */
+}
+select.infraSelect {
+    background: hsl($h, 42%, 91%) !important;
+    border-radius: 4px;
+    padding: 2px;
+}
+#divInfraAreaProcesso {
+    clear: both;
 }
 /*
-.extraDestaqueEventos .extraEventoExterno.extraEventoDestaque td:nth-of-type(3) {
-    border: 2px solid #058DC7;
-}
-.extraDestaqueEventos .extraEventoEntidade.extraEventoDestaque td:nth-of-type(3) {
-    border: 2px solid #AE432E;
-} */
-
-/* Felipe */
-fieldset.infraFieldset {background: hsl($h, 42%, 91%); border-radius: 4px; box-shadow: 0 0 3px #ABABAB inset; margin-bottom: 3px; margin-top: 4px; padding-top: 7px; border: 0.1em solid hsl($h, 80%, 37%)}
-select.infraSelect {background: hsl($h, 42%, 91%) !important; border-radius: 4px; padding: 2px;}
-#fldAcoes input {background: #fff}
-.extraTabelaEventos td:nth-of-type(3) {padding: 12px 8px 8px 11px}
-.infraTable th, .infraTable td {border-color: #EEEEEE} /* talvez retirar */
-div.infraAreaDados {overflow: visible; border: none;}
-input.infraButton, button.infraButton, input.infraButton:hover, button.infraButton:hover {font-size: 1.5em; padding: 8px; border-radius: 5px; background-image: none;}
-#divInfraBarraComandosSuperior {margin-bottom: 10px; margin-top: -12px}
-* {color: #333333}
-table {font-size: 1.2em}
-.extraResumo {margin-bottom: 5px}
-.extraResumo span {font-size: 9px}
-tr.infraTrClara, tr.infraTrEscura{background-color: #fff} /*alternativa é #F2F3FA */
-
-
-
-/*  Buttons  */
-button.infraButton, button {
-	display:inline-block;
-	-webkit-border-radius:3px;
-	-moz-border-radius:3px;
-	border-radius:3px;
-	text-decoration:none;
-	text-shadow:0 1px 2px #666;
-	white-space:nowrap;
-	cursor:pointer;
-	vertical-align:baseline;
-	-webkit-transition:all 400ms ease;
-	-moz-transition:all 400ms ease;
-	-o-transition:all 400ms ease;
-	transition:all 400ms ease;
-	overflow:visible;
-	width:auto;
-}
-.button-link {
-	background-color:#ae432e;
-	color:#fff;
-}
-.button-link.blue { background-color:#066d99; }
-.button-link.green { background-color:#6a9912; }
-.button-link.gray { background-color:#929494; }
-.button-link:hover {
-	background-color:#4c4c4c;
-	color:#fff;
-}
-button.infraButton {
-	border-color:#cb6652 #b74d39 #803121;
-	background:-moz-linear-gradient(top, #faa796, #d06c57 5%, #ae432e 100%);
-	background:-webkit-gradient(linear, left top, left bottom, from(#faa796), to(#ae432e), color-stop(0.05, #d06c57));
-	background:-o-linear-gradient(top, #faa796, #d06c57 5%, #ae432e 100%);
-	-webkit-box-shadow:0 1px 2px #999;
-	-moz-box-shadow:0 1px 2px #999;
-	box-shadow:0 1px 2px #999;
-	color:#fce8e3;
-}
-button.infraButton:hover {
-	background:-moz-linear-gradient(top, #faa796, #d06c57 5%, #943a28 100%);
-	background:-webkit-gradient(linear, left top, left bottom, from(#faa796), to(#943a28), color-stop(0.05, #d06c57));
-	background:-o-linear-gradient(top, #faa796, #d06c57 5%, #943a28 100%);
-	color:#fff;
-}
-
-/*  Buttons :: Button :: Green  */
-button.infraButton { 
-    border-color:hsl($h, 79%, 45%) hsl($h, 79%, 39%) hsl($h, 79%, 34%);
-        background:-moz-linear-gradient(top, hsl($h, 91%, 78%), hsl($h, 63%, 60%) 5%, hsl($h, 78%, 38%) 100%);
-        background:-webkit-gradient(linear, left top, left bottom, from(hsl($h, 91%, 78%)), to(hsl($h, 78%, 38%)), color-stop(0.05, hsl($h, 63%, 60%)));
-        background:-o-linear-gradient(top, hsl($h, 91%, 78%), hsl($h, 63%, 60%) 5%, hsl($h, 78%, 38%) 100%);
-        color:#f7ffe5;
-}
-button.infraButton:hover {
-        background:-moz-linear-gradient(top, hsl($h, 91%, 78%), hsl($h, 63%, 60%) 5%, hsl($h, 79%, 32%) 100%);
-        background:-webkit-gradient(linear, left top, left bottom, from(hsl($h, 91%, 78%)), to(hsl($h, 79%, 32%)), color-stop(0.05, hsl($h, 63%, 60%)));
-        background:-o-linear-gradient(top, hsl($h, 91%, 78%), hsl($h, 63%, 60%) 5%, hsl($h, 79%, 32%) 100%);
-        color:#fff;
-}
-
-.infraButton.disabled, button:disabled {
-        background:#fafafa;
-        border-color:#b1b1b1;
-        color:#a0a0a0;
-}
-button.infraButton span {color: #fff !important; font-weight: bold}
-button.infraButton {font-weight: bold}
-legend.infraLegendObrigatorio {margin-top: -12px; background: hsl($h, 42%, 91%); border-radius: 5px; border: 0.1em solid hsl($h, 80%, 37%); padding: 2px 8px}
-#divInfraAreaGlobal {border: 2px solid #EEEEEE; border-radius: 5px; }
-div.infraBarraComandos {border: none;}
-#divInfraBarraComandosMeio {margin-bottom: -11px; margin-top: -29px;}
-span.extraSeparadorTitulo {display: block; clear: both; margin-bottom: 7px;}
-.extraMarkerPrioridade {
-	background-color: #AE432E;
-	box-shadow: 0 0 3px #999999;
-	color: #FFFFFF;
-	margin-top: 5px;
-	vertical-align: middle;
-	margin-left:10px;
-	padding-left: 8px;
-	padding-right: 8px;
-}
-#btnDownloadCompletoRS {
-	background:-moz-linear-gradient(top, #d7fa96, #abd957 5%, #78ac15 100%);
-	background:-webkit-gradient(linear, left top, left bottom, from(#d7fa96), to(#78ac15), color-stop(0.05, #abd957));
-	background:-o-linear-gradient(top, #d7fa96, #abd957 5%, #78ac15 100%);
-	-webkit-box-shadow:0 1px 2px #999;
-	-moz-box-shadow:0 1px 2px #999;
-	box-shadow:0 1px 2px #999;
-}
-
-#btnDownloadCompletoRS:hover {
-	background:-moz-linear-gradient(top, #d7fa96, #abd957 5%, #659111 100%);
-	background:-webkit-gradient(linear, left top, left bottom, from(#d7fa96), to(#659111), color-stop(0.05, #abd957));
-	background:-o-linear-gradient(top, #d7fa96, #abd957 5%, #659111 100%);
-	color:#fff;
-}
-
-#divOrdenacao, #divPaginacao, #divCamposConsulta {background-color: hsl($h, 42%, 91%)}
-#fldPartes td {vertical-align: top; padding: 10px 1px 5px 8px}
-#tbInfoProcesso td {background-color:hsl($h, 42%, 91%)}
-
-span.extraIntimacaoParte {font-weight: bold; text-shadow: 1px 1px #fff;}
-span.extraIntimacaoEntidade {color: #AE432E;}
-span.extraIntimacaoExterno {color: #058DC7;}
-
-#fldAcoes {height: 10em; position: relative;}
-
 a[href*="?acao=acessar_processo_gedpro"]  {
     bottom: 20px;
   left: 253px;
@@ -607,5 +454,5 @@ a[href*="?acao=processo_citacao"]{
   font-weight: bold;
   position: absolute;color: #444;
 }
-input:focus, button:focus, select:focus, textarea:focus {background-color: #fff}
-.infraTable button.infraButton, .infraTable button.infraButton:hover, #tbDocumentosCadastradas button.infraButton, #tbDocumentosCadastradas button.infraButton:hover {font-size: 1em; padding: 4px;}
+*/
+

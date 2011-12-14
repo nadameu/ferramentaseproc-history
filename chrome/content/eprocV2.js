@@ -81,7 +81,7 @@ var Eproc = {
                 if (!pessoa) {
                     pessoa = $('#lblInfraUnidades', window.parent.document);
                 }
-                if (new RegExp(destino + '$').test(pessoa.textContent)) {
+                if (new RegExp(destino).test(pessoa.textContent)) {
                     destino = 'VOCÊ';
                     classes.push('extraLembreteVoce');
                 }
@@ -1953,7 +1953,7 @@ var Eproc = {
                 marker.appendTo(container);
             };
 
-            this.setSelectorRules('extraMarker', 'float: left; padding: 5px; -moz-border-radius: 5px; font-size: 1.2em; color: white; margin-left: 5px;');
+            this.setSelectorRules('extraMarker', 'float: left; padding: 5px; -moz-border-radius: 5px; font-size: 1.2em; color: white; margin-left: 5px; font-weight: bold;');
         }
 
         function Marker()
@@ -1978,7 +1978,7 @@ var Eproc = {
         }
         ReuPresoMarker.prototype = new Marker();
         ReuPresoMarker.prototype.selector = 'extraMarkerReuPreso';
-        ReuPresoMarker.prototype.cssRules = 'background-color: red; font-weight: bold;';
+        ReuPresoMarker.prototype.cssRules = 'background-color: red;';
 
         function PrioridadeMarker()
         {
@@ -1986,7 +1986,7 @@ var Eproc = {
         }
         PrioridadeMarker.prototype = new Marker();
         PrioridadeMarker.prototype.selector = 'extraMarkerPrioridade';
-        PrioridadeMarker.prototype.cssRules = 'background-color: orange;';
+        PrioridadeMarker.prototype.cssRules = 'background-color: brown;';
 
         function SigiloMarker(texto)
         {
@@ -1994,7 +1994,7 @@ var Eproc = {
         }
         SigiloMarker.prototype = new Marker();
         SigiloMarker.prototype.selector = 'extraMarkerSigilo';
-        SigiloMarker.prototype.cssRules = 'background-color: white; color: red; font-weight: bold;';
+        SigiloMarker.prototype.cssRules = 'background-color: white; color: red;';
 
         var comandos = $('#divInfraBarraComandosSuperior');
         if (comandos) {
