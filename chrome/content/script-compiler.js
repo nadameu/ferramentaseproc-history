@@ -177,6 +177,14 @@ var EprocGmCompiler = {
         sandbox.GM_getBase64 = function(aUrl) { return EprocGmCompiler.getUrlContentsAsBase64(aUrl); };
         sandbox.GM_MD5 = function(word) { return MD5(word); };
         sandbox.GM_showPreferences = function() { return showPreferences(); };
+        sandbox.GM_analisarVersao = function(FeP)
+        {
+            var versionComparator = Components.classes["@mozilla.org/xpcom/version-comparator;1"].getService(Components.interfaces.nsIVersionComparator);
+            myDump(versionComparator.compare(versaoInstalada, FeP.numeroVersaoCompativel));
+            if (versionComparator.compare(versaoInstalada, FeP.numeroVersaoCompativel) >= 0) {
+                FeP.versaoUsuarioCompativel = true;
+            }
+        };
         sandbox.__proto__ = sandbox.window;
 
         try {
@@ -332,3 +340,12 @@ function myDump(aMessage)
     consoleService.logStringMessage("e-Proc: " + aMessage);
 }
 
+var versaoInstalada = '';
+if ('extensions' in Application) {
+    versaoInstalada = Application.extensions.get('eproc@nadameu.com.br').version;
+} else {
+    Application.getExtensions(function(extensions)
+    {
+        versaoInstalada = extensions.get('eproc@nadameu.com.br').version;
+    });
+}
