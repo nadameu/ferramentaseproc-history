@@ -5,23 +5,17 @@ body {
     border-color: hsl($h, 50%, 80%);
     border-left-color: hsl($h, 94%, 39%);
 }
-#divInfraAreaTela input, select {
-    background-color: hsl($h, 42%, 91%);
+input.infraText, select.infraSelect,
+select.infraSelect:focus option {
+    background-color: hsl($h, 50%, 92%);
 }
-#divInfraAreaTela input:focus {
+input:focus,
+select:focus {
     background-color: #fff;
 }
-select:focus {
-    background-color: hsla(0, 0%, 50%, 0.25);
-}
-select:focus option {
-    background-color: hsla(0, 0%, 100%, 0.25);
-}
-div.infraAjaxAutoCompletar {
-    background-color: $background;
-}
+div.infraAjaxAutoCompletar,
 div.infraAjaxAutoCompletar li {
-    background-color: hsla(0, 0%, 80%, 0.25);
+    background-color: hsl($h, 50%, 92%);
 }
 div.infraAjaxAutoCompletar li.selected {
     background-color: Highlight;
@@ -43,10 +37,10 @@ table.infraTable {
     border: none;
 }
 tr.infraTrClara {
-    background-color: hsla(0, 0%, 98%, 0.5);
+    background-color: hsl($h, 33%, 97%);
 }
 tr.infraTrEscura {
-    background-color: hsla(0, 0%, 94%, 0.5);
+    background-color: hsl($h, 33%, 95%);
 }
 tr.infraTrSelecionada td {
     background-color: hsla(0, 0%, 50%, 0.25);
@@ -248,31 +242,6 @@ button.infraButton[class~=extraBuscarPreventosButton] { font-size: .8em; }
         display: block;
     }
 }
-#cargaDocsGedpro a[href="#"],
-a.extraLinkAcao {
-    display: inline-block;
-    text-decoration: none;
-    margin: 0 .25ex .5em;
-    background-color: #ddd;
-    border: 1px outset #ddd;
-    padding: 2px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
-    color: #333;
-    line-height: 16px;
-}
-#cargaDocsGedpro a[href="#"]:hover,
-a.extraLinkAcao:hover {
-    background-color: #eee;
-    border-color: #eee;
-}
-.extraIconeAcao {
-    vertical-align: middle;
-    margin: auto 2px;
-}
-#fldAcoes.extraNaoMostrar .extraIconeAcao {
-    display: none;
-}
 fieldset.infraFieldset {
     border-style: groove;
     border-color: $background;
@@ -284,7 +253,8 @@ fieldset.infraFieldset {
     -moz-box-shadow: 1px 1px 2px hsla(0, 0%, 0%, 0.5) inset;
     border: none;
 }
-legend.infraLegendObrigatorio {
+legend.infraLegendObrigatorio,
+legend.infraLegendObrigatorioExterno {
     background: $background;
     -moz-border-radius: 5px;
     -moz-box-shadow: 2px 2px 5px hsla(0, 0%, 0%, 0.5);
@@ -345,7 +315,7 @@ fieldset.extraFieldset {
     display: inline-block;
     font-weight: bold;
 }
-span.extraIntimacaoParte {
+.extraDestaqueEventos span.extraIntimacaoParte {
     font-weight: bold;
 }
 .extraDestaqueEventos .extraEventoInterno.extraEventoDestaque td:nth-of-type(3) {
@@ -361,7 +331,7 @@ span.extraIntimacaoParte {
 }
 .extraDestaqueEventos .extraEventoExterno .extraEventoTitulo,
 .extraDestaqueEventos .extraEventoExterno td:nth-of-type(4) label,
-span.extraIntimacaoExterno {
+.extraDestaqueEventos span.extraIntimacaoExterno {
     color: hsl(198, 60%, 35%);
 }
 .extraDestaqueEventos .extraEventoExterno.extraEventoDestaque .extraEventoTitulo,
@@ -371,7 +341,7 @@ a.extraNomeParte {
 }
 .extraDestaqueEventos .extraEventoEntidade .extraEventoTitulo,
 .extraDestaqueEventos .extraEventoEntidade td:nth-of-type(4) label,
-span.extraIntimacaoEntidade {
+.extraDestaqueEventos span.extraIntimacaoEntidade {
     color: hsl(10, 60%, 35%);
 }
 .extraDestaqueEventos .extraEventoEntidade.extraEventoDestaque .extraEventoTitulo,
@@ -386,6 +356,15 @@ span.extraNomeParte {
     margin-bottom: 5px;
     -moz-border-radius: 0.5ex;
 }
+br.extraEventoSeparador {
+    display: none;
+}
+.extraDestaqueEventos br.extraEventoSeparador {
+    display: inline;
+}
+.extraDestaqueEventos span.extraEventoSeparador {
+    display: none;
+}
 .extraNomeParte {
     -moz-border-radius: 3px;
     padding: 1px 3px;
@@ -399,60 +378,92 @@ a.extraNomeParte {
     padding: 0.25em 0.5ex;
 }
 .prazoAguardaAbertura .extraEventoTitulo {
-    color: #AE432E !important; /* deixa o título vermelho mesmo sendo interno em intimações que o prazo ainda não abriu */
+    color: hsl(10, 60%, 35%) !important; /* deixa o título vermelho mesmo sendo interno em intimações que o prazo ainda não abriu */
 }
-select.infraSelect {
-    background: hsl($h, 42%, 91%) !important;
-    border-radius: 4px;
-    padding: 2px;
+select.infraSelect, input.infraText {
+    -moz-border-radius: 4px;
+    padding: 3px 1px;
+    -moz-box-shadow: 2px 2px 2px hsla(0, 0%, 0%, 0.5) inset;
+    border: none;
 }
 #divInfraAreaProcesso {
     clear: both;
 }
-/*
-a[href*="?acao=acessar_processo_gedpro"]  {
-    bottom: 20px;
-  left: 253px;
-  font-size: 1.4em;
-  font-weight: bold;
-  position: absolute;color: #444;
+input.infraButton, button.infraButton,
+a:hover input.infraButton:hover, button.infraButton:hover,
+#cargaDocsGedpro a[href="#"],
+a.extraLinkAcao,
+#btnDownloadCompletoRS,
+#btnDownloadCompletoTRF4 {
+    -moz-border-radius: 4px;
+    padding: 3px 1px;
+    -moz-box-shadow: 2px 2px 2px hsla(0, 0%, 0%, 0.5);
+    border: 1px outset hsl($h, 50%, 50%);
+    font-size: 1.2em;
 }
-a[href*="?acao=processo_lembrete_destino_cadastrar"] {
-  bottom: 20px;
-  left: 160px;
-  font-size: 1.4em;
-  font-weight: bold;
-  position: absolute;color: #444;
+input.infraButton, button.infraButton,
+#btnDownloadCompletoRS,
+#btnDownloadCompletoTRF4 {
+    background: -moz-linear-gradient(
+            hsl($h, 40%, 60%) 0%,
+            hsl($h, 60%, 40%) 100%
+        ) transparent !important;
 }
-a[href*="?acao=processo_movimento_consultar"] {
-    bottom: 20px;
-  left: 614px;
-  font-size: 1.4em;
-  font-weight: bold;
-  position: absolute;color: #444;
+input.infraButton, button.infraButton,
+input.infraButton span, button.infraButton span,
+a:hover input.infraButton:hover, button.infraButton:hover,
+#btnDownloadCompletoRS,
+#btnDownloadCompletoTRF4 {
+    font-weight: bold;
+    color: #fff;
 }
-
-a[href*="?acao=processo_intimacao"]{
-    bottom: 20px;
-  left: 540px;
-  font-size: 1.4em;
-  font-weight: bold;
-  position: absolute;color: #444;
+a:hover input.infraButton:hover, button.infraButton:hover,
+#btnDownloadCompletoRS:hover,
+#btnDownloadCompletoTRF4:hover {
+    background: -moz-linear-gradient(
+            hsl($h, 40%, 75%) 0%,
+            hsl($h, 60%, 55%) 100%
+        ) transparent !important;
 }
-a[href*="?acao=processo_intimacao_aps_bloco"] {
-    bottom: 20px;
-  left: 345px;
-  width: 8.9em;
-  font-size: 1.4em;
-  font-weight: bold;
-  position: absolute;color: #444;
+a:active input.infraButton:active, button.infraButton:active,
+#btnDownloadCompletoRS:active,
+#btnDownloadCompletoTRF4:active {
+    position: relative;
+    top: 1px;
 }
-a[href*="?acao=processo_citacao"]{
-    bottom: 20px;
-  left: 479px;
-  font-size: 1.4em;
-  font-weight: bold;
-  position: absolute;color: #444;
+#cargaDocsGedpro a[href="#"],
+a.extraLinkAcao {
+    display: inline-block;
+    text-decoration: none;
+    margin: 0 .25ex .5em;
+    background: -moz-linear-gradient(
+            hsl($h, 0%, 95%) 0%,
+            hsl($h, 0%, 80%) 100%
+        ) transparent;
+    border-color: hsl($h, 0%, 90%);
+    -moz-box-shadow: 1px 1px 2px hsla(0, 0%, 0%, 0.5);
 }
-*/
-
+#cargaDocsGedpro a[href="#"]:hover,
+a.extraLinkAcao:hover {
+    background: -moz-linear-gradient(
+            hsl($h, 0%, 100%) 0%,
+            hsl($h, 0%, 85%) 100%
+        ) transparent;
+}
+.extraIconeAcao {
+    vertical-align: middle;
+    margin: auto 2px;
+}
+#fldAcoes.extraNaoMostrar .extraIconeAcao {
+    display: none;
+}
+#fldAcoes .extraAcoesDestacadas {
+    text-align: center;
+}
+#fldAcoes .extraAcoesDestacadas a.extraLinkAcao {
+    font-weight: bold;
+    font-size: 1.4em;
+}
+#fldObsRegra #lblObsRegra {
+    position: relative;
+}

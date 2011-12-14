@@ -912,6 +912,9 @@ var Eproc = {
                 label.appendChild(naoMostrar);
                 label.appendChild(document.createTextNode(' Não mostrar ícones'));
                 legend.appendChild(label);
+                var divAcoesDestacadas = document.createElement('div');
+                divAcoesDestacadas.className = 'extraAcoesDestacadas';
+                fieldset.appendChild(divAcoesDestacadas);
             }
             acoes.forEach(function(acao)
             {
@@ -932,11 +935,13 @@ var Eproc = {
                     acao.addEventListener('click', function(e) { e.preventDefault(); }, false);
                 }
                 var acaoControlador = /\?acao=([^&]+)/.exec(acao.href);
+                var destacar = false;
                 if (acaoControlador.length == 2) {
                     var icone = null;
                     switch (acaoControlador[1]) {
                         case 'acessar_processo_gedpro':
                             icone = new ChromeIcone('ie.png');
+                            destacar = true;
                             break;
 
                         case 'acesso_usuario_processo_listar':
@@ -990,6 +995,7 @@ var Eproc = {
 
                         case 'processo_citacao':
                             icone = new ChromeIcone('newspaper.png');
+                            destacar = true;
                             break;
 
                         case 'processo_consultar':
@@ -1007,18 +1013,22 @@ var Eproc = {
                         case 'processo_intimacao':
                         case 'processo_intimacao_bloco':
                             icone = new InfraIcone('encaminhar.gif');
+                            destacar = true;
                             break;
 
                         case 'processo_intimacao_aps_bloco':
                             icone = new InfraIcone('transportar.gif');
+                            destacar = true;
                             break;
 
                         case 'processo_lembrete_destino_cadastrar':
                             icone = new InfraIcone('tooltip.gif');
+                            destacar = true;
                             break;
 
                         case 'processo_movimento_consultar':
                             icone = new InfraIcone('receber.gif');
+                            destacar = true;
                             break;
 
                         case 'processo_movimento_desativar_consulta':
@@ -1044,6 +1054,9 @@ var Eproc = {
                 }
                 if (acao.nextSibling.nodeType == document.TEXT_NODE) {
                     acao.parentNode.removeChild(acao.nextSibling);
+                }
+                if (destacar) {
+                    divAcoesDestacadas.appendChild(acao);
                 }
             });
         }
@@ -1571,14 +1584,16 @@ var Eproc = {
                             });
                             if (importante) tr.className += ' extraEventoImportante';
                         }
-                        var re = /((?: - )?)(Refer\.(?: aos?)? Eventos?:? \d+)/, referencia = re.exec(tr.cells[2].innerHTML);
-                        if (referencia) {
-                            tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '<br><span class="extraEventoSeparador">$1</span>$2');
+                        var linhas = tr.cells[2].innerHTML.split(' - ');
+                        if (linhas.length > 1) {
+                            var primeira = linhas.splice(0, 1);
+                            linhas = primeira + '<span class="extraEventoSeparador"> - </span><br class="extraEventoSeparador"/>' + linhas.join(' - ');
+                            linhas = linhas.split('<');
+                        } else {
+                            linhas = linhas[0].split('<');
                         }
-                        var linhas = tr.cells[2].innerHTML.split('<br>');
-                        var primeira = linhas.splice(0, 1);
-                        primeira = '<span class="extraEventoTitulo">' + primeira + '</span><br>';
-                        tr.cells[2].innerHTML =  primeira + linhas.join('<br>');
+                        linhas[0] = '<span class="extraEventoTitulo">' + linhas[0] + '</span>';
+                        tr.cells[2].innerHTML =  linhas.join('<');
                     }
                     if (match = tr.cells[2].innerHTML.match(/Prazo: .* Status:([^<]+)/)) {
                         if (match[1] == 'AGUARD. ABERTURA') {
@@ -1624,19 +1639,6 @@ var Eproc = {
                     } else if (/Intimação Eletrônica - Expedida\/Certificada - Pauta/.test(tr.cells[2].innerHTML)) {
                         haPrazosFechados = true;
                         tr.cells[2].className = 'prazoFechado';
-                    } else if ((re = /(<span[^>]*>)Sentença ([^-]*) - ([^<]*)<\/span><br>/).test(tr.cells[2].innerHTML)) {
-                        tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1Sentença $2</span><br>$3');
-                    } else if ((re = /(<span[^>]*>)Audiência Realizada (com|sem) ([^-]*) - ([^<]*)<\/span><br>/).test(tr.cells[2].innerHTML)) {
-                        tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1Audiência Realizada</span><br>$2 $3 - $4');
-                    } else if ((re = /(<span[^>]*>)Audiência ([^-]*) - ([^<]*)<\/span><br>/).test(tr.cells[2].innerHTML)) {
-                        tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1Audiência $2</span><br>$3');
-                    } else if ((re = /(<span[^>]*>) - SUBSTABELECIMENTO ([^<]*)<\/span><br>/).test(tr.cells[2].innerHTML)) {
-                        tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1SUBSTABELECIMENTO</span><br>$2');
-                    } else if ((re = /Intimação Eletrônica/).test(tr.cells[2].innerHTML)) {
-                    } else if ((re = /(<span[^>]*>[^-]+) - ([^<]*)<\/span><br>(.+)/).test(tr.cells[2].innerHTML)) {
-                        tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1</span><br>$2 - $3');
-                    } else if ((re = /(<span[^>]*>[^-]+) - ([^<]*)<\/span><br>/).test(tr.cells[2].innerHTML)) {
-                        tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1</span><br>$2');
                     }
                     var colunaDocumentos = tr.cells[4];
                     var tabelaDocumentos = $('table', colunaDocumentos);
