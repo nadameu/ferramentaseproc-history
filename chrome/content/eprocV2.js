@@ -466,7 +466,7 @@ var Eproc = {
             },
             esconder: function()
             {
-                this.aviso.style.display = 'none';
+                this.aviso.style.visibility = 'hidden';
             },
             atualizar: function(t) {
                 var text = 'Carregando perfil padrão em ' + t + ' ' + (t > 1 ? 'segundos' : 'segundo') + '...';
@@ -481,6 +481,7 @@ var Eproc = {
                     e.preventDefault();
                     e.stopPropagation();
                     timer.cancelar();
+                    padrao.desmarcar();
                     perfis.removeListener(timer.cancelar);
                 }, false);
                 return timer;
@@ -506,7 +507,6 @@ var Eproc = {
             {
                 window.clearInterval(timer);
                 aviso.esconder();
-                perfil.desmarcar();
             };
             timer = window.setInterval(me.executa, 1000);
         }
