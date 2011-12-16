@@ -808,6 +808,12 @@ var Eproc = {
         var pesquisaRapida = $('#txtNumProcessoPesquisaRapida');
         if (pesquisaRapida) {
             pesquisaRapida.addEventListener('change', this.onNumProcessoChange, false);
+            if ('placeholder' in pesquisaRapida) {
+                pesquisaRapida.setAttribute('placeholder', 'Nº. processo');
+                pesquisaRapida.removeAttribute('value');
+                pesquisaRapida.removeAttribute('style');
+                pesquisaRapida.removeAttribute('onclick');
+            }
         }
         var global = $('#divInfraAreaGlobal');
         if (global) {

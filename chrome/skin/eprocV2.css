@@ -444,6 +444,14 @@ a:active input.infraButton:active, button.infraButton:active,
     position: relative;
     top: 1px;
 }
+#txtNumProcessoPesquisaRapida[placeholder] {
+    width: 135px;
+    font-size: 1.1em;
+}
+#txtNumProcessoPesquisaRapida:-moz-placeholder {
+    font-style: italic;
+    color: gray;
+}
 #cargaDocsGedpro a[href="#"],
 a.extraLinkAcao {
     display: inline-block;
