@@ -1147,7 +1147,7 @@ var Eproc = {
         css = css.replace(/\$background/g, background);
         css = css.replace(/(hsla?)\(\$h, *(\d+)%, *(\d+)%\)/g, function(expr, fn, sPercent, lPercent)
         {
-            return fn + '(' + h + ', ' + (s * Number(sPercent) / 100) + '%, ' + (l * Number(lPercent) / 100) + '%)';
+            return fn + '(' + h + ', ' + (s * Number(sPercent) / 100) + '%, ' + lPercent + '%)';
         });
         css = css.replace(/(hsla?)\(\$hB, *(\d+)%, *(\d+)%\)/g, function(expr, fn, sPercent, lPercent)
         {
