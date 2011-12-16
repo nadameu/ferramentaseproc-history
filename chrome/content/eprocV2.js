@@ -346,6 +346,20 @@ var Eproc = {
             {
                 GM_setValue('v2.perfil.' + GM_MD5(this.nome), this.id);
             },
+            desmarcar: function()
+            {
+                $('input', this.row.cells[0]).checked = false;
+            },
+            disparar: function()
+            {
+                var evento = document.createEvent('MouseEvents');
+                evento.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                this.row.dispatchEvent(evento);
+            },
+            removeListener: function(fn)
+            {
+                this.row.removeEventListener('click', fn, false);
+            },
             removerNome: function()
             {
                 this.row.cells[1].textContent = this.sigla;
@@ -406,6 +420,20 @@ var Eproc = {
             aviso.inserir(this.fieldset);
             return aviso;
         };
+        Perfis.prototype.addListener = function(fn)
+        {
+            this.forEach(function(perfil)
+            {
+                perfil.addListener(fn);
+            });
+        };
+        Perfis.prototype.removeListener = function(fn)
+        {
+            this.forEach(function(perfil)
+            {
+                perfil.removeListener(fn);
+            });
+        };
         Perfis.fromFieldset = function(fieldset)
         {
             var perfis = [];
@@ -432,17 +460,17 @@ var Eproc = {
             inserir: function(parentNode)
             {
                 this.parentNode = parentNode;
-                this.parentNode.appendChild(this.aviso);
+                this.parentNode.insertBefore(this.aviso, parentNode.firstChild);
             },
             esconder: function()
             {
-                this.parentNode.removeChild(this.aviso);
+                this.aviso.style.display = 'none';
             },
             atualizar: function(t) {
                 var text = 'Carregando perfil padrão em ' + t + ' ' + (t > 1 ? 'segundos' : 'segundo') + '...';
                 this.mensagem.textContent = text;
             },
-            createTimer: function(padrao)
+            createTimer: function(padrao, perfis)
             {
                 var timer = new Timer(this, padrao);
                 padrao.selecionar();
@@ -451,6 +479,7 @@ var Eproc = {
                     e.preventDefault();
                     e.stopPropagation();
                     timer.cancelar();
+                    perfis.removeListener(timer.cancelar);
                 }, false);
                 return timer;
             }
@@ -468,30 +497,25 @@ var Eproc = {
                     aviso.atualizar(timeRemaining);
                 } else {
                     me.cancelar();
-                    var evento = document.createEvent('MouseEvents');
-                    evento.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-                    perfil.row.dispatchEvent(evento);
+                    perfil.disparar();
                 }
             };
             this.cancelar = function()
             {
                 window.clearInterval(timer);
                 aviso.esconder();
+                perfil.desmarcar();
             };
             timer = window.setInterval(me.executa, 1000);
         }
         var fieldset = $('#fldLogin');
         var perfis = Perfis.fromFieldset(fieldset);
         if (perfis.length > 0) {
-            $('#fldLogin').style.left = '15%';
             if (perfis.hasPadrao) {
                 var padrao = perfis.getPadrao();
                 var aviso = perfis.createAviso();
-                var timer = aviso.createTimer(padrao);
-                perfis.forEach(function(perfil)
-                {
-                    perfil.addListener(timer.cancelar);
-                });
+                var timer = aviso.createTimer(padrao, perfis);
+                perfis.addListener(timer.cancelar);
             }
             perfis.forEach(function(perfil)
             {
