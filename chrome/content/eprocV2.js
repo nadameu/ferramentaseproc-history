@@ -207,6 +207,12 @@ var Eproc = {
             });
         }
     },
+    corrigirCss: function(rule)
+    {
+        var extra = Eproc.getStyle('extraCorrecaoCss');
+        extra.innerHTML = 'div.infraAreaDados { height: auto !important; overflow: inherit; }';
+        extra.innerHTML += rule;
+    },
     digitar_documento: function()
     {
         unsafeWindow.FCKeditor_OnComplete = this.digitar_documento_oncomplete;
@@ -285,6 +291,7 @@ var Eproc = {
         {
             if (b < (barras.length - 1)) barra.parentNode.removeChild(barra);
     	});
+        Eproc.corrigirCss('#fldLogin { position: static; margin: 6% auto; }');
         function Perfil(perfil)
         {
             for (n in perfil) {
@@ -802,6 +809,13 @@ var Eproc = {
         if (pesquisaRapida) {
             pesquisaRapida.addEventListener('change', this.onNumProcessoChange, false);
         }
+        var global = $('#divInfraAreaGlobal');
+        if (global) {
+            var wrapper = document.createElement('div');
+            wrapper.className = 'extraWrapper';
+            global.parentNode.insertBefore(wrapper, global);
+            wrapper.appendChild(global);
+        }
         var barra = $('#divInfraBarraTribunalD');
         if (barra) {
             var div = document.createElement('div');
@@ -1078,7 +1092,7 @@ var Eproc = {
         }
         var background = 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
         var css = atob(GM_getBase64('chrome://eproc/skin/cor-capa.css'));
-        GM_addStyle(css);
+        Eproc.getStyle('extraCorCapa').innerHTML = css;
         var css = atob(GM_getBase64('chrome://eproc/skin/eprocV2.css'));
         css = css.replace(/\$background/g, background);
         css = css.replace(/\$h/g, h);

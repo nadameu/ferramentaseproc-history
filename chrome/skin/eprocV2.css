@@ -1,6 +1,19 @@
+html, body {
+    margin: 0;
+    height: 100%;
+}
 body {
     background-color: $background;
-}        
+    overflow-y: auto;
+}
+div.extraWrapper {
+    padding: 0.5625% 0;
+    height: 98%
+}
+#divInfraAreaGlobal {
+    height: 100%;
+    margin-bottom: 0.5625%;
+}
 #divInfraAreaGlobal, div.infraBarraTribunal {
     border-color: hsl($h, 50%, 80%);
     border-left-color: hsl($h, 94%, 39%);
