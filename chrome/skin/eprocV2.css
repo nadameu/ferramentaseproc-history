@@ -190,7 +190,10 @@ div.infraAjaxAutoCompletar { max-height: 30em; overflow-y: scroll; } div.infraAj
 .extraGedproRotuloBlue { color: blue; }
 .extraGedproRotuloGray { color: gray; cursor: inherit; }
 .extraGedproImg { cursor: inherit; }
-button.infraButton[class~=extraBuscarPreventosButton] { font-size: .8em; }
+button.infraButton.extraBuscarPreventosButton,
+button.infraButton.extraBuscarPreventosButton:hover {
+    font-size: .8em;
+}
 .extraLembrete {
     float: left;
     font-size: 12px;
@@ -412,7 +415,7 @@ select.infraSelect, input.infraText {
     clear: both;
 }
 input.infraButton, button.infraButton,
-a:hover input.infraButton:hover, button.infraButton:hover,
+input.infraButton:hover, button.infraButton:hover,
 #cargaDocsGedpro a[href="#"],
 a.extraLinkAcao,
 #btnDownloadCompletoRS,
@@ -433,13 +436,13 @@ input.infraButton, button.infraButton,
 }
 input.infraButton, button.infraButton,
 input.infraButton span, button.infraButton span,
-a:hover input.infraButton:hover, button.infraButton:hover,
+input.infraButton:hover, button.infraButton:hover,
 #btnDownloadCompletoRS,
 #btnDownloadCompletoTRF4 {
     font-weight: bold;
     color: #fff;
 }
-a:hover input.infraButton:hover, button.infraButton:hover,
+input.infraButton:hover, button.infraButton:hover,
 #btnDownloadCompletoRS:hover,
 #btnDownloadCompletoTRF4:hover {
     background: -moz-linear-gradient(
@@ -447,11 +450,14 @@ a:hover input.infraButton:hover, button.infraButton:hover,
             hsl($h, 60%, 55%) 100%
         ) transparent !important;
 }
-a:active input.infraButton:active, button.infraButton:active,
+input.infraButton:active, button.infraButton:active,
 #btnDownloadCompletoRS:active,
 #btnDownloadCompletoTRF4:active {
     position: relative;
     top: 1px;
+}
+input.infraButton[disabled], button.infraButton[disabled] {
+    color: #aaa;
 }
 #txtNumProcessoPesquisaRapida[placeholder] {
     width: 135px;

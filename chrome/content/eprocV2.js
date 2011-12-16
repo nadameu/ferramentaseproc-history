@@ -323,6 +323,7 @@ var Eproc = {
             addButton: function()
             {
                 var button = document.createElement('button');
+                button.className = 'infraButton';
                 button.textContent = 'Tornar padrão';
                 var me = this;
                 button.addEventListener('click', function(e)
@@ -452,6 +453,7 @@ var Eproc = {
             this.mensagem = document.createElement('label');
             this.mensagem.style.color = 'red';
             this.cancelar = document.createElement('button');
+            this.cancelar.className = 'infraButton';
             this.cancelar.textContent = 'Cancelar login automático';
             this.aviso.appendChild(this.mensagem);
             this.aviso.appendChild(this.cancelar);
