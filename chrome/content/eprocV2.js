@@ -832,7 +832,7 @@ var Eproc = {
                 var options = $$('option'), previousOption = null;
                 options.forEach(function(option) { if (option.getAttribute('selected')) previousOption = option; });
                 var msg = 'Perfil selecionado: ' + options[this.selectedIndex].textContent;
-                var nome = $('#lblInfraUnidades').textContent.match(/ - (.*) \(.*\)$/)[1];
+                var nome = $('#lblInfraUnidades').textContent.match(/ - (?:Nome\: )?(.*) \(.*\)$/)[1];
                 var msgPadrao = (this.value != GM_getValue('v2.perfil.' + GM_MD5(nome), '')) ? 'Definir este perfil como padrão' : '';
                 var padrao = {value: false};
                 var mudanca = GM_confirmCheck('Mudança de perfil', msg, msgPadrao, padrao);
