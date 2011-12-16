@@ -266,12 +266,16 @@ fieldset.infraFieldset {
     -moz-box-shadow: 1px 1px 2px hsla(0, 0%, 0%, 0.5) inset;
     border: none;
 }
+legend.infraLegend,
 legend.infraLegendObrigatorio,
 legend.infraLegendObrigatorioExterno {
-    background: $background;
     -moz-border-radius: 5px;
     -moz-box-shadow: 2px 2px 5px hsla(0, 0%, 0%, 0.5);
     padding: 2px 8px;
+}
+legend.infraLegendObrigatorio,
+legend.infraLegendObrigatorioExterno {
+    background: $background;
 }
 fieldset.extraFieldset {
     border: 2px outset hsla(0, 0%, 50%, 0.5);
@@ -334,6 +338,10 @@ fieldset.extraFieldset {
 .extraDestaqueEventos .extraEventoInterno.extraEventoDestaque td:nth-of-type(3) {
     border: 2px solid hsl(81, 60%, 35%);
 }
+.extraDestaqueEventos .extraEventoTitulo,
+.extraDestaqueEventos td:nth-of-type(4) label {
+    color: hsl(0, 0%, 35%);
+}
 .extraDestaqueEventos .extraEventoInterno .extraEventoTitulo,
 .extraDestaqueEventos .extraEventoInterno td:nth-of-type(4) label {
     color: hsl(81, 60%, 35%);
@@ -349,7 +357,7 @@ fieldset.extraFieldset {
 }
 .extraDestaqueEventos .extraEventoExterno.extraEventoDestaque .extraEventoTitulo,
 .extraDestaqueEventos .extraEventoExterno.extraEventoImportante .extraEventoTitulo,
-a.extraNomeParte {
+.extraNomeParteExterno {
     background-color: hsl(198, 60%, 35%);
 }
 .extraDestaqueEventos .extraEventoEntidade .extraEventoTitulo,
@@ -359,11 +367,12 @@ a.extraNomeParte {
 }
 .extraDestaqueEventos .extraEventoEntidade.extraEventoDestaque .extraEventoTitulo,
 .extraDestaqueEventos .extraEventoEntidade.extraEventoImportante .extraEventoTitulo,
-span.extraNomeParte {
+.extraNomeParteEntidade {
     background-color: hsl(10, 60%, 35%);
 }
 .extraDestaqueEventos .extraEventoDestaque .extraEventoTitulo,
 .extraDestaqueEventos .extraEventoImportante .extraEventoTitulo {
+    background-color: hsl(0, 0%, 35%);
     color: #fff;        
     padding: 3px;
     margin-bottom: 5px;
@@ -384,7 +393,7 @@ br.extraEventoSeparador {
     vertical-align: top;
     color: #fff;
 }
-a.extraNomeParte {
+.extraNomeParteExterno {
     margin-left: 2px;
 }
 .extraTabelaEventos td:nth-of-type(3) {

@@ -1475,6 +1475,17 @@ var Eproc = {
             }
             return false;
         }
+        function isInquerito()
+        {
+            var capa = $('#fldAssuntos');
+            if (capa) {
+                var classe = capa.getAttribute('data-classe');
+                if (classe == '000120') {
+                    return true;
+                }
+            }
+            return false;
+        }
         function VirtualLink(texto, funcao)
         {
             var vLink = document.createElement('a');
@@ -1557,22 +1568,26 @@ var Eproc = {
             'GERENTE DE CADASTROS OAB',
             'GERENTE DE ENTIDADES',
             'GERENTE DE USUÁRIOS',
-            'IMPRENSA',
+            'IMPRENSA'
+        ];
+        var USUARIOS_TERCEIROS = [
+            'AG. PREV. SOCIAL',
+            'ANALISTA AG. PREV. SOCIAL',
             'PERITO'
         ];
         var USUARIOS_ENTIDADES = [
-            'AG. PREV. SOCIAL',
-            'ANALISTA AG. PREV. SOCIAL',
             'ANALISTA PROCURADORIA',
             'AUTORIDADE',
-            'DELEGADO CHEFE DA POLÍCIA FEDERAL',
-            'DELEGADO DA POLÍCIA FEDERAL',
-            'ESCRIVÃO CHEFE DA POL. FEDERAL',
-            'ESCRIVÃO DA POLÍCIA FEDERAL',
             'GERENTE PROCURADORIA',
             'MIGRA PROCESSOS PARA ENTIDADE',
             'PROCURADOR',
             'PROCURADOR PLANTÃO'
+        ];
+        var USUARIOS_POLICIA = [
+            'DELEGADO CHEFE DA POLÍCIA FEDERAL',
+            'DELEGADO DA POLÍCIA FEDERAL',
+            'ESCRIVÃO CHEFE DA POL. FEDERAL',
+            'ESCRIVÃO DA POLÍCIA FEDERAL'
         ];
         var TIPO_PARTE = {
             DESCONHECIDO: 0,
@@ -1598,7 +1613,13 @@ var Eproc = {
                             tipo_usuario = tipo_usuario[1];
                             if (USUARIOS_EXTERNOS.indexOf(tipo_usuario) > -1) {
                                 classeTipoUsuario = 'extraEventoExterno';
-                            } else if (USUARIOS_ENTIDADES.indexOf(tipo_usuario) > -1) {
+                            } else if (USUARIOS_TERCEIROS.indexOf(tipo_usuario) > -1) {
+                                classeTipoUsuario = 'extraEventoTerceiro';
+                            } else if (! isInquerito() && USUARIOS_ENTIDADES.indexOf(tipo_usuario) > -1) {
+                                classeTipoUsuario = 'extraEventoEntidade';
+                            } else if (isInquerito() && USUARIOS_ENTIDADES.indexOf(tipo_usuario) > -1) {
+                                classeTipoUsuario = 'extraEventoTerceiro';
+                            } else if (isInquerito() && USUARIOS_POLICIA.indexOf(tipo_usuario) > -1) {
                                 classeTipoUsuario = 'extraEventoEntidade';
                             }
                         }
@@ -1619,7 +1640,7 @@ var Eproc = {
                         {
                             if (re.test(nomeEvento)) tr.className += ' extraEventoDestaque';
                         });
-                        if (classeTipoUsuario == 'extraEventoExterno' || classeTipoUsuario == 'extraEventoEntidade') {
+                        if (classeTipoUsuario == 'extraEventoExterno' || classeTipoUsuario == 'extraEventoEntidade' || classeTipoUsuario == 'extraEventoTerceiro') {
                             var importante = true;
                             [
                                 /^Distribuição/,
@@ -1893,30 +1914,41 @@ var Eproc = {
                 $$('a[href*="acao=substabelecimento_historico_listar_subfrm"]', table).forEach(function(linkSubstabelecimento)
                 {
                     for (var celula = linkSubstabelecimento.parentNode; celula.tagName.toUpperCase() != 'TD'; celula = celula.parentNode);
-                    var nomeParte;
-                    if (linkSubstabelecimento.nextSibling instanceof HTMLAnchorElement && celula.colSpan == 1) {
-                        if (celula.cellIndex == 0) {
-                            nomeTipoAutor = celula.parentNode.parentNode.rows[0].cells[0].textContent;
-                            tipoAutor = TIPO_PARTE.EXTERNO;
-                        } else if (celula.cellIndex == 1) {
-                            nomeTipoReu = celula.parentNode.parentNode.rows[0].cells[1].textContent;
-                            tipoReu = TIPO_PARTE.EXTERNO;
+                    var nomeParte, tipoParte, classeParte;
+                    var lastSpan = $('span:last-of-type', celula);
+                    if (lastSpan instanceof HTMLSpanElement) {
+                        tipoParte = /^ - (.*)$/.exec(lastSpan.textContent);
+                        if (tipoParte) {
+                            tipoParte = tipoParte[1];
                         }
-                        nomeParte = linkSubstabelecimento.nextSibling;
-                    } else if (linkSubstabelecimento.nextSibling instanceof Text) {
-                        if (linkSubstabelecimento.nextSibling.nextSibling instanceof HTMLSpanElement && celula.colSpan == 1) {
-                            if (celula.cellIndex == 0) {
-                                nomeTipoAutor = celula.parentNode.parentNode.rows[0].cells[0].textContent;
-                                tipoAutor = TIPO_PARTE.ENTIDADE;
-                            } else if (celula.cellIndex == 1) {
-                                nomeTipoReu = celula.parentNode.parentNode.rows[0].cells[1].textContent;
-                                tipoReu = TIPO_PARTE.ENTIDADE;
-                            }
-                            nomeParte = linkSubstabelecimento.nextSibling.nextSibling;
+                        if (tipoParte == 'Entidade') {
+                            tipoParte = TIPO_PARTE.ENTIDADE;
+                            classeParte = 'extraNomeParteEntidade';
+                        } else if (tipoParte == 'Pessoa Física' || tipoParte == 'Pessoa Jurídica') {
+                            tipoParte = TIPO_PARTE.EXTERNO;
+                            classeParte = 'extraNomeParteExterno';
+                        } else {
+                            tipoParte = null;
                         }
                     }
+                    if (celula.colSpan == 1) {
+                        if (celula.cellIndex == 0) {
+                            tipoAutor = tipoParte;
+                            nomeTipoAutor = celula.parentNode.parentNode.rows[0].cells[0].textContent;
+                        } else if (celula.cellIndex == 1) {
+                            tipoReu = tipoParte;
+                            nomeTipoReu = celula.parentNode.parentNode.rows[0].cells[1].textContent;
+                        }
+                    }
+                    if (tipoParte && linkSubstabelecimento.nextSibling instanceof HTMLAnchorElement) {
+                        nomeParte = linkSubstabelecimento.nextSibling;
+                    } else if (tipoParte
+                            && linkSubstabelecimento.nextSibling instanceof Text
+                            && linkSubstabelecimento.nextSibling.nextSibling instanceof HTMLSpanElement) {
+                        nomeParte = linkSubstabelecimento.nextSibling.nextSibling;
+                    }
                     if (nomeParte) {
-                        nomeParte.className = 'extraNomeParte';
+                        nomeParte.className = 'extraNomeParte ' + classeParte;
                     }
                 });
             }
