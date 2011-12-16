@@ -208,10 +208,10 @@ var EprocGmCompiler = {
             sandbox);
         } catch (e) {
             var e2 = new Error(typeof e=="string" ? e : e.message);
-            e2.fileName = script.filename;
-            e2.lineNumber = 0;
-            //GM_logError(e2);
+            e2.fileName = scriptPath;
+            e2.lineNumber = typeof e=="string" ? 0 : e.lineNumber;
             alert(e2);
+            throw e2;
         }
     },
 
