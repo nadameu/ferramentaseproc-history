@@ -1255,32 +1255,31 @@ var Eproc = {
         var docsGedpro = $('#divDocumentosGedpro');
         if (docsGedpro) {
             var linkSecao = $('#divInfraBarraTribunalE').getElementsByTagName('a')[0];
-            var estado = linkSecao.hostname.match(/\.jf(pr|rs|sc)\.(?:gov|jus)\.br/);
-            var linkGedpro = (estado && 'sc' == estado[1]) ? 'http://gedpro.jfsc.jus.br/visualizarDocumentos.asp?codigoDocumento=' : '';
+            var estado = linkSecao.hostname.match(/\.jf(pr|rs|sc)\.(?:gov|jus)\.br/), host = 'trf4', linkGedpro = null;
+            if (estado) {
+                host = 'jf' + estado[1];
+            }
+            linkGedpro = 'http://gedpro.' + host + '.jus.br/visualizarDocumentos.asp?codigoDocumento=';
             var Doc = function(processo, numero, tipo)
             {
                 this.toString = function() { return [tipo, numero].join(' '); };
-                if (!linkGedpro) {
-                    this.link = '';
-                } else {
-                    this.link = document.createElement('a');
-                    this.link.textContent = this.toString();
-                    this.link.href = linkGedpro + numero;
-                    this.link.target='_blank';
-                    this.link.addEventListener('click', (function(processo, numero) {
-                        return function(e)
-                        {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            var win = Eproc.windows['' + processo + numero];
-                            if (typeof win == 'object' && !win.closed) {
-                                return win.focus();
-                            } else {
-                                Eproc.windows['' + processo + numero] = window.open(e.target.href, '' + processo + numero, 'menubar=0,resizable=1,status=0,toolbar=0,location=0,directories=0,scrollbars=1');
-                            }
-                        };
-                    })(processo, numero), false);
-                }
+                this.link = document.createElement('a');
+                this.link.textContent = this.toString();
+                this.link.href = linkGedpro + numero;
+                this.link.target='_blank';
+                this.link.addEventListener('click', (function(processo, numero) {
+                    return function(e)
+                    {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        var win = Eproc.windows['' + processo + numero];
+                        if (typeof win == 'object' && !win.closed) {
+                            return win.focus();
+                        } else {
+                            Eproc.windows['' + processo + numero] = window.open(e.target.href, '' + processo + numero, 'menubar=0,resizable=1,status=0,toolbar=0,location=0,directories=0,scrollbars=1');
+                        }
+                    };
+                })(processo, numero), false);
             };
             Doc.fromRow = function(row) {
                 var processo = row.cells[0].textContent;
