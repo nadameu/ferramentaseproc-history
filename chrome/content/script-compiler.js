@@ -219,7 +219,7 @@ var EprocGmCompiler = {
     {
         if (Cu && Cu.Sandbox) {
             // DP beta+
-            Cu.evalInSandbox(code, sandbox, "1.8.1", codebase, 1);
+            Cu.evalInSandbox(code, sandbox, "1.8", codebase, 1);
         } else if (Cu && Cu.evalInSandbox) {
             // DP alphas
             Cu.evalInSandbox(code, codebase, sandbox);
