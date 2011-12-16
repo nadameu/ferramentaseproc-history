@@ -15,8 +15,8 @@ div.extraWrapper {
     margin-bottom: 0.5625%;
 }
 #divInfraAreaGlobal, div.infraBarraTribunal {
-    border-color: hsl($h, 50%, 80%);
-    border-left-color: hsl($h, 94%, 39%);
+    border-color: hsl($hB, 50%, 80%);
+    border-left-color: hsl($hB, 94%, 39%);
 }
 input.infraText, select.infraSelect,
 select.infraSelect:focus option {
@@ -65,7 +65,7 @@ tr.infraTrMarcada td {
     background-color: hsla(0, 0%, 50%, 0.375);
 }
 #tabLocalizadores tr.infraTrMarcada td {
-    background-color: hsl($h, 78%, 38%);
+    background-color: hsl($hB, 78%, 38%);
     color: #fff;
     text-shadow: 0 1px 2px #666666;
 }
@@ -83,7 +83,7 @@ a.docLink {
     border-color: $background !important;
 }
 div.infraBarraTribunal {
-    background-color: hsl($h, 50%, 50%);
+    background-color: hsl($hB, 50%, 50%);
 }
 #divInfraBarraSistema + div img {
     display: none;
@@ -120,7 +120,7 @@ div.infraBarraTribunal {
 #divInfraBarraSistema,
 #divInfraBarraSistema + div:before,
 #divInfraBarraSistema + div:after {
-    background-color: hsl($h, 75%, 50%) !important;
+    background-color: hsl($hB, 75%, 50%) !important;
 }
 div.infraBarraTribunalE, div.infraBarraTribunalD {
     width: auto;
@@ -423,15 +423,15 @@ a.extraLinkAcao,
     -moz-border-radius: 4px;
     padding: 3px 1px;
     -moz-box-shadow: 2px 2px 2px hsla(0, 0%, 0%, 0.5);
-    border: 1px outset hsl($h, 50%, 50%);
+    border: 1px outset hsl($hB, 50%, 50%);
     font-size: 1.2em;
 }
 input.infraButton, button.infraButton,
 #btnDownloadCompletoRS,
 #btnDownloadCompletoTRF4 {
     background: -moz-linear-gradient(
-            hsl($h, 40%, 60%) 0%,
-            hsl($h, 60%, 40%) 100%
+            hsl($hB, 40%, 60%) 0%,
+            hsl($hB, 60%, 40%) 100%
         ) transparent !important;
 }
 input.infraButton, button.infraButton,
@@ -446,8 +446,8 @@ input.infraButton:hover, button.infraButton:hover,
 #btnDownloadCompletoRS:hover,
 #btnDownloadCompletoTRF4:hover {
     background: -moz-linear-gradient(
-            hsl($h, 40%, 75%) 0%,
-            hsl($h, 60%, 55%) 100%
+            hsl($hB, 40%, 75%) 0%,
+            hsl($hB, 60%, 55%) 100%
         ) transparent !important;
 }
 input.infraButton:active, button.infraButton:active,
@@ -473,17 +473,17 @@ a.extraLinkAcao {
     text-decoration: none;
     margin: 0 .25ex .5em;
     background: -moz-linear-gradient(
-            hsl($h, 0%, 95%) 0%,
-            hsl($h, 0%, 80%) 100%
+            hsl(0, 0%, 95%) 0%,
+            hsl(0, 0%, 80%) 100%
         ) transparent;
-    border-color: hsl($h, 0%, 90%);
+    border-color: hsl(0, 0%, 90%);
     -moz-box-shadow: 1px 1px 2px hsla(0, 0%, 0%, 0.5);
 }
 #cargaDocsGedpro a[href="#"]:hover,
 a.extraLinkAcao:hover {
     background: -moz-linear-gradient(
-            hsl($h, 0%, 100%) 0%,
-            hsl($h, 0%, 85%) 100%
+            hsl(0, 0%, 100%) 0%,
+            hsl(0, 0%, 85%) 100%
         ) transparent;
 }
 .extraIconeAcao {

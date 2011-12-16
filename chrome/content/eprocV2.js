@@ -778,12 +778,17 @@ var Eproc = {
                 cor.textContent = 'Cor ' + c;
                 cor.addEventListener('click', function()
                 {
-                    Eproc.salvaFundo(h, s, l);
+                    Eproc.salvaFundo(h, s, l, (s == 0 ? (Eproc.isSegundoGrau() ? 10 : 210) : h), (s == 0 && l < 100 ? 0 : 100), 100);
                 }, false);
+                cor.addEventListener('mouseover', function()
+                {
+                    Eproc.mudaEstilosTemporariamente(h, s, l, (s == 0 ? (Eproc.isSegundoGrau() ? 10 : 210) : h), (s == 0 && l < 100 ? 0 : 100), 100);
+                }, false);
+                cor.addEventListener('mouseout', Eproc.removeEstilosTemporarios, false);
                 return cor;
             }
             for (var c = 1; c <= 14; c++) {
-                var h = 81, s = 0, l = 96;
+                var h = 0, s = 0, l = 96;
                 if (c == 1) {
                     l = 100;
                 } else if (c == 14) {
@@ -800,15 +805,24 @@ var Eproc = {
         var barraSistema = $('.infraBarraSistema'), lembretes = $$('.infraTable[summary="Lembretes"]');
         var getFundoUsuario = function()
         {
-            var hsl = /^\d+\/\d+\/\d+$/.test(GM_getValue('v2.fundo')) ? GM_getValue('v2.fundo') : '81/0/100';
+            return getCorUsuario('fundo');
+        };
+        var getBarraUsuario = function()
+        {
+            return getCorUsuario('barra');
+        };
+        var getCorUsuario = function(prop)
+        {
+            var hsl = /^\d+\/\d+\/\d+$/.test(GM_getValue('v2.' + prop + '.' + (Eproc.isSegundoGrau() ? '2g' : '1g'), '')) ? GM_getValue('v2.' + prop + '.' + (Eproc.isSegundoGrau() ? '2g' : '1g')) : (prop == 'fundo' ? '0/0/100' : (Eproc.isSegundoGrau() ? '10/100/100' : '210/100/100'));
             var h, s, l;
             [h, s, l] = hsl.split('/');
-            var fundoUsuario = { hsl: hsl, h: h, s: s, l: l };
-            return fundoUsuario;
+            var corUsuario = { hsl: hsl, h: h, s: s, l: l };
+            return corUsuario;
         };
         var fundoUsuario = getFundoUsuario();
+        var barraUsuario = getBarraUsuario();
         if (barraSistema || lembretes.length) {
-            Eproc.mudaEstilos(fundoUsuario.h, fundoUsuario.s, fundoUsuario.l);
+            Eproc.mudaEstilos(fundoUsuario.h, fundoUsuario.s, fundoUsuario.l, barraUsuario.h, barraUsuario.s, barraUsuario.l);
         }
         var unidades = $('#selInfraUnidades');
         if (unidades) {
@@ -1117,20 +1131,31 @@ var Eproc = {
             return acoes;
         }
     },
-    mudaEstilos: function(h, s, l)
+    mudaEstilos: function(h, s, l, hB, sB, lB, temporario)
     {
+        if (typeof temporario == 'undefined') temporario = false;
         if (typeof h == 'undefined') {
             h = 0, s = 0, l = 100;
+        }
+        if (typeof hB == 'undefined') {
+            hB = 210, sB = 100, lB = 100;
         }
         var background = 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
         var css = atob(GM_getBase64('chrome://eproc/skin/cor-capa.css'));
         Eproc.getStyle('extraCorCapa').innerHTML = css;
         var css = atob(GM_getBase64('chrome://eproc/skin/eprocV2.css'));
         css = css.replace(/\$background/g, background);
-        css = css.replace(/\$h/g, h);
+        css = css.replace(/(hsla?)\(\$h, *(\d+)%, *(\d+)%\)/g, function(expr, fn, sPercent, lPercent)
+        {
+            return fn + '(' + h + ', ' + (s * Number(sPercent) / 100) + '%, ' + (l * Number(lPercent) / 100) + '%)';
+        });
+        css = css.replace(/(hsla?)\(\$hB, *(\d+)%, *(\d+)%\)/g, function(expr, fn, sPercent, lPercent)
+        {
+            return fn + '(' + hB + ', ' + (sB * Number(sPercent) / 100) + '%, ' + (lB * Number(lPercent) / 100) + '%)';
+        });
         css = css.replace(/\$s/g, s);
         css = css.replace(/\$l/g, l);
-        var estilo = Eproc.getExtraMainStyle();
+        var estilo = temporario ? Eproc.getStyle('extraMainTemp') : Eproc.getExtraMainStyle();
         estilo.innerHTML = css;
         $$('label[onclick^="listarTodos"], label[onclick^="listarEventos"], #txtEntidade, #txtPessoaEntidade').forEach(function(auto)
         {
@@ -1141,10 +1166,21 @@ var Eproc = {
           }
         }, this);
     },
-    salvaFundo: function(h, s, l)
+    mudaEstilosTemporariamente: function(h, s, l, hB, sB, lB)
     {
-        GM_setValue('v2.fundo', h + '/' + s + '/' + l);
-        Eproc.mudaEstilos(h, s, l);
+        Eproc.mudaEstilos(h, s, l, hB, sB, lB, true);
+    },
+    removeEstilosTemporarios: function()
+    {
+        var estilos = Eproc.getStyle('extraMainTemp');
+        estilos.parentNode.removeChild(estilos);
+    },
+    salvaFundo: function(h, s, l, hB, sB, lB)
+    {
+        var grau = Eproc.isSegundoGrau() ? '2g' : '1g';
+        GM_setValue('v2.fundo.' + grau, h + '/' + s + '/' + l);
+        GM_setValue('v2.barra.' + grau, hB + '/' + sB + '/' + lB);
+        Eproc.mudaEstilos(h, s, l, hB, sB, lB);
     },
     painel_secretaria_listar: function()
     {
