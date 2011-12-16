@@ -61,6 +61,9 @@
                         </columns>
                         <rows>
                             <row align="center">
+                                <checkbox id="v2_eventosdestacados" label="Destacar eventos por tipo de usuário"/>
+                            </row>
+                            <row align="center">
                                 <checkbox id="v2_semdestaque" label="Sem destaque para eventos fechados"/>
                             </row>
                             <row align="center">
