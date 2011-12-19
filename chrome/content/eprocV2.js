@@ -652,6 +652,7 @@ var Eproc = {
                     link.textContent = texto;
                     link.addEventListener('click', function(e) {
                         var newLink = document.createElement('a');
+                        newLink.className = 'extraLinkAcao';
                         newLink.href = 'http://' + Eproc.loginGedpro.host + '/XMLInterface.asp?processo=' + Eproc.processo + '&ProcessoVisual=PV&grupos=0&pgtree=' + pagina;
                         newLink.textContent = 'Carregando documentos do GEDPRO...';
                         newLink.addEventListener('click', function(e)
@@ -1379,6 +1380,7 @@ var Eproc = {
             linkGedpro.removeAttribute('onclick');
             linkGedpro.target = '_blank';
             var linkCargaDocs = document.createElement('a');
+            linkCargaDocs.className = 'extraLinkAcao';
             linkGedpro.addEventListener('click', function(e)
             {
                 e.preventDefault();
@@ -1432,6 +1434,7 @@ var Eproc = {
                 Eproc.getDocsGedpro();
             };
             var linkCargaDocs = new VirtualLink('Carregar documentos do GEDPRO', onLinkCargaDocsClick);
+            linkCargaDocs.className = 'extraLinkAcao';
             div.appendChild(linkCargaDocs);
             processo.insertBefore(div, tabelas[tabelas.length - 1]);
             processo.insertBefore(document.createElement('br'), tabelas[tabelas.length - 1]);
