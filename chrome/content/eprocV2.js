@@ -819,9 +819,9 @@ var Eproc = {
             var corUsuario = { hsl: hsl, h: h, s: s, l: l };
             return corUsuario;
         };
-        var fundoUsuario = getFundoUsuario();
-        var barraUsuario = getBarraUsuario();
         if (barraSistema || lembretes.length) {
+            var fundoUsuario = getFundoUsuario();
+            var barraUsuario = getBarraUsuario();
             Eproc.mudaEstilos(fundoUsuario.h, fundoUsuario.s, fundoUsuario.l, barraUsuario.h, barraUsuario.s, barraUsuario.l);
         }
         var unidades = $('#selInfraUnidades');
