@@ -222,4 +222,6 @@ fieldset.extraFieldset {
     font-weight: bold;
     float: left;
 }
-
+#divInfraAreaProcesso {
+    clear: both;
+}
