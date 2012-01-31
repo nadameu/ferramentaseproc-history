@@ -1142,8 +1142,6 @@ var Eproc = {
             hB = 210, sB = 100, lB = 100;
         }
         var background = 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
-        var css = atob(GM_getBase64('chrome://eproc/skin/cor-capa.css'));
-        Eproc.getStyle('extraCorCapa').innerHTML = css;
         var css = atob(GM_getBase64('chrome://eproc/skin/eprocV2.css'));
         css = css.replace(/\$background/g, background);
         css = css.replace(/(hsla?)\(\$h, *(\d+)%, *(\d+)%\)/g, function(expr, fn, sPercent, lPercent)
