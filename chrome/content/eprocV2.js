@@ -2339,7 +2339,7 @@ var Eproc = {
     getEstado: function()
     {
         var linkSecao = $('#divInfraBarraTribunalE a');
-        var estado = linkSecao.hostname.match(/\.jf(pr|rs|sc)\.(?:gov|jus)\.br/);
+        var estado = (linkSecao ? linkSecao.hostname : location.hostname).match(/\.jf(pr|rs|sc)\.(?:gov|jus)\.br/);
         if (estado) return estado[1];
         else return null;
     },
