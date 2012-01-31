@@ -18,12 +18,13 @@ div.extraWrapper {
     border-color: hsl($hB, 50%, 80%);
     border-left-color: hsl($hB, 94%, 39%);
 }
-input.infraText, select.infraSelect,
+input.infraText, select.infraSelect, textarea.infraTextarea,
 select.infraSelect:focus option {
     background-color: hsl($h, 50%, 92%);
 }
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
     background-color: #fff;
 }
 div.infraAjaxAutoCompletar,
@@ -405,7 +406,7 @@ br.extraEventoSeparador {
 .prazoAguardaAbertura .extraEventoTitulo {
     color: hsl(10, 60%, 35%) !important; /* deixa o título vermelho mesmo sendo interno em intimações que o prazo ainda não abriu */
 }
-select.infraSelect, input.infraText {
+select.infraSelect, input.infraText, textarea.infraTextarea {
     -moz-border-radius: 4px;
     padding: 3px 1px;
     -moz-box-shadow: 2px 2px 2px hsla(0, 0%, 0%, 0.5) inset;
