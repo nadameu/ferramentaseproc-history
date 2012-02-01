@@ -1735,14 +1735,6 @@ var Eproc = {
         PrioridadeMarker.prototype.selector = 'extraMarkerPrioridade';
         PrioridadeMarker.prototype.cssRules = 'background-color: orange;';
 
-        function SigiloMarker(texto)
-        {
-            this.create(texto);
-        }
-        SigiloMarker.prototype = new Marker();
-        SigiloMarker.prototype.selector = 'extraMarkerSigilo';
-        SigiloMarker.prototype.cssRules = 'background-color: white; color: red; font-weight: bold;';
-
         var comandos = $('#divInfraBarraComandosSuperior');
         if (comandos) {
             var markers = new MarkersContainer(comandos);
@@ -1754,13 +1746,6 @@ var Eproc = {
             var prioridade = getPrioridadeText();
             if (prioridade == 'Sim') {
                 markers.add(new PrioridadeMarker());
-            }
-            var sigilo = getSigiloText();
-            if (sigilo) {
-                var nivel = /[2345]/.exec(sigilo) || (sigilo == 'Segredo de Justiça' ? 1 : 0);
-                if (nivel > 0) {
-                    markers.add(new SigiloMarker(sigilo));
-                }
             }
         }
 
@@ -1774,10 +1759,6 @@ var Eproc = {
                 }
                 container.parentNode.removeChild(container);
             }
-        }
-        function getSigiloText()
-        {
-            return getLabelValue('Nível de Sigilo do Processo: ');
         }
         function getPrioridadeText()
         {
