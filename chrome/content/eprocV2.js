@@ -699,6 +699,9 @@ var Eproc = {
     },
     init: function()
     {
+        if (unsafeWindow.FeP) {
+            GM_analisarVersao(unsafeWindow.FeP);
+        }
         if (document.body && document.body.hasAttribute('onload')) {
             document.body.setAttribute('onload', document.body.getAttribute('onload').replace('infraProcessarResize();', ''));
         }
