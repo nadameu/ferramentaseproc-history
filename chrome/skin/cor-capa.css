@@ -23,7 +23,7 @@ tr.infraTrClara[data-classe='000120'], tr.infraTrEscura[data-classe='000120'], f
 tr.infraTrClara[data-classe='000169'][data-competencia='10'], tr.infraTrEscura[data-classe='000169'][data-competencia='10'], fieldset.infraFieldset[data-classe='000169'][data-competencia='10'] /* PROCEDIMENTO COMUM DO JUIZADO ESPECIAL CÍVEL */, 
 tr.infraTrClara[data-classe='000178'], tr.infraTrEscura[data-classe='000178'], fieldset.infraFieldset[data-classe='000178'] /* PROCEDIMENTO ESP.DOS CRIMES DE RESPONSABILIDADE DE FUNC.PUBL. */, 
 tr.infraTrClara[data-classe='000179'], tr.infraTrEscura[data-classe='000179'], fieldset.infraFieldset[data-classe='000179'] /* PROCEDIMENTO ESP.SUMÁRIO */ {
-    background-color: #b8daf7 /* azul */;
+    background-color: #87adcd /* azul */;
 }
 
 /* azul claro */
@@ -33,7 +33,7 @@ tr.infraTrClara[data-classe='000171'], tr.infraTrEscura[data-classe='000171'], f
 tr.infraTrClara[data-classe='000172'], tr.infraTrEscura[data-classe='000172'], fieldset.infraFieldset[data-classe='000172'] /* PROCEDIMENTO ESP.DA LEI DE IMPRENSA */, 
 tr.infraTrClara[data-classe='000174'], tr.infraTrEscura[data-classe='000174'], fieldset.infraFieldset[data-classe='000174'] /* PROCEDIMENTO ESP.DOS CRIMES CONTRA A PROPRIEDADE IMATERIAL */, 
 tr.infraTrClara[data-classe='000175'], tr.infraTrEscura[data-classe='000175'], fieldset.infraFieldset[data-classe='000175'] /* PROCEDIMENTO ESP.DOS CRIMES DE ABUSO DE AUTORIDADE */ {
-    background-color: #daedff /* azul claro */;
+    background-color: #c4dffb /* azul claro */;
 }
 
 /* bege */
@@ -134,13 +134,13 @@ tr.infraTrClara[data-classe='000099'], tr.infraTrEscura[data-classe='000099'], f
 tr.infraTrClara[data-classe='000200'], tr.infraTrEscura[data-classe='000200'], fieldset.infraFieldset[data-classe='000200'] /* REVISÃO CRIMINAL */, 
 tr.infraTrClara[data-classe='000201'], tr.infraTrEscura[data-classe='000201'], fieldset.infraFieldset[data-classe='000201'] /* SUSPENSÃO DE LIMINAR */, 
 tr.infraTrClara[data-classe='000202'], tr.infraTrEscura[data-classe='000202'], fieldset.infraFieldset[data-classe='000202'] /* SUSPENSÃO DE SEGURANÇA */ {
-    background-color: #ffc95f /* laranja */;
+    background-color: #f5b574 /* laranja */;
 }
 
 /* marrom */
 tr.infraTrClara[data-classe='000169'], tr.infraTrEscura[data-classe='000169'], fieldset.infraFieldset[data-classe='000169'] /* PROCEDIMENTO COMUM DO JUIZADO ESPECIAL CÍVEL */, 
 tr.infraTrClara[data-classe='000177'], tr.infraTrEscura[data-classe='000177'], fieldset.infraFieldset[data-classe='000177'] /* PROCEDIMENTO ESP.DOS CRIMES DE COMPETÊNCIA DO JÚRI */ {
-    background-color: #d3a16f /* marrom */;
+    background-color: #bf936a /* marrom */;
 }
 
 /* rosa */
@@ -252,7 +252,7 @@ tr.infraTrClara[data-classe='000198'], tr.infraTrEscura[data-classe='000198'], f
 tr.infraTrClara[data-classe='000698'], tr.infraTrEscura[data-classe='000698'], fieldset.infraFieldset[data-classe='000698'] /* RESTAURAÇÃO DE AUTOS JEF */, 
 tr.infraTrClara[data-classe='000898'], tr.infraTrEscura[data-classe='000898'], fieldset.infraFieldset[data-classe='000898'] /* RESTAURAÇÃO DE AUTOS TR */, 
 tr.infraTrClara[data-classe='000199'], tr.infraTrEscura[data-classe='000199'], fieldset.infraFieldset[data-classe='000199'] /* RETIFICAÇÃO DE REGISTRO DE IMÓVEL */ {
-    background-color: #b6e35b /* verde */;
+    background-color: #a7eda7 /* verde */;
 }
 
 /* vermelho */
@@ -260,7 +260,7 @@ tr.infraTrClara[data-classe='000730'], tr.infraTrEscura[data-classe='000730'], f
 tr.infraTrClara[data-classe='000173'], tr.infraTrEscura[data-classe='000173'], fieldset.infraFieldset[data-classe='000173'] /* PROCEDIMENTO ESP.DO JUIZADO ESPECIAL CRIMINAL */, 
 tr.infraTrClara[data-classe='000176'], tr.infraTrEscura[data-classe='000176'], fieldset.infraFieldset[data-classe='000176'] /* PROCEDIMENTO ESP.DOS CRIMES DE CALÚNIA E INJÚRIA */, 
 tr.infraTrClara[data-classe='000203'], tr.infraTrEscura[data-classe='000203'], fieldset.infraFieldset[data-classe='000203'] /* TERMO CIRCUNSTANCIADO */ {
-    background-color: #da7c79 /* vermelho */;
+    background-color: #db8080 /* vermelho */;
 }
 
 /*
@@ -284,7 +284,7 @@ tr.infraTrClara[data-classe='372'], tr.infraTrEscura[data-classe='372'], fieldse
 tr.infraTrClara[data-classe='94'], tr.infraTrEscura[data-classe='94'], fieldset.infraFieldset[data-classe='94'] /* Apelação Criminal */, 
 tr.infraTrClara[data-classe='418'], tr.infraTrEscura[data-classe='418'], fieldset.infraFieldset[data-classe='418'] /* Reexame Necessário Criminal */, 
 tr.infraTrClara[data-classe='760'], tr.infraTrEscura[data-classe='760'], fieldset.infraFieldset[data-classe='760'] /* Revisão Criminal (Seção) */ {
-    background-color: #b8daf7 /* azul */;
+    background-color: #87adcd /* azul */;
 }
 
 /* branco */
@@ -375,5 +375,5 @@ tr.infraTrClara[data-classe='780'], tr.infraTrEscura[data-classe='780'], fieldse
 tr.infraTrClara[data-classe='878'], tr.infraTrEscura[data-classe='878'], fieldset.infraFieldset[data-classe='878'] /* Incidente de Falsidade (Corte Especial) */, 
 tr.infraTrClara[data-classe='882'], tr.infraTrEscura[data-classe='882'], fieldset.infraFieldset[data-classe='882'] /* Incidente de Falsidade (Seção) */, 
 tr.infraTrClara[data-classe='895'], tr.infraTrEscura[data-classe='895'], fieldset.infraFieldset[data-classe='895'] /* Incidente de Falsidade (Turma) */ {
-    background-color: #b6e35b /* verde */;
+    background-color: #a7eda7 /* verde */;
 }

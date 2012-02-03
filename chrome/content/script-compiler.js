@@ -6,7 +6,6 @@ var EprocChrome = {};
         var ec = EprocChrome;
         ec.__defineGetter__(moduleName, function()
         {
-            myDump('importando ' + moduleName + '...');
             delete ec[moduleName];
             Cu['import']('resource://eproc/' + moduleName + '.jsm', ec);
             return ec[moduleName];
@@ -114,17 +113,17 @@ var EprocGmCompiler = {
 
         if (EprocGmCompiler.isGreasemonkeyable(href)) {
             var prefs = new EprocPreferences();
-            var script = false;
+            var scriptPath = false;
             var uri = new EprocChrome.Uri(href);
             if (uri.isV1()) {
                 if (prefs.getValue('v1.enable')) {
                     var controlador = uri.getControlador();
                     var arquivo = uri.getArquivo();
                     if (['consulta_processo', 'html_to_pdf', 'alteracao_assunto'].indexOf(controlador) > -1 && prefs.getValue('v1.' + controlador + '.enable')) {
-                        script = EprocGmCompiler.getUrlContents('chrome://eproc/content/' + controlador + '.js');
+                        scriptPath = 'chrome://eproc/content/' + controlador + '.js';
                     } else if (['download_documento', 'arvore'].indexOf(controlador) > -1 || /^(class|download)\//.test(arquivo)) {
                     } else if (prefs.getValue('v1.eproc.enable')) {
-                        script = EprocGmCompiler.getUrlContents('chrome://eproc/content/eproc.js');
+                        scriptPath = 'chrome://eproc/content/eproc.js';
                     }
                 }
             } else if (uri.isV2()) {
@@ -132,14 +131,17 @@ var EprocGmCompiler = {
                 var query = uri.getQuery();
                 if (controlador == 'controlador' && /^acao=acessar_documento_implementacao/.test(query)) {
                 } else if (prefs.getValue('v2.enable')) {
-                    script = EprocGmCompiler.getUrlContents('chrome://eproc/content/eprocV2.js');
+                    scriptPath = 'chrome://eproc/content/eprocV2.js';
                 }
             }
-            if (script) EprocGmCompiler.injectScript(script, href, unsafeWin);
+            if (scriptPath) {
+                var script = EprocGmCompiler.getUrlContents(scriptPath);
+                EprocGmCompiler.injectScript(script, href, unsafeWin, scriptPath);
+            }
         }
     },
 
-    injectScript: function(script, url, unsafeContentWin)
+    injectScript: function(script, url, unsafeContentWin, scriptPath)
     {
         var sandbox, script, logger, storage, xmlhttpRequester;
         var safeWin = new XPCNativeWrapper(unsafeContentWin);
@@ -193,7 +195,6 @@ var EprocGmCompiler = {
         sandbox.GM_analisarVersao = function(FeP)
         {
             var versionComparator = Components.classes["@mozilla.org/xpcom/version-comparator;1"].getService(Components.interfaces.nsIVersionComparator);
-            myDump(versionComparator.compare(versaoInstalada, FeP.numeroVersaoCompativel));
             if (versionComparator.compare(versaoInstalada, FeP.numeroVersaoCompativel) >= 0) {
                 FeP.versaoUsuarioCompativel = true;
             }
@@ -203,14 +204,14 @@ var EprocGmCompiler = {
         try {
             this.evalInSandbox(
             "(function(){"+script+"})()",
-            url,
+            scriptPath,
             sandbox);
         } catch (e) {
             var e2 = new Error(typeof e=="string" ? e : e.message);
-            e2.fileName = script.filename;
-            e2.lineNumber = 0;
-            //GM_logError(e2);
+            e2.fileName = scriptPath;
+            e2.lineNumber = typeof e=="string" ? 0 : e.lineNumber;
             alert(e2);
+            throw e2;
         }
     },
 
@@ -218,7 +219,7 @@ var EprocGmCompiler = {
     {
         if (Cu && Cu.Sandbox) {
             // DP beta+
-            Cu.evalInSandbox(code, sandbox);
+            Cu.evalInSandbox(code, sandbox, "1.8", codebase, 1);
         } else if (Cu && Cu.evalInSandbox) {
             // DP alphas
             Cu.evalInSandbox(code, codebase, sandbox);

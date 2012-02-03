@@ -81,7 +81,7 @@ var Eproc = {
                 if (!pessoa) {
                     pessoa = $('#lblInfraUnidades', window.parent.document);
                 }
-                if (new RegExp(destino + '$').test(pessoa.textContent)) {
+                if (new RegExp(destino).test(pessoa.textContent)) {
                     destino = 'VOCÊ';
                     classes.push('extraLembreteVoce');
                 }
@@ -207,6 +207,12 @@ var Eproc = {
             });
         }
     },
+    corrigirCss: function(rule)
+    {
+        var extra = Eproc.getStyle('extraCorrecaoCss');
+        extra.innerHTML = 'div.infraAreaDados { height: auto !important; overflow: inherit; }';
+        extra.innerHTML += rule;
+    },
     digitar_documento: function()
     {
         unsafeWindow.FCKeditor_OnComplete = this.digitar_documento_oncomplete;
@@ -243,7 +249,8 @@ var Eproc = {
                     imgUrl.push('imagens');
                     imgUrl.push('brasao_pb.jpg');
                     imgUrl = imgUrl.join('/');
-                    oTexto.SetHTML('<html lang="pt-BR" dir="ltr"><head><title>' + sTitulo.replace(/<[^>]+>/g, '') + '</title><style type="text/css">.header { font-family: Helvetica; font-size: 10pt; } .title { font-family: Times; font-size: 14pt; font-weight: bold; } .text { font-family: Times; font-size: 13pt; } .signature { font-family: Times; font-size: 12pt; font-weight: bold; font-style: italic; } .dados { font-family: Times; font-size: 13pt; font-weight: bold; }</style></head><body bgcolor="white"><div class="header" align="center"><img width="85" height="86" src="' + imgUrl + '"></div><div class="header" align="center">PODER JUDICIÁRIO</div><div class="header" align="center"><strong>JUSTIÇA FEDERAL</div><div class="header" align="center"></strong>' + GM_getValue('v1.secao') + '</div><div class="header" align="center">' + GM_getValue('v1.subsecao') + '</div><div class="header" align="center">' + GM_getValue('v1.vara') + '</div><p class="text" align="justify">&nbsp;</p>' + (info ? '<div class="dados" align="left">PROCESSO: ' + processo + '</div><div class="dados" align="left">AUTOR: ' + autor + '</div><div class="dados" align="left">RÉU: ' + reu + '</div><p class="text" align="justify">&nbsp;</p>' : '') + '<p class="title" align="center">' + sTitulo + '</p><p class="text" align="justify">&nbsp;</p><p class="text" align="justify">' + sConteudo + '</p><p class="text" align="justify">&nbsp;</p><p class="text" align="justify">&nbsp;</p><p class="text" align="justify">&nbsp;</p><p class="signature" align="center">documento assinado eletronicamente</p></body></html>');
+                    imgUrl = 'data:image/jpeg;base64,' + GM_getBase64('chrome://eproc/skin/Logo_JF.jpg') + '==.jpg';
+                    oTexto.SetHTML('<html lang="pt-BR" dir="ltr"><head><title>' + sTitulo.replace(/<[^>]+>/g, '') + '</title><style type="text/css">.header { font-family: Calibri, Helvetica, sans-serif; font-size: 9pt; } .title { font-family: Times; font-size: 14pt; font-weight: bold; } .text { font-family: Times; font-size: 13pt; } .signature { font-family: Times; font-size: 12pt; font-weight: bold; font-style: italic; } .dados { font-family: Times; font-size: 13pt; font-weight: bold; }</style></head><body bgcolor="white"><div class="header" align="center"><img width="135" height="100" src="' + imgUrl + '" alt="Logo JF"></div><div class="header" align="center"></strong>' + GM_getValue('v1.secao') + '</div><div class="header" align="center">' + GM_getValue('v1.subsecao') + '</div><div class="header" align="center">' + GM_getValue('v1.vara') + '</div><p class="text" align="justify">&nbsp;</p>' + (info ? '<div class="dados" align="left">PROCESSO: ' + processo + '</div><div class="dados" align="left">AUTOR: ' + autor + '</div><div class="dados" align="left">RÉU: ' + reu + '</div><p class="text" align="justify">&nbsp;</p>' : '') + '<p class="title" align="center">' + sTitulo + '</p><p class="text" align="justify">&nbsp;</p><p class="text" align="justify">' + sConteudo + '</p><p class="text" align="justify">&nbsp;</p><p class="text" align="justify">&nbsp;</p><p class="text" align="justify">&nbsp;</p><p class="signature" align="center">documento assinado eletronicamente</p></body></html>');
                     $('#selTipoArquivo').value = iTipo;
                 }
             }, true);
@@ -284,6 +291,7 @@ var Eproc = {
         {
             if (b < (barras.length - 1)) barra.parentNode.removeChild(barra);
     	});
+        Eproc.corrigirCss('#fldLogin { position: static; margin: 6% auto; }');
         function Perfil(perfil)
         {
             for (n in perfil) {
@@ -315,6 +323,7 @@ var Eproc = {
             addButton: function()
             {
                 var button = document.createElement('button');
+                button.className = 'infraButton';
                 button.textContent = 'Tornar padrão';
                 var me = this;
                 button.addEventListener('click', function(e)
@@ -337,6 +346,20 @@ var Eproc = {
             definirComoPadrao: function()
             {
                 GM_setValue('v2.perfil.' + GM_MD5(this.nome), this.id);
+            },
+            desmarcar: function()
+            {
+                $('input', this.row.cells[0]).checked = false;
+            },
+            disparar: function()
+            {
+                var evento = document.createEvent('MouseEvents');
+                evento.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                this.row.dispatchEvent(evento);
+            },
+            removeListener: function(fn)
+            {
+                this.row.removeEventListener('click', fn, false);
             },
             removerNome: function()
             {
@@ -398,6 +421,20 @@ var Eproc = {
             aviso.inserir(this.fieldset);
             return aviso;
         };
+        Perfis.prototype.addListener = function(fn)
+        {
+            this.forEach(function(perfil)
+            {
+                perfil.addListener(fn);
+            });
+        };
+        Perfis.prototype.removeListener = function(fn)
+        {
+            this.forEach(function(perfil)
+            {
+                perfil.removeListener(fn);
+            });
+        };
         Perfis.fromFieldset = function(fieldset)
         {
             var perfis = [];
@@ -416,6 +453,7 @@ var Eproc = {
             this.mensagem = document.createElement('label');
             this.mensagem.style.color = 'red';
             this.cancelar = document.createElement('button');
+            this.cancelar.className = 'infraButton';
             this.cancelar.textContent = 'Cancelar login automático';
             this.aviso.appendChild(this.mensagem);
             this.aviso.appendChild(this.cancelar);
@@ -424,17 +462,17 @@ var Eproc = {
             inserir: function(parentNode)
             {
                 this.parentNode = parentNode;
-                this.parentNode.appendChild(this.aviso);
+                this.parentNode.insertBefore(this.aviso, parentNode.firstChild);
             },
             esconder: function()
             {
-                this.parentNode.removeChild(this.aviso);
+                this.aviso.style.visibility = 'hidden';
             },
             atualizar: function(t) {
                 var text = 'Carregando perfil padrão em ' + t + ' ' + (t > 1 ? 'segundos' : 'segundo') + '...';
                 this.mensagem.textContent = text;
             },
-            createTimer: function(padrao)
+            createTimer: function(padrao, perfis)
             {
                 var timer = new Timer(this, padrao);
                 padrao.selecionar();
@@ -443,6 +481,8 @@ var Eproc = {
                     e.preventDefault();
                     e.stopPropagation();
                     timer.cancelar();
+                    padrao.desmarcar();
+                    perfis.removeListener(timer.cancelar);
                 }, false);
                 return timer;
             }
@@ -460,9 +500,7 @@ var Eproc = {
                     aviso.atualizar(timeRemaining);
                 } else {
                     me.cancelar();
-                    var evento = document.createEvent('MouseEvents');
-                    evento.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-                    perfil.row.dispatchEvent(evento);
+                    perfil.disparar();
                 }
             };
             this.cancelar = function()
@@ -475,15 +513,11 @@ var Eproc = {
         var fieldset = $('#fldLogin');
         var perfis = Perfis.fromFieldset(fieldset);
         if (perfis.length > 0) {
-            $('#fldLogin').style.left = '15%';
             if (perfis.hasPadrao) {
                 var padrao = perfis.getPadrao();
                 var aviso = perfis.createAviso();
-                var timer = aviso.createTimer(padrao);
-                perfis.forEach(function(perfil)
-                {
-                    perfil.addListener(timer.cancelar);
-                });
+                var timer = aviso.createTimer(padrao, perfis);
+                perfis.addListener(timer.cancelar);
             }
             perfis.forEach(function(perfil)
             {
@@ -618,6 +652,7 @@ var Eproc = {
                     link.textContent = texto;
                     link.addEventListener('click', function(e) {
                         var newLink = document.createElement('a');
+                        newLink.className = 'extraLinkAcao';
                         newLink.href = 'http://' + Eproc.loginGedpro.host + '/XMLInterface.asp?processo=' + Eproc.processo + '&ProcessoVisual=PV&grupos=0&pgtree=' + pagina;
                         newLink.textContent = 'Carregando documentos do GEDPRO...';
                         newLink.addEventListener('click', function(e)
@@ -744,12 +779,17 @@ var Eproc = {
                 cor.textContent = 'Cor ' + c;
                 cor.addEventListener('click', function()
                 {
-                    Eproc.salvaFundo(h, s, l);
+                    Eproc.salvaFundo(h, s, l, (s == 0 ? (Eproc.isSegundoGrau() ? 10 : 210) : h), (s == 0 && l < 100 ? 0 : 100), 100);
                 }, false);
+                cor.addEventListener('mouseover', function()
+                {
+                    Eproc.mudaEstilosTemporariamente(h, s, l, (s == 0 ? (Eproc.isSegundoGrau() ? 10 : 210) : h), (s == 0 && l < 100 ? 0 : 100), 100);
+                }, false);
+                cor.addEventListener('mouseout', Eproc.removeEstilosTemporarios, false);
                 return cor;
             }
             for (var c = 1; c <= 14; c++) {
-                var h = 81, s = 0, l = 96;
+                var h = 0, s = 0, l = 96;
                 if (c == 1) {
                     l = 100;
                 } else if (c == 14) {
@@ -766,15 +806,24 @@ var Eproc = {
         var barraSistema = $('.infraBarraSistema'), lembretes = $$('.infraTable[summary="Lembretes"]');
         var getFundoUsuario = function()
         {
-            var hsl = /^\d+\/\d+\/\d+$/.test(GM_getValue('v2.fundo')) ? GM_getValue('v2.fundo') : '81/0/100';
+            return getCorUsuario('fundo');
+        };
+        var getBarraUsuario = function()
+        {
+            return getCorUsuario('barra');
+        };
+        var getCorUsuario = function(prop)
+        {
+            var hsl = /^\d+\/\d+\/\d+$/.test(GM_getValue('v2.' + prop + '.' + (Eproc.isSegundoGrau() ? '2g' : '1g'), '')) ? GM_getValue('v2.' + prop + '.' + (Eproc.isSegundoGrau() ? '2g' : '1g')) : (prop == 'fundo' ? '0/0/100' : (Eproc.isSegundoGrau() ? '10/100/100' : '210/100/100'));
             var h, s, l;
             [h, s, l] = hsl.split('/');
-            var fundoUsuario = { hsl: hsl, h: h, s: s, l: l };
-            return fundoUsuario;
+            var corUsuario = { hsl: hsl, h: h, s: s, l: l };
+            return corUsuario;
         };
-        var fundoUsuario = getFundoUsuario();
         if (barraSistema || lembretes.length) {
-            Eproc.mudaEstilos(fundoUsuario.h, fundoUsuario.s, fundoUsuario.l);
+            var fundoUsuario = getFundoUsuario();
+            var barraUsuario = getBarraUsuario();
+            Eproc.mudaEstilos(fundoUsuario.h, fundoUsuario.s, fundoUsuario.l, barraUsuario.h, barraUsuario.s, barraUsuario.l);
         }
         var unidades = $('#selInfraUnidades');
         if (unidades) {
@@ -784,7 +833,7 @@ var Eproc = {
                 var options = $$('option'), previousOption = null;
                 options.forEach(function(option) { if (option.getAttribute('selected')) previousOption = option; });
                 var msg = 'Perfil selecionado: ' + options[this.selectedIndex].textContent;
-                var nome = $('#lblInfraUnidades').textContent.match(/ - Nome: (.*) \(.*\)$/)[1];
+                var nome = $('#lblInfraUnidades').textContent.match(/ - (?:Nome\: )?(.*) \(.*\)$/)[1];
                 var msgPadrao = (this.value != GM_getValue('v2.perfil.' + GM_MD5(nome), '')) ? 'Definir este perfil como padrão' : '';
                 var padrao = {value: false};
                 var mudanca = GM_confirmCheck('Mudança de perfil', msg, msgPadrao, padrao);
@@ -800,6 +849,19 @@ var Eproc = {
         var pesquisaRapida = $('#txtNumProcessoPesquisaRapida');
         if (pesquisaRapida) {
             pesquisaRapida.addEventListener('change', this.onNumProcessoChange, false);
+            if ('placeholder' in pesquisaRapida) {
+                pesquisaRapida.setAttribute('placeholder', 'Nº. processo');
+                pesquisaRapida.removeAttribute('value');
+                pesquisaRapida.removeAttribute('style');
+                pesquisaRapida.removeAttribute('onclick');
+            }
+        }
+        var global = $('#divInfraAreaGlobal');
+        if (global) {
+            var wrapper = document.createElement('div');
+            wrapper.className = 'extraWrapper';
+            global.parentNode.insertBefore(wrapper, global);
+            wrapper.appendChild(global);
         }
         var barra = $('#divInfraBarraTribunalD');
         if (barra) {
@@ -915,6 +977,9 @@ var Eproc = {
                 label.appendChild(naoMostrar);
                 label.appendChild(document.createTextNode(' Não mostrar ícones'));
                 legend.appendChild(label);
+                var divAcoesDestacadas = document.createElement('div');
+                divAcoesDestacadas.className = 'extraAcoesDestacadas';
+                fieldset.appendChild(divAcoesDestacadas);
             }
             acoes.forEach(function(acao)
             {
@@ -935,11 +1000,13 @@ var Eproc = {
                     acao.addEventListener('click', function(e) { e.preventDefault(); }, false);
                 }
                 var acaoControlador = /\?acao=([^&]+)/.exec(acao.href);
+                var destacar = false;
                 if (acaoControlador.length == 2) {
                     var icone = null;
                     switch (acaoControlador[1]) {
                         case 'acessar_processo_gedpro':
                             icone = new ChromeIcone('ie.png');
+                            destacar = true;
                             break;
 
                         case 'acesso_usuario_processo_listar':
@@ -993,6 +1060,7 @@ var Eproc = {
 
                         case 'processo_citacao':
                             icone = new ChromeIcone('newspaper.png');
+                            destacar = true;
                             break;
 
                         case 'processo_consultar':
@@ -1010,18 +1078,22 @@ var Eproc = {
                         case 'processo_intimacao':
                         case 'processo_intimacao_bloco':
                             icone = new InfraIcone('encaminhar.gif');
+                            destacar = true;
                             break;
 
                         case 'processo_intimacao_aps_bloco':
                             icone = new InfraIcone('transportar.gif');
+                            destacar = true;
                             break;
 
                         case 'processo_lembrete_destino_cadastrar':
                             icone = new InfraIcone('tooltip.gif');
+                            destacar = true;
                             break;
 
                         case 'processo_movimento_consultar':
                             icone = new InfraIcone('receber.gif');
+                            destacar = true;
                             break;
 
                         case 'processo_movimento_desativar_consulta':
@@ -1048,6 +1120,9 @@ var Eproc = {
                 if (acao.nextSibling.nodeType == document.TEXT_NODE) {
                     acao.parentNode.removeChild(acao.nextSibling);
                 }
+                if (destacar) {
+                    divAcoesDestacadas.appendChild(acao);
+                }
             });
         }
         function getAcoes()
@@ -1057,20 +1132,31 @@ var Eproc = {
             return acoes;
         }
     },
-    mudaEstilos: function(h, s, l)
+    mudaEstilos: function(h, s, l, hB, sB, lB, temporario)
     {
+        if (typeof temporario == 'undefined') temporario = false;
         if (typeof h == 'undefined') {
             h = 0, s = 0, l = 100;
         }
+        if (typeof hB == 'undefined') {
+            hB = 210, sB = 100, lB = 100;
+        }
         var background = 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
         var css = atob(GM_getBase64('chrome://eproc/skin/cor-capa.css'));
-        GM_addStyle(css);
+        Eproc.getStyle('extraCorCapa').innerHTML = css;
         var css = atob(GM_getBase64('chrome://eproc/skin/eprocV2.css'));
         css = css.replace(/\$background/g, background);
-        css = css.replace(/\$h/g, h);
+        css = css.replace(/(hsla?)\(\$h, *(\d+)%, *(\d+)%\)/g, function(expr, fn, sPercent, lPercent)
+        {
+            return fn + '(' + h + ', ' + (s * Number(sPercent) / 100) + '%, ' + lPercent + '%)';
+        });
+        css = css.replace(/(hsla?)\(\$hB, *(\d+)%, *(\d+)%\)/g, function(expr, fn, sPercent, lPercent)
+        {
+            return fn + '(' + hB + ', ' + (sB * Number(sPercent) / 100) + '%, ' + (lB * Number(lPercent) / 100) + '%)';
+        });
         css = css.replace(/\$s/g, s);
         css = css.replace(/\$l/g, l);
-        var estilo = Eproc.getExtraMainStyle();
+        var estilo = temporario ? Eproc.getStyle('extraMainTemp') : Eproc.getExtraMainStyle();
         estilo.innerHTML = css;
         $$('label[onclick^="listarTodos"], label[onclick^="listarEventos"], #txtEntidade, #txtPessoaEntidade').forEach(function(auto)
         {
@@ -1081,10 +1167,21 @@ var Eproc = {
           }
         }, this);
     },
-    salvaFundo: function(h, s, l)
+    mudaEstilosTemporariamente: function(h, s, l, hB, sB, lB)
     {
-        GM_setValue('v2.fundo', h + '/' + s + '/' + l);
-        Eproc.mudaEstilos(h, s, l);
+        Eproc.mudaEstilos(h, s, l, hB, sB, lB, true);
+    },
+    removeEstilosTemporarios: function()
+    {
+        var estilos = Eproc.getStyle('extraMainTemp');
+        estilos.parentNode.removeChild(estilos);
+    },
+    salvaFundo: function(h, s, l, hB, sB, lB)
+    {
+        var grau = Eproc.isSegundoGrau() ? '2g' : '1g';
+        GM_setValue('v2.fundo.' + grau, h + '/' + s + '/' + l);
+        GM_setValue('v2.barra.' + grau, hB + '/' + sB + '/' + lB);
+        Eproc.mudaEstilos(h, s, l, hB, sB, lB);
     },
     painel_secretaria_listar: function()
     {
@@ -1197,32 +1294,31 @@ var Eproc = {
         var docsGedpro = $('#divDocumentosGedpro');
         if (docsGedpro) {
             var linkSecao = $('#divInfraBarraTribunalE').getElementsByTagName('a')[0];
-            var estado = linkSecao.hostname.match(/\.jf(pr|rs|sc)\.(?:gov|jus)\.br/);
-            var linkGedpro = (estado && 'sc' == estado[1]) ? 'http://gedpro.jfsc.jus.br/visualizarDocumentos.asp?codigoDocumento=' : '';
+            var estado = linkSecao.hostname.match(/\.jf(pr|rs|sc)\.(?:gov|jus)\.br/), host = 'trf4', linkGedpro = null;
+            if (estado) {
+                host = 'jf' + estado[1];
+            }
+            linkGedpro = 'http://gedpro.' + host + '.jus.br/visualizarDocumentos.asp?codigoDocumento=';
             var Doc = function(processo, numero, tipo)
             {
                 this.toString = function() { return [tipo, numero].join(' '); };
-                if (!linkGedpro) {
-                    this.link = '';
-                } else {
-                    this.link = document.createElement('a');
-                    this.link.textContent = this.toString();
-                    this.link.href = linkGedpro + numero;
-                    this.link.target='_blank';
-                    this.link.addEventListener('click', (function(processo, numero) {
-                        return function(e)
-                        {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            var win = Eproc.windows['' + processo + numero];
-                            if (typeof win == 'object' && !win.closed) {
-                                return win.focus();
-                            } else {
-                                Eproc.windows['' + processo + numero] = window.open(e.target.href, '' + processo + numero, 'menubar=0,resizable=1,status=0,toolbar=0,location=0,directories=0,scrollbars=1');
-                            }
-                        };
-                    })(processo, numero), false);
-                }
+                this.link = document.createElement('a');
+                this.link.textContent = this.toString();
+                this.link.href = linkGedpro + numero;
+                this.link.target='_blank';
+                this.link.addEventListener('click', (function(processo, numero) {
+                    return function(e)
+                    {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        var win = Eproc.windows['' + processo + numero];
+                        if (typeof win == 'object' && !win.closed) {
+                            return win.focus();
+                        } else {
+                            Eproc.windows['' + processo + numero] = window.open(e.target.href, '' + processo + numero, 'menubar=0,resizable=1,status=0,toolbar=0,location=0,directories=0,scrollbars=1');
+                        }
+                    };
+                })(processo, numero), false);
             };
             Doc.fromRow = function(row) {
                 var processo = row.cells[0].textContent;
@@ -1284,6 +1380,7 @@ var Eproc = {
             linkGedpro.removeAttribute('onclick');
             linkGedpro.target = '_blank';
             var linkCargaDocs = document.createElement('a');
+            linkCargaDocs.className = 'extraLinkAcao';
             linkGedpro.addEventListener('click', function(e)
             {
                 e.preventDefault();
@@ -1337,6 +1434,7 @@ var Eproc = {
                 Eproc.getDocsGedpro();
             };
             var linkCargaDocs = new VirtualLink('Carregar documentos do GEDPRO', onLinkCargaDocsClick);
+            linkCargaDocs.className = 'extraLinkAcao';
             div.appendChild(linkCargaDocs);
             processo.insertBefore(div, tabelas[tabelas.length - 1]);
             processo.insertBefore(document.createElement('br'), tabelas[tabelas.length - 1]);
@@ -1413,6 +1511,17 @@ var Eproc = {
             if (txtCompetencia) {
                 var competencia = txtCompetencia.textContent;
                 if (/Criminal/.test(competencia)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        function isInquerito()
+        {
+            var capa = $('#fldAssuntos');
+            if (capa) {
+                var classe = capa.getAttribute('data-classe');
+                if (classe == '000120') {
                     return true;
                 }
             }
@@ -1500,22 +1609,26 @@ var Eproc = {
             'GERENTE DE CADASTROS OAB',
             'GERENTE DE ENTIDADES',
             'GERENTE DE USUÁRIOS',
-            'IMPRENSA',
+            'IMPRENSA'
+        ];
+        var USUARIOS_TERCEIROS = [
+            'AG. PREV. SOCIAL',
+            'ANALISTA AG. PREV. SOCIAL',
             'PERITO'
         ];
         var USUARIOS_ENTIDADES = [
-            'AG. PREV. SOCIAL',
-            'ANALISTA AG. PREV. SOCIAL',
             'ANALISTA PROCURADORIA',
             'AUTORIDADE',
-            'DELEGADO CHEFE DA POLÍCIA FEDERAL',
-            'DELEGADO DA POLÍCIA FEDERAL',
-            'ESCRIVÃO CHEFE DA POL. FEDERAL',
-            'ESCRIVÃO DA POLÍCIA FEDERAL',
             'GERENTE PROCURADORIA',
             'MIGRA PROCESSOS PARA ENTIDADE',
             'PROCURADOR',
             'PROCURADOR PLANTÃO'
+        ];
+        var USUARIOS_POLICIA = [
+            'DELEGADO CHEFE DA POLÍCIA FEDERAL',
+            'DELEGADO DA POLÍCIA FEDERAL',
+            'ESCRIVÃO CHEFE DA POL. FEDERAL',
+            'ESCRIVÃO DA POLÍCIA FEDERAL'
         ];
         var TIPO_PARTE = {
             DESCONHECIDO: 0,
@@ -1541,7 +1654,13 @@ var Eproc = {
                             tipo_usuario = tipo_usuario[1];
                             if (USUARIOS_EXTERNOS.indexOf(tipo_usuario) > -1) {
                                 classeTipoUsuario = 'extraEventoExterno';
-                            } else if (USUARIOS_ENTIDADES.indexOf(tipo_usuario) > -1) {
+                            } else if (USUARIOS_TERCEIROS.indexOf(tipo_usuario) > -1) {
+                                classeTipoUsuario = 'extraEventoTerceiro';
+                            } else if (! isInquerito() && USUARIOS_ENTIDADES.indexOf(tipo_usuario) > -1) {
+                                classeTipoUsuario = 'extraEventoEntidade';
+                            } else if (isInquerito() && USUARIOS_ENTIDADES.indexOf(tipo_usuario) > -1) {
+                                classeTipoUsuario = 'extraEventoTerceiro';
+                            } else if (isInquerito() && USUARIOS_POLICIA.indexOf(tipo_usuario) > -1) {
                                 classeTipoUsuario = 'extraEventoEntidade';
                             }
                         }
@@ -1562,7 +1681,7 @@ var Eproc = {
                         {
                             if (re.test(nomeEvento)) tr.className += ' extraEventoDestaque';
                         });
-                        if (classeTipoUsuario == 'extraEventoExterno' || classeTipoUsuario == 'extraEventoEntidade') {
+                        if (classeTipoUsuario == 'extraEventoExterno' || classeTipoUsuario == 'extraEventoEntidade' || classeTipoUsuario == 'extraEventoTerceiro') {
                             var importante = true;
                             [
                                 /^Distribuição/,
@@ -1574,14 +1693,16 @@ var Eproc = {
                             });
                             if (importante) tr.className += ' extraEventoImportante';
                         }
-                        var re = /((?: - )?)(Refer\.(?: aos?)? Eventos?:? \d+)/, referencia = re.exec(tr.cells[2].innerHTML);
-                        if (referencia) {
-                            tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '<br><span class="extraEventoSeparador">$1</span>$2');
+                        var linhas = tr.cells[2].innerHTML.split(' - ');
+                        if (linhas.length > 1) {
+                            var primeira = linhas.splice(0, 1);
+                            linhas = primeira + '<span class="extraEventoSeparador"> - </span><br class="extraEventoSeparador"/>' + linhas.join(' - ');
+                            linhas = linhas.split('<');
+                        } else {
+                            linhas = linhas[0].split('<');
                         }
-                        var linhas = tr.cells[2].innerHTML.split('<br>');
-                        var primeira = linhas.splice(0, 1);
-                        primeira = '<span class="extraEventoTitulo">' + primeira + '</span><br>';
-                        tr.cells[2].innerHTML =  primeira + linhas.join('<br>');
+                        linhas[0] = '<span class="extraEventoTitulo">' + linhas[0] + '</span>';
+                        tr.cells[2].innerHTML =  linhas.join('<');
                     }
                     if (match = tr.cells[2].innerHTML.match(/Prazo: .* Status:([^<]+)/)) {
                         if (match[1] == 'AGUARD. ABERTURA') {
@@ -1599,14 +1720,14 @@ var Eproc = {
                                         tr.cells[2].className = 'prazoDecurso';
                                     } else {
                                         tr.cells[2].className = 'prazoFechado';
-                                        evento = '<span class="prazoEvento">' + evento + '</span>';
                                     }
+                                    evento = '<span class="prazoEvento">' + evento + '</span>';
                                     extraContent = '<span class="prazoExtra"> (' + evento + ')</span>';
                                 }
                             }
                             tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(/Prazo: .* Status:FECHADO/, '$&' + extraContent);
                         }
-                        var intimadoRegExp = new RegExp('\\((' + nomeTipoAutor + '|' + nomeTipoReu + '|MPF|AGÊNCIA DA PREVIDÊNCIA SOCIAL) +- ([^\\)]+)\\)');
+                        var intimadoRegExp = new RegExp('\\((' + nomeTipoAutor + '|' + nomeTipoReu + '|MPF|AGÊNCIA DA PREVIDÊNCIA SOCIAL|PERITO) +- ([^\\)]+)\\)');
                         var intimado = intimadoRegExp.exec(tr.cells[2].innerHTML);
                         if (intimado) {
                             intimado = intimado[1];
@@ -1627,19 +1748,6 @@ var Eproc = {
                     } else if (/Intimação Eletrônica - Expedida\/Certificada - Pauta/.test(tr.cells[2].innerHTML)) {
                         haPrazosFechados = true;
                         tr.cells[2].className = 'prazoFechado';
-                    } else if ((re = /(<span[^>]*>)Sentença ([^-]*) - ([^<]*)<\/span><br>/).test(tr.cells[2].innerHTML)) {
-                        tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1Sentença $2</span><br>$3');
-                    } else if ((re = /(<span[^>]*>)Audiência Realizada (com|sem) ([^-]*) - ([^<]*)<\/span><br>/).test(tr.cells[2].innerHTML)) {
-                        tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1Audiência Realizada</span><br>$2 $3 - $4');
-                    } else if ((re = /(<span[^>]*>)Audiência ([^-]*) - ([^<]*)<\/span><br>/).test(tr.cells[2].innerHTML)) {
-                        tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1Audiência $2</span><br>$3');
-                    } else if ((re = /(<span[^>]*>) - SUBSTABELECIMENTO ([^<]*)<\/span><br>/).test(tr.cells[2].innerHTML)) {
-                        tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1SUBSTABELECIMENTO</span><br>$2');
-                    } else if ((re = /Intimação Eletrônica/).test(tr.cells[2].innerHTML)) {
-                    } else if ((re = /(<span[^>]*>[^-]+) - ([^<]*)<\/span><br>(.+)/).test(tr.cells[2].innerHTML)) {
-                        tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1</span><br>$2 - $3');
-                    } else if ((re = /(<span[^>]*>[^-]+) - ([^<]*)<\/span><br>/).test(tr.cells[2].innerHTML)) {
-                        tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(re, '$1</span><br>$2');
                     }
                     var colunaDocumentos = tr.cells[4];
                     var tabelaDocumentos = $('table', colunaDocumentos);
@@ -1847,30 +1955,41 @@ var Eproc = {
                 $$('a[href*="acao=substabelecimento_historico_listar_subfrm"]', table).forEach(function(linkSubstabelecimento)
                 {
                     for (var celula = linkSubstabelecimento.parentNode; celula.tagName.toUpperCase() != 'TD'; celula = celula.parentNode);
-                    var nomeParte;
-                    if (linkSubstabelecimento.nextSibling instanceof HTMLAnchorElement) {
-                        if (celula.cellIndex == 0) {
-                            nomeTipoAutor = celula.parentNode.parentNode.rows[0].cells[0].textContent;
-                            tipoAutor = TIPO_PARTE.EXTERNO;
-                        } else if (celula.cellIndex == 1) {
-                            nomeTipoReu = celula.parentNode.parentNode.rows[0].cells[1].textContent;
-                            tipoReu = TIPO_PARTE.EXTERNO;
+                    var nomeParte, tipoParte, classeParte;
+                    var lastSpan = $('span:last-of-type', celula);
+                    if (lastSpan instanceof HTMLSpanElement) {
+                        tipoParte = /^ - (.*)$/.exec(lastSpan.textContent);
+                        if (tipoParte) {
+                            tipoParte = tipoParte[1];
                         }
-                        nomeParte = linkSubstabelecimento.nextSibling;
-                    } else if (linkSubstabelecimento.nextSibling instanceof Text) {
-                        if (linkSubstabelecimento.nextSibling.nextSibling instanceof HTMLSpanElement && celula.colSpan == 1) {
-                            if (celula.cellIndex == 0) {
-                                nomeTipoAutor = celula.parentNode.parentNode.rows[0].cells[0].textContent;
-                                tipoAutor = TIPO_PARTE.ENTIDADE;
-                            } else if (celula.cellIndex == 1) {
-                                nomeTipoReu = celula.parentNode.parentNode.rows[0].cells[1].textContent;
-                                tipoReu = TIPO_PARTE.ENTIDADE;
-                            }
-                            nomeParte = linkSubstabelecimento.nextSibling.nextSibling;
+                        if (tipoParte == 'Entidade') {
+                            tipoParte = TIPO_PARTE.ENTIDADE;
+                            classeParte = 'extraNomeParteEntidade';
+                        } else if (tipoParte == 'Pessoa Física' || tipoParte == 'Pessoa Jurídica') {
+                            tipoParte = TIPO_PARTE.EXTERNO;
+                            classeParte = 'extraNomeParteExterno';
+                        } else {
+                            tipoParte = null;
                         }
                     }
+                    if (celula.colSpan == 1) {
+                        if (celula.cellIndex == 0) {
+                            tipoAutor = tipoParte;
+                            nomeTipoAutor = celula.parentNode.parentNode.rows[0].cells[0].textContent;
+                        } else if (celula.cellIndex == 1) {
+                            tipoReu = tipoParte;
+                            nomeTipoReu = celula.parentNode.parentNode.rows[0].cells[1].textContent;
+                        }
+                    }
+                    if (tipoParte && linkSubstabelecimento.nextSibling instanceof HTMLAnchorElement) {
+                        nomeParte = linkSubstabelecimento.nextSibling;
+                    } else if (tipoParte
+                            && linkSubstabelecimento.nextSibling instanceof Text
+                            && linkSubstabelecimento.nextSibling.nextSibling instanceof HTMLSpanElement) {
+                        nomeParte = linkSubstabelecimento.nextSibling.nextSibling;
+                    }
                     if (nomeParte) {
-                        nomeParte.className = 'extraNomeParte';
+                        nomeParte.className = 'extraNomeParte ' + classeParte;
                     }
                 });
             }
@@ -1956,7 +2075,7 @@ var Eproc = {
                 marker.appendTo(container);
             };
 
-            this.setSelectorRules('extraMarker', 'float: left; padding: 5px; -moz-border-radius: 5px; font-size: 1.2em; color: white; margin-left: 5px;');
+            this.setSelectorRules('extraMarker', 'float: left; padding: 5px; -moz-border-radius: 5px; font-size: 1.2em; color: white; margin-left: 5px; font-weight: bold;');
         }
 
         function Marker()
@@ -1981,7 +2100,7 @@ var Eproc = {
         }
         ReuPresoMarker.prototype = new Marker();
         ReuPresoMarker.prototype.selector = 'extraMarkerReuPreso';
-        ReuPresoMarker.prototype.cssRules = 'background-color: red; font-weight: bold;';
+        ReuPresoMarker.prototype.cssRules = 'background-color: red;';
 
         function PrioridadeMarker()
         {
@@ -1989,7 +2108,7 @@ var Eproc = {
         }
         PrioridadeMarker.prototype = new Marker();
         PrioridadeMarker.prototype.selector = 'extraMarkerPrioridade';
-        PrioridadeMarker.prototype.cssRules = 'background-color: orange;';
+        PrioridadeMarker.prototype.cssRules = 'background-color: brown;';
 
         function SigiloMarker(texto)
         {
@@ -1997,7 +2116,7 @@ var Eproc = {
         }
         SigiloMarker.prototype = new Marker();
         SigiloMarker.prototype.selector = 'extraMarkerSigilo';
-        SigiloMarker.prototype.cssRules = 'background-color: white; color: red; font-weight: bold;';
+        SigiloMarker.prototype.cssRules = 'background-color: white; color: red;';
 
         var comandos = $('#divInfraBarraComandosSuperior');
         if (comandos) {
