@@ -80,24 +80,6 @@ img.infraImg, img.infraImgNormal, img.infraImg:hover, img.infraImgNormal:hover {
     width: auto;
     height: auto;
 }
-.prazoAguardaAbertura {
-    background-color: hsl(0, 50%, 80%);
-}
-.prazoAberto {
-    background-color: hsl(60, 50%, 80%);
-}
-table.prazoComDestaque .prazoFechado {
-    background-color: hsla(120, 50%, 50%, 0.2);
-}
-.prazoExtra {
-    display: none;
-}
-.prazoComDestaque .prazoExtra {
-    display: inline;
-}
-.prazoComDestaque .prazoFechado .prazoEvento {
-    background-color: hsl(60, 40%, 85%);
-}
 *[disabled] {
     color: #aaa;
 }
