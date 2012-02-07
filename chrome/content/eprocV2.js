@@ -653,7 +653,7 @@ var Eproc = {
                     link.addEventListener('click', function(e) {
                         var newLink = document.createElement('a');
                         newLink.className = 'extraLinkAcao';
-                        newLink.href = 'http://' + Eproc.loginGedpro.host + '/XMLInterface.asp?processo=' + Eproc.processo + '&ProcessoVisual=PV&grupos=0&pgtree=' + pagina;
+                        newLink.href = '#';
                         newLink.textContent = 'Carregando documentos do GEDPRO...';
                         newLink.addEventListener('click', function(e)
                         {
@@ -848,7 +848,6 @@ var Eproc = {
         }
         var pesquisaRapida = $('#txtNumProcessoPesquisaRapida');
         if (pesquisaRapida) {
-            pesquisaRapida.addEventListener('change', this.onNumProcessoChange, false);
             if ('placeholder' in pesquisaRapida) {
                 pesquisaRapida.setAttribute('placeholder', 'Nº. processo');
                 pesquisaRapida.removeAttribute('value');
@@ -891,10 +890,6 @@ var Eproc = {
                 break;
         }
         this.colorirTabela();
-        this.setCorCapa();
-        if (this.acao != 'processo_relacionado_incluir') {
-            this.setLastProcesso();
-        }
         if (this.acao && this[this.acao]) {
             this[this.acao]();
         } else if (this.parametros.acao_origem && this[this.parametros.acao_origem + '_destino']) {
@@ -1388,11 +1383,13 @@ var Eproc = {
                     return Eproc.obterLinkGedpro(
                         function(url)
                         {
-                            Eproc.loginGedpro.url = linkGedpro.href = url;
-                            Eproc.loginGedpro.host = linkGedpro.host;
+                            var tempLink = document.createElement('a');
+                            tempLink.href = url;
+                            Eproc.loginGedpro.url = url;
+                            Eproc.loginGedpro.host = tempLink.host;
                             linkCargaDocs.textContent = 'Carregar documentos do GEDPRO';                
-                            linkCargaDocs.href = 'http://' + Eproc.loginGedpro.host + '/XMLInterface.asp?processo=' + Eproc.processo + '&ProcessoVisual=PV&grupos=0&pgtree=1';
-                            IELauncher(linkGedpro.href);
+                            linkCargaDocs.href = '#';
+                            IELauncher(Eproc.loginGedpro.url);
                         },
                         function()
                         {
@@ -1401,7 +1398,7 @@ var Eproc = {
                         }
                     );
                 }
-                IELauncher(linkGedpro.href);
+                IELauncher(Eproc.loginGedpro.url);
             }, false);
             var processo = $('#divInfraAreaProcesso');
             var tabelas = processo.getElementsByClassName('infraTable');
@@ -1415,10 +1412,12 @@ var Eproc = {
                     return Eproc.obterLinkGedpro(
                         function(url)
                         {
-                            Eproc.loginGedpro.url = linkGedpro.href = url;
-                            Eproc.loginGedpro.host = linkGedpro.host;
+                            var tempLink = document.createElement('a');
+                            tempLink.href = url;
+                            Eproc.loginGedpro.url = url;
+                            Eproc.loginGedpro.host = tempLink.host;
                             self.textContent = 'Tentando fazer login no GEDPRO...';
-                            self.href = 'http://' + Eproc.loginGedpro.host + '/XMLInterface.asp?processo=' + Eproc.processo + '&ProcessoVisual=PV&grupos=0&pgtree=1';
+                            self.href = '#';
                             Eproc.getDocsGedpro();
                         },
                         function()
@@ -1642,111 +1641,8 @@ var Eproc = {
                 {
                     th.setAttribute('width', '');
                 });
-                var haPrazosFechados = false;
                 $$('tr[class^="infraTr"]', table).forEach(function(tr, r, trs)
                 {
-                    var usuario = $('label', tr.cells[3]), classeTipoUsuario = 'extraEventoInterno';
-                    if (usuario) {
-                        var tipo_usuario = ('' + usuario.getAttribute('onmouseover')).split('<br/>');
-                        if (tipo_usuario.length > 2) {
-                            tipo_usuario = tipo_usuario[1];
-                            if (USUARIOS_EXTERNOS.indexOf(tipo_usuario) > -1) {
-                                classeTipoUsuario = 'extraEventoExterno';
-                            } else if (USUARIOS_TERCEIROS.indexOf(tipo_usuario) > -1) {
-                                classeTipoUsuario = 'extraEventoTerceiro';
-                            } else if (! isInquerito() && USUARIOS_ENTIDADES.indexOf(tipo_usuario) > -1) {
-                                classeTipoUsuario = 'extraEventoEntidade';
-                            } else if (isInquerito() && USUARIOS_ENTIDADES.indexOf(tipo_usuario) > -1) {
-                                classeTipoUsuario = 'extraEventoTerceiro';
-                            } else if (isInquerito() && USUARIOS_POLICIA.indexOf(tipo_usuario) > -1) {
-                                classeTipoUsuario = 'extraEventoEntidade';
-                            }
-                        }
-                        tr.className += ' ' + classeTipoUsuario;
-                        var nomeEvento = tr.cells[2].textContent;
-                        [
-                            /^Audiência/,
-                            /^Citação .* Confirmada/,
-                            /^Despacho\/Decisão/,
-                            /^Mandado.* Devolvido/
-                        ].forEach(function(re)
-                        {
-                            if (re.test(nomeEvento)) tr.className += ' extraEventoImportante';
-                        });
-                        [
-                            /^Sentença/
-                        ].forEach(function(re)
-                        {
-                            if (re.test(nomeEvento)) tr.className += ' extraEventoDestaque';
-                        });
-                        if (classeTipoUsuario == 'extraEventoExterno' || classeTipoUsuario == 'extraEventoEntidade' || classeTipoUsuario == 'extraEventoTerceiro') {
-                            var importante = true;
-                            [
-                                /^Distribuição/,
-                                /^Intimação .* Confirmada/,
-                                /^ - SUBSTABELECIMENTO/
-                            ].forEach(function(re)
-                            {
-                                if (re.test(nomeEvento) || importante == false) importante = false;
-                            });
-                            if (importante) tr.className += ' extraEventoImportante';
-                        }
-                        var linhas = tr.cells[2].innerHTML.split(' - ');
-                        if (linhas.length > 1) {
-                            var primeira = linhas.splice(0, 1);
-                            linhas = primeira + '<span class="extraEventoSeparador"> - </span><br class="extraEventoSeparador"/>' + linhas.join(' - ');
-                            linhas = linhas.split('<');
-                        } else {
-                            linhas = linhas[0].split('<');
-                        }
-                        linhas[0] = '<span class="extraEventoTitulo">' + linhas[0] + '</span>';
-                        tr.cells[2].innerHTML =  linhas.join('<');
-                    }
-                    if (match = tr.cells[2].innerHTML.match(/Prazo: .* Status:([^<]+)/)) {
-                        if (match[1] == 'AGUARD. ABERTURA') {
-                            tr.cells[2].className = 'prazoAguardaAbertura';
-                        } else if (match[1] == 'ABERTO') {
-                            tr.cells[2].className = 'prazoAberto';
-                        } else if (match[1] == 'FECHADO') {
-                            haPrazosFechados = true;
-                            var extraContent = '', fechamento = $$('a', tr.cells[0]);
-                            if (fechamento.length) {
-                                fechamento = fechamento[0].getAttribute('onmouseover').match(/Fechamento do Prazo:.*?(\d+ - [^<]+)/);
-                                if (fechamento) {
-                                    var evento = fechamento[1];
-                                    if (/Decurso de Prazo/.test(evento)) {
-                                        tr.cells[2].className = 'prazoDecurso';
-                                    } else {
-                                        tr.cells[2].className = 'prazoFechado';
-                                    }
-                                    evento = '<span class="prazoEvento">' + evento + '</span>';
-                                    extraContent = '<span class="prazoExtra"> (' + evento + ')</span>';
-                                }
-                            }
-                            tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(/Prazo: .* Status:FECHADO/, '$&' + extraContent);
-                        }
-                        var intimadoRegExp = new RegExp('\\((' + nomeTipoAutor + '|' + nomeTipoReu + '|MPF|AGÊNCIA DA PREVIDÊNCIA SOCIAL|PERITO) +- ([^\\)]+)\\)');
-                        var intimado = intimadoRegExp.exec(tr.cells[2].innerHTML);
-                        if (intimado) {
-                            intimado = intimado[1];
-                            var classeIntimado = 'extraIntimacaoParte';
-                            var tipoIntimado = null;
-                            if (intimado == nomeTipoAutor) {
-                                tipoIntimado = tipoAutor;
-                            } else if (intimado == nomeTipoReu) {
-                                tipoIntimado = tipoReu;
-                            }
-                            if (tipoIntimado == TIPO_PARTE.ENTIDADE) {
-                                classeIntimado += ' extraIntimacaoEntidade';
-                            } else if (tipoIntimado == TIPO_PARTE.EXTERNO) {
-                                classeIntimado += ' extraIntimacaoExterno';
-                            }
-                            tr.cells[2].innerHTML = tr.cells[2].innerHTML.replace(intimadoRegExp, '<span class="' + classeIntimado + '">$1</span> - $2');
-                        }
-                    } else if (/Intimação Eletrônica - Expedida\/Certificada - Pauta/.test(tr.cells[2].innerHTML)) {
-                        haPrazosFechados = true;
-                        tr.cells[2].className = 'prazoFechado';
-                    }
                     var colunaDocumentos = tr.cells[4];
                     var tabelaDocumentos = $('table', colunaDocumentos);
                     if (tabelaDocumentos) {
@@ -1879,44 +1775,6 @@ var Eproc = {
                         return false;
                     }
                     return /^(TXT|PDF|GIF|JPEG|JPG|PNG|HTM|HTML)$/.exec(mime);
-                }
-                if (haPrazosFechados) {
-                    var check = document.createElement('input');
-                    check.type = 'checkbox';
-                    check.id = 'extraSemDestaque';
-                    table.parentNode.insertBefore(check, table.nextSibling);
-                    var label = document.createElement('label');
-                    label.textContent = ' Destacar prazos fechados';
-                    label.htmlFor = 'extraSemDestaque';
-                    check.parentNode.insertBefore(label, check.nextSibling);
-                    if (GM_getValue('v2.semdestaque')) {
-                        check.checked = false;
-                        table.className += ' prazoSemDestaque';
-                    } else {
-                        check.checked = true;
-                        table.className += ' prazoComDestaque';
-                    }
-                    var thisTable = table;
-                    check.addEventListener('change', function(e)
-                    {
-                        var me = e.target;
-                        var thisTableClasses = thisTable.className.split(' ');
-                        ['prazoSemDestaque', 'prazoComDestaque'].forEach(function(nomeClasse)
-                        {
-                            var indexOfPrazo = thisTableClasses.indexOf(nomeClasse);
-                            if (indexOfPrazo > -1) {
-                                thisTableClasses.splice(indexOfPrazo, 1);
-                            }
-                        });
-                        if (! me.checked) {
-                            GM_setValue('v2.semdestaque', true);
-                            thisTableClasses.push('prazoSemDestaque');
-                        } else {
-                            GM_setValue('v2.semdestaque', false);
-                            thisTableClasses.push('prazoComDestaque');
-                        }
-                        thisTable.className = thisTableClasses.join(' ');
-                    }, false);
                 }
                 var check = document.createElement('input');
                 check.type = 'checkbox';
@@ -2108,14 +1966,6 @@ var Eproc = {
         PrioridadeMarker.prototype.selector = 'extraMarkerPrioridade';
         PrioridadeMarker.prototype.cssRules = 'background-color: brown;';
 
-        function SigiloMarker(texto)
-        {
-            this.create(texto);
-        }
-        SigiloMarker.prototype = new Marker();
-        SigiloMarker.prototype.selector = 'extraMarkerSigilo';
-        SigiloMarker.prototype.cssRules = 'background-color: white; color: red;';
-
         var comandos = $('#divInfraBarraComandosSuperior');
         if (comandos) {
             var markers = new MarkersContainer(comandos);
@@ -2127,13 +1977,6 @@ var Eproc = {
             var prioridade = getPrioridadeText();
             if (prioridade == 'Sim') {
                 markers.add(new PrioridadeMarker());
-            }
-            var sigilo = getSigiloText();
-            if (sigilo) {
-                var nivel = /[2345]/.exec(sigilo) || (sigilo == 'Segredo de Justiça' ? 1 : 0);
-                if (nivel > 0) {
-                    markers.add(new SigiloMarker(sigilo));
-                }
             }
         }
 
@@ -2147,10 +1990,6 @@ var Eproc = {
                 }
                 container.parentNode.removeChild(container);
             }
-        }
-        function getSigiloText()
-        {
-            return getLabelValue('Nível de Sigilo do Processo: ');
         }
         function getPrioridadeText()
         {
@@ -2220,115 +2059,6 @@ var Eproc = {
         }, false);
         $('#divInfraAreaTelaE').appendChild(iframe);
         iframe.src = Eproc.loginGedpro.url;
-    },
-    setCorCapa: function()
-    {
-        var assuntos = $('#fldAssuntos');
-        if (assuntos) {
-            assuntos.className += ' extraFieldset';
-            var classe = $('#txtClasse', assuntos);
-        }
-        if (classe) {
-            if (classe.hasAttribute('data-classe')) {
-                assuntos.setAttribute('data-classe', classe.getAttribute('data-classe'));
-                var competencia = $('#txtCompetencia')
-                if (competencia && competencia.hasAttribute('data-competencia')) {
-                    assuntos.setAttribute('data-competencia', competencia.getAttribute('data-competencia'));
-                }
-            }
-        }
-    },
-    setLastProcesso: function()
-    {
-        var txtNumProcesso = $('input#txtNumProcesso[type="text"]');
-        if (txtNumProcesso) {
-            var before = document.referrer.match(/\&(txtNumProcesso|num_processo)=([0-9]{20})/);
-            if (before) {
-                txtNumProcesso.value = before[2];
-            }
-            txtNumProcesso.select();
-            txtNumProcesso.addEventListener('change', this.onNumProcessoChange, false);
-        }
-    },
-    onNumProcessoChange: function(e)
-    {
-        var txtNumProcesso = e.target;
-        var possiveis = Eproc.getPossiveis(txtNumProcesso.value);
-        if (possiveis.length == 1) {
-            txtNumProcesso.value = possiveis[0];
-            return;
-        } else if (possiveis.length > 1) {
-            var message = [];
-            for (var i = 0, possivel; possivel = possiveis[i]; i++) {
-                message.push((i + 1) + '. ' + Eproc.getNumprocF(possivel));
-            }
-            var escolha = prompt('Escolha:\n' + message.join('\n'));
-            if (escolha) {
-                txtNumProcesso.value = possiveis[escolha - 1];
-            }
-            return;
-        }
-    },
-    getPossiveis: function(numproc)
-    {
-        var possibilidades = [];
-        var ano, anoAtual = new Date().getFullYear();
-        var novoAno, novoNumproc;
-        var match = /^(\d*)\/(\d{2}|\d{4})$/.exec(numproc);
-        if (match) {
-            var novoNumproc = match[1], novoAno = match[2];
-            if (novoAno.length == 2) novoAno = '20' + novoAno;
-            if (novoAno >= 2009 && novoAno <= anoAtual) {
-                ano = novoAno;
-                numproc = novoNumproc;
-            }
-        }
-        var segmentos = numproc.split(/[^0-9]/);
-        segmentos.forEach(function(segmento, s)
-        {
-            if (s == 0) {
-                numproc = segmento;
-            } else {
-                numproc += segmento;
-            }
-        }, this);
-        if (numproc.length < 3 || numproc.length > 8) return possibilidades;
-        var dd = numproc.substr(numproc.length - 2);
-        numproc = numproc.substr(0, numproc.length - 2);
-        while (numproc.length < 6) {
-            numproc = '0' + numproc;
-        }
-        while (numproc.length < 7) {
-            numproc = '5' + numproc;
-        }
-        var secoesMaxSu = {};
-        var estado = this.getEstado(), segundoGrau = this.isSegundoGrau();
-        if (segundoGrau) {
-            secoesMaxSu['00'] = 0;
-        }
-        if (segundoGrau || estado == 'pr') {
-            secoesMaxSu['70'] = 17;
-        }
-        if (segundoGrau || estado == 'rs') {
-            secoesMaxSu['71'] = 22;
-        }
-        if (segundoGrau || estado == 'sc') {
-            secoesMaxSu['72'] = 16;
-        }
-        var se;
-        for (se in secoesMaxSu) {
-            var maxSu = secoesMaxSu[se];
-            for (var su = 0; su <= maxSu; su++) {
-                if (su.toString().length == 1) su = '0' + su;
-                for (var a = 2009; a <= anoAtual; a++) {
-                    var r1 = numproc % 97;
-                    var r2 = ('' + r1 + a + '404') % 97;
-                    var r3 = ('' + r2 + se + su + dd) % 97;
-                    if (r3 == 1) possibilidades.push(numproc + dd + a + '404' + se + su);
-                }
-            }
-        }
-        return possibilidades;
     },
     isSegundoGrau: function()
     {
