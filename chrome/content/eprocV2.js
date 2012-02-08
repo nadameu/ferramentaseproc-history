@@ -1151,11 +1151,11 @@ var Eproc = {
         var background = 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
         var css = atob(GM_getBase64('chrome://eproc/skin/eprocV2.css'));
         css = css.replace(/\$background/g, background);
-        css = css.replace(/(hsla?)\(\$h, *(\d+)%, *(\d+)%\)/g, function(expr, fn, sPercent, lPercent)
+        css = css.replace(/(hsla?)\(\$h, *([0-9\.]+)%, *([0-9\.]+)%\)/g, function(expr, fn, sPercent, lPercent)
         {
             return fn + '(' + h + ', ' + (s * Number(sPercent) / 100) + '%, ' + lPercent + '%)';
         });
-        css = css.replace(/(hsla?)\(\$hB, *(\d+)%, *(\d+)%\)/g, function(expr, fn, sPercent, lPercent)
+        css = css.replace(/(hsla?)\(\$hB, *([0-9\.]+)%, *([0-9\.]+)%\)/g, function(expr, fn, sPercent, lPercent)
         {
             return fn + '(' + hB + ', ' + (sB * Number(sPercent) / 100) + '%, ' + (lB * Number(lPercent) / 100) + '%)';
         });
