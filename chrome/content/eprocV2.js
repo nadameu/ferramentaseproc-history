@@ -528,6 +528,17 @@ var Eproc = {
     },
     getDocsGedpro: function()
     {
+      var docsGedproStatus = {
+        0: 'Em edição',
+        1: 'Bloqueado',
+        2: 'Pronto para assinar',
+        3: 'Assinado',
+        4: 'Movimentado',
+        5: 'Devolvido',
+        6: 'Arquivado',
+        7: 'Anulado',
+        8: 'Conferido'
+      };
       if (arguments.length == 0) {
         return Eproc.reloginGedpro();
       } else if (arguments[0] == 'arvore') {
@@ -596,6 +607,7 @@ var Eproc = {
                             rotulo.className = 'extraGedproRotuloGray';
                         }
                         row.insertCell(row.cells.length).textContent = reg.getAttribute('codigoDocumento');
+                        row.insertCell(row.cells.length).textContent = docsGedproStatus[reg.getAttribute('statusDocumento')];
                         if (reg.getAttribute('assinaturaDigital')) {
                             row.insertCell(row.cells.length).innerHTML = '<img class="extraGedproImg" src="http://' + Eproc.loginGedpro.host + '/images/assinatura.gif"/>';
                         } else {
@@ -629,11 +641,11 @@ var Eproc = {
                             rotulo.textContent = reg.getAttribute('nomeTipoDocComposto') + ' ' + reg.getAttribute('identificador') + '/' + reg.getAttribute('ano');
                         }
                         var cell = row.insertCell(row.cells.length);
-                        cell.colSpan = 5;
+                        cell.colSpan = 6;
                     }
                 });
                 var head = table.createTHead().insertRow(0);
-                ['','Documento','Número','Ass.','Data Documento','Criação','Edição'].forEach(function (text, i)
+                ['','Documento','Número','Status','Ass.','Data Documento','Criação','Edição'].forEach(function (text, i)
                 {
                     var th = document.createElement('th');
                     if (i == 1) th.colSpan = maiorIcone;
@@ -641,7 +653,7 @@ var Eproc = {
                     th.textContent = text;
                     head.appendChild(th);
                 });
-                table.tHead.rows[0].cells[3].title = 'Assinado digitalmente';
+                table.tHead.rows[0].cells[4].title = 'Assinado digitalmente';
                 var pai = $('#cargaDocsGedpro');
                 pai.textContent = '';
                 pai.appendChild(table);
