@@ -1188,10 +1188,6 @@ var Eproc = {
         GM_setValue('v2.barra.' + grau, hB + '/' + sB + '/' + lB);
         Eproc.mudaEstilos(h, s, l, hB, sB, lB);
     },
-    painel_secretaria_listar: function()
-    {
-        Eproc.addCssRule('#divInfraAreaDados { height: auto !important; }');
-    },
     prevencao_judicial: function()
     {
         if (document.referrer.match(/\?acao=processo_selecionar&/)) {
@@ -1283,6 +1279,65 @@ var Eproc = {
                     cell.appendChild(button);
                 });
             });
+        }
+    },
+    usuario_tipo_monitoramento_localizador_listar: function(){
+        var linhas = $$('#divInfraAreaTabela tr[class^="infraTr"]');
+        if (linhas) {
+            this.decorarLinhasTabelaLocalizadores(linhas);
+        }
+    },
+    principal_destino: function()
+    {
+        Eproc.addCssRule('#divInfraAreaDados { height: auto !important; }');
+        var linhas = $$('#fldProcessos tr[class^="infraTr"], #fldLocalizadores tr[class^="infraTr"]');
+        if (linhas) {
+            this.decorarLinhasTabelaLocalizadores(linhas);
+        }
+    },
+    decorarLinhasTabelaLocalizadores: function(linhas)
+    {
+        linhas.forEach(function(linha)
+        {
+            var link = getLink(linha);
+            var url = getUrl(link);
+            var processos = getQtdProcessos(link);
+            linha.className += ' extraLocalizador';
+            linha.setAttribute('data-processos', processos);
+            if (processos > 0) {
+                linha.addEventListener('click', function(e)
+                {
+                    location.href = url;
+                }, false);
+            }
+        });
+        function getLink(tr)
+        {
+            try {
+                return tr.cells[1].querySelector('a');
+            } catch (e) {
+                return null;
+            }
+        }
+        function getUrl(a)
+        {
+            try {
+                if (a.href) {
+                    return a.href;
+                } else if (a.getAttribute('onclick')) {
+                    return 'javascript:' + a.getAttribute('onclick');
+                }
+            } catch(e) {
+                return '';
+            }
+        }
+        function getQtdProcessos(a)
+        {
+            try {
+                return a.textContent;
+            } catch (e) {
+                return 0;
+            }
         }
     },
     processo_cadastrar_2: function()

@@ -471,3 +471,15 @@ a.extraLinkAcao:hover {
 #fldObsRegra #lblObsRegra {
     position: relative;
 }
+tr.extraLocalizador[data-processos] {
+    cursor: pointer;
+}
+tr.extraLocalizador[data-processos="0"] {
+    cursor: default;
+}
+tr.extraLocalizador[data-processos] a, tr.extraLocalizador[data-processos] u {
+    text-decoration: none;
+}
+tr.extraLocalizador[data-processos="0"] td, tr.extraLocalizador[data-processos="0"] td u {
+    color: #999;
+}
