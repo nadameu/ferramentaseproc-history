@@ -548,11 +548,11 @@ var Eproc = {
             mimeType: 'application/xml; charset=ISO-8859-1',
             onload: function(obj)
             {
-                var xml = obj.responseText.match(/[^']PathXMLOriginal =  "([^"]+)"/)[1];
-                if (xml.match(/grupos=$/)) {
+                var grupos = obj.responseText.match(/\&grupos=([^\&]*)\&/)[1];
+                if (grupos == '') {
                     return Eproc.reloginGedpro();
                 } else {
-                    Eproc.loginGedpro.docs = xml;
+                    Eproc.loginGedpro.docs = 'http://' + Eproc.loginGedpro.host + '/XMLInterface.asp?processo=' + Eproc.processo + '&ProcessoVisual=PV&grupos=' + grupos;
                     return window.setTimeout(function() { Eproc.getDocsGedpro(1); }, 100);
                 }
             }
