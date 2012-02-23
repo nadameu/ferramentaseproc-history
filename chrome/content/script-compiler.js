@@ -182,12 +182,20 @@ var EprocGmCompiler = {
             var result = prompts.confirmCheck(null, title, text, chkMsg, chkState);
             return result;
         };
-        sandbox.GM_yesNo = function(title, text)
+        sandbox.GM_yesCancelNo = function(title, text)
         {
             var prompts = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
-            var flags = prompts.BUTTON_POS_0 * prompts.BUTTON_TITLE_YES + prompts.BUTTON_POS_1 * prompts.BUTTON_TITLE_NO;
+            var flags =
+                  prompts.BUTTON_POS_0 * prompts.BUTTON_TITLE_YES
+                + prompts.BUTTON_POS_1 * prompts.BUTTON_TITLE_CANCEL
+                + prompts.BUTTON_POS_2 * prompts.BUTTON_TITLE_NO
             var button = prompts.confirmEx(null, title, text, flags, '', '', '', '', {value: false});
-            return button;
+            return {
+                YES: 0,
+                CANCEL: 1,
+                NO: 2,
+                value: button
+            };
         };
         sandbox.GM_getBase64 = function(aUrl) { return EprocGmCompiler.getUrlContentsAsBase64(aUrl); };
         sandbox.GM_MD5 = function(word) { return EprocChrome.MD5(word); };
