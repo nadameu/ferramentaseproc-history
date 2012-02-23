@@ -19,6 +19,8 @@ var httpRequestObserver = {
                     replacePattern = 'filename="$1"';
                 }
                 httpChannel.setResponseHeader('Content-Disposition', httpChannel.getResponseHeader('Content-Disposition').replace(/filename=([^"]*)$/, replacePattern), false);
+            } else if (uri.isV1() && /^download\//.test(uri.getArquivo())) {
+                httpChannel.setResponseHeader('Content-Disposition', 'inline', false);
             }
         }
     },
