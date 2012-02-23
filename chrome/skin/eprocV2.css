@@ -961,8 +961,6 @@ span.extraIntimacaoParte {font-weight: bold; text-shadow: 1px 1px #fff;}
 span.extraIntimacaoEntidade {color: #AE432E;}
 span.extraIntimacaoExterno {color: #058DC7;}
 
-#fldAcoes {height: 10em; position: relative;}
-
 input:focus, button:focus, select:focus, textarea:focus {background-color: #fff}
 .infraTable button.infraButton, .infraTable button.infraButton:hover, #tbDocumentosCadastradas button.infraButton, #tbDocumentosCadastradas button.infraButton:hover {font-size: 1em; padding: 4px;}
 #fldAssuntos .infraTrClara td:nth-of-type(2) {font-size: 1.4em; text-shadow: 1px 1px 0 #DDDDDD}
