@@ -182,21 +182,29 @@ var EprocGmCompiler = {
             var result = prompts.confirmCheck(null, title, text, chkMsg, chkState);
             return result;
         };
-        sandbox.GM_yesCancelNo = function(title, text)
+        var ConfirmEx = function()
         {
             var prompts = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
-            var flags =
-                  prompts.BUTTON_POS_0 * prompts.BUTTON_TITLE_YES
-                + prompts.BUTTON_POS_1 * prompts.BUTTON_TITLE_CANCEL
-                + prompts.BUTTON_POS_2 * prompts.BUTTON_TITLE_NO
-            var button = prompts.confirmEx(null, title, text, flags, '', '', '', '', {value: false});
-            return {
-                YES: 0,
-                CANCEL: 1,
-                NO: 2,
-                value: button
+            var flags = 0;
+            var titles = Array.prototype.slice.call(arguments);
+            titles.forEach(function(title, position)
+            {
+                flags += prompts['BUTTON_TITLE_' + title] * prompts['BUTTON_POS_' + position];
+            });
+            return function(title, text)
+            {
+                var position = prompts.confirmEx(null, title, text, flags, '', '', '', '', {value: false});
+                return titles[position];
             };
         };
+        sandbox.GM_yesCancelNo = (function()
+        {
+            return new ConfirmEx('YES', 'CANCEL', 'NO');
+        })();
+        sandbox.GM_yesNo = (function()
+        {
+            return new ConfirmEx('YES', 'NO');
+        })();
         sandbox.GM_getBase64 = function(aUrl) { return EprocGmCompiler.getUrlContentsAsBase64(aUrl); };
         sandbox.GM_MD5 = function(word) { return EprocChrome.MD5(word); };
         sandbox.GM_showPreferences = function() { return showPreferences(); };

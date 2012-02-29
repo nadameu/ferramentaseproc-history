@@ -45,8 +45,13 @@ var Eproc = {
         }
         if (windows.length) {
             var tela = /^\d{7}-\d{2}\.\d{4}\.\d{3}\.\d{4}$/.test(document.title) ? 'Este processo' : 'Esta tela';
-            var resposta = GM_yesCancelNo('Janelas abertas', tela + ' possui ' + windows.length + ' ' + (windows.length > 1 ? 'janelas abertas' : 'janela aberta') + '.\nDeseja fechá-' + (windows.length > 1 ? 'las' : 'la') + '?');
-            if (resposta.value == resposta.YES) {
+            var msg = tela + ' possui ' + windows.length + ' ' + (windows.length > 1 ? 'janelas abertas' : 'janela aberta') + '.\nDeseja fechá-' + (windows.length > 1 ? 'las' : 'la') + '?';
+            if (typeof e != 'undefined') {
+                var resposta = GM_yesCancelNo('Janelas abertas', msg);
+            } else {
+                var resposta = GM_yesNo('Janelas abertas', msg);
+            }
+            if (resposta == 'YES') {
                 for (var w = windows.length - 1; w >= 0; w--) {
                     windows[w].close();
                 }
@@ -54,7 +59,7 @@ var Eproc = {
                 if (menuFechar) {
                     menuFechar.style.visibility = 'hidden';
                 }
-            } else if (resposta.value == resposta.CANCEL && typeof e != 'undefined') {
+            } else if (resposta == 'CANCEL' && typeof e != 'undefined') {
                 e.preventDefault();
                 e.stopPropagation();
             }
@@ -1600,7 +1605,7 @@ var Eproc = {
             {
                 e.preventDefault();
                 e.stopPropagation();
-                funcao.call(this, e);
+                funcao.call(this);
             }, false);
             return vLink;
         }
