@@ -1472,8 +1472,6 @@ var Eproc = {
                 }
                 IELauncher(Eproc.loginGedpro.url);
             }, false);
-            var processo = $('#divInfraAreaProcesso');
-            var tabelas = processo.getElementsByClassName('infraTable');
             var div = document.createElement('div');
             div.id = 'cargaDocsGedpro';
             var onLinkCargaDocsClick =  function()
@@ -1505,9 +1503,10 @@ var Eproc = {
             var linkCargaDocs = new VirtualLink('Carregar documentos do GEDPRO', onLinkCargaDocsClick);
             linkCargaDocs.className = 'extraLinkAcao';
             div.appendChild(linkCargaDocs);
-            processo.insertBefore(div, tabelas[tabelas.length - 1]);
-            processo.insertBefore(document.createElement('br'), tabelas[tabelas.length - 1]);
-            processo.insertBefore(document.createElement('br'), tabelas[tabelas.length - 1]);
+            var tabelas = $$('.infraTable'), tabela = tabelas[tabelas.length - 1], tabelaParent = tabela.parentNode;
+            tabelaParent.insertBefore(div, tabela);
+            tabelaParent.insertBefore(document.createElement('br'), tabela);
+            tabelaParent.insertBefore(document.createElement('br'), tabela);
         }
         function getLinkGedpro()
         {
