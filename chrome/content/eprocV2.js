@@ -729,6 +729,22 @@ var Eproc = {
     {
         return Eproc.getStyle('extraMainStyle');
     },
+    getFundoUsuario: function()
+    {
+        return Eproc.getCorUsuario('fundo');
+    },
+    getBarraUsuario: function()
+    {
+        return Eproc.getCorUsuario('barra');
+    },
+    getCorUsuario: function(prop)
+    {
+        var hsl = /^\d+\/\d+\/\d+$/.test(GM_getValue('v2.' + prop + '.' + (Eproc.isSegundoGrau() ? '2g' : '1g'), '')) ? GM_getValue('v2.' + prop + '.' + (Eproc.isSegundoGrau() ? '2g' : '1g')) : (prop == 'fundo' ? '0/0/100' : (Eproc.isSegundoGrau() ? '10/100/100' : '210/100/100'));
+        var h, s, l;
+        [h, s, l] = hsl.split('/');
+        var corUsuario = { hsl: hsl, h: h, s: s, l: l };
+        return corUsuario;
+    },
     getMenu: function()
     {
         var menu = $('#infraMenuRaizes');
@@ -820,26 +836,44 @@ var Eproc = {
             }
             menu.appendChild(cores);
         }
+        var menu = Eproc.getMenu();
+        if (menu) {
+            var skins = document.createElement('li');
+            skins.innerHTML = '<a class="infraMenuRaiz"  title="Estilo" ><div class="infraItemMenu"><div class="infraRotuloMenu">Estilo</div><div class="infraSetaMenu">&raquo;</div></div></a><ul></ul>';
+            var skinsMenu = skins.querySelector('ul');
+            function Skin(nome, descricao)
+            {
+                if (typeof nome == 'undefined') throw 'Par√¢metro "nome" √© obrigat√≥rio';
+                if (typeof descricao == 'undefined') descricao = nome;
+                var skin = document.createElement('a');
+                skin.className = 'infraMenuFilho';
+                skin.textContent = descricao;
+                skin.addEventListener('click', function()
+                {
+                    Eproc.salvaSkin(nome);
+                }, false);
+                skin.addEventListener('mouseover', function()
+                {
+                    Eproc.mudaSkinTemporariamente(nome);
+                }, false);
+                skin.addEventListener('mouseout', Eproc.removeEstilosTemporarios, false);
+                return skin;
+            }
+            var skinNames = {
+                stock: 'Padr„o',
+                candy: 'Candy',
+                icecream: 'Ice Cream'
+            };
+            for (name in skinNames) {
+                var skin = new Skin(name, skinNames[name]);
+                skinsMenu.appendChild(skin);
+            }
+            menu.appendChild(skins);
+        }
         var barraSistema = $('.infraBarraSistema'), lembretes = $$('.infraTable[summary="Lembretes"]');
-        var getFundoUsuario = function()
-        {
-            return getCorUsuario('fundo');
-        };
-        var getBarraUsuario = function()
-        {
-            return getCorUsuario('barra');
-        };
-        var getCorUsuario = function(prop)
-        {
-            var hsl = /^\d+\/\d+\/\d+$/.test(GM_getValue('v2.' + prop + '.' + (Eproc.isSegundoGrau() ? '2g' : '1g'), '')) ? GM_getValue('v2.' + prop + '.' + (Eproc.isSegundoGrau() ? '2g' : '1g')) : (prop == 'fundo' ? '0/0/100' : (Eproc.isSegundoGrau() ? '10/100/100' : '210/100/100'));
-            var h, s, l;
-            [h, s, l] = hsl.split('/');
-            var corUsuario = { hsl: hsl, h: h, s: s, l: l };
-            return corUsuario;
-        };
         if (barraSistema || lembretes.length) {
-            var fundoUsuario = getFundoUsuario();
-            var barraUsuario = getBarraUsuario();
+            var fundoUsuario = Eproc.getFundoUsuario();
+            var barraUsuario = Eproc.getBarraUsuario();
             Eproc.mudaEstilos(fundoUsuario.h, fundoUsuario.s, fundoUsuario.l, barraUsuario.h, barraUsuario.s, barraUsuario.l);
         }
         var unidades = $('#selInfraUnidades');
@@ -1144,29 +1178,49 @@ var Eproc = {
             return acoes;
         }
     },
-    mudaEstilos: function(h, s, l, hB, sB, lB, temporario)
+    mudaEstilos: function(h, s, l, hB, sB, lB, temporario, skin)
     {
-        if (typeof temporario == 'undefined') temporario = false;
         if (typeof h == 'undefined') {
             h = 0, s = 0, l = 100;
         }
         if (typeof hB == 'undefined') {
             hB = 210, sB = 100, lB = 100;
         }
+        if (typeof temporario == 'undefined') temporario = false;
+        if (typeof skin == 'undefined') skin = GM_getValue('v2.skin', 'stock');
         var background = 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
-        var css = atob(GM_getBase64('chrome://eproc/skin/eprocV2.css'));
-        css = css.replace(/\$background/g, background);
-        css = css.replace(/(hsla?)\(\$h, *([0-9\.]+)%, *([0-9\.]+)%\)/g, function(expr, fn, sPercent, lPercent)
+        function getTransformedCss(name)
         {
-            return fn + '(' + h + ', ' + (s * Number(sPercent) / 100) + '%, ' + lPercent + '%)';
-        });
-        css = css.replace(/(hsla?)\(\$hB, *([0-9\.]+)%, *([0-9\.]+)%\)/g, function(expr, fn, sPercent, lPercent)
+            var css = atob(GM_getBase64('chrome://eproc/skin/' + name + '.css'));
+            css = css.replace(/\$background/g, background);
+            css = css.replace(/(hsla?)\(\$h, *([0-9\.]+)%, *([0-9\.]+)%\)/g, function(expr, fn, sPercent, lPercent)
+            {
+                return fn + '(' + h + ', ' + (s * Number(sPercent) / 100) + '%, ' + lPercent + '%)';
+            });
+            css = css.replace(/(hsla?)\(\$hB, *([0-9\.]+)%, *([0-9\.]+)%\)/g, function(expr, fn, sPercent, lPercent)
+            {
+                return fn + '(' + hB + ', ' + (sB * Number(sPercent) / 100) + '%, ' + (lB * Number(lPercent) / 100) + '%)';
+            });
+            css = css.replace(/\$s/g, s);
+            css = css.replace(/\$l/g, l);
+            return css;
+        }
+        function getStyleElement(skin)
         {
-            return fn + '(' + hB + ', ' + (sB * Number(sPercent) / 100) + '%, ' + (lB * Number(lPercent) / 100) + '%)';
-        });
-        css = css.replace(/\$s/g, s);
-        css = css.replace(/\$l/g, l);
-        var estilo = temporario ? Eproc.getStyle('extraMainTemp') : Eproc.getExtraMainStyle();
+            var styleElementName = 'extraMain';
+            if (typeof skin != 'undefined') {
+                styleElementName = 'extraSkin';
+            }
+            if (temporario) {
+                styleElementName += 'Temp';
+            }
+            return Eproc.getStyle(styleElementName);
+        }
+        var estilo = getStyleElement();
+        var css = getTransformedCss('eprocV2');
+        estilo.innerHTML = css;
+        var estilo = getStyleElement(skin);
+        var css = getTransformedCss(skin);
         estilo.innerHTML = css;
         $$('label[onclick^="listarTodos"], label[onclick^="listarEventos"], #txtEntidade, #txtPessoaEntidade').forEach(function(auto)
         {
@@ -1185,6 +1239,8 @@ var Eproc = {
     {
         var estilos = Eproc.getStyle('extraMainTemp');
         estilos.parentNode.removeChild(estilos);
+        var estilos = Eproc.getStyle('extraSkinTemp');
+        estilos.parentNode.removeChild(estilos);
     },
     salvaFundo: function(h, s, l, hB, sB, lB)
     {
@@ -1192,6 +1248,22 @@ var Eproc = {
         GM_setValue('v2.fundo.' + grau, h + '/' + s + '/' + l);
         GM_setValue('v2.barra.' + grau, hB + '/' + sB + '/' + lB);
         Eproc.mudaEstilos(h, s, l, hB, sB, lB);
+    },
+    mudaSkin: function(nome, temporario)
+    {
+        if (typeof temporario == 'undefined') temporario = false;
+        var fundoUsuario = Eproc.getFundoUsuario();
+        var barraUsuario = Eproc.getBarraUsuario();
+        Eproc.mudaEstilos(fundoUsuario.h, fundoUsuario.s, fundoUsuario.l, barraUsuario.h, barraUsuario.s, barraUsuario.l, temporario, nome);
+    },
+    mudaSkinTemporariamente: function(nome)
+    {
+//        Eproc.mudaSkin(nome, false);
+    },
+    salvaSkin: function(nome)
+    {
+        GM_setValue('v2.skin', nome);
+        Eproc.mudaSkin(nome);
     },
     prevencao_judicial: function()
     {
@@ -2021,6 +2093,223 @@ var Eproc = {
             numprocF += d;
         }
         return numprocF;
+    },
+    usuario_personalizacao_configuracao: function()
+    {
+        var tabela = $('#cadastro_plugins');
+        var esquema = $('#selInfraCores', tabela).parentNode.parentNode;
+
+        var Configuracao = (function(original)
+        {
+            function clonar()
+            {
+                var linhas = [];
+                for (var i = 0, atual = original; i < 4; i++) {
+                    var copia = atual.cloneNode(true);
+                    copia.className += ' nostock';
+                    linhas.push(copia);
+                    atual = atual.nextSibling;
+                }
+                return linhas;
+            }
+            return function()
+            {
+                var linhas = clonar();
+                this.setControle = function(elemento, replace)
+                {
+                    if (typeof replace == 'undefined') replace = true;
+                    if (replace) linhas[0].cells[1].textContent = '';
+                    linhas[0].cells[1].appendChild(elemento);
+                };
+                this.setTexto = function(texto, replace)
+                {
+                    if (typeof replace == 'undefined') replace = true;
+                    if (replace) linhas[0].cells[0].textContent = '';
+                    linhas[0].cells[0].textContent += texto;
+                };
+                this.setDescricao = function(texto, replace)
+                {
+                    if (typeof replace == 'undefined') replace = true;
+                    if (replace) linhas[1].cells[0].textContent = '';
+                    linhas[1].cells[0].textContent += texto;
+                };
+                this.insertBefore = function(elemento)
+                {
+                    linhas.forEach(function(linha)
+                    {
+                        elemento.parentNode.insertBefore(linha, elemento);
+                    });
+                };
+            };
+        })(esquema);
+        var corBarra = new Configuracao();
+        corBarra.setControle(new TabelaCoresBarra());
+        corBarra.setDescricao(' (clique sobre a cor para tornar a mudanÁa permanente)', false);
+        corBarra.insertBefore(esquema);
+        var corFundo = new Configuracao();
+        corFundo.setTexto('Cor de fundo');
+        corFundo.setControle(new TabelaCoresFundo());
+        corFundo.setDescricao('Altera a cor de fundo da p·gina (clique sobre a cor para tornar a mudanÁa permanente)');
+        corFundo.insertBefore(esquema);
+
+        function TabelaCores()
+        {
+            var CELLS_PER_ROW = 7;
+            var div = document.createElement('div');
+            div.innerHTML = '<table border="0" cellpadding="2" cellspacing="0" style="border-collapse: collapse;"></table>';
+            var tabelaCores = div.firstChild;
+            this.createTabela = function()
+            {
+                for (var c = 1; c <= 14; c++) {
+                    var cell = getCell(c);
+                    var decorator = this.getDecorator(c);
+                    decorator.decorate(cell);
+                }
+                return tabelaCores;
+            };
+            function getRow(index)
+            {
+                var rowIndex = Math.floor(index / CELLS_PER_ROW);
+                if (tabelaCores.rows.length == rowIndex) tabelaCores.insertRow(rowIndex);
+                var row = tabelaCores.rows[rowIndex];
+                return row;
+            }
+            function getCell(indexPlusOne)
+            {
+                var cellIndex = indexPlusOne - 1;
+                var row = getRow(cellIndex);
+                var cell = row.insertCell(cellIndex % CELLS_PER_ROW);
+                return cell;
+            }
+            this.replaceContent = function(elemento)
+            {
+                elemento.innerHTML = '';
+                elemento.appendChild(tabelaCores);
+            };
+        }
+        function TabelaCoresFundo()
+        {
+            TabelaCores.apply(this, arguments);
+            this.getDecorator = function(c)
+            {
+                return new CellDecoratorFundo(c);
+            };
+            return this.createTabela();
+        }
+        TabelaCoresFundo.prototype = new TabelaCores;
+        TabelaCoresFundo.prototype.constructor = TabelaCores;
+        function TabelaCoresBarra()
+        {
+            TabelaCores.apply(this, arguments);
+            this.getDecorator = function(c)
+            {
+                return new CellDecoratorBarra(c);
+            };
+            return this.createTabela();
+        }
+        TabelaCoresBarra.prototype = new TabelaCores;
+        TabelaCoresBarra.prototype.constructor = TabelaCores;
+        function CellDecorator(cD)
+        {
+            this.decorate = function(cell)
+            {
+                cell.innerHTML = '<br/>';
+                cell.textContent = cD;
+                cell.style.textAlign = 'center';
+                cell.style.border = '2px solid black';
+                cell.style.cursor = 'pointer';
+                cell.style.color = this.getTextColor();
+                cell.style.background = this.getBackground();
+                cell.style.width = '2ex';
+                cell.style.height = '2ex';
+                cell.addEventListener('click', this.getFuncaoSalva(), false);
+                cell.addEventListener('mouseover', this.getFuncaoPrevisao(), false);
+                cell.addEventListener('mouseout', Eproc.removeEstilosTemporarios, false);
+            };
+        }
+        function CellDecoratorFundo(cF)
+        {
+            CellDecorator.apply(this, arguments);
+            var hF = 0, sF = 0, lF = 96;
+            if (cF == 1) {
+                lF = 100;
+            } else if (cF == 14) {
+                // do nothing
+            } else {
+                hF = (cF - 2) * 30;
+                sF = 66;
+            }
+            this.getTextColor = function()
+            {
+                return 'black';
+            };
+            this.getBackground = function()
+            {
+                return 'hsl(' + hF + ', ' + sF + '%, ' + lF + '%)';
+            };
+            this.getFuncaoPrevisao = function()
+            {
+                return function()
+                {
+                    var barra = Eproc.getBarraUsuario();
+                    Eproc.mudaEstilosTemporariamente(hF, sF, lF, barra.h, barra.s, barra.l);
+                };
+            };
+            this.getFuncaoSalva = function()
+            {
+                return function()
+                {
+                    var barra = Eproc.getBarraUsuario();
+                    Eproc.salvaFundo(hF, sF, lF, barra.h, barra.s, barra.l);
+                };
+            };
+        };
+        CellDecoratorFundo.prototype = new CellDecorator;
+        CellDecoratorFundo.prototype.constructor = CellDecorator;
+        function CellDecoratorBarra(cB)
+        {
+            CellDecorator.apply(this, arguments);
+            var hB = 0, sB = 0, lB = 96;
+            if (cB == 1) {
+                lB = 100;
+            } else if (cB == 14) {
+                // do nothing
+            } else {
+                hB = (cB - 2) * 30;
+                sB = 66;
+            }
+            this.getTextColor = function()
+            {
+                return 'white';
+            };
+            this.getBackground = function()
+            {
+                if (cB == 1) return 'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAIAAABLbSncAAAABGdBTUEAALGPC/xhBQAAADlJREFUGFdj3G9vzwAD9Q4NcDYDUAKC7Or3wxFINVZRqASaWohSBqyiKBJwyyD2QXWgiUIlMEWBEgD05k66X4QKQQAAAABJRU5ErkJggg==")';
+                return 'hsl(' + hB + ', 50%, 50%)';
+            };
+            function getArguments()
+            {
+                var fundo = Eproc.getFundoUsuario();
+                return [fundo.h, fundo.s, fundo.l, (sB == 0 ? (Eproc.isSegundoGrau() ? 10 : 210) : hB), (sB == 0 && lB < 100 ? 0 : 100), 100];
+            }
+            this.getFuncaoPrevisao = function()
+            {
+                return function()
+                {
+                    Eproc.mudaEstilosTemporariamente.apply(null, getArguments());
+                };
+            };
+            this.getFuncaoSalva = function()
+            {
+                return function()
+                {
+                    var fundo = Eproc.getFundoUsuario();
+                    Eproc.salvaFundo(fundo.h, fundo.s, fundo.l, (sB == 0 ? (Eproc.isSegundoGrau() ? 10 : 210) : hB), (sB == 0 && lB < 100 ? 0 : 100), 100);
+                };
+            };
+        };
+        CellDecoratorBarra.prototype = new CellDecorator;
+        CellDecoratorBarra.prototype.constructor = CellDecorator;
     }
 };
 Eproc.init();

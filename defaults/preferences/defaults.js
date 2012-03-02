@@ -15,3 +15,4 @@ pref('eproc.v2.ielocation', 'C:\\Arquivos de programas\\Internet Explorer\\iexpl
 pref('eproc.v2.semdestaque', false);
 pref('eproc.v2.mostraricones', true);
 pref('eproc.v2.eventosdestacados', true);
+pref('eproc.v2.skin', 'stock');

@@ -1,35 +1,23 @@
-html, body {
-    margin: 0;
-    height: 100%;
-}
 body {
     background-color: $background;
-    overflow-y: auto;
+}        
+#divInfraAreaTela input, select {
+    background-color: hsla(0, 0%, 80%, 0.25);
 }
-div.extraWrapper {
-    padding: 0.5625% 0;
-    height: 98%
+#divInfraAreaTela input:focus {
+    background-color: hsla(0, 0%, 50%, 0.5);
 }
-#divInfraAreaGlobal {
-    height: 100%;
-    margin-bottom: 0.5625%;
+select:focus {
+    background-color: hsla(0, 0%, 50%, 0.25);
 }
-#divInfraAreaGlobal, div.infraBarraTribunal {
-    border-color: hsl($hB, 50%, 80%);
-    border-left-color: hsl($hB, 94%, 39%);
+select:focus option {
+    background-color: hsla(0, 0%, 100%, 0.25);
 }
-input.infraText, select.infraSelect, textarea.infraTextarea,
-select.infraSelect:focus option {
-    background-color: hsl($h, 50%, 92%);
+div.infraAjaxAutoCompletar {
+    background-color: $background;
 }
-input:focus,
-select:focus,
-textarea:focus {
-    background-color: #fff;
-}
-div.infraAjaxAutoCompletar,
 div.infraAjaxAutoCompletar li {
-    background-color: hsl($h, 50%, 92%);
+    background-color: hsla(0, 0%, 80%, 0.25);
 }
 div.infraAjaxAutoCompletar li.selected {
     background-color: Highlight;
@@ -51,10 +39,10 @@ table.infraTable {
     border: none;
 }
 tr.infraTrClara {
-    background-color: hsl($h, 33%, 97%);
+    background-color: hsla(0, 0%, 98%, 0.5);
 }
 tr.infraTrEscura {
-    background-color: hsl($h, 33%, 95%);
+    background-color: hsla(0, 0%, 94%, 0.5);
 }
 tr.infraTrSelecionada td {
     background-color: hsla(0, 0%, 50%, 0.25);
@@ -64,11 +52,6 @@ tr.infraTrSelecionada td td {
 }
 tr.infraTrMarcada td {
     background-color: hsla(0, 0%, 50%, 0.375);
-}
-#tabLocalizadores tr.infraTrMarcada td {
-    background-color: hsl($hB, 78%, 38%);
-    color: #fff;
-    text-shadow: 0 1px 2px #666666;
 }
 div.infraMenu a {
     background-color: $background;
@@ -83,70 +66,15 @@ a.docLink {
 .infraBarraComandos, .infraAreaTelaD, .infraAreaDados {
     border-color: $background !important;
 }
-#divInfraBarraSistema + div img {
-    display: none;
-}
-#divInfraBarraSistema + div:before {
-    display: inline-block;
-    width: 2em;
-    height: 4em;
-    content: '';
-    -moz-border-radius-bottomright: 100%;
-    border-bottom-right-radius: 100% 50%;
-}
-#divInfraBarraSistema + div:after {
-    display: inline-block;
-    width: 2em;
-    height: 4em;
-    content: '';
-}
-#divInfraBarraLocalizacao:before {
-    position: absolute;
-    font-size: 50%;
-    margin-left: -2em;
-    margin-top: -0.6em;
-    width: 2em;
-    height: 4em;
-    content: '';
-    background-color: $background;
-    -moz-border-radius-topleft: 100%;
-    border-top-left-radius: 100% 50%;
-}
-#divInfraBarraSistema + div:after {
-    background-color: $background;
-}
-div.infraBarraTribunalE, div.infraBarraTribunalD {
-    width: auto;
-}
 div.infraBarraTribunal {
-    background-color: hsl($hB, 50%, 50%);
-    background-image: -moz-linear-gradient(top,
-        hsl($hB, 50%, 75%) 0%,
-        hsl($hB, 31.25%, 62.5%) 25%,
-        hsl($hB, 37.5%, 50%) 25%,
-        hsl($hB, 45.3125%, 53.125%) 100%
-    ) !important;
-}
-#divInfraBarraSistema,
-#divInfraBarraSistema + div:before,
-#divInfraBarraSistema + div:after {
-    background-color: hsl($hB, 75%, 50%) !important;
-    background-image: -moz-linear-gradient(top,
-        hsl($hB, 75%, 75%) 0%,
-        hsl($hB, 46.875%, 62.5%) 25%,
-        hsl($hB, 65.625%, 50%) 25%,
-        hsl($hB, 67.96875%, 53.125%) 100%
-    ) !important;
-}
-div.infraBarraSistemaD {
-    top: 25% !important;
-    height: 50% !important;
+    -moz-background-size: 1px 80px;
+    background-size: 1px 80px;
 }
 .infraTable td label {
     font-size: 1em;
 }
-#fldAssuntos label.infraLabelObrigatorio {
-    color: #333;
+label.infraLabelObrigatorio {
+    color: #555;
 }
 img.infraImg, img.infraImgNormal, img.infraImg:hover, img.infraImgNormal:hover {
     width: auto;
@@ -170,49 +98,37 @@ div.infraAjaxAutoCompletar { max-height: 30em; overflow-y: scroll; } div.infraAj
 .extraGedproRotuloBlue { color: blue; }
 .extraGedproRotuloGray { color: gray; cursor: inherit; }
 .extraGedproImg { cursor: inherit; }
-button.infraButton.extraBuscarPreventosButton,
-button.infraButton.extraBuscarPreventosButton:hover {
-    font-size: .8em;
-}
+.extraFieldset { -moz-border-radius: 8px; border-radius: 8px; }
+button.infraButton[class~=extraBuscarPreventosButton] { font-size: .8em; }
 .extraLembrete {
     float: left;
     font-size: 12px;
     min-width: 20ex;
-    max-width: 40ex;
+    max-width: 60ex;
     margin-bottom: 0.5em;
     margin-right: 1ex;
-    padding: 0.5em 1ex;
+    padding: 0 1ex;
     text-align: center;
-    -moz-border-radius: 0.5ex;
-    font-weight: bold;
-    border: 1px solid hsl(60, 100%, 40%);
-    background: -moz-linear-gradient(
-            hsl(60, 100%, 80%) 0%,
-            hsl(60, 96%, 90%) 100%
-        );
-    color: #333;
+    background-color: hsl(60, 100%, 80%);
+    color: hsl(0, 0%, 0%);
 }
 .extraLembreteVoce {
-    border-color: hsl(60, 100%, 30%);
-    background: -moz-linear-gradient(
-            hsl(60, 100%, 70%) 0%,
-            hsl(60, 96%, 80%) 100%
-        );
+    background-color: hsl(60, 100%, 70%);
 }
 .extraLembrete a {
     float: right;
-    vertical-align: middle;
-    margin-left: 0.5ex;
+    margin: -0.5em 0.5ex 0;
 }
-.extraLembrete a:last-of-type {
-    margin-left: 3ex;
+.extraLembretePara, .extraLembreteData {
+    margin-left: -1ex;
+    margin-right: -1ex;
+    color: hsl(0, 0%, 33%);
 }
 .extraLembretePara {
-    margin-bottom: 1em;
-    line-height: 16px;
+    margin-bottom: 0.5em;
 }
 .extraLembreteData {
-    margin-top: 1em;
+    margin-top: 0.5em;
     text-align: right;
 }
 .extraLembrete abbr {
@@ -238,24 +154,38 @@ button.infraButton.extraBuscarPreventosButton:hover {
         display: block;
     }
 }
+a.extraLinkAcao {
+    display: inline-block;
+    text-decoration: none;
+    margin: 0 .25ex .5em;
+    background-color: #ddd;
+    border: 1px outset #ddd;
+    padding: 2px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    color: #333;
+    line-height: 16px;
+}
+a.extraLinkAcao:hover {
+    background-color: #eee;
+    border-color: #eee;
+}
+.extraIconeAcao {
+    vertical-align: middle;
+    margin: auto 2px;
+}
+#fldAcoes.extraNaoMostrar .extraIconeAcao {
+    display: none;
+}
 fieldset.infraFieldset {
-    border: 1px inset $background;
-    background: hsl($h, 42%, 93%);
-    -moz-border-radius: 4px;
-}
-legend.infraLegend,
-legend.infraLegendObrigatorio,
-legend.infraLegendObrigatorioExterno {
-    border: 1px outset $background;
-    -moz-border-radius: 5px;
-    padding: 2px 8px;
-}
-legend.infraLegendObrigatorio,
-legend.infraLegendObrigatorioExterno {
-    background: $background;
+    border-style: groove;
+    border-color: $background;
+    border-width: 2px;
 }
 fieldset.extraFieldset {
-    border: 2px inset hsl(0, 0%, 75%);
+    border-style: outset;
+    border-color: $background;
+    border-width: 1px;
 }
 #fldAcoes .extraNaoMostrarIcones {
     display: none;
@@ -274,212 +204,7 @@ fieldset.extraFieldset {
     font-weight: bold;
     float: left;
 }
-.extraTabelaEventos img,
-.extraTabelaEventos img.infraImg,
-.extraTabelaEventos img.infraImgNormal,
-.extraTabelaEventos img.infraImg:hover,
-.extraTabelaEventos img.infraImgNormal:hover {
-    position: inherit !important;
-    margin-top: inherit !important;
-    margin-left: 1px !important;
-    width: 13px !important;
-    height: inherit !important;
-}
-.extraTabelaEventos a {
-    display: inline-block;
-}
-.extraTabelaEventos td:first-of-type,
-.extraTabelaEventos td:nth-of-type(2),
-.extraTabelaEventos td:last-of-type {
-    white-space: nowrap;
-}
-.extraDocumentoObservacao,
-.extraDocumentoLembrete {
-    margin-bottom: 0.5em;
-    font-size: 11px;
-    white-space: normal;
-    max-width: 50ex;
-}
-.extraDocumentoObservacao {
-    margin-left: 34px;
-}
-.extraDestaqueEventos .extraEventoTitulo {
-    font-size: 1.1em; 
-    display: inline-block;
-    font-weight: bold;
-}
-.extraDestaqueEventos span.extraIntimacaoParte {
-    font-weight: bold;
-}
-.extraDestaqueEventos .extraEventoInterno.extraEventoDestaque td:nth-of-type(3) {
-    border: 2px solid hsl(81, 60%, 35%);
-}
-.extraDestaqueEventos .extraEventoTitulo,
-.extraDestaqueEventos td:nth-of-type(4) label {
-    color: hsl(0, 0%, 35%);
-}
-.extraDestaqueEventos .extraEventoInterno .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoInterno td:nth-of-type(4) label {
-    color: hsl(81, 60%, 35%);
-}
-.extraDestaqueEventos .extraEventoInterno.extraEventoDestaque .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoInterno.extraEventoImportante .extraEventoTitulo {
-    background-color: hsl(81, 60%, 35%);
-}
-.extraDestaqueEventos .extraEventoExterno .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoExterno td:nth-of-type(4) label,
-.extraDestaqueEventos span.extraIntimacaoExterno {
-    color: hsl(198, 60%, 35%);
-}
-.extraDestaqueEventos .extraEventoExterno.extraEventoDestaque .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoExterno.extraEventoImportante .extraEventoTitulo,
-.extraNomeParteExterno {
-    background-color: hsl(198, 60%, 35%);
-}
-.extraDestaqueEventos .extraEventoEntidade .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoEntidade td:nth-of-type(4) label,
-.extraDestaqueEventos span.extraIntimacaoEntidade {
-    color: hsl(10, 60%, 35%);
-}
-.extraDestaqueEventos .extraEventoEntidade.extraEventoDestaque .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoEntidade.extraEventoImportante .extraEventoTitulo,
-.extraNomeParteEntidade {
-    background-color: hsl(10, 60%, 35%);
-}
-.extraDestaqueEventos .extraEventoDestaque .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoImportante .extraEventoTitulo {
-    background-color: hsl(0, 0%, 35%);
-    color: #fff;        
-    padding: 3px;
-    margin-bottom: 5px;
-    -moz-border-radius: 0.5ex;
-}
-br.extraEventoSeparador {
-    display: none;
-}
-.extraDestaqueEventos br.extraEventoSeparador {
-    display: inline;
-}
-.extraDestaqueEventos span.extraEventoSeparador {
-    display: none;
-}
-.extraNomeParte {
-    -moz-border-radius: 3px;
-    padding: 1px 3px;
-    vertical-align: top;
-    color: #fff;
-}
-.extraNomeParteExterno {
-    margin-left: 2px;
-}
-.extraTabelaEventos td:nth-of-type(3) {
-    padding: 0.25em 0.5ex;
-}
-.prazoAguardaAbertura .extraEventoTitulo {
-    color: hsl(10, 60%, 35%) !important; /* deixa o título vermelho mesmo sendo interno em intimações que o prazo ainda não abriu */
-}
-select.infraSelect, input.infraText, textarea.infraTextarea {
-    -moz-border-radius: 4px;
-    padding: 3px 1px;
-    -moz-box-shadow: 2px 2px 2px hsl(0, 0%, 50%) inset;
-    border: none;
-}
 #divInfraAreaProcesso {
     clear: both;
 }
-input.infraButton, button.infraButton,
-input.infraButton:hover, button.infraButton:hover,
-a.extraLinkAcao,
-#btnDownloadCompletoRS,
-#btnDownloadCompletoTRF4 {
-    -moz-border-radius: 4px;
-    padding: 3px 1px;
-    border: 1px outset hsl($hB, 50%, 50%);
-    font-size: 1.2em;
-}
-input.infraButton, button.infraButton,
-#btnDownloadCompletoRS,
-#btnDownloadCompletoTRF4 {
-    background: -moz-linear-gradient(
-            hsl($hB, 40%, 60%) 0%,
-            hsl($hB, 60%, 40%) 100%
-        ) transparent !important;
-}
-input.infraButton, button.infraButton,
-input.infraButton span, button.infraButton span,
-input.infraButton:hover, button.infraButton:hover,
-#btnDownloadCompletoRS,
-#btnDownloadCompletoTRF4 {
-    font-weight: bold;
-    color: #fff;
-}
-input.infraButton:hover, button.infraButton:hover,
-#btnDownloadCompletoRS:hover,
-#btnDownloadCompletoTRF4:hover {
-    background: -moz-linear-gradient(
-            hsl($hB, 40%, 75%) 0%,
-            hsl($hB, 60%, 55%) 100%
-        ) transparent !important;
-}
-input.infraButton:active, button.infraButton:active,
-#btnDownloadCompletoRS:active,
-#btnDownloadCompletoTRF4:active {
-    position: relative;
-    top: 1px;
-}
-input.infraButton[disabled], button.infraButton[disabled] {
-    color: #aaa;
-}
-#txtNumProcessoPesquisaRapida[placeholder] {
-    width: 135px;
-    font-size: 1.1em;
-}
-#txtNumProcessoPesquisaRapida:-moz-placeholder {
-    font-style: italic;
-    color: gray;
-}
-a.extraLinkAcao {
-    display: inline-block;
-    text-decoration: none;
-    margin: 0 .25ex .5em;
-    background: -moz-linear-gradient(
-            hsl(0, 0%, 95%) 0%,
-            hsl(0, 0%, 80%) 100%
-        ) transparent;
-    border-color: hsl(0, 0%, 90%);
-}
-a.extraLinkAcao:hover {
-    background: -moz-linear-gradient(
-            hsl(0, 0%, 100%) 0%,
-            hsl(0, 0%, 85%) 100%
-        ) transparent;
-}
-.extraIconeAcao {
-    vertical-align: middle;
-    margin: auto 2px;
-}
-#fldAcoes.extraNaoMostrar .extraIconeAcao {
-    display: none;
-}
-#fldAcoes .extraAcoesDestacadas {
-    text-align: center;
-}
-#fldAcoes .extraAcoesDestacadas a.extraLinkAcao {
-    font-weight: bold;
-    font-size: 1.4em;
-}
-#fldObsRegra #lblObsRegra {
-    position: relative;
-}
-tr.extraLocalizador[data-processos] {
-    cursor: pointer;
-}
-tr.extraLocalizador[data-processos="0"] {
-    cursor: default;
-}
-tr.extraLocalizador[data-processos] a, tr.extraLocalizador[data-processos] u {
-    text-decoration: none;
-}
-tr.extraLocalizador[data-processos="0"] td, tr.extraLocalizador[data-processos="0"] td u {
-    color: #999;
-}
+
