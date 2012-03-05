@@ -74,19 +74,28 @@ var Eproc = {
     {
         var tables = $$('.infraTable[summary="Lembretes"]');
         if (tables.length == 0) return;
+        var unidades = $$('label[id="lblInfraUnidades"]');
+        if (unidades.length == 0) {
+            unidades = $$('label[id="lblInfraUnidades"]', window.parent.document);
+        }
+        if (unidades.length == 1) {
+            unidades = unidades[0];
+        } else if (unidades.length > 1) {
+            unidades = unidades[1];
+        }
+        if (unidades instanceof HTMLLabelElement) {
+            var usuarioAtual = unidades.textContent;
+        } else {
+            var usuarioAtual = '';
+        }
         tables.forEach(function(table)
         {
-            var separator = document.createElement('div');
-            separator.className = 'extraSeparador';
-            table.parentNode.insertBefore(separator, table);
+            var div = document.createElement('div');
+            div.className = 'extraLembretes noprint';
             $$('tr.infraTrClara, tr.infraTrEscura', table).forEach(function(tr, r)
             {
                 var destino = tr.cells[3].textContent, classes = ['extraLembrete'];
-                var pessoa = $('#lblInfraUnidades');
-                if (!pessoa) {
-                    pessoa = $('#lblInfraUnidades', window.parent.document);
-                }
-                if (new RegExp(destino).test(pessoa.textContent)) {
+                if (new RegExp(destino).test(usuarioAtual)) {
                     destino = 'VOCÊ';
                     classes.push('extraLembreteVoce');
                 }
@@ -112,9 +121,13 @@ var Eproc = {
                 var celulaBotoes = tr.cells[tr.cells.length - 1];
                 floater.childNodes[0].appendChild(celulaBotoes.childNodes[2]);
                 floater.childNodes[0].appendChild(celulaBotoes.childNodes[0]);
-                table.parentNode.insertBefore(floater, separator);
+                div.appendChild(floater);
             });
-            table.parentNode.removeChild(table);
+            var separator = document.createElement('div');
+            separator.className = 'extraSeparador';
+            div.appendChild(separator);
+            table.parentNode.insertBefore(div, table);
+            table.classList.add('noscreen');
         });
     },
     colorirTabela: function()
@@ -745,6 +758,10 @@ var Eproc = {
         var corUsuario = { hsl: hsl, h: h, s: s, l: l };
         return corUsuario;
     },
+    getSkinUsuario: function()
+    {
+        return GM_getValue('v2.skin', 'stock');
+    },
     getMenu: function()
     {
         var menu = $('#infraMenuRaizes');
@@ -793,82 +810,6 @@ var Eproc = {
         var brasao = $('#imgBrasao');
         if (brasao) {
             brasao.src = 'data:image/png;base64,' + GM_getBase64('chrome://eproc/skin/brasao.png');
-        }
-        var menu = Eproc.getMenu();
-        if (menu) {
-            var cores = document.createElement('li');
-            cores.innerHTML = '<a class="infraMenuRaiz"  title="Cor de fundo" ><div class="infraItemMenu"><div class="infraRotuloMenu">Cor de fundo</div><div class="infraSetaMenu">&raquo;</div></div></a><ul></ul>';
-            var coresMenu = cores.querySelector('ul');
-            var extraStyle = Eproc.getExtraStyle();
-            function Cor(c, h, s, l)
-            {
-                var cor = document.createElement('a');
-                cor.className = 'infraMenuFilho extraCor' + c;
-                extraStyle.innerHTML += 'div.infraMenu a.extraCor' + c + ' { ';
-                extraStyle.innerHTML += 'background-color: hsl(' + h + ', ' + s + '%, ' + l + '%);';
-                extraStyle.innerHTML += 'color: hsl(' + h + ', ' + s + '%, 25%);';
-                extraStyle.innerHTML += 'border: 1px solid #888;';
-                extraStyle.innerHTML += '}\n';
-                cor.textContent = 'Cor ' + c;
-                cor.addEventListener('click', function()
-                {
-                    Eproc.salvaFundo(h, s, l, (s == 0 ? (Eproc.isSegundoGrau() ? 10 : 210) : h), (s == 0 && l < 100 ? 0 : 100), 100);
-                }, false);
-                cor.addEventListener('mouseover', function()
-                {
-                    Eproc.mudaEstilosTemporariamente(h, s, l, (s == 0 ? (Eproc.isSegundoGrau() ? 10 : 210) : h), (s == 0 && l < 100 ? 0 : 100), 100);
-                }, false);
-                cor.addEventListener('mouseout', Eproc.removeEstilosTemporarios, false);
-                return cor;
-            }
-            for (var c = 1; c <= 14; c++) {
-                var h = 0, s = 0, l = 96;
-                if (c == 1) {
-                    l = 100;
-                } else if (c == 14) {
-                    // do nothing
-                } else {
-                    h = (c - 2) * 30;
-                    s = 66;
-                }
-                var cor = new Cor(c, h, s, l);
-                coresMenu.appendChild(cor);
-            }
-            menu.appendChild(cores);
-        }
-        var menu = Eproc.getMenu();
-        if (menu) {
-            var skins = document.createElement('li');
-            skins.innerHTML = '<a class="infraMenuRaiz"  title="Estilo" ><div class="infraItemMenu"><div class="infraRotuloMenu">Estilo</div><div class="infraSetaMenu">&raquo;</div></div></a><ul></ul>';
-            var skinsMenu = skins.querySelector('ul');
-            function Skin(nome, descricao)
-            {
-                if (typeof nome == 'undefined') throw 'ParÃ¢metro "nome" Ã© obrigatÃ³rio';
-                if (typeof descricao == 'undefined') descricao = nome;
-                var skin = document.createElement('a');
-                skin.className = 'infraMenuFilho';
-                skin.textContent = descricao;
-                skin.addEventListener('click', function()
-                {
-                    Eproc.salvaSkin(nome);
-                }, false);
-                skin.addEventListener('mouseover', function()
-                {
-                    Eproc.mudaSkinTemporariamente(nome);
-                }, false);
-                skin.addEventListener('mouseout', Eproc.removeEstilosTemporarios, false);
-                return skin;
-            }
-            var skinNames = {
-                stock: 'Padrão',
-                candy: 'Candy',
-                icecream: 'Ice Cream'
-            };
-            for (name in skinNames) {
-                var skin = new Skin(name, skinNames[name]);
-                skinsMenu.appendChild(skin);
-            }
-            menu.appendChild(skins);
         }
         var barraSistema = $('.infraBarraSistema'), lembretes = $$('.infraTable[summary="Lembretes"]');
         if (barraSistema || lembretes.length) {
@@ -958,7 +899,7 @@ var Eproc = {
                 var icone = document.createElement('img');
                 icone.width = 16;
                 icone.height = 16;
-                icone.className = 'extraIconeAcao';
+                icone.className = 'extraIconeAcao noprint';
                 getIcone = function() { return icone; };
                 return getIcone();
             }
@@ -996,35 +937,43 @@ var Eproc = {
                 span.textContent = legend.textContent;
                 legend.textContent = '';
                 legend.appendChild(span);
-                var mostrar = GM_getValue('v2.mostraricones');
-                if (! mostrar) {
-                    fieldset.className += ' extraNaoMostrar';
-                }
-                var label = document.createElement('label');
-                label.htmlFor = 'naoMostrarIcones';
-                label.className = 'extraNaoMostrarIcones';
-                var naoMostrar = document.createElement('input');
-                naoMostrar.id = 'naoMostrarIcones';
-                naoMostrar.type = 'checkbox';
-                naoMostrar.checked = ! mostrar;
-                naoMostrar.addEventListener('change', function(e)
+                var opcoes = document.createElement('div');
+                opcoes.className = 'extraAcoesOpcoes noprint';
+                legend.appendChild(opcoes);
+                function createCheckBox(preferencia, classe, id, texto)
                 {
-                    var naoMostrar = e.target, mostrar = (! naoMostrar.checked);
-                    GM_setValue('v2.mostraricones', mostrar);
-                    var fieldset = $('#fldAcoes');
-                    if (mostrar) {
-                        fieldset.className = fieldset.className.replace(/ ?extraNaoMostrar/, '');
-                    } else {
-                        var fieldsetClasses = (fieldset.className == '') ? [] : fieldset.className.split(/\s+/);
-                        fieldsetClasses.push('extraNaoMostrar');
-                        fieldset.className = fieldsetClasses.join(' ');
+                    var valor = GM_getValue(preferencia);
+                    if (valor) {
+                        fieldset.classList.add(classe);
                     }
-                }, false);
-                label.appendChild(naoMostrar);
-                label.appendChild(document.createTextNode(' Não mostrar ícones'));
-                legend.appendChild(label);
+                    var label = document.createElement('label');
+                    label.htmlFor = id;
+                    var checkbox = document.createElement('input');
+                    checkbox.id = id;
+                    checkbox.type = 'checkbox';
+                    checkbox.checked = valor;
+                    checkbox.addEventListener('change', (function(preferencia, classe)
+                    {
+                        return function(e)
+                        {
+                            var valor = e.target.checked;
+                            GM_setValue(preferencia, valor);
+                            var fieldset = $('#fldAcoes');
+                            if (valor) {
+                                fieldset.classList.add(classe);
+                            } else {
+                                fieldset.classList.remove(classe);
+                            }
+                        };
+                    })(preferencia, classe), false);
+                    label.appendChild(checkbox);
+                    label.appendChild(document.createTextNode(' ' + texto));
+                    opcoes.appendChild(label);
+                }
+                createCheckBox('v2.mostraricones', 'extraAcoesMostrarIcones', 'mostrarIcones', 'Mostrar ícones');
+                createCheckBox('v2.destacaracoes', 'extraAcoesDestacar', 'destacarAcoes', 'Destacar ações mais comuns');
                 var divAcoesDestacadas = document.createElement('div');
-                divAcoesDestacadas.className = 'extraAcoesDestacadas';
+                divAcoesDestacadas.className = 'extraAcoesDestacadas noprint';
                 fieldset.appendChild(divAcoesDestacadas);
             }
             acoes.forEach(function(acao)
@@ -1164,10 +1113,15 @@ var Eproc = {
                     }
                 }
                 if (acao.nextSibling.nodeType == document.TEXT_NODE) {
-                    acao.parentNode.removeChild(acao.nextSibling);
+                    var span = document.createElement('span');
+                    span.className = 'extraAcoesSeparador';
+                    span.textContent = acao.nextSibling.textContent;
+                    acao.parentNode.replaceChild(span, acao.nextSibling);
                 }
                 if (destacar) {
-                    divAcoesDestacadas.appendChild(acao);
+                    var copia = acao.cloneNode(true);
+                    acao.classList.add('extraLinkAcaoDestacadaOriginal');
+                    divAcoesDestacadas.appendChild(copia);
                 }
             });
         }
@@ -1187,7 +1141,7 @@ var Eproc = {
             hB = 210, sB = 100, lB = 100;
         }
         if (typeof temporario == 'undefined') temporario = false;
-        if (typeof skin == 'undefined') skin = GM_getValue('v2.skin', 'stock');
+        if (typeof skin == 'undefined') skin = Eproc.getSkinUsuario();
         var background = 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
         function getTransformedCss(name)
         {
@@ -1207,28 +1161,39 @@ var Eproc = {
         }
         function getStyleElement(skin)
         {
-            var styleElementName = 'extraMain';
-            if (typeof skin != 'undefined') {
-                styleElementName = 'extraSkin';
+            var styleElementName = 'extraSkin';
+            if (typeof skin == 'undefined') {
+                styleElementName = 'extraMain';
+            } else if (skin == 'print') {
+                styleElementName = 'extraPrint';
             }
             if (temporario) {
                 styleElementName += 'Temp';
             }
             return Eproc.getStyle(styleElementName);
         }
-        var estilo = getStyleElement();
-        var css = getTransformedCss('eprocV2');
-        estilo.innerHTML = css;
-        var estilo = getStyleElement(skin);
-        var css = getTransformedCss(skin);
-        estilo.innerHTML = css;
+        function addStyleSheet(name)
+        {
+            var estilo = getStyleElement(name);
+            var media = (name == 'print') ? 'print' : 'screen';
+            estilo.media = media;
+            if (typeof name == 'undefined') name = 'screen';
+            var css = '.no' + name + ' { display: none; }\n';
+            if (name == 'screen') name = 'eprocV2';
+            css += getTransformedCss(name);
+            estilo.innerHTML = css;
+        }
+        addStyleSheet();
+        addStyleSheet('print');
+        addStyleSheet(skin);
+
         $$('label[onclick^="listarTodos"], label[onclick^="listarEventos"], #txtEntidade, #txtPessoaEntidade').forEach(function(auto)
         {
-          var id = auto.id.replace('lblListar', 'txt');
-          auto = $('#' + id);
-          if (auto) {
-            auto.style.width = auto.clientWidth + 'px';
-          }
+            var id = auto.id.replace('lblListar', 'txt');
+            auto = $('#' + id);
+            if (auto) {
+                auto.style.width = auto.clientWidth + 'px';
+            }
         }, this);
     },
     mudaEstilosTemporariamente: function(h, s, l, hB, sB, lB)
@@ -1255,10 +1220,6 @@ var Eproc = {
         var fundoUsuario = Eproc.getFundoUsuario();
         var barraUsuario = Eproc.getBarraUsuario();
         Eproc.mudaEstilos(fundoUsuario.h, fundoUsuario.s, fundoUsuario.l, barraUsuario.h, barraUsuario.s, barraUsuario.l, temporario, nome);
-    },
-    mudaSkinTemporariamente: function(nome)
-    {
-//        Eproc.mudaSkin(nome, false);
     },
     salvaSkin: function(nome)
     {
@@ -1929,22 +1890,11 @@ var Eproc = {
 
         function MarkersContainer(container)
         {
-            var cssRules = {};
-
-            this.setSelectorRules = function(selector, rules)
-            {
-                if (! (selector in cssRules)) {
-                    Eproc.addCssRule('.' + selector + ' { ' + rules + ' }');
-                    cssRules[selector] = rules;
-                }
-            };
             this.add = function(marker)
             {
-                this.setSelectorRules(marker.selector, marker.cssRules);
                 marker.appendTo(container);
             };
 
-            this.setSelectorRules('extraMarker', 'float: left; padding: 5px; -moz-border-radius: 5px; font-size: 1.2em; color: white; margin-left: 5px; font-weight: bold;');
         }
 
         function Marker()
@@ -1954,7 +1904,7 @@ var Eproc = {
             this.create = function (text)
             {
                 marker = document.createElement('div');
-                marker.className = 'extraMarker ' + this.selector;
+                marker.className = 'extraMarker noprint ' + this.selector;
                 marker.textContent = text;
             };
             this.appendTo = function(container)
@@ -1969,7 +1919,6 @@ var Eproc = {
         }
         ReuPresoMarker.prototype = new Marker();
         ReuPresoMarker.prototype.selector = 'extraMarkerReuPreso';
-        ReuPresoMarker.prototype.cssRules = 'background-color: red;';
 
         function PrioridadeMarker()
         {
@@ -1977,7 +1926,6 @@ var Eproc = {
         }
         PrioridadeMarker.prototype = new Marker();
         PrioridadeMarker.prototype.selector = 'extraMarkerPrioridade';
-        PrioridadeMarker.prototype.cssRules = 'background-color: brown;';
 
         var comandos = $('#divInfraBarraComandosSuperior');
         if (comandos) {
@@ -2097,61 +2045,121 @@ var Eproc = {
     usuario_personalizacao_configuracao: function()
     {
         var tabela = $('#cadastro_plugins');
-        var esquema = $('#selInfraCores', tabela).parentNode.parentNode;
 
-        var Configuracao = (function(original)
+        function Configuracao(linhas)
         {
-            function clonar()
+            this.clonar = function()
             {
-                var linhas = [];
-                for (var i = 0, atual = original; i < 4; i++) {
+                var linhasClonadas = [];
+                for (var i = 0, atual; atual = linhas[i]; i++) {
                     var copia = atual.cloneNode(true);
-                    copia.className += ' nostock';
-                    linhas.push(copia);
-                    atual = atual.nextSibling;
+                    linhasClonadas[i] = copia;
                 }
-                return linhas;
-            }
-            return function()
-            {
-                var linhas = clonar();
-                this.setControle = function(elemento, replace)
-                {
-                    if (typeof replace == 'undefined') replace = true;
-                    if (replace) linhas[0].cells[1].textContent = '';
-                    linhas[0].cells[1].appendChild(elemento);
-                };
-                this.setTexto = function(texto, replace)
-                {
-                    if (typeof replace == 'undefined') replace = true;
-                    if (replace) linhas[0].cells[0].textContent = '';
-                    linhas[0].cells[0].textContent += texto;
-                };
-                this.setDescricao = function(texto, replace)
-                {
-                    if (typeof replace == 'undefined') replace = true;
-                    if (replace) linhas[1].cells[0].textContent = '';
-                    linhas[1].cells[0].textContent += texto;
-                };
-                this.insertBefore = function(elemento)
-                {
-                    linhas.forEach(function(linha)
-                    {
-                        elemento.parentNode.insertBefore(linha, elemento);
-                    });
-                };
+                return new Configuracao(linhasClonadas);
             };
-        })(esquema);
-        var corBarra = new Configuracao();
-        corBarra.setControle(new TabelaCoresBarra());
-        corBarra.setDescricao(' (clique sobre a cor para tornar a mudança permanente)', false);
-        corBarra.insertBefore(esquema);
-        var corFundo = new Configuracao();
+            this.getLinhas = function()
+            {
+                return linhas;
+            };
+            this.setControle = function(elemento, replace)
+            {
+                if (typeof replace == 'undefined') replace = true;
+                if (replace) linhas[0].cells[1].textContent = '';
+                linhas[0].cells[1].appendChild(elemento);
+            };
+            this.setTexto = function(texto, replace)
+            {
+                if (typeof replace == 'undefined') replace = true;
+                if (replace) linhas[0].cells[0].textContent = '';
+                linhas[0].cells[0].textContent += texto;
+            };
+            this.setDescricao = function(texto, replace)
+            {
+                if (typeof replace == 'undefined') replace = true;
+                if (replace) linhas[1].cells[0].textContent = '';
+                linhas[1].cells[0].textContent += texto;
+            };
+            this.insertAfter = function(elemento)
+            {                
+                linhas.forEach(function(linha)
+                {
+                    elemento = elemento.nextSibling;
+                });
+                linhas.forEach(function(linha)
+                {
+                    elemento.parentNode.insertBefore(linha, elemento.nextSibling);
+                    elemento = elemento.nextSibling;
+                });
+            };
+            this.insertBefore = function(elemento)
+            {
+                linhas.forEach(function(linha)
+                {
+                    elemento.parentNode.insertBefore(linha, elemento);
+                });
+            };
+            this.hideFrom = function(skins)
+            {
+                if (! (skins instanceof Array)) {
+                    skins = [skins];
+                }
+                linhas.forEach(function(linha)
+                {
+                    skins.forEach(function(skin)
+                    {
+                        linha.className += ' no' + skin;
+                    });
+                });
+            };
+        }
+        Configuracao.fromRow = function(row)
+        {
+            var linhas = [];
+            for (var i = 0, atual = row; i < 4; i++) {
+                linhas.push(atual);
+                atual = atual.nextSibling;
+            }
+            return new Configuracao(linhas);
+        };
+        var esquema = $('#selInfraCores', tabela).parentNode.parentNode;
+        var confEsquema = Configuracao.fromRow(esquema);
+        var estilo = confEsquema.clonar();
+        estilo.setTexto('Estilo');
+        estilo.setControle(new Estilos());
+        estilo.setDescricao('Altera o estilo dos botões e demais controles das páginas');
+        estilo.insertBefore(esquema);
+        var corFundo = confEsquema.clonar();
         corFundo.setTexto('Cor de fundo');
         corFundo.setControle(new TabelaCoresFundo());
         corFundo.setDescricao('Altera a cor de fundo da página (clique sobre a cor para tornar a mudança permanente)');
-        corFundo.insertBefore(esquema);
+        corFundo.insertAfter(esquema);
+        var corBarra = confEsquema.clonar();
+        corBarra.hideFrom('stock');
+        corBarra.setControle(new TabelaCoresBarra());
+        corBarra.setDescricao(' (clique sobre a cor para tornar a mudança permanente)', false);
+        corBarra.insertAfter(esquema);
+        confEsquema.hideFrom(['candy', 'icecream']);
 
+        function Estilos()
+        {
+            var select = document.createElement('select');
+            select.className = 'infraSelect';
+            var skins = {
+                stock: 'Padrão',
+                candy: 'Candy',
+                icecream: 'Ice Cream'
+            };
+            for (nome in skins) {
+                var descricao = skins[nome];
+                var selecionada = nome == Eproc.getSkinUsuario() ? true : false;
+                select.innerHTML += '<option value="' + nome + '"' + (selecionada ? ' selected="selected"' : '') + '>' + descricao + '</option>';
+            }
+            select.addEventListener('change', function(e)
+            {
+                Eproc.salvaSkin(e.target.value);
+            }, false);
+            return select;
+        }
         function TabelaCores()
         {
             var CELLS_PER_ROW = 7;
@@ -2269,14 +2277,13 @@ var Eproc = {
         function CellDecoratorBarra(cB)
         {
             CellDecorator.apply(this, arguments);
-            var hB = 0, sB = 0, lB = 96;
+            var hB = 0, sB = 50, lB = 50;
             if (cB == 1) {
-                lB = 100;
+                hB = (Eproc.isSegundoGrau() ? 10 : 210);
             } else if (cB == 14) {
-                // do nothing
+                sB = 0;
             } else {
                 hB = (cB - 2) * 30;
-                sB = 66;
             }
             this.getTextColor = function()
             {
@@ -2284,13 +2291,12 @@ var Eproc = {
             };
             this.getBackground = function()
             {
-                if (cB == 1) return 'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAIAAABLbSncAAAABGdBTUEAALGPC/xhBQAAADlJREFUGFdj3G9vzwAD9Q4NcDYDUAKC7Or3wxFINVZRqASaWohSBqyiKBJwyyD2QXWgiUIlMEWBEgD05k66X4QKQQAAAABJRU5ErkJggg==")';
-                return 'hsl(' + hB + ', 50%, 50%)';
+                return 'hsl(' + hB + ', ' + sB + '%, ' + lB + '%)';
             };
             function getArguments()
             {
                 var fundo = Eproc.getFundoUsuario();
-                return [fundo.h, fundo.s, fundo.l, (sB == 0 ? (Eproc.isSegundoGrau() ? 10 : 210) : hB), (sB == 0 && lB < 100 ? 0 : 100), 100];
+                return [fundo.h, fundo.s, fundo.l, hB, sB == 0 ? 0 : 100, 100];
             }
             this.getFuncaoPrevisao = function()
             {

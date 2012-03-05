@@ -1,23 +1,31 @@
+html, body {
+    margin: 0;
+    height: 100%;
+}
 body {
     background-color: $background;
-}        
-#divInfraAreaTela input, select {
-    background-color: hsla(0, 0%, 80%, 0.25);
+    overflow-y: auto;
 }
-#divInfraAreaTela input:focus {
-    background-color: hsla(0, 0%, 50%, 0.5);
+div.extraWrapper {
+    padding: 0.5625% 0;
+    height: 98%
 }
-select:focus {
-    background-color: hsla(0, 0%, 50%, 0.25);
+#divInfraAreaGlobal {
+    height: 100%;
+    margin-bottom: 0.5625%;
 }
-select:focus option {
-    background-color: hsla(0, 0%, 100%, 0.25);
+input.infraText, select.infraSelect, textarea.infraTextarea,
+select.infraSelect:focus option {
+    background-color: hsl($h, 50%, 92%);
 }
-div.infraAjaxAutoCompletar {
-    background-color: $background;
+input:focus,
+select:focus,
+textarea:focus {
+    background-color: #fff;
 }
+div.infraAjaxAutoCompletar,
 div.infraAjaxAutoCompletar li {
-    background-color: hsla(0, 0%, 80%, 0.25);
+    background-color: hsl($h, 50%, 92%);
 }
 div.infraAjaxAutoCompletar li.selected {
     background-color: Highlight;
@@ -39,10 +47,10 @@ table.infraTable {
     border: none;
 }
 tr.infraTrClara {
-    background-color: hsla(0, 0%, 98%, 0.5);
+    background-color: hsl($h, 33%, 97%);
 }
 tr.infraTrEscura {
-    background-color: hsla(0, 0%, 94%, 0.5);
+    background-color: hsl($h, 33%, 95%);
 }
 tr.infraTrSelecionada td {
     background-color: hsla(0, 0%, 50%, 0.25);
@@ -66,15 +74,11 @@ a.docLink {
 .infraBarraComandos, .infraAreaTelaD, .infraAreaDados {
     border-color: $background !important;
 }
-div.infraBarraTribunal {
-    -moz-background-size: 1px 80px;
-    background-size: 1px 80px;
-}
 .infraTable td label {
     font-size: 1em;
 }
-label.infraLabelObrigatorio {
-    color: #555;
+#fldAssuntos label.infraLabelObrigatorio {
+    color: #333;
 }
 img.infraImg, img.infraImgNormal, img.infraImg:hover, img.infraImgNormal:hover {
     width: auto;
@@ -98,16 +102,18 @@ div.infraAjaxAutoCompletar { max-height: 30em; overflow-y: scroll; } div.infraAj
 .extraGedproRotuloBlue { color: blue; }
 .extraGedproRotuloGray { color: gray; cursor: inherit; }
 .extraGedproImg { cursor: inherit; }
-.extraFieldset { -moz-border-radius: 8px; border-radius: 8px; }
-button.infraButton[class~=extraBuscarPreventosButton] { font-size: .8em; }
+button.infraButton.extraBuscarPreventosButton,
+button.infraButton.extraBuscarPreventosButton:hover {
+    font-size: .8em;
+}
 .extraLembrete {
     float: left;
     font-size: 12px;
     min-width: 20ex;
-    max-width: 60ex;
+    max-width: 40ex;
     margin-bottom: 0.5em;
     margin-right: 1ex;
-    padding: 0 1ex;
+    padding: 0.5em 1ex;
     text-align: center;
     background-color: hsl(60, 100%, 80%);
     color: hsl(0, 0%, 0%);
@@ -117,18 +123,25 @@ button.infraButton[class~=extraBuscarPreventosButton] { font-size: .8em; }
 }
 .extraLembrete a {
     float: right;
-    margin: -0.5em 0.5ex 0;
+    vertical-align: middle;
+    margin-left: 0.5ex;
+}
+.extraLembrete a:last-of-type {
+    margin-left: 3ex;
+}
+.extraLembrete a img {
+    width: 16px !important;
+    height: 16px !important;
 }
 .extraLembretePara, .extraLembreteData {
-    margin-left: -1ex;
-    margin-right: -1ex;
     color: hsl(0, 0%, 33%);
 }
 .extraLembretePara {
-    margin-bottom: 0.5em;
+    margin-bottom: 1em;
+    line-height: 16px;
 }
 .extraLembreteData {
-    margin-top: 0.5em;
+    margin-top: 1em;
     text-align: right;
 }
 .extraLembrete abbr {
@@ -138,73 +151,123 @@ button.infraButton[class~=extraBuscarPreventosButton] { font-size: .8em; }
 .extraSeparador {
     clear: both;
 }
-@media print {
-    #divInfraAreaGlobal, #divInfraAreaTela, #divInfraAreaTelaD {
-        display: block;
-        margin: 0;
-        padding: 0;
-        border: none;
-        width: auto;
-        height: auto;
-    }
-    #divInfraBarraTribunal, #divInfraBarraSistemaLocalizacao, #divInfraAreaTelaE, div.infraBarraComandos {
-        display: none;
-    }
-    div.infraAreaDados > #divPainel {
-        display: block;
-    }
+.extraTabelaEventos img,
+.extraTabelaEventos img.infraImg,
+.extraTabelaEventos img.infraImgNormal,
+.extraTabelaEventos img.infraImg:hover,
+.extraTabelaEventos img.infraImgNormal:hover {
+    position: inherit !important;
+    margin-top: inherit !important;
+    margin-left: 1px !important;
+    width: 13px !important;
+    height: inherit !important;
+}
+.extraTabelaEventos a {
+    display: inline-block;
+}
+.extraTabelaEventos td:first-of-type,
+.extraTabelaEventos td:nth-of-type(2),
+.extraTabelaEventos td:last-of-type {
+    white-space: nowrap;
+}
+.extraDocumentoObservacao,
+.extraDocumentoLembrete {
+    margin-bottom: 0.5em;
+    font-size: 11px;
+    white-space: normal;
+    max-width: 50ex;
+}
+.extraDocumentoObservacao {
+    margin-left: 34px;
+}
+#divInfraAreaProcesso {
+    clear: both;
+}
+#txtNumProcessoPesquisaRapida[placeholder] {
+    width: 135px;
+    font-size: 1.1em;
+}
+#txtNumProcessoPesquisaRapida:-moz-placeholder {
+    font-style: italic;
+    color: gray;
 }
 a.extraLinkAcao {
     display: inline-block;
+    padding: 3px 1px;
     text-decoration: none;
     margin: 0 .25ex .5em;
     background-color: #ddd;
     border: 1px outset #ddd;
-    padding: 2px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
-    color: #333;
-    line-height: 16px;
 }
 a.extraLinkAcao:hover {
     background-color: #eee;
     border-color: #eee;
 }
 .extraIconeAcao {
+    display: none;
     vertical-align: middle;
     margin: auto 2px;
 }
-#fldAcoes.extraNaoMostrar .extraIconeAcao {
+.extraAcoesMostrarIcones .extraIconeAcao {
+    display: inherit;
+}
+.extraAcoesSeparador {
     display: none;
 }
-fieldset.infraFieldset {
-    border-style: groove;
-    border-color: $background;
-    border-width: 2px;
+.extraAcoesDestacadas {
+    display: none;
 }
-fieldset.extraFieldset {
-    border-style: outset;
-    border-color: $background;
-    border-width: 1px;
+.extraAcoesDestacar .extraAcoesDestacadas {
+    display: inherit;
+    text-align: center;
 }
-#fldAcoes .extraNaoMostrarIcones {
+.extraAcoesDestacar .extraAcoesDestacadas a.extraLinkAcao {
+    font-weight: bold;
+    font-size: 1.4em;
+}
+.extraAcoesDestacar .extraLinkAcaoDestacadaOriginal {
+    display: none;
+}
+.extraAcoesOpcoes {
     display: none;
     float: right;
     margin-left: 1ex;
     font-size: 0.9em;
     line-height: 1em;
 }
-#naoMostrarIcones {
-    margin: 0;
-}
-#fldAcoes:hover .extraNaoMostrarIcones {
+#fldAcoes:hover .extraAcoesOpcoes {
     display: inline-block;
 }
 #fldAcoes .extraAcoesLegend {
     font-weight: bold;
     float: left;
 }
-#divInfraAreaProcesso {
-    clear: both;
+#fldObsRegra #lblObsRegra {
+    position: relative;
 }
-
+tr.extraLocalizador[data-processos] {
+    cursor: pointer;
+}
+tr.extraLocalizador[data-processos="0"] {
+    cursor: default;
+}
+tr.extraLocalizador[data-processos] a, tr.extraLocalizador[data-processos] u {
+    text-decoration: none;
+}
+tr.extraLocalizador[data-processos="0"] td, tr.extraLocalizador[data-processos="0"] td u {
+    color: #999;
+}
+.extraMarker {
+    float: left;
+    color: white;
+    padding: 5px;
+    font-size: 1.2em;
+    margin-left: 5px;
+    -moz-border-radius: 5px;
+}
+.extraMarkerReuPreso {
+    background-color: red;
+}
+.extraMarkerPrioridade {
+    background-color: brown;
+}
