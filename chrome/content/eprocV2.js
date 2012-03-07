@@ -1336,9 +1336,7 @@ var Eproc = {
         if (botao && !novasConfiguracoesMostradas) {
             var resposta = GM_yesNo('Novas configurações', 'Você deve configurar algumas opções antes de continuar.\n\nDeseja abrir a tela de configurações agora?');
             if (resposta == 'YES') {
-                var evento = document.createEvent('MouseEvents');
-                evento.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-                botao.dispatchEvent(evento);
+                location.href = botao.href;
             }
         }
     },
@@ -2328,6 +2326,7 @@ var Eproc = {
         var botao = $('#lnkConfiguracaoSistema');
         var novasConfiguracoesMostradas = GM_getValue('v2.novasconfiguracoesmostradas', false);
         if (botao && !novasConfiguracoesMostradas) {
+            alert('Por favor, verifique se todas as configurações estão de acordo com suas preferências.');
             var novasConfiguracoesMostradas = GM_setValue('v2.novasconfiguracoesmostradas', true);
             function Tooltip(texto)
             {
@@ -2364,8 +2363,8 @@ var Eproc = {
                 function posicionarElementos()
                 {
                     img.style.top = y + elementoVinculado.offsetHeight + 'px';
-                    img.style.left = x + elementoVinculado.offsetWidth/2 - img.offsetWidth + 'px';
-                    div.style.top = y + elementoVinculado.offsetHeight + img.offsetHeight - 1 + 'px';
+                    img.style.left = x + elementoVinculado.offsetWidth/2 - 15 + 'px';
+                    div.style.top = y + elementoVinculado.offsetHeight + 15 - 1 + 'px';
                     div.style.left = x + elementoVinculado.offsetWidth/2 - div.offsetWidth + 10 + 'px';
                 }
                 function removerElementos()
