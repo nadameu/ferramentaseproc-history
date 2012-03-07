@@ -272,3 +272,29 @@ tr.extraLocalizador[data-processos="0"] td, tr.extraLocalizador[data-processos="
 .extraMarkerPrioridade {
     background-color: brown;
 }
+div.infraBarraTribunalE, div.infraBarraTribunalD {
+    width: auto;
+}
+span.infraEventoPrazoFechou { display: inline; }
+tr.infraEventoPrazoFechouMovimento span.infraEventoPrazoFechouDescricao {
+    background-color: #fff;
+}
+tr.infraEventoPrazoAguardando td.infraEventoDescricao,
+tr.infraEventoPrazoAberto td.infraEventoDescricao,
+tr.infraEventoPrazoFechado td.infraEventoDescricao {
+    padding-right: 20px;
+}
+tr.infraEventoPrazoAguardando td.infraEventoDescricao {
+    background: rgb(252, 220, 220) url('imagens/prazos/aguardando.png') top right no-repeat;
+}
+tr.infraEventoPrazoAberto td.infraEventoDescricao {
+    background: rgb(252, 252, 189) url('imagens/prazos/aberto.png') top right no-repeat;
+}
+tr.infraEventoPrazoFechouMovimento td.infraEventoDescricao {
+    background: rgb(235, 242, 223) url('imagens/prazos/fechado.png') top right no-repeat;
+}
+tr.infraEventoPrazoFechouDecurso td.infraEventoDescricao {
+    background: rgb(235, 242, 223) url('imagens/prazos/decurso.png') top right no-repeat;
+    padding-right: 36px;
+}
+
