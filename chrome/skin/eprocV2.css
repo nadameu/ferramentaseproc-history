@@ -14,16 +14,13 @@ div.extraWrapper {
     height: 100%;
     margin-bottom: 0.5625%;
 }
-#divInfraAreaGlobal, div.infraBarraTribunal {
-    border-color: hsl($hB, 50%, 80%);
-    border-left-color: hsl($hB, 94%, 39%);
-}
-input.infraText, select.infraSelect,
+input.infraText, select.infraSelect, textarea.infraTextarea,
 select.infraSelect:focus option {
     background-color: hsl($h, 50%, 92%);
 }
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
     background-color: #fff;
 }
 div.infraAjaxAutoCompletar,
@@ -64,11 +61,6 @@ tr.infraTrSelecionada td td {
 tr.infraTrMarcada td {
     background-color: hsla(0, 0%, 50%, 0.375);
 }
-#tabLocalizadores tr.infraTrMarcada td {
-    background-color: hsl($hB, 78%, 38%);
-    color: #fff;
-    text-shadow: 0 1px 2px #666666;
-}
 div.infraMenu a {
     background-color: $background;
     border-color: $background;
@@ -82,64 +74,6 @@ a.docLink {
 .infraBarraComandos, .infraAreaTelaD, .infraAreaDados {
     border-color: $background !important;
 }
-div.infraBarraTribunal {
-    background-color: hsl($hB, 50%, 50%);
-}
-#divInfraBarraSistema + div img {
-    display: none;
-}
-#divInfraBarraSistema + div:before {
-    display: inline-block;
-    width: 2em;
-    height: 4em;
-    content: '';
-    -moz-border-radius-bottomright: 100%;
-    border-bottom-right-radius: 100% 50%;
-}
-#divInfraBarraSistema + div:after {
-    display: inline-block;
-    width: 2em;
-    height: 4em;
-    content: '';
-}
-#divInfraBarraLocalizacao:before {
-    position: absolute;
-    font-size: 50%;
-    margin-left: -2em;
-    margin-top: -0.6em;
-    width: 2em;
-    height: 4em;
-    content: '';
-    background-color: $background;
-    -moz-border-radius-topleft: 100%;
-    border-top-left-radius: 100% 50%;
-}
-#divInfraBarraSistema + div:after {
-    background-color: $background;
-}
-#divInfraBarraSistema,
-#divInfraBarraSistema + div:before,
-#divInfraBarraSistema + div:after {
-    background-color: hsl($hB, 75%, 50%) !important;
-}
-div.infraBarraTribunalE, div.infraBarraTribunalD {
-    width: auto;
-}
-div.infraBarraTribunal,
-#divInfraBarraSistema,
-#divInfraBarraSistema + div:before,
-#divInfraBarraSistema + div:after {
-    background-image: -moz-linear-gradient(top,
-        hsla(0, 0%, 100%, 0.5),
-        hsla(0, 0%, 75%, 0.5) 25%,
-        hsla(0, 0%, 50%, 0.25) 25%,
-        hsla(0, 0%, 75%, 0.125)
-    ) !important;
-}
-div.infraBarraSistemaD {
-    top: 25% !important;
-    height: 50% !important;
-}
 .infraTable td label {
     font-size: 1em;
 }
@@ -149,28 +83,6 @@ div.infraBarraSistemaD {
 img.infraImg, img.infraImgNormal, img.infraImg:hover, img.infraImgNormal:hover {
     width: auto;
     height: auto;
-}
-.prazoAguardaAbertura {
-    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAALPSURBVDjLjZNbSFNxHMcXm+BDBEFBvgRS9CBFrxJRoUlPs4ceJMiHsIshSTdSi7AI1K6KOfOSaZgXQmyic5u3TJ3zNue8TEvP5tl0czed7uy+nW//DV3ajQ58D+fh9/nwP/8fX85s9e1okkySVhKKhCEJqspvYKjoEnrykoOtD08zjbeOU++vxbYKUvdlFqbsjgbACYVDhgcWxfkwDApgVlbBOvUBFlUNVkYqsdxXCl1HIaiWfEzX5mCg6DKas0+BCAYiAnXtA9WWwKSoJHkHo7wcS18FWJS8BiV8htmGJ1BW3kXfy9SwoCg1RhURyCbpOIWsFwviCszUP8KIIA09+edBjg1ybFRfP4SytIOoyDiKhqcXUFFSgJI6cVxEEHr1zPskCr0XVocfbh8Lj5+FzRnAjMGNMdoFrdULyuJF27gFJe1ayRYcEYQiVbs+S9VOdpEMM54gDHY/Zo0eaAgo+76Bt1Id+0akbd4O7xCEIlSux7co7dQw5YBu1ReG2ydsKJXS88UiTfyv8G+CrdQPmvvHaQZjWgcEErrvTzP/FDQOmuQTegYKIihu0/T/t6BeZjohHDXTkzoHbEwAxnU/RGMmFDTNLYjTE0p7+XvorgQeK03i6kiydwhq+1eETUMmVmN2hzfhDbDYcAehs/nQXfYCynsn4Ra9AquWwNl4B6MZxwIdibybYbimzyjtnLJh2e6D0xuEj8CBIAuGfCv1LnRdPAwXgVHMB7L2AnmxsDw/A+lZrobT0DkVV9dvQK96DeYNfxgmbFhgdwXwbcWDrsQosIrQBn8+a7kHEPqdcBempWUYkMsgn7NCb3Fh3UlWaHSg/osWjz9OoCU5BkxVGkAgz30OVknodC7IPSztKNPfuqDI5WP46hEYsmJhzokCdWUXuvm8gCSJ+4Czvc6kwhSpMLNZ4XAXSIWDpMLMp5T9NtE5nnNzC0shOHR/PwBGKPcL7gZY5gAAAABJRU5ErkJggg==') no-repeat scroll 99% 7% #FCDCDC;
-}
-.prazoAberto {
-    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAxlJREFUeNqMU11Ik1EYfs73fduc35ZNbWlKOlsR/Rg2EcSULioioiIhDYyiguomuiiri25CiBDsB6IyF9KFTi9SyuhnuUxLxbIfxFJzVqYrf9JCt+W275zOttYP3nTg/Q7nPe/znvd9n+cjDcUZMVQJnGGMZTHAAhDMXizo7SSEdAiidJIIwvfIjUSp8i2r4Ah806OAbwyKd3IWXNQaAPU8i1pntHTUXjgk8kwg4Yek4DbRXQNDWiZiV+RClJP4g+wPmgcq7mFMOJ/ha/cjEPZvcqn/81SpV7/4mPrVTTD3VQRoOEIgf+cgUOnnwROzHK4vztKlyXMRaTX4NV688/6TaEpVWxKBZfxO4E77ECCrgGgpvIsUaGob8R7elJDadCxrFEQIt1duH3Q311cMmBcuzv9GYpAoTEHvH4LedQuG8QdgxAhJE4d3PW7cKDu+JeXAi9dP5g6jZc4QmrkJgt8N25WSekfNpSJlxOVt+0Tgcr6CXmeC57sCN0mDs29mtKxRh7yia3dVCmyaAKClYROClVjvvfHYys/W7V2blPOm1XG2w78ew5o8fEw4iabGtpJt2VHrVCJQmFOMnFQUBAKoZjTcKrHe7+VDp9BoomTO9mVBjt8VHyfD3rkdT9/WhWgSeGRAASr2ncaEpwf2riq098OmlrBTopIMEvCafH5lgMUvQnp0L9JlilPddag9fB5uv53LSAKllCeKRddIFTZa9kBQVRa290IlpdSvRt+Gx/XEkIRs8hAmmYuGGRAkc8L3Ds8/3vlNJ2W3QTgjXaOV2Jy5D6091nxegU7144eSHquPhjkhFcw/AyJFhbQ0SV9CNSfMdfBM/b+UyefR0GVFYBoOiQpqX6L4gXuXo19jRgLXAe8NuSt34kRFNUSODhlPsH8HQpV94Bp53IIHj0pwiDQcTWfmFUbEpqyCwZQBol3AqRF5FdF8elHceM3uceRdX4MDu4H+Pg52hMAHt57De8k55rvoffllo/q1awmjDWB8WBH5Ek5UkGct04AkAwODIbAjAo5IeT63OG5a/N8K/q4DkcNPAQYAZnEuH2sFut0AAAAASUVORK5CYII=') no-repeat scroll 99% 7% #FCFCBD;
-}
-table.prazoComDestaque .prazoDecurso {
-    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAs5JREFUeNq0UktIVFEY/s99zcydO47zaMZxSi0f+SLLnCKjlEAobGGLXosgLCiwRVmSQiCUQVCkhJtIC4IWNdRCskBCqE2ghLoQoqYi85Uzt0nndWfmnDudO2lOrtr0w8f5OY/v/7//O2iozQVakKTaI8+GdywFooJKUhDwA/gDALzApEwWntgcAgWPzTZ+jGXReVgOrh11/s4EGH3We2Lfl4WI7LIYDHaTYJsJxqZicYKUJEFETaE8u2g92v1oFDKCS6VSKzmCfwh6H/03AsYgsCIXm8J4bqgy6ixn5HcDeUuhJe0RZHkuTYrurSLNmUwCRjtcxkTD1b4ua04xxxQceY8YTkWcjiBOT6TqC5OO9eX8ga7+Lu1exhvgMsjGtfaO3X7Y8/LK6TZBlb4L1k8pW3n9nMVRYKD73aUW3wTFeGYHaEtrb6Y+UFW1mqbbXl872665IAqcvelG/53mssfFde63hfTsBcWDPxIURQEN8XgckslkekhrdYpsRFe17kNlaW3fHoS4elpHr41OA7NmyDW0g5qhzjOtKxtyKC7fb97QbnbWVej1Wc5sZ30ZUaEBEwANmQQeWtnz9PKplrCCF1d1YbQ46+VLivbmHz/5BKyu3SUqQU0EA0ex6gKt7HlzveXiwmJc/sv30HC2JOqMgP3I6/WCEp43C8aNFbR6XZIScNEZH+hdm9LziCVIVPp4ayfJcqCYs5T9MTbojuNXgnN7LTsbHIHB523gV0aBt+YU4cDnw6oKw8zMwF2ITPsAY5y2FEuFMjLl/2RFR4Q1CSGDWU8Y3TcQGBkaD94EIx8CyRi38XqpCmPYpc1AnB+850wkEjqNQHEd8jHu/V8Fe1UggaZIbh6PDMwcSHwEInJHepX4MOS4zYXUtGbtX9socs9VQkd2EkqCQQCV2hMIA2xuhDzbBuoiLcOyVC8Fw4JCdDDNcZAQOBj5JcAAxBZTOchnWusAAAAASUVORK5CYII=') no-repeat scroll 95% 7%, url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAodJREFUeNqkk0tME0Ecxr/Z3b4ADZRqAqQ2hJJSmhAfxKjUqIlXLujJqAe96NGee+Bi4kE5edHIyRhOcsEY4sGDotGEgxEBCUQpTVqgD0262310dtaZlcL25MFJvs3M7P/37X+y8xHHcfA/QxEP8jwCyIRLLEgvCCb4bIwruleX5/oAB7NwnAJsvrIdODfKfw08Yzyo+DOJvkQ8FomGOwIdQdGfZqonNku59Fph/YrZMKf41lxLB034cODQ5MXUhaQCOUQtCtVSm+/a4t0DbdGuaPe7lfeTNd3dd02kvYLegOTPnB8aS1p1M6SqKgzDaNHLwWegeiN0Jn466Se+jGAODKgzMdgzEDdUI6RpGnRdb9GDgaxbNn98hpvQUCwcjQvGa3Au0h4J12o1mKbpSnSxvbuNO8Hr6Ky0I5/P4+bru1heWQYzWFgwXoNjMuSgbdv4fGkexUoRuZ0cYqQPZ7tGoSgKpjdf4FX5DRpSA4ZlBAXjNQC1KW73X8PS0hLmh2dwMjKCJyMPXfhteQGPC9NACK6oQl3mwKDhbJW1kpH9eh+yLMPn8+Hp0CP4FB/W6z9wbzML1sH4v4Ari5iGYLwdfNwuFatyWEb6+7j71aaurt8COrEPCxm1elUwXoPZ31uVDQlEJ30Ep75dduHUYho40gozZutmUd8QzIEBcwq2Rqcqn4qrDmU6iRGkvnA4hv1zC7EG1dXF6iqr21OCcWMgwkQIz0GMB2FUGpf65Yw/2R73J9rCcpcSFEX2L2pYa/WqtaptsJ8cXmRzyNlw2T0DcaW7uSLolXowjDSOIsXD5d42Hp4CdrGMFSygwHb4TomrzFnaNJA8J1X+kWCRRY2rzln2R4ABABpvPoBuuSpnAAAAAElFTkSuQmCC') no-repeat scroll 99% 7% #ebf2df;
-}
-table.prazoComDestaque .prazoFechado {
-    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAodJREFUeNqkk0tME0Ecxr/Z3b4ADZRqAqQ2hJJSmhAfxKjUqIlXLujJqAe96NGee+Bi4kE5edHIyRhOcsEY4sGDotGEgxEBCUQpTVqgD0262310dtaZlcL25MFJvs3M7P/37X+y8xHHcfA/QxEP8jwCyIRLLEgvCCb4bIwruleX5/oAB7NwnAJsvrIdODfKfw08Yzyo+DOJvkQ8FomGOwIdQdGfZqonNku59Fph/YrZMKf41lxLB034cODQ5MXUhaQCOUQtCtVSm+/a4t0DbdGuaPe7lfeTNd3dd02kvYLegOTPnB8aS1p1M6SqKgzDaNHLwWegeiN0Jn466Se+jGAODKgzMdgzEDdUI6RpGnRdb9GDgaxbNn98hpvQUCwcjQvGa3Au0h4J12o1mKbpSnSxvbuNO8Hr6Ky0I5/P4+bru1heWQYzWFgwXoNjMuSgbdv4fGkexUoRuZ0cYqQPZ7tGoSgKpjdf4FX5DRpSA4ZlBAXjNQC1KW73X8PS0hLmh2dwMjKCJyMPXfhteQGPC9NACK6oQl3mwKDhbJW1kpH9eh+yLMPn8+Hp0CP4FB/W6z9wbzML1sH4v4Ari5iGYLwdfNwuFatyWEb6+7j71aaurt8COrEPCxm1elUwXoPZ31uVDQlEJ30Ep75dduHUYho40gozZutmUd8QzIEBcwq2Rqcqn4qrDmU6iRGkvnA4hv1zC7EG1dXF6iqr21OCcWMgwkQIz0GMB2FUGpf65Yw/2R73J9rCcpcSFEX2L2pYa/WqtaptsJ8cXmRzyNlw2T0DcaW7uSLolXowjDSOIsXD5d42Hp4CdrGMFSygwHb4TomrzFnaNJA8J1X+kWCRRY2rzln2R4ABABpvPoBuuSpnAAAAAElFTkSuQmCC') no-repeat scroll 99% 7% #ebf2df;
-}
-.prazoExtra {
-    display: none;
-}
-.prazoComDestaque .prazoExtra {
-    display: inline;
-}
-.prazoComDestaque .prazoFechado .prazoEvento,
-.prazoComDestaque .prazoDecurso .prazoEvento {
-    background-color: #fff;
 }
 *[disabled] {
     color: #aaa;
@@ -203,21 +115,11 @@ button.infraButton.extraBuscarPreventosButton:hover {
     margin-right: 1ex;
     padding: 0.5em 1ex;
     text-align: center;
-    -moz-border-radius: 0.5ex;
-    font-weight: bold;
-    border: 1px solid hsl(60, 100%, 40%);
-    background: -moz-linear-gradient(
-            hsl(60, 100%, 80%) 0%,
-            hsl(60, 96%, 90%) 100%
-        );
-    color: #333;
+    background-color: hsl(60, 100%, 80%);
+    color: hsl(0, 0%, 0%);
 }
 .extraLembreteVoce {
-    border-color: hsl(60, 100%, 30%);
-    background: -moz-linear-gradient(
-            hsl(60, 100%, 70%) 0%,
-            hsl(60, 96%, 80%) 100%
-        );
+    background-color: hsl(60, 100%, 70%);
 }
 .extraLembrete a {
     float: right;
@@ -226,6 +128,13 @@ button.infraButton.extraBuscarPreventosButton:hover {
 }
 .extraLembrete a:last-of-type {
     margin-left: 3ex;
+}
+.extraLembrete a img {
+    width: 16px !important;
+    height: 16px !important;
+}
+.extraLembretePara, .extraLembreteData {
+    color: hsl(0, 0%, 33%);
 }
 .extraLembretePara {
     margin-bottom: 1em;
@@ -242,65 +151,6 @@ button.infraButton.extraBuscarPreventosButton:hover {
 .extraSeparador {
     clear: both;
 }
-@media print {
-    #divInfraAreaGlobal, #divInfraAreaTela, #divInfraAreaTelaD {
-        display: block;
-        margin: 0;
-        padding: 0;
-        border: none;
-        width: auto;
-        height: auto;
-    }
-    #divInfraBarraTribunal, #divInfraBarraSistemaLocalizacao, #divInfraAreaTelaE, div.infraBarraComandos {
-        display: none;
-    }
-    div.infraAreaDados > #divPainel {
-        display: block;
-    }
-}
-fieldset.infraFieldset {
-    border-style: groove;
-    border-color: $background;
-    border-width: 2px;
-}
-fieldset.infraFieldset {
-    background: hsl($h, 42%, 93%);
-    border-radius: 4px;
-    -moz-box-shadow: 1px 1px 2px hsla(0, 0%, 0%, 0.5) inset;
-    border: none;
-}
-legend.infraLegend,
-legend.infraLegendObrigatorio,
-legend.infraLegendObrigatorioExterno {
-    -moz-border-radius: 5px;
-    -moz-box-shadow: 2px 2px 5px hsla(0, 0%, 0%, 0.5);
-    padding: 2px 8px;
-}
-legend.infraLegendObrigatorio,
-legend.infraLegendObrigatorioExterno {
-    background: $background;
-}
-fieldset.extraFieldset {
-    border: 2px outset hsla(0, 0%, 50%, 0.5);
-    -moz-box-shadow: none;
-}
-#fldAcoes .extraNaoMostrarIcones {
-    display: none;
-    float: right;
-    margin-left: 1ex;
-    font-size: 0.9em;
-    line-height: 1em;
-}
-#naoMostrarIcones {
-    margin: 0;
-}
-#fldAcoes:hover .extraNaoMostrarIcones {
-    display: inline-block;
-}
-#fldAcoes .extraAcoesLegend {
-    font-weight: bold;
-    float: left;
-}
 .extraTabelaEventos img,
 .extraTabelaEventos img.infraImg,
 .extraTabelaEventos img.infraImgNormal,
@@ -326,137 +176,12 @@ fieldset.extraFieldset {
     font-size: 11px;
     white-space: normal;
     max-width: 50ex;
-	background-color: #FEFBC5;
 }
 .extraDocumentoObservacao {
     margin-left: 34px;
 }
-.extraDestaqueEventos .extraEventoTitulo {
-    font-size: 1.1em; 
-    display: inline-block;
-    font-weight: bold;
-}
-.extraDestaqueEventos span.extraIntimacaoParte {
-    font-weight: bold;
-}
-.extraDestaqueEventos .extraEventoInterno.extraEventoDestaque td:nth-of-type(3) {
-    border: 2px solid hsl(81, 60%, 35%);
-}
-.extraDestaqueEventos .extraEventoTitulo,
-.extraDestaqueEventos td:nth-of-type(4) label {
-    color: hsl(0, 0%, 35%);
-}
-.extraDestaqueEventos .extraEventoInterno .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoInterno td:nth-of-type(4) label {
-    color: hsl(81, 60%, 35%);
-}
-.extraDestaqueEventos .extraEventoInterno.extraEventoDestaque .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoInterno.extraEventoImportante .extraEventoTitulo {
-    background-color: hsl(81, 60%, 35%);
-}
-.extraDestaqueEventos .extraEventoExterno .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoExterno td:nth-of-type(4) label,
-.extraDestaqueEventos span.extraIntimacaoExterno {
-    color: hsl(198, 60%, 35%);
-}
-.extraDestaqueEventos .extraEventoExterno.extraEventoDestaque .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoExterno.extraEventoImportante .extraEventoTitulo,
-.extraNomeParteExterno {
-    background-color: hsl(198, 60%, 35%);
-}
-.extraDestaqueEventos .extraEventoEntidade .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoEntidade td:nth-of-type(4) label,
-.extraDestaqueEventos span.extraIntimacaoEntidade {
-    color: hsl(10, 60%, 35%);
-}
-.extraDestaqueEventos .extraEventoEntidade.extraEventoDestaque .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoEntidade.extraEventoImportante .extraEventoTitulo,
-.extraNomeParteEntidade {
-    background-color: hsl(10, 60%, 35%);
-}
-.extraDestaqueEventos .extraEventoDestaque .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoImportante .extraEventoTitulo {
-    background-color: hsl(0, 0%, 35%);
-    color: #fff;        
-    padding: 2px 6px;
-    margin-bottom: 5px;
-    color: #fff;		
-	box-shadow: 0 0 3px #999999; 
-	-moz-border-radius: 3px;
-	border-radius: 3px; 
-	text-shadow: 0 1px 2px #666666;
-	vertical-align: middle;
-	margin-bottom: 5px;
-}
-br.extraEventoSeparador {
-    display: none;
-}
-.extraDestaqueEventos br.extraEventoSeparador {
-    display: inline;
-}
-.extraDestaqueEventos span.extraEventoSeparador {
-    display: none;
-}
-.extraNomeParte {
-    -moz-border-radius: 3px;
-    padding: 1px 3px;
-    vertical-align: top;
-    color: #fff;
-}
-.extraNomeParteExterno {
-    margin-left: 2px;
-}
-.extraTabelaEventos td:nth-of-type(3) {
-    padding: 0.25em 0.5ex;
-}
-.prazoAguardaAbertura .extraEventoTitulo {
-    color: hsl(10, 60%, 35%) !important; /* deixa o título vermelho mesmo sendo interno em intimações que o prazo ainda não abriu */
-}
-select.infraSelect, input.infraText {
-    -moz-border-radius: 4px;
-    padding: 3px 1px;
-    -moz-box-shadow: 2px 2px 2px hsla(0, 0%, 0%, 0.5) inset;
-    border: none;
-}
 #divInfraAreaProcesso {
     clear: both;
-}
-/*input.infraButton, button.infraButton,
-input.infraButton:hover, button.infraButton:hover,
-a.extraLinkAcao,
-#btnDownloadCompletoRS,
-#btnDownloadCompletoTRF4 {
-    -moz-border-radius: 4px;
-    padding: 3px 1px;
-    -moz-box-shadow: 2px 2px 2px hsla(0, 0%, 0%, 0.5);
-    border: 1px outset hsl($hB, 50%, 50%);
-    font-size: 1.2em;
-}
-input.infraButton, button.infraButton,
-#btnDownloadCompletoRS,
-#btnDownloadCompletoTRF4 {
-    background: -moz-linear-gradient(
-            hsl($hB, 40%, 60%) 0%,
-            hsl($hB, 60%, 40%) 100%
-        ) transparent !important;
-}
-input.infraButton, button.infraButton,
-input.infraButton span, button.infraButton span,
-input.infraButton:hover, button.infraButton:hover,
-#btnDownloadCompletoRS,
-#btnDownloadCompletoTRF4 {
-    font-weight: bold;
-    color: #fff;
-}*/
-
-input.infraButton:active, button.infraButton:active,
-#btnDownloadCompletoRS:active,
-#btnDownloadCompletoTRF4:active {
-    position: relative;
-    top: 1px;
-}
-input.infraButton[disabled], button.infraButton[disabled] {
-    color: #aaa;
 }
 #txtNumProcessoPesquisaRapida[placeholder] {
     width: 135px;
@@ -468,500 +193,82 @@ input.infraButton[disabled], button.infraButton[disabled] {
 }
 a.extraLinkAcao {
     display: inline-block;
-    text-decoration: none;
-    margin: 0 .25ex .5em;
-    background: -moz-linear-gradient(
-            hsl(0, 0%, 95%) 0%,
-            hsl(0, 0%, 80%) 100%
-        ) transparent;
-    border-color: hsl(0, 0%, 90%);
-    
-}
-a.extraLinkAcao:hover {
-    background: -moz-linear-gradient(
-            hsl(0, 0%, 100%) 0%,
-            hsl(0, 0%, 85%) 100%
-        ) transparent;
-}
-.extraIconeAcao {
-    vertical-align: middle;
-    margin: auto 2px;
-}
-#fldAcoes.extraNaoMostrar .extraIconeAcao {
-    display: none;
-}
-#fldAcoes .extraAcoesDestacadas {
-    text-align: center;
-}
-#fldAcoes .extraAcoesDestacadas a.extraLinkAcao {
-    font-weight: bold;
-    font-size: 1.4em;
-}
-#fldObsRegra #lblObsRegra {
-    position: relative;
-}
-
-/* FELIPE */
-body {
-    background-color: $background;
-}        
-#divInfraAreaTela input, select {
-    background-color: #EBF2DF;
-}
-#divInfraAreaTela input:focus {
-    background-color: #fff;
-}
-select:focus {
-    background-color: hsla(0, 0%, 50%, 0.25);
-}
-select:focus option {
-    background-color: hsla(0, 0%, 100%, 0.25);
-}
-div.infraAjaxAutoCompletar {
-    background-color: $background;
-}
-div.infraAjaxAutoCompletar li {
-    background-color: hsla(0, 0%, 80%, 0.25);
-}
-div.infraAjaxAutoCompletar li.selected {
-    background-color: Highlight;
-}
-div.infraAjaxAutoCompletar li.selected a, div.infraAjaxAutoCompletar li.selected b {
-    color: HighlightText;
-}
-table.infraTable {
-    border-spacing: 0;
-    border: solid #ccc;
-    border-width: 1px 0 0 1px;
-    background-color: transparent;
-}
-.infraTable th, .infraTable td {
-    border: solid #ccc;
-    border-width: 0 1px 1px 0;
-}
-.infraTable table th, .infraTable table td {
-    border: none;
-}
-tr.infraTrClara {
-    background-color: hsla(0, 0%, 98%, 0.5);
-}
-tr.infraTrEscura {
-    background-color: hsla(0, 0%, 94%, 0.5);
-}
-tr.infraTrSelecionada td {
-    background-color: hsla(0, 0%, 50%, 0.25);
-}
-tr.infraTrSelecionada td td {
-    background-color: hsla(0, 0%, 50%, 0);
-}
-tr.infraTrMarcada td {
-    background-color: hsl($h, 60%, 37%);
-	color: #fff;
-	font-size: 14px;
-	font-weight: bold;
-	text-shadow: 0 1px 2px #666666;
-}
-tr[data-classe="000169"] {
-    background-color: #bf8040;
-}
-tr[data-classe="000169"][data-competencia="10"] {
-    background-color: #60a0d2;
-}
-div.infraMenu a {
-    background-color: $background;
-    border-color: $background;
-}
-a.docLink {
-    font-size: 11px;
-}
-#lastClicked {
-    background: #ff0;
-}
-.infraBarraComandos, .infraAreaTelaD, .infraAreaDados {
-    border-color: $background !important;
-}
-div.infraBarraTribunal {
-    box-shadow: 0 0 3px #000;
-	margin-top: -13px;
-	margin-bottom: 6px;
-	padding-bottom: 3px;
-	border-bottom: none;
-}
-.infraTable td label {
-    font-size: 1em;
-	padding: 3px;
-}
-label.infraLabelObrigatorio {
-    color: #333;
-}
-img.infraImg, img.infraImgNormal, img.infraImg:hover, img.infraImgNormal:hover {
-    width: auto;
-    height: auto;
-}
-.prazoAguardaAbertura {
-    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAALPSURBVDjLjZNbSFNxHMcXm+BDBEFBvgRS9CBFrxJRoUlPs4ceJMiHsIshSTdSi7AI1K6KOfOSaZgXQmyic5u3TJ3zNue8TEvP5tl0czed7uy+nW//DV3ajQ58D+fh9/nwP/8fX85s9e1okkySVhKKhCEJqspvYKjoEnrykoOtD08zjbeOU++vxbYKUvdlFqbsjgbACYVDhgcWxfkwDApgVlbBOvUBFlUNVkYqsdxXCl1HIaiWfEzX5mCg6DKas0+BCAYiAnXtA9WWwKSoJHkHo7wcS18FWJS8BiV8htmGJ1BW3kXfy9SwoCg1RhURyCbpOIWsFwviCszUP8KIIA09+edBjg1ybFRfP4SytIOoyDiKhqcXUFFSgJI6cVxEEHr1zPskCr0XVocfbh8Lj5+FzRnAjMGNMdoFrdULyuJF27gFJe1ayRYcEYQiVbs+S9VOdpEMM54gDHY/Zo0eaAgo+76Bt1Id+0akbd4O7xCEIlSux7co7dQw5YBu1ReG2ydsKJXS88UiTfyv8G+CrdQPmvvHaQZjWgcEErrvTzP/FDQOmuQTegYKIihu0/T/t6BeZjohHDXTkzoHbEwAxnU/RGMmFDTNLYjTE0p7+XvorgQeK03i6kiydwhq+1eETUMmVmN2hzfhDbDYcAehs/nQXfYCynsn4Ra9AquWwNl4B6MZxwIdibybYbimzyjtnLJh2e6D0xuEj8CBIAuGfCv1LnRdPAwXgVHMB7L2AnmxsDw/A+lZrobT0DkVV9dvQK96DeYNfxgmbFhgdwXwbcWDrsQosIrQBn8+a7kHEPqdcBempWUYkMsgn7NCb3Fh3UlWaHSg/osWjz9OoCU5BkxVGkAgz30OVknodC7IPSztKNPfuqDI5WP46hEYsmJhzokCdWUXuvm8gCSJ+4Czvc6kwhSpMLNZ4XAXSIWDpMLMp5T9NtE5nnNzC0shOHR/PwBGKPcL7gZY5gAAAABJRU5ErkJggg%3D%3D) no-repeat scroll 99% 7% #FCDCDC;
-}
-.prazoAberto {
-    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAxlJREFUeNqMU11Ik1EYfs73fduc35ZNbWlKOlsR/Rg2EcSULioioiIhDYyiguomuiiri25CiBDsB6IyF9KFTi9SyuhnuUxLxbIfxFJzVqYrf9JCt+W275zOttYP3nTg/Q7nPe/znvd9n+cjDcUZMVQJnGGMZTHAAhDMXizo7SSEdAiidJIIwvfIjUSp8i2r4Ah806OAbwyKd3IWXNQaAPU8i1pntHTUXjgk8kwg4Yek4DbRXQNDWiZiV+RClJP4g+wPmgcq7mFMOJ/ha/cjEPZvcqn/81SpV7/4mPrVTTD3VQRoOEIgf+cgUOnnwROzHK4vztKlyXMRaTX4NV688/6TaEpVWxKBZfxO4E77ECCrgGgpvIsUaGob8R7elJDadCxrFEQIt1duH3Q311cMmBcuzv9GYpAoTEHvH4LedQuG8QdgxAhJE4d3PW7cKDu+JeXAi9dP5g6jZc4QmrkJgt8N25WSekfNpSJlxOVt+0Tgcr6CXmeC57sCN0mDs29mtKxRh7yia3dVCmyaAKClYROClVjvvfHYys/W7V2blPOm1XG2w78ew5o8fEw4iabGtpJt2VHrVCJQmFOMnFQUBAKoZjTcKrHe7+VDp9BoomTO9mVBjt8VHyfD3rkdT9/WhWgSeGRAASr2ncaEpwf2riq098OmlrBTopIMEvCafH5lgMUvQnp0L9JlilPddag9fB5uv53LSAKllCeKRddIFTZa9kBQVRa290IlpdSvRt+Gx/XEkIRs8hAmmYuGGRAkc8L3Ds8/3vlNJ2W3QTgjXaOV2Jy5D6091nxegU7144eSHquPhjkhFcw/AyJFhbQ0SV9CNSfMdfBM/b+UyefR0GVFYBoOiQpqX6L4gXuXo19jRgLXAe8NuSt34kRFNUSODhlPsH8HQpV94Bp53IIHj0pwiDQcTWfmFUbEpqyCwZQBol3AqRF5FdF8elHceM3uceRdX4MDu4H+Pg52hMAHt57De8k55rvoffllo/q1awmjDWB8WBH5Ek5UkGct04AkAwODIbAjAo5IeT63OG5a/N8K/q4DkcNPAQYAZnEuH2sFut0AAAAASUVORK5CYII%3D) no-repeat scroll 99% 7% #FCFCBD;
-}
-.prazoDecurso {
-    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAs5JREFUeNq0UktIVFEY/s99zcydO47zaMZxSi0f+SLLnCKjlEAobGGLXosgLCiwRVmSQiCUQVCkhJtIC4IWNdRCskBCqE2ghLoQoqYi85Uzt0nndWfmnDudO2lOrtr0w8f5OY/v/7//O2iozQVakKTaI8+GdywFooJKUhDwA/gDALzApEwWntgcAgWPzTZ+jGXReVgOrh11/s4EGH3We2Lfl4WI7LIYDHaTYJsJxqZicYKUJEFETaE8u2g92v1oFDKCS6VSKzmCfwh6H/03AsYgsCIXm8J4bqgy6ixn5HcDeUuhJe0RZHkuTYrurSLNmUwCRjtcxkTD1b4ua04xxxQceY8YTkWcjiBOT6TqC5OO9eX8ga7+Lu1exhvgMsjGtfaO3X7Y8/LK6TZBlb4L1k8pW3n9nMVRYKD73aUW3wTFeGYHaEtrb6Y+UFW1mqbbXl872665IAqcvelG/53mssfFde63hfTsBcWDPxIURQEN8XgckslkekhrdYpsRFe17kNlaW3fHoS4elpHr41OA7NmyDW0g5qhzjOtKxtyKC7fb97QbnbWVej1Wc5sZ30ZUaEBEwANmQQeWtnz9PKplrCCF1d1YbQ46+VLivbmHz/5BKyu3SUqQU0EA0ex6gKt7HlzveXiwmJc/sv30HC2JOqMgP3I6/WCEp43C8aNFbR6XZIScNEZH+hdm9LziCVIVPp4ayfJcqCYs5T9MTbojuNXgnN7LTsbHIHB523gV0aBt+YU4cDnw6oKw8zMwF2ITPsAY5y2FEuFMjLl/2RFR4Q1CSGDWU8Y3TcQGBkaD94EIx8CyRi38XqpCmPYpc1AnB+850wkEjqNQHEd8jHu/V8Fe1UggaZIbh6PDMwcSHwEInJHepX4MOS4zYXUtGbtX9socs9VQkd2EkqCQQCV2hMIA2xuhDzbBuoiLcOyVC8Fw4JCdDDNcZAQOBj5JcAAxBZTOchnWusAAAAASUVORK5CYII%3D) no-repeat scroll 95% 7%, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAodJREFUeNqkk0tME0Ecxr/Z3b4ADZRqAqQ2hJJSmhAfxKjUqIlXLujJqAe96NGee+Bi4kE5edHIyRhOcsEY4sGDotGEgxEBCUQpTVqgD0262310dtaZlcL25MFJvs3M7P/37X+y8xHHcfA/QxEP8jwCyIRLLEgvCCb4bIwruleX5/oAB7NwnAJsvrIdODfKfw08Yzyo+DOJvkQ8FomGOwIdQdGfZqonNku59Fph/YrZMKf41lxLB034cODQ5MXUhaQCOUQtCtVSm+/a4t0DbdGuaPe7lfeTNd3dd02kvYLegOTPnB8aS1p1M6SqKgzDaNHLwWegeiN0Jn466Se+jGAODKgzMdgzEDdUI6RpGnRdb9GDgaxbNn98hpvQUCwcjQvGa3Au0h4J12o1mKbpSnSxvbuNO8Hr6Ky0I5/P4+bru1heWQYzWFgwXoNjMuSgbdv4fGkexUoRuZ0cYqQPZ7tGoSgKpjdf4FX5DRpSA4ZlBAXjNQC1KW73X8PS0hLmh2dwMjKCJyMPXfhteQGPC9NACK6oQl3mwKDhbJW1kpH9eh+yLMPn8+Hp0CP4FB/W6z9wbzML1sH4v4Ari5iGYLwdfNwuFatyWEb6+7j71aaurt8COrEPCxm1elUwXoPZ31uVDQlEJ30Ep75dduHUYho40gozZutmUd8QzIEBcwq2Rqcqn4qrDmU6iRGkvnA4hv1zC7EG1dXF6iqr21OCcWMgwkQIz0GMB2FUGpf65Yw/2R73J9rCcpcSFEX2L2pYa/WqtaptsJ8cXmRzyNlw2T0DcaW7uSLolXowjDSOIsXD5d42Hp4CdrGMFSygwHb4TomrzFnaNJA8J1X+kWCRRY2rzln2R4ABABpvPoBuuSpnAAAAAElFTkSuQmCC) no-repeat scroll 99% 7% #EBF2DF;
-}
-table.prazoComDestaque .prazoFechado {
-    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAodJREFUeNqkk0tME0Ecxr/Z3b4ADZRqAqQ2hJJSmhAfxKjUqIlXLujJqAe96NGee+Bi4kE5edHIyRhOcsEY4sGDotGEgxEBCUQpTVqgD0262310dtaZlcL25MFJvs3M7P/37X+y8xHHcfA/QxEP8jwCyIRLLEgvCCb4bIwruleX5/oAB7NwnAJsvrIdODfKfw08Yzyo+DOJvkQ8FomGOwIdQdGfZqonNku59Fph/YrZMKf41lxLB034cODQ5MXUhaQCOUQtCtVSm+/a4t0DbdGuaPe7lfeTNd3dd02kvYLegOTPnB8aS1p1M6SqKgzDaNHLwWegeiN0Jn466Se+jGAODKgzMdgzEDdUI6RpGnRdb9GDgaxbNn98hpvQUCwcjQvGa3Au0h4J12o1mKbpSnSxvbuNO8Hr6Ky0I5/P4+bru1heWQYzWFgwXoNjMuSgbdv4fGkexUoRuZ0cYqQPZ7tGoSgKpjdf4FX5DRpSA4ZlBAXjNQC1KW73X8PS0hLmh2dwMjKCJyMPXfhteQGPC9NACK6oQl3mwKDhbJW1kpH9eh+yLMPn8+Hp0CP4FB/W6z9wbzML1sH4v4Ari5iGYLwdfNwuFatyWEb6+7j71aaurt8COrEPCxm1elUwXoPZ31uVDQlEJ30Ep75dduHUYho40gozZutmUd8QzIEBcwq2Rqcqn4qrDmU6iRGkvnA4hv1zC7EG1dXF6iqr21OCcWMgwkQIz0GMB2FUGpf65Yw/2R73J9rCcpcSFEX2L2pYa/WqtaptsJ8cXmRzyNlw2T0DcaW7uSLolXowjDSOIsXD5d42Hp4CdrGMFSygwHb4TomrzFnaNJA8J1X+kWCRRY2rzln2R4ABABpvPoBuuSpnAAAAAElFTkSuQmCC) no-repeat scroll 99% 7% #EBF2DF;
-}
-.prazoExtra {
-    display: none;
-}
-.prazoComDestaque .prazoExtra {
-    display: inline;
-	background: #fff;
-}
-.prazoComDestaque .prazoFechado .prazoEvento {
-    background-color: #fff;
-}
-*[disabled] {
-    color: #aaa;
-}
-button {
-    background-color: #eee;
-}
-a img {
-    border: none;
-}
-div[class^=infraLegend], div[id^=divDes] {
-    background-color: $background !important;
-}
-div.infraAjaxAutoCompletar { max-height: 30em; overflow-y: scroll; } div.infraAjaxAutoCompletar li a { display: block; margin-left: 3ex; text-indent: -3ex; } div.infraAjaxAutoCompletar li.selected { background-color: Highlight; } div.infraAjaxAutoCompletar li.selected a, div.infraAjaxAutoCompletar li.selected b { color: HighlightText; }
-.extraGedproRotuloGreen, .extraGedproRotuloBlue { cursor: pointer; }
-.extraGedproRotuloGreen { color: green; }
-.extraGedproRotuloBlue { color: blue; }
-.extraGedproRotuloGray { color: gray; cursor: inherit; }
-.extraGedproImg { cursor: inherit; }
-.extraFieldset { -moz-border-radius: 8px; }
-button.infraButton[class~=extraBuscarPreventosButton] { font-size: .8em; }
-
-.extraLembreteVoce {
-    background-color: hsl(60, 100%, 70%);
-}
-.extraLembrete a {
-    float: right;
-    margin: -0.5em 0.5ex 0;
-}
-.extraLembretePara, .extraLembreteData {
-    margin-left: -1ex;
-    margin-right: -1ex;
-    color: hsl(0, 0%, 33%);
-	padding: 6px;
-	
-}
-.extraLembretePara {
-    margin-bottom: 0.5em;
-}
-.extraLembreteData {
-    margin-top: 0.5em;
-    text-align: right;
-}
-.extraLembrete abbr {
-    color: hsl(240, 50%, 25%);
-    border-bottom: 1pt dotted;
-}
-.extraSeparador {
-    clear: both;
-}
-@media print {
-    #divInfraAreaGlobal, #divInfraAreaTela, #divInfraAreaTelaD {
-        display: block;
-        margin: 0;
-        padding: 0;
-        border: none;
-        width: auto;
-        height: auto;
-    }
-    #divInfraBarraTribunal, #divInfraBarraSistemaLocalizacao, #divInfraAreaTelaE, div.infraBarraComandos {
-        display: none;
-    }
-    div.infraAreaDados > #divPainel {
-        display: block;
-    }
-}
-a.extraLinkAcao {
-    display: inline-block;
+    padding: 3px 1px;
     text-decoration: none;
     margin: 0 .25ex .5em;
     background-color: #ddd;
     border: 1px outset #ddd;
-    padding: 2px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
-    color: #333;
-    line-height: 16px;
 }
 a.extraLinkAcao:hover {
     background-color: #eee;
     border-color: #eee;
 }
 .extraIconeAcao {
+    display: none;
     vertical-align: middle;
     margin: auto 2px;
 }
-#fldAcoes.extraNaoMostrar .extraIconeAcao {
+.extraAcoesMostrarIcones .extraIconeAcao {
+    display: inherit;
+}
+.extraAcoesSeparador {
     display: none;
 }
-fieldset.infraFieldset {
-    border-style: groove;
-    border-color: $background;
-    border-width: 2px;
+.extraAcoesDestacadas {
+    display: none;
 }
-fieldset.extraFieldset {
-    border-style: outset;
-    border-color: $background;
-    border-width: 1px;
+.extraAcoesDestacar .extraAcoesDestacadas {
+    display: inherit;
+    text-align: center;
 }
-#fldAcoes .extraNaoMostrarIcones {
+.extraAcoesDestacar .extraAcoesDestacadas a.extraLinkAcao {
+    font-weight: bold;
+    font-size: 1.4em;
+}
+.extraAcoesDestacar .extraLinkAcaoDestacadaOriginal {
+    display: none;
+}
+.extraAcoesOpcoes {
     display: none;
     float: right;
     margin-left: 1ex;
     font-size: 0.9em;
     line-height: 1em;
 }
-#naoMostrarIcones {
-    margin: 0;
-}
-#fldAcoes:hover .extraNaoMostrarIcones {
+#fldAcoes:hover .extraAcoesOpcoes {
     display: inline-block;
 }
 #fldAcoes .extraAcoesLegend {
     font-weight: bold;
     float: left;
 }
-.extraTabelaEventos img,
-.extraTabelaEventos img.infraImg,
-.extraTabelaEventos img.infraImgNormal,
-.extraTabelaEventos img.infraImg:hover,
-.extraTabelaEventos img.infraImgNormal:hover {
-    position: inherit !important;
-    margin-top: inherit !important;
-    margin-left: 1px !important;
-    width: 13px !important;
-    height: inherit !important;
+#fldObsRegra #lblObsRegra {
+    position: relative;
 }
-.extraTabelaEventos a {
-    display: inline-block;
+tr.extraLocalizador[data-processos] {
+    cursor: pointer;
 }
-.extraTabelaEventos td:first-of-type,
-.extraTabelaEventos td:nth-of-type(2),
-.extraTabelaEventos td:last-of-type {
-    white-space: nowrap;
+tr.extraLocalizador[data-processos="0"] {
+    cursor: default;
 }
-.extraDocumentoObservacao,
-.extraDocumentoLembrete {
-    margin-bottom: 0.5em;
-    font-size: 11px;
-    white-space: normal;
-    max-width: 50ex;
+tr.extraLocalizador[data-processos] a, tr.extraLocalizador[data-processos] u {
+    text-decoration: none;
 }
-.extraDocumentoObservacao {
-    margin-left: 34px;
+tr.extraLocalizador[data-processos="0"] td, tr.extraLocalizador[data-processos="0"] td u {
+    color: #999;
 }
-.extraDestaqueEventos .extraEventoTitulo {
-	font-size: 1.2em; 
-	margin-right: 10px;
-	overflow: visible;	
-	text-decoration: none;
-	vertical-align: baseline;
-	display: inline-block;
-}
-.extraDestaqueEventos .extraEventoExterno .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoEntidade .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoInterno.extraEventoImportante .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoInterno.extraEventoDestaque .extraEventoTitulo {
+.extraMarker {
+    float: left;
+    color: white;
+    padding: 5px;
+    font-size: 1.2em;
+    margin-left: 5px;
+    -moz-border-radius: 5px;
     font-weight: bold;
 }
-.extraDestaqueEventos .extraEventoInterno td:nth-of-type(4) label {color: #77AB13}
-.extraDestaqueEventos .extraEventoExterno td:nth-of-type(4) label {color: #058DC7}
-.extraDestaqueEventos .extraEventoEntidade td:nth-of-type(4) label {color:#AE432E} 
-
-.extraDestaqueEventos .extraEventoInterno .extraEventoTitulo {
-    color: #77AB13;
-	font-weight: bold;
-	padding-left: 0;
-	vertical-align: middle;
-	text-shadow: 1px 1px #fff;
+.extraMarkerReuPreso {
+    background-color: red;
 }
-.extraDestaqueEventos .extraEventoInterno.extraEventoDestaque  .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoInterno.extraEventoImportante  .extraEventoTitulo {
-    background-color: #77AB13;
-	color: #fff;		
-	box-shadow: 0 0 3px #999999; 
-	border-radius: 3px; 
-	text-shadow: 0 1px 2px #666666;
-	border-radius: 3px;
-	vertical-align: middle;
-	padding: 2px 6px;
-	margin-bottom: 5px;
-	border: 1px solid #337D33;
-}
-.prazoAguardaAbertura .extraEventoTitulo {color: #AE432E !important; } /* deixa o título vermelho mesmo sendo interno em intimações que o prazo ainda não abriu */
-
-.extraDestaqueEventos .extraEventoExterno .extraEventoTitulo {
-    color: #058DC7;
-	font-weight: bold;
-	padding-left: 0;
-	vertical-align: middle;
-	text-shadow: 1px 1px #fff;
-}
-
-.extraDestaqueEventos .extraEventoExterno.extraEventoImportante .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoExterno.extraEventoDestaque .extraEventoTitulo {
-    background-color: #058DC7;
-	color: #fff;		
-	box-shadow: 0 0 3px #999999; 
-	border-radius: 3px; 
-	text-shadow: 0 1px 2px #666666;
-	border-radius: 3px;
-	vertical-align: middle;
-	margin-bottom: 5px;
-	padding: 2px 6px;
-}
-
-.extraDestaqueEventos .extraEventoEntidade .extraEventoTitulo {
-    color: #AE432E;
-	font-weight: bold;
-	padding-left: 0;
-	vertical-align: middle;
-	text-shadow: 1px 1px #fff;
-}
-
-.extraDestaqueEventos .extraEventoEntidade.extraEventoImportante .extraEventoTitulo,
-.extraDestaqueEventos .extraEventoEntidade.extraEventoDestaque .extraEventoTitulo {
-    background-color: #AE432E;
-	color: #fff;		
-	box-shadow: 0 0 3px #999999; 
-	border-radius: 3px; 
-	text-shadow: 0 1px 2px #666666;
-	vertical-align: middle;
-	margin-bottom: 5px;
-	padding: 2px 6px; 	
-}
-
-.extraDestaqueEventos .extraEventoSeparador {
-    display: none;
-	clear:both;
-}
-
-a.extraNomeParte {
-  border-radius: 3px 3px 3px 3px;
-  padding: 1px 3px;
-  background-color: #058DC7;
-  vertical-align: top;
-  color: #fff;
-  display: inline-block;
-  margin-left: 2px;
-}
-span.extraNomeParte {
-  border-radius: 3px 3px 3px 3px;
-  padding: 1px 3px;
-  background-color: #AE432E;
-  vertical-align: top;
-  color: #fff;
-}
-
-.extraDestaqueEventos .extraEventoInterno.extraEventoDestaque td:nth-of-type(3) {
-    border: 2px solid #77AB13;
-}
-/*
-.extraDestaqueEventos .extraEventoExterno.extraEventoDestaque td:nth-of-type(3) {
-    border: 2px solid #058DC7;
-}
-.extraDestaqueEventos .extraEventoEntidade.extraEventoDestaque td:nth-of-type(3) {
-    border: 2px solid #AE432E;
-} */
-
-/* Felipe */
-fieldset.infraFieldset {background: hsl($h, 42%, 91%); border-radius: 4px; box-shadow: 0 0 3px #ABABAB inset; margin-bottom: 3px; margin-top: 4px; padding-top: 7px; border: 0.1em solid hsl($h, 80%, 37%)}
-select.infraSelect {background: hsl($h, 42%, 91%) !important; border-radius: 4px; padding: 2px;}
-#fldAcoes input {background: #fff}
-.extraTabelaEventos td:nth-of-type(3) {padding: 8px 8px 8px 11px}
-.infraTable th, .infraTable td {border-color: #EEEEEE} /* talvez retirar */
-div.infraAreaDados {overflow: visible; border: none;}
-input.infraButton, button.infraButton, input.infraButton:hover, button.infraButton:hover, #btnDownloadCompletoRS, #btnDownloadCompletoTRF4 {font-size: 1.5em; padding: 8px; border-radius: 5px; background-image: none;}
-#divInfraBarraComandosSuperior {margin-bottom: 10px; margin-top: -12px}
-* {color: #333333}
-table {font-size: 1.3em}
-.extraResumo {margin-bottom: 5px}
-.extraResumo span {font-size: 9px}
-tr.infraTrClara, tr.infraTrEscura{background-color: #fff} /*alternativa é #F2F3FA */
-
-
-
-/*  Buttons  */
-button.infraButton, #btnDownloadCompletoRS, #btnDownloadCompletoTRF4, button {
-	display:inline-block;
-	-webkit-border-radius:3px;
-	-moz-border-radius:3px;
-	border-radius:3px;
-	text-decoration:none;
-	text-shadow:0 1px 2px #666;
-	white-space:nowrap;
-	cursor:pointer;
-	vertical-align:baseline;
-	-webkit-transition:all 400ms ease;
-	-moz-transition:all 400ms ease;
-	-o-transition:all 400ms ease;
-	transition:all 400ms ease;
-	overflow:visible;
-	width:auto;
-}
-
-/*  Buttons :: Button :: Green  */
-button.infraButton, #btnDownloadCompletoRS, #btnDownloadCompletoTRF4 { 
-    border-color:hsl($h, 79%, 45%) hsl($h, 79%, 39%) hsl($h, 79%, 34%);
-        background:-moz-linear-gradient(top, hsl($h, 91%, 78%), hsl($h, 63%, 60%) 5%, hsl($h, 78%, 38%) 100%);
-        background:-webkit-gradient(linear, left top, left bottom, from(hsl($h, 91%, 78%)), to(hsl($h, 78%, 38%)), color-stop(0.05, hsl($h, 63%, 60%)));
-        background:-o-linear-gradient(top, hsl($h, 91%, 78%), hsl($h, 63%, 60%) 5%, hsl($h, 78%, 38%) 100%);
-        color:#f7ffe5;
-}
-button.infraButton:hover, #btnDownloadCompletoRS:hover, #btnDownloadCompletoTRF4 :hover{
-        background:-moz-linear-gradient(top, hsl($h, 91%, 78%), hsl($h, 63%, 60%) 5%, hsl($h, 79%, 32%) 100%);
-        background:-webkit-gradient(linear, left top, left bottom, from(hsl($h, 91%, 78%)), to(hsl($h, 79%, 32%)), color-stop(0.05, hsl($h, 63%, 60%)));
-        background:-o-linear-gradient(top, hsl($h, 91%, 78%), hsl($h, 63%, 60%) 5%, hsl($h, 79%, 32%) 100%);
-        color:#fff;
-}
-
-.infraButton.disabled, button:disabled {
-        background:#fafafa;
-        border-color:#b1b1b1;
-        color:#a0a0a0;
-}
-button.infraButton span {color: #fff !important; font-weight: bold}
-button.infraButton {font-weight: bold}
-legend.infraLegendObrigatorio {margin-top: -12px; background: hsl($h, 42%, 91%); border-radius: 5px; border: 0.1em solid hsl($h, 80%, 37%); padding: 2px 8px}
-#divInfraAreaGlobal {border: 2px solid #EEEEEE; border-radius: 5px; }
-div.infraBarraComandos {border: none;}
-#divInfraBarraComandosMeio {margin-bottom: -11px; margin-top: -29px;}
-span.extraSeparadorTitulo {display: block; clear: both; margin-bottom: 7px;}
 .extraMarkerPrioridade {
-	background-color: #AE432E;
-	box-shadow: 0 0 3px #999999;
-	color: #FFFFFF;
-	margin-top: 5px;
-	vertical-align: middle;
-	margin-left:10px;
-	padding-left: 8px;
-	padding-right: 8px;
+    background-color: brown;
 }
-
-#divOrdenacao, #divPaginacao, #divCamposConsulta {background-color: #EBF2DF}
-#divInfraBarraSistemaLocalizacao {margin-top: -6px}
-#fldPartes td {vertical-align: top; padding: 10px 1px 5px 8px}
-#tbInfoProcesso td {background-color:#EBF2DF}
-
-span.extraIntimacaoParte {font-weight: bold; text-shadow: 1px 1px #fff;}
-span.extraIntimacaoEntidade {color: #AE432E;}
-span.extraIntimacaoExterno {color: #058DC7;}
-
-input:focus, button:focus, select:focus, textarea:focus {background-color: #fff}
-.infraTable button.infraButton, .infraTable button.infraButton:hover, #tbDocumentosCadastradas button.infraButton, #tbDocumentosCadastradas button.infraButton:hover {font-size: 1em; padding: 4px;}
-#fldAssuntos .infraTrClara td:nth-of-type(2) {font-size: 1.4em; text-shadow: 1px 1px 0 #DDDDDD}
-#fldAssuntos .infraTrClara td {text-align: center; }

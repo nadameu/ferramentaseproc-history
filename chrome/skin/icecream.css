@@ -1,0 +1,170 @@
+#divInfraAreaGlobal, div.infraBarraTribunal {
+    border-color: hsl($hB, 50%, 80%);
+    border-left-color: hsl($hB, 94%, 39%);
+}
+.extraLembrete {
+    -moz-border-radius: 0.5ex;
+    border: 1px solid hsl(60, 100%, 40%);
+    background: -moz-linear-gradient(
+            hsl(60, 100%, 80%) 0%,
+            hsl(60, 96%, 90%) 100%
+        );
+    color: #333;
+    font-weight: bold;
+}
+.extraLembreteVoce {
+    border-color: hsl(60, 100%, 30%);
+    background: -moz-linear-gradient(
+            hsl(60, 100%, 70%) 0%,
+            hsl(60, 96%, 80%) 100%
+        );
+}
+.extraLembretePara, .extraLembreteData {
+    color: hsl(0, 0%, 0%);
+}
+#divInfraBarraSistema + div img {
+    display: none;
+}
+#divInfraBarraSistema + div:before {
+    display: inline-block;
+    width: 2em;
+    height: 4em;
+    content: '';
+    -moz-border-radius-bottomright: 100%;
+    border-bottom-right-radius: 100% 50%;
+}
+#divInfraBarraSistema + div:after {
+    display: inline-block;
+    width: 2em;
+    height: 4em;
+    content: '';
+}
+#divInfraBarraLocalizacao:before {
+    position: absolute;
+    font-size: 50%;
+    margin-left: -2em;
+    margin-top: -0.6em;
+    width: 2em;
+    height: 4em;
+    content: '';
+    background-color: $background;
+    -moz-border-radius-topleft: 100%;
+    border-top-left-radius: 100% 50%;
+}
+#divInfraBarraSistema + div:after {
+    background-color: $background;
+}
+div.infraBarraTribunalE, div.infraBarraTribunalD {
+    width: auto;
+}
+div.infraBarraTribunal {
+    background-color: hsl($hB, 50%, 50%);
+    background-image: -moz-linear-gradient(top,
+        hsl($hB, 50%, 75%) 0%,
+        hsl($hB, 31.25%, 62.5%) 25%,
+        hsl($hB, 37.5%, 50%) 25%,
+        hsl($hB, 45.3125%, 53.125%) 100%
+    ) !important;
+}
+#divInfraBarraSistema,
+#divInfraBarraSistema + div:before,
+#divInfraBarraSistema + div:after {
+    background-color: hsl($hB, 75%, 50%) !important;
+    background-image: -moz-linear-gradient(top,
+        hsl($hB, 75%, 75%) 0%,
+        hsl($hB, 46.875%, 62.5%) 25%,
+        hsl($hB, 65.625%, 50%) 25%,
+        hsl($hB, 67.96875%, 53.125%) 100%
+    ) !important;
+}
+div.infraBarraSistemaD {
+    top: 25% !important;
+    height: 50% !important;
+}
+#tabLocalizadores tr.infraTrMarcada td {
+    background-color: hsl($hB, 78%, 38%);
+    color: #fff;
+    text-shadow: 0 1px 2px #666666;
+}
+select.infraSelect, input.infraText, textarea.infraTextarea {
+    -moz-border-radius: 4px;
+    padding: 3px 1px;
+    -moz-box-shadow: 2px 2px 2px hsl(0, 0%, 50%) inset;
+    border: none;
+}
+input.infraButton, button.infraButton,
+input.infraButton:hover, button.infraButton:hover,
+a.extraLinkAcao,
+#btnDownloadCompletoRS,
+#btnDownloadCompletoTRF4 {
+    -moz-border-radius: 4px;
+    padding: 3px 1px;
+    border: 1px outset hsl($hB, 50%, 50%);
+    font-size: 1.2em;
+}
+input.infraButton, button.infraButton,
+#btnDownloadCompletoRS,
+#btnDownloadCompletoTRF4 {
+    background: -moz-linear-gradient(
+            hsl($hB, 40%, 60%) 0%,
+            hsl($hB, 60%, 40%) 100%
+        ) transparent !important;
+}
+input.infraButton, button.infraButton,
+input.infraButton span, button.infraButton span,
+input.infraButton:hover, button.infraButton:hover,
+#btnDownloadCompletoRS,
+#btnDownloadCompletoTRF4 {
+    font-weight: bold;
+    color: #fff;
+}
+input.infraButton:hover, button.infraButton:hover,
+#btnDownloadCompletoRS:hover,
+#btnDownloadCompletoTRF4:hover {
+    background: -moz-linear-gradient(
+            hsl($hB, 40%, 75%) 0%,
+            hsl($hB, 60%, 55%) 100%
+        ) transparent !important;
+}
+input.infraButton:active, button.infraButton:active,
+#btnDownloadCompletoRS:active,
+#btnDownloadCompletoTRF4:active {
+    position: relative;
+    top: 1px;
+}
+input.infraButton[disabled], button.infraButton[disabled] {
+    color: #aaa;
+}
+fieldset.infraFieldset {
+    border: 1px inset $background;
+    background: hsl($h, 42%, 93%);
+    -moz-border-radius: 4px;
+}
+legend.infraLegend,
+legend.infraLegendObrigatorio,
+legend.infraLegendObrigatorioExterno {
+    border: 1px outset $background;
+    -moz-border-radius: 5px;
+    padding: 2px 8px;
+}
+legend.infraLegendObrigatorio,
+legend.infraLegendObrigatorioExterno {
+    background: $background;
+}
+fieldset.extraFieldset {
+    border: 2px inset hsl(0, 0%, 75%);
+}
+a.extraLinkAcao {
+    background: -moz-linear-gradient(
+            hsl(0, 0%, 95%) 0%,
+            hsl(0, 0%, 80%) 100%
+        ) transparent;
+    border-color: hsl(0, 0%, 90%);
+}
+a.extraLinkAcao:hover {
+    background: -moz-linear-gradient(
+            hsl(0, 0%, 100%) 0%,
+            hsl(0, 0%, 85%) 100%
+        ) transparent;
+}
+

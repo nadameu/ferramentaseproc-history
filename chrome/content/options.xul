@@ -61,12 +61,6 @@
                         </columns>
                         <rows>
                             <row align="center">
-                                <checkbox id="v2_eventosdestacados" label="Destacar eventos por tipo de usuário"/>
-                            </row>
-                            <row align="center">
-                                <checkbox id="v2_semdestaque" label="Sem destaque para eventos fechados"/>
-                            </row>
-                            <row align="center">
                                 <label control="v2_ielocation" value="Localização do Internet Explorer:"/>
                                 <textbox id="v2_ielocation"/><button label="Procurar..." oncommand="Commands.on_v2_ielocation();"/>
                             </row>
