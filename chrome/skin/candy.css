@@ -337,7 +337,7 @@ tr.infraEventoImportante[data-parte] label.infraEventoDescricao {
     font-weight: bold; text-shadow: 1px 1px #fff;
 }
 tr.infraEventoMuitoImportante[data-parte="INTERNO"] td.infraEventoDescricao {
-    border: 2px solid hsl(81, 60%, 35%);
+    border: 2px solid #77AB13;
 }
 label.infraEventoDescricao,
 label.infraEventoUsuario {
@@ -345,21 +345,21 @@ label.infraEventoUsuario {
 }
 tr[data-parte="INTERNO"] label.infraEventoDescricao,
 tr[data-parte="INTERNO"] label.infraEventoUsuario {
-    color: hsl(81, 60%, 35%);
+    color: #77AB13;
 }
 tr.infraEventoMuitoImportante[data-parte="INTERNO"] label.infraEventoDescricao,
 tr.infraEventoImportante[data-parte="INTERNO"] label.infraEventoDescricao {
-    background-color: hsl(81, 60%, 35%);
+    background-color: #77AB13;
 }
 tr[data-parte="AUTOR"] label.infraEventoDescricao,
 tr[data-parte="AUTOR"] label.infraEventoUsuario,
 span.infraEventoPrazoParte[data-parte="AUTOR"] {
-    color: hsl(198, 60%, 35%);
+    color: #058DC7;
 }
 tr.infraEventoMuitoImportante[data-parte="AUTOR"] label.infraEventoDescricao,
 tr.infraEventoImportante[data-parte="AUTOR"] label.infraEventoDescricao,
 a.infraNomeParte[data-parte="AUTOR"], span.infraNomeParte[data-parte="AUTOR"] {
-    background-color: hsl(198, 60%, 35%);
+    background-color: #058DC7;
 }
 tr[data-parte="REU"] label.infraEventoDescricao,
 tr[data-parte="REU"] label.infraEventoUsuario,
@@ -369,7 +369,7 @@ span.infraEventoPrazoParte[data-parte="REU"] {
 tr.infraEventoMuitoImportante[data-parte="REU"] label.infraEventoDescricao,
 tr.infraEventoImportante[data-parte="REU"] label.infraEventoDescricao,
 a.infraNomeParte[data-parte="REU"], span.infraNomeParte[data-parte="REU"] {
-    background-color: hsl(10, 60%, 35%);
+    background-color: #AE432E;
 }
 .infraNomeParte {
     -moz-border-radius: 3px;
@@ -793,16 +793,14 @@ tr.infraEventoMuitoImportante[data-parte="REU"] label.infraEventoDescricao {
 a.infraNomeParte {
   border-radius: 3px 3px 3px 3px;
   padding: 1px 3px;
-  background-color: #058DC7;
   vertical-align: top;
   color: #fff;
-  display: inline-block;
+  display: inline;
   margin-left: 2px;
 }
 span.infraNomeParte {
   border-radius: 3px 3px 3px 3px;
   padding: 1px 3px;
-  background-color: #AE432E;
   vertical-align: top;
   color: #fff;
 }

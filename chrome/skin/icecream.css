@@ -136,23 +136,8 @@ input.infraButton[disabled], button.infraButton[disabled] {
     color: #aaa;
 }
 fieldset.infraFieldset {
-    border: 1px inset $background;
+    border: 2px groove $background;
     background: hsl($h, 42%, 93%);
-    -moz-border-radius: 4px;
-}
-legend.infraLegend,
-legend.infraLegendObrigatorio,
-legend.infraLegendObrigatorioExterno {
-    border: 1px outset $background;
-    -moz-border-radius: 5px;
-    padding: 2px 8px;
-}
-legend.infraLegendObrigatorio,
-legend.infraLegendObrigatorioExterno {
-    background: $background;
-}
-fieldset.extraFieldset {
-    border: 2px inset hsl(0, 0%, 75%);
 }
 a.extraLinkAcao {
     background: -moz-linear-gradient(
@@ -166,5 +151,68 @@ a.extraLinkAcao:hover {
             hsl(0, 0%, 100%) 0%,
             hsl(0, 0%, 85%) 100%
         ) transparent;
+}
+span.infraEventoPrazoParte[data-parte],
+label.infraEventoDescricao, label.infraEventoUsuario {
+    color: rgb(89, 89, 89);
+}
+.infraTable label.infraEventoDescricao {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+table.infraTable td.infraEventoDescricao {
+    padding: 0.5em 0.3em;
+}
+tr.infraEventoMuitoImportante[data-parte="INTERNO"] td.infraEventoDescricao {
+    border-color: rgb(105, 142, 35);
+}
+span.infraEventoPrazoParte[data-parte] {
+    font-weight: bold;
+}
+tr[data-parte="INTERNO"] label.infraEventoDescricao,
+tr[data-parte="INTERNO"] label.infraEventoUsuario {
+    color: rgb(105, 142, 35);
+}
+span.infraEventoPrazoParte[data-parte="AUTOR"],
+tr[data-parte="AUTOR"] label.infraEventoDescricao,
+tr[data-parte="AUTOR"] label.infraEventoUsuario {
+    color: rgb(35, 110, 142);
+}
+span.infraEventoPrazoParte[data-parte="REU"],
+tr[data-parte="REU"] label.infraEventoDescricao,
+tr[data-parte="REU"] label.infraEventoUsuario {
+    color: rgb(142, 53, 35);
+}
+a.infraNomeParte[data-parte], span.infraNomeParte[data-parte],
+tr.infraEventoImportante label.infraEventoDescricao,
+tr.infraEventoMuitoImportante label.infraEventoDescricao {
+    padding: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    background-color: rgb(89, 89, 89);
+    color: #fff;
+}
+tr.infraEventoImportante label.infraEventoDescricao,
+tr.infraEventoMuitoImportante label.infraEventoDescricao {
+    display: inline-block;
+}
+tr.infraEventoImportante[data-parte="INTERNO"] label.infraEventoDescricao,
+tr.infraEventoMuitoImportante[data-parte="INTERNO"] label.infraEventoDescricao {
+    background-color: rgb(105, 142, 35);
+}
+a.infraNomeParte[data-parte="AUTOR"], span.infraNomeParte[data-parte="AUTOR"],
+tr.infraEventoImportante[data-parte="AUTOR"] label.infraEventoDescricao,
+tr.infraEventoMuitoImportante[data-parte="AUTOR"] label.infraEventoDescricao {
+    background-color: rgb(35, 110, 142);
+}
+a.infraNomeParte[data-parte="REU"], span.infraNomeParte[data-parte="REU"],
+tr.infraEventoImportante[data-parte="REU"] label.infraEventoDescricao,
+tr.infraEventoMuitoImportante[data-parte="REU"] label.infraEventoDescricao {
+    background-color: rgb(142, 53, 35);
+}
+tr.infraEventoMuitoImportante td.infraEventoDescricao {
+    border-style: solid;
+    border-width: 2px;
 }
 
