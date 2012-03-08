@@ -34,6 +34,12 @@ var Eproc = {
         var extraStyle = Eproc.getExtraStyle();
         extraStyle.innerHTML += rule + '\n';
     },
+    clicar: function(elemento)
+    {
+        var evento = document.createEvent('MouseEvents');
+        evento.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+        elemento.dispatchEvent(evento);
+    },
     closeAllWindows: function(e)
     {
         var windows = [];
@@ -370,9 +376,7 @@ var Eproc = {
             },
             disparar: function()
             {
-                var evento = document.createEvent('MouseEvents');
-                evento.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-                this.row.dispatchEvent(evento);
+                Eproc.clicar(this.row);
             },
             removeListener: function(fn)
             {
@@ -1121,6 +1125,15 @@ var Eproc = {
                     var copia = acao.cloneNode(true);
                     acao.classList.add('extraLinkAcaoDestacadaOriginal');
                     divAcoesDestacadas.appendChild(copia);
+                    copia.addEventListener('click', (function(original)
+                    {
+                        return function(evento)
+                        {
+                            evento.preventDefault();
+                            evento.stopPropagation();
+                            Eproc.clicar(original);
+                        };
+                    })(acao), false);
                 }
             });
         }
