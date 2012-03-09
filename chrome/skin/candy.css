@@ -375,6 +375,7 @@ a.infraNomeParte[data-parte="REU"], span.infraNomeParte[data-parte="REU"] {
     -moz-border-radius: 3px;
     padding: 1px 3px;
     vertical-align: top;
+    background-color: hsl(0, 0%, 35%);
     color: #fff;
 }
 .infraNomeParte[data-parte="AUTOR"] {
