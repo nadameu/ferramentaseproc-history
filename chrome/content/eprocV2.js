@@ -13,6 +13,76 @@ function $$(selector, baseElement)
     var elements = baseElement.querySelectorAll(selector);
     return Array.prototype.slice.call(elements);
 }
+function CheckBox(preferencia, texto)
+{
+    var checkbox = null, label = null;
+    var that = this;
+    this.getCheckbox = function()
+    {
+        if (! checkbox) {
+            createConjunto();
+        }
+        return checkbox;
+    }
+    this.getLabel = function()
+    {
+        if (! label) {
+            createConjunto();
+        }
+        return label;
+    }
+    function createConjunto()
+    {
+        checkbox = that.createCheckbox(that.preferencia());
+        label = that.createLabel(checkbox, texto);
+    }
+    this.vincularModificacao = function(fn)
+    {
+        this.getCheckbox().addEventListener('change', fn, false);
+    };
+    this.preferencia = function(valor)
+    {
+        if (typeof valor != 'undefined') {
+            GM_setValue(preferencia, valor);
+        } else {
+            return GM_getValue(preferencia, false);
+        }
+    };
+}
+CheckBox.prototype.createCheckbox = function(valor)
+{
+    var checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = valor;
+    return checkbox;
+};
+CheckBox.prototype.createLabel = function(checkbox, texto)
+{
+    var label = document.createElement('label');
+    label.className = 'infraLabel noprint';
+    label.appendChild(this.getCheckbox());
+    label.appendChild(document.createTextNode(' ' + texto));
+    return label;
+};
+CheckBox.prototype.vincularElementoClasse = function(elemento, classe)
+{
+    var that = this;
+    this.vincularModificacao(function(e)
+    {
+        var valor = e.target.checked;
+        that.preferencia(valor);
+        alterarClasse(valor);
+    });
+    function alterarClasse(valor)
+    {
+        if (valor) {
+            elemento.classList.add(classe);
+        } else {
+            elemento.classList.remove(classe);
+        }
+    };
+    alterarClasse(this.preferencia());
+};
 var Eproc = {
     acao: '',
     pagina: '',
@@ -33,6 +103,12 @@ var Eproc = {
     {
         var extraStyle = Eproc.getExtraStyle();
         extraStyle.innerHTML += rule + '\n';
+    },
+    clicar: function(elemento)
+    {
+        var evento = document.createEvent('MouseEvents');
+        evento.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+        elemento.dispatchEvent(evento);
     },
     closeAllWindows: function(e)
     {
@@ -94,14 +170,15 @@ var Eproc = {
             div.className = 'extraLembretes noprint';
             $$('tr.infraTrClara, tr.infraTrEscura', table).forEach(function(tr, r)
             {
-                var destino = tr.cells[3].textContent, classes = ['extraLembrete'];
-                if (new RegExp(destino).test(usuarioAtual)) {
-                    destino = 'VOCÊ';
-                    classes.push('extraLembreteVoce');
-                }
+                var destino = tr.cells[3].textContent;
                 var inicio = tr.cells[6].textContent == ' - ' ? null : tr.cells[6].textContent;
                 var fim = tr.cells[7].textContent == ' - ' ? null : tr.cells[7].textContent;
                 var floater = document.createElement('div');
+                floater.className = 'extraLembrete';
+                if (new RegExp(destino).test(usuarioAtual)) {
+                    destino = 'VOCÊ';
+                    floater.classList.add('extraLembreteVoce');
+                }
                 floater.innerHTML =
                     '<div class="extraLembretePara">Para: '
                         + destino
@@ -117,7 +194,6 @@ var Eproc = {
                         + '</div>' + tr.cells[4].textContent.replace(/\n/g, '<br/>')
                         + '<div class="extraLembreteData">' + tr.cells[5].textContent
                         + '<br/>' + tr.cells[1].textContent + '</div>';
-                floater.className = classes.join(' ');
                 var celulaBotoes = tr.cells[tr.cells.length - 1];
                 floater.childNodes[0].appendChild(celulaBotoes.childNodes[2]);
                 floater.childNodes[0].appendChild(celulaBotoes.childNodes[0]);
@@ -370,9 +446,7 @@ var Eproc = {
             },
             disparar: function()
             {
-                var evento = document.createEvent('MouseEvents');
-                evento.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-                this.row.dispatchEvent(evento);
+                Eproc.clicar(this.row);
             },
             removeListener: function(fn)
             {
@@ -969,17 +1043,19 @@ var Eproc = {
                     label.appendChild(document.createTextNode(' ' + texto));
                     opcoes.appendChild(label);
                 }
-                createCheckBox('v2.mostraricones', 'extraAcoesMostrarIcones', 'mostrarIcones', 'Mostrar ícones');
-                createCheckBox('v2.destacaracoes', 'extraAcoesDestacar', 'destacarAcoes', 'Destacar ações mais comuns');
+                var chkMostrarIcones = new CheckBox('v2.mostraricones', 'Mostrar ícones');
+                chkMostrarIcones.vincularElementoClasse(fieldset, 'extraAcoesMostrarIcones');
+                opcoes.appendChild(chkMostrarIcones.getLabel());
+                var chkDestacarAcoes = new CheckBox('v2.destacaracoes', 'Destacar ações mais comuns');
+                chkDestacarAcoes.vincularElementoClasse(fieldset, 'extraAcoesDestacar');
+                opcoes.appendChild(chkDestacarAcoes.getLabel());
                 var divAcoesDestacadas = document.createElement('div');
                 divAcoesDestacadas.className = 'extraAcoesDestacadas noprint';
                 fieldset.appendChild(divAcoesDestacadas);
             }
             acoes.forEach(function(acao)
             {
-                var classes = (acao.className == '') ? [] : acao.className.split(' ');
-                classes.push('extraLinkAcao');
-                acao.className = classes.join(' ');
+                acao.classList.add('extraLinkAcao');
                 var sublinhados = $$('u', acao);
                 if (sublinhados.length == 1) {
                     var u = sublinhados[0];
@@ -1121,6 +1197,15 @@ var Eproc = {
                     var copia = acao.cloneNode(true);
                     acao.classList.add('extraLinkAcaoDestacadaOriginal');
                     divAcoesDestacadas.appendChild(copia);
+                    copia.addEventListener('click', (function(original)
+                    {
+                        return function(evento)
+                        {
+                            evento.preventDefault();
+                            evento.stopPropagation();
+                            Eproc.clicar(original);
+                        };
+                    })(acao), false);
                 }
             });
         }
@@ -1347,7 +1432,7 @@ var Eproc = {
             var link = getLink(linha);
             var url = getUrl(link);
             var processos = getQtdProcessos(link);
-            linha.className += ' extraLocalizador';
+            linha.classList.add('extraLocalizador');
             linha.setAttribute('data-processos', processos);
             if (processos > 0) {
                 linha.addEventListener('click', function(e)
@@ -1694,54 +1779,92 @@ var Eproc = {
                 {
                     th.setAttribute('width', '');
                 });
+                var possuiAnotacoes = false;
                 $$('tr[class^="infraTr"]', table).forEach(function(tr, r, trs)
                 {
                     var colunaDocumentos = tr.cells[4];
                     var tabelaDocumentos = $('table', colunaDocumentos);
                     if (tabelaDocumentos) {
+                        function Anotacao(texto)
+                        {
+                            var anotacao = null;
+                            this.getElemento = function()
+                            {
+                                if (! anotacao) {
+                                    anotacao = this.createElemento(texto);
+                                }
+                                return anotacao;
+                            };
+                        }
+                        Anotacao.prototype.createElemento = function(texto)
+                        {
+                            var anotacao = document.createElement('div');
+                            anotacao.className = 'noprint';
+                            anotacao.appendChild(document.createTextNode(texto));
+                            anotacao.textContent = texto;
+                            anotacao.innerHTML = anotacao.innerHTML.split('\n').join('<br />');
+                            return anotacao;
+                        };
+                        Anotacao.prototype.setClassName = function(className)
+                        {
+                            this.getElemento().classList.add(className);
+                        };
+                        Anotacao.fromChild = function(child)
+                        {
+                            if (! (child instanceof HTMLElement)) return null;
+                            try {
+                                var onmouseover = child.getAttribute('onmouseover');
+                                var tooltip = /\('(Obs: .*)','',400\)/.exec(onmouseover)[1];
+                                var textos = tooltip.split('<br /><div style="margin-bottom:0.3em;" class="infraTooltipTitulo"></div>');
+                                var textoMaisRecente = textos[0];
+                                var texto = /^Obs: (.*) \/ .*\(.*\)$/.exec(textoMaisRecente)[1];
+                                texto = texto.replace(/\\'/g, '\'').replace(/<br \/>/g, '\n');
+                            } catch (e) {
+                                return null;
+                            }
+                            if (child instanceof HTMLImageElement) {
+                                return new DocumentoObservacao(texto);
+                            } else if (child instanceof HTMLAnchorElement && /^\?acao=processo_evento_documento_tooltip_alterar/.test(child.search)) {
+                                return new DocumentoMemo(texto);
+                            }
+                            return null;
+                        };
+                        function DocumentoObservacao(texto)
+                        {
+                            Anotacao.apply(this, arguments);
+                            this.setClassName('extraDocumentoObservacao');
+                        };
+                        DocumentoObservacao.prototype = new Anotacao;
+                        DocumentoObservacao.prototype.constructor = DocumentoObservacao;
+                        function DocumentoMemo(texto)
+                        {
+                            Anotacao.apply(this, arguments);
+                            this.setClassName('extraDocumentoMemo');
+                        };
+                        DocumentoMemo.prototype = new Anotacao;
+                        DocumentoMemo.prototype.constructor = DocumentoMemo;
                         $$('td', colunaDocumentos).forEach(function(subtd, subc, subtds)
                         {
-                            var child = null, lembrete = null, onmouseover = null, onmouseout = null;
+                            var child = null, anexarAnotacao = null, onmouseover = null, onmouseout = null;
                             while (child = subtd.firstChild) {
-                                var append = true;
-                                if (child instanceof HTMLElement) {
-                                    if (child.tagName.toUpperCase() == 'IMG') {
-                                        onmouseover = child.getAttribute('onmouseover');
-                                        onmouseout = child.getAttribute('onmouseout');
-                                        var textoLembrete = /\('(Obs: .*)','',400\)/.exec(child.getAttribute('onmouseover'))[1];
-                                        textoLembrete = /^Obs: (.*) \/ .*\(.*\)(?:<br \/>)?$/.exec(textoLembrete)[1];
-                                        lembrete = document.createElement('div');
-                                        lembrete.className = 'extraDocumentoObservacao';
-                                        lembrete.appendChild(document.createTextNode(textoLembrete));
-                                        lembrete.innerHTML = lembrete.innerHTML.replace(/&lt;br \/&gt;/g, '<br />');
-                                        append = false;
-                                    } else if (child instanceof HTMLAnchorElement && /^\?acao=processo_evento_documento_tooltip_alterar/.test(child.search)) {
-                                        var textoLembrete = /\('(Obs: .*)','',400\)/.exec(child.getAttribute('onmouseover'))[1];
-                                        textoLembrete = textoLembrete.split('<div style="margin-bottom:0.3em;" class="infraTooltipTitulo"></div>')[0];
-                                        textoLembrete = /^Obs: (.*) \/ .*\(.*\)(?:<br \/>)?$/.exec(textoLembrete)[1];
-                                        lembrete = document.createElement('div');
-                                        lembrete.className = 'extraDocumentoLembrete';
-                                        lembrete.appendChild(document.createTextNode(textoLembrete));
-                                        lembrete.innerHTML = lembrete.innerHTML.replace(/\\'/g, "'").replace(/&lt;br \/&gt;/g, '<br />');
-                                    } else if (lembrete && child instanceof HTMLAnchorElement && /^\?acao=processo_evento_documento_tooltip_cadastrar/.test(child.search)) {
-                                        child.setAttribute('onmouseover', onmouseover);
-                                        child.setAttribute('onmouseout', onmouseout);
+                                var anotacao;
+                                if (anotacao = Anotacao.fromChild(child)) {
+                                    anexarAnotacao = anotacao.getElemento();
+                                    if (anotacao instanceof DocumentoObservacao) {
+                                        var espaco = child.nextSibling;
+                                        subtd.removeChild(espaco);
+                                        var linkMemo = child.nextSibling;
+                                        var iconeMemo = linkMemo.firstChild;
+                                        linkMemo.replaceChild(child, iconeMemo);
+                                        child = linkMemo;
                                     }
                                 }
-                                if (! append) {
-                                    subtd.removeChild(child);
-                                    if (subtd.firstChild instanceof Text && subtd.firstChild.textContent == ' ') {
-                                        subtd.removeChild(subtd.firstChild);
-                                    }
-                                } else if (append instanceof HTMLElement) {
-                                    colunaDocumentos.appendChild(append);
-                                } else {
-                                    colunaDocumentos.appendChild(child);
-                                }
+                                colunaDocumentos.appendChild(child);
                             }
                             colunaDocumentos.appendChild(document.createElement('br'));
-                            if (lembrete) {
-                                colunaDocumentos.appendChild(lembrete);
+                            if (anexarAnotacao) {
+                                colunaDocumentos.appendChild(anexarAnotacao);
+                                possuiAnotacoes = true;
                             }
                         });
                         colunaDocumentos.removeChild(tabelaDocumentos);
@@ -1814,7 +1937,16 @@ var Eproc = {
                         }, false);
                     })
                 });
-                table.className += ' extraTabelaEventos';
+                table.classList.add('extraTabelaEventos');
+                if (possuiAnotacoes) {
+                    var checkbox = new CheckBox('v2.mostraranotacoes', 'Mostrar observações e memos dos documentos');
+                    checkbox.vincularElementoClasse(table, 'extraTabelaMostrarAnotacoes');
+                    if (! $('caption', table)) {
+                        table.appendChild(document.createElement('caption'));
+                        table.caption.className = 'infraCaption';
+                    }
+                    table.caption.appendChild(checkbox.getLabel());
+                }
                 function getLinkMimeType(docLink)
                 {
                     var type = docLink.getAttribute('data-mimetype');
@@ -1985,6 +2117,23 @@ var Eproc = {
             if (lblTextoAtencao && lblTextoAtencao.textContent == 'PROCESSO COM RÉU PRESO') return lblTextoAtencao;
             return null;
         }
+        var firstStyle = $('head > style');
+        if (firstStyle) {
+            var formatacaoDiferenciada = /\[data-parte="INTERNO"\]/.test(firstStyle.textContent);
+            if (! formatacaoDiferenciada) {
+                ['infraNomeParte', 'infraEventoUsuario', 'infraEventoPrazoParte', 'infraEventoMuitoImportante'].forEach(function(nomeClasse)
+                {
+                    $$('.' + nomeClasse).forEach(function(elemento)
+                    {
+                        elemento.classList.remove(nomeClasse);
+                    });
+                });
+                $$('label.infraEventoDescricao').forEach(function(elemento)
+                {
+                    elemento.classList.remove('infraEventoDescricao');
+                });
+            }
+        }
     },
     reloginGedpro: function(e)
     {
@@ -2114,7 +2263,7 @@ var Eproc = {
                 {
                     skins.forEach(function(skin)
                     {
-                        linha.className += ' no' + skin;
+                        linha.classList.add('no' + skin);
                     });
                 });
             };
@@ -2145,6 +2294,7 @@ var Eproc = {
         corBarra.setControle(new TabelaCoresBarra());
         corBarra.setDescricao(' (clique sobre a cor para tornar a mudança permanente)', false);
         corBarra.insertAfter(esquema);
+        // Não podemos esconder esta configuração antes de fazermos as clonagens necessárias
         confEsquema.hideFrom(['candy', 'icecream']);
 
         function Estilos()
@@ -2384,6 +2534,21 @@ var Eproc = {
             tooltip.vincular(botao);
             window.addEventListener('resize', tooltip.desenhar, false);
             botao.addEventListener('mouseover', tooltip.ocultar, false);
+        }
+        var corCapa = $('#ch1');
+        if (corCapa) {
+            document.body.addEventListener('keydown', function(e)
+            {
+                if (e.shiftKey && e.ctrlKey) {
+                    corCapa.name = '2';
+                }
+            }, false);
+            document.body.addEventListener('keyup', function(e)
+            {
+                if (corCapa.name != '1') {
+                    corCapa.name = '1';
+                }
+            }, false);
         }
     }
 };
