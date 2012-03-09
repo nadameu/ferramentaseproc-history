@@ -159,7 +159,7 @@ var Eproc = {
         } else if (unidades.length > 1) {
             unidades = unidades[1];
         }
-        if (unidades instanceof HTMLLabelElement) {
+        if (('tagName' in unidades) && unidades.tagName == 'LABEL') {
             var usuarioAtual = unidades.textContent;
         } else {
             var usuarioAtual = '';
@@ -1811,7 +1811,7 @@ var Eproc = {
                         };
                         Anotacao.fromChild = function(child)
                         {
-                            if (! (child instanceof HTMLElement)) return null;
+                            if (! ('tagName' in child)) return null;
                             try {
                                 var onmouseover = child.getAttribute('onmouseover');
                                 var tooltip = /\('(Obs: .*)','',400\)/.exec(onmouseover)[1];
@@ -1822,9 +1822,9 @@ var Eproc = {
                             } catch (e) {
                                 return null;
                             }
-                            if (child instanceof HTMLImageElement) {
+                            if (child.tagName == 'IMG') {
                                 return new DocumentoObservacao(texto);
-                            } else if (child instanceof HTMLAnchorElement && /^\?acao=processo_evento_documento_tooltip_alterar/.test(child.search)) {
+                            } else if (child.tagName == 'A' && /^\?acao=processo_evento_documento_tooltip_alterar/.test(child.search)) {
                                 return new DocumentoMemo(texto);
                             }
                             return null;
