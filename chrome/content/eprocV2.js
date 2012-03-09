@@ -2117,6 +2117,23 @@ var Eproc = {
             if (lblTextoAtencao && lblTextoAtencao.textContent == 'PROCESSO COM RÉU PRESO') return lblTextoAtencao;
             return null;
         }
+        var firstStyle = $('head > style');
+        if (firstStyle) {
+            var formatacaoDiferenciada = /\[data-parte="INTERNO"\]/.test(firstStyle.textContent);
+            if (! formatacaoDiferenciada) {
+                ['infraNomeParte', 'infraEventoUsuario', 'infraEventoPrazoParte', 'infraEventoMuitoImportante'].forEach(function(nomeClasse)
+                {
+                    $$('.' + nomeClasse).forEach(function(elemento)
+                    {
+                        elemento.classList.remove(nomeClasse);
+                    });
+                });
+                $$('label.infraEventoDescricao').forEach(function(elemento)
+                {
+                    elemento.classList.remove('infraEventoDescricao');
+                });
+            }
+        }
     },
     reloginGedpro: function(e)
     {
@@ -2277,6 +2294,7 @@ var Eproc = {
         corBarra.setControle(new TabelaCoresBarra());
         corBarra.setDescricao(' (clique sobre a cor para tornar a mudança permanente)', false);
         corBarra.insertAfter(esquema);
+        // Não podemos esconder esta configuração antes de fazermos as clonagens necessárias
         confEsquema.hideFrom(['candy', 'icecream']);
 
         function Estilos()
@@ -2516,6 +2534,21 @@ var Eproc = {
             tooltip.vincular(botao);
             window.addEventListener('resize', tooltip.desenhar, false);
             botao.addEventListener('mouseover', tooltip.ocultar, false);
+        }
+        var corCapa = $('#ch1');
+        if (corCapa) {
+            document.body.addEventListener('keydown', function(e)
+            {
+                if (e.shiftKey && e.ctrlKey) {
+                    corCapa.name = '2';
+                }
+            }, false);
+            document.body.addEventListener('keyup', function(e)
+            {
+                if (corCapa.name != '1') {
+                    corCapa.name = '1';
+                }
+            }, false);
         }
     }
 };
