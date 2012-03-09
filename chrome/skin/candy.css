@@ -303,16 +303,9 @@ fieldset.extraFieldset {
 .extraTabelaEventos td:last-of-type {
     white-space: nowrap;
 }
-.extraDocumentoObservacao,
-.extraDocumentoLembrete {
-    margin-bottom: 0.5em;
-    font-size: 11px;
-    white-space: normal;
-    max-width: 50ex;
+.extraTabelaMostrarAnotacoes .extraDocumentoObservacao,
+.extraTabelaMostrarAnotacoes .extraDocumentoMemo {
 	background-color: #FEFBC5;
-}
-.extraDocumentoObservacao {
-    margin-left: 34px;
 }
 .infraTable label.infraEventoDescricao {
     font-size: 1.1em; 
@@ -699,16 +692,6 @@ fieldset.extraFieldset {
 .extraTabelaEventos td:nth-of-type(2),
 .extraTabelaEventos td:last-of-type {
     white-space: nowrap;
-}
-.extraDocumentoObservacao,
-.extraDocumentoLembrete {
-    margin-bottom: 0.5em;
-    font-size: 11px;
-    white-space: normal;
-    max-width: 50ex;
-}
-.extraDocumentoObservacao {
-    margin-left: 34px;
 }
 label.infraEventoDescricao {
 	font-size: 1.2em; 

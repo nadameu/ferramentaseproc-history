@@ -171,13 +171,18 @@ button.infraButton.extraBuscarPreventosButton:hover {
     white-space: nowrap;
 }
 .extraDocumentoObservacao,
-.extraDocumentoLembrete {
+.extraDocumentoMemo {
+    display: none;
+}
+.extraTabelaMostrarAnotacoes .extraDocumentoObservacao,
+.extraTabelaMostrarAnotacoes .extraDocumentoMemo {
+    display: block;
     margin-bottom: 0.5em;
     font-size: 11px;
     white-space: normal;
     max-width: 50ex;
 }
-.extraDocumentoObservacao {
+.extraTabelaMostrarAnotacoes .extraDocumentoObservacao {
     margin-left: 34px;
 }
 #divInfraAreaProcesso {
