@@ -620,15 +620,15 @@ var Eproc = {
     getDocsGedpro: function()
     {
       var docsGedproStatus = {
-        0: 'Em edição',
-        1: 'Bloqueado',
-        2: 'Pronto para assinar',
-        3: 'Assinado',
-        4: 'Movimentado',
-        5: 'Devolvido',
-        6: 'Arquivado',
-        7: 'Anulado',
-        8: 'Conferido'
+        0: 'documento|Em edição',
+        1: 'chave|Bloqueado',
+        2: 'valida|Pronto para assinar',
+        3: 'assinatura|Assinado',
+        4: 'fase|Movimentado',
+        5: 'procedimentos|Devolvido',
+        6: 'localizador|Arquivado',
+        7: 'excluidos|Anulado',
+        8: 'abrirbloco|Conferido'
       };
       if (arguments.length == 0) {
         return Eproc.reloginGedpro();
@@ -650,14 +650,135 @@ var Eproc = {
         });
       } else {
         var pagina = arguments[0];
+        var GedproNodes = function(xml)
+        {
+            var parser = new DOMParser();  
+            var doc = parser.parseFromString(xml, "application/xml");  
+            var nodes = [];
+            $$('reg', doc).forEach(function(reg)
+            {
+                nodes.push(GedproNode.fromReg(reg));
+            });
+        };
+        var GedproNode = function(reg)
+        {
+            if (typeof reg == 'undefined') return;
+            this.icones = this.parseIcones(reg.getAttribute('icones'));
+        };
+        GedproNode.prototype = {
+            rotulo: '',
+            parseIcones: function(text)
+            {
+                var icones = [];
+                for (var i = 0; i < text.length; i += 3) {
+                    var icone = {
+                        'iWO': 'Word.gif',
+                        'iPO': 'Papiro.gif',
+                        'PDF': 'pdfgedpro.gif',                                    
+                        'iPF': 'PastaAberta.gif',
+                        'iL+': 'L-.gif',
+                        'iT+': 'T-.gif',
+                        'iL0': 'L.gif',
+                        'iT0': 'T.gif',
+                        'i00': 'Vazio.gif',
+                        'iI0': 'I.gif',
+                    }[text.substr(i, 3)];
+                    icones.push(icone);
+                }
+                return icones;
+            }
+        };
+        GedproNode.fromReg = function(reg)
+        {
+            switch (reg.getAttribute('codigoTipoNodo')) {
+                case '-1':
+                    return new GedproDocComposto(reg);
+                    break;
+
+                case '0':
+                    return new GedproProcesso(reg);
+                    break;
+
+                case '1':
+                    return new GedproIncidente(reg);
+                    break;
+
+                case '2':
+                    return new GedproDoc(reg);
+                    break;
+
+            }
+        };
+        var GedproDoc = function(reg)
+        {
+            GedproNode.apply(this, arguments);
+            this.rotulo = reg.getAttribute('nomeTipoDocumentoExibicao');
+            this.maiorAcesso = reg.getAttribute('MaiorAcesso');
+            this.codigo = reg.getAttribute('codigoDocumento');
+            this.status = reg.getAttribute('statusDocumento');
+            this.data = reg.getAttribute('dataDocumento');
+            this.criador = reg.getAttribute('siglaCriador');
+            this.dataCriacao = reg.getAttribute('dataCriacao');
+            this.versao = reg.getAttribute('numeroVersaoDocumento');
+            this.editor = reg.getAttribute('siglaEditor');
+            this.dataVersao = reg.getAttribute('dataHoraEdicao');
+        };
+        GedproDoc.prototype = new GedproNode;
+        GedproDoc.prototype.constructor = GedproDoc;
+        GedproDoc.prototype.getClasse = function()
+        {
+            if (this.maiorAcesso >= 8) {
+                return 'extraGedproRotuloGreen';
+            } else if (this.maiorAcesso >= 2) {
+                return 'extraGedproRotuloBlue';
+            } else {
+                return 'extraGedproRotuloGray';
+            }
+        };
+        var GedproProcesso = function(reg)
+        {
+            GedproNode.apply(this, arguments);
+            this.rotulo = 'Documentos do GEDPRO';
+        };
+        GedproProcesso.prototype = new GedproNode;
+        GedproProcesso.prototype.constructor = GedproProcesso;
+        var GedproIncidente = function(reg)
+        {
+            GedproNode.apply(this, arguments);
+            this.rotulo = reg.getAttribute('descricaoIncidente');
+        };
+        GedproIncidente.prototype = new GedproNode;
+        GedproIncidente.prototype.constructor = GedproIncidente;
+        var GedproDocComposto = function(reg)
+        {
+            GedproNode.apply(this, arguments);
+            this.rotulo = reg.getAttribute('nomeTipoDocComposto') + ' ' + reg.getAttribute('identificador') + '/' + reg.getAttribute('ano');
+        };
+        GedproDocComposto.prototype = new GedproNode;
+        GedproDocComposto.prototype.constructor = GedproDocComposto;
+        var GedproTabela = {
+            fromNodes: function(nodes)
+            {
+                var table = document.createElement('table');
+                return table;
+            }
+        };
         GM_xmlhttpRequest({
             method: 'GET',
             url: Eproc.loginGedpro.docs + '&pgtree=' + pagina,
             mimeType: 'application/xml; charset=ISO-8859-1',
             onload: function(obj)
             {
+                var xml = obj.responseText;
+                var nodes = new GedproNodes(xml);
+                var table = GedproTabela.fromNodes(nodes);
+                var pai = $('#cargaDocsGedpro');
+                pai.textContent = '';
+                pai.appendChild(table);
+                return;
+
                 var div = document.createElement('div');
-                div.innerHTML = obj.responseText;
+                div.innerHTML = xml;
                 var maiorIcone = 0;
                 $$('reg', div).forEach(function(reg)
                 {
@@ -698,15 +819,11 @@ var Eproc = {
                             rotulo.className = 'extraGedproRotuloGray';
                         }
                         row.insertCell(row.cells.length).textContent = reg.getAttribute('codigoDocumento');
-                        row.insertCell(row.cells.length).textContent = docsGedproStatus[reg.getAttribute('statusDocumento')];
-                        if (reg.getAttribute('assinaturaDigital')) {
-                            row.insertCell(row.cells.length).innerHTML = '<img class="extraGedproImg" src="http://' + Eproc.loginGedpro.host + '/images/assinatura.gif"/>';
-                        } else {
-                            row.insertCell(row.cells.length).innerHTML = '&nbsp;';
-                        }
+                        var statusImgTexto = docsGedproStatus[reg.getAttribute('statusDocumento')].split('|');
+                        row.insertCell(row.cells.length).innerHTML = '<img class="extraGedproImg" src="http://' + Eproc.loginGedpro.host + '/images/' + statusImgTexto[0] + '.gif" alt=" "/>&nbsp;' + statusImgTexto[1];
                         row.insertCell(row.cells.length).textContent = reg.getAttribute('dataDocumento');
                         row.insertCell(row.cells.length).innerHTML = [reg.getAttribute('siglaCriador'), reg.getAttribute('dataCriacao')].join('<br/>');
-                        row.insertCell(row.cells.length).innerHTML = ['Versão ' + reg.getAttribute('numeroVersaoDocumento') + ' por ' + reg.getAttribute('siglaEditor'), reg.getAttribute('dataCriacao')].join('<br/>');
+                        row.insertCell(row.cells.length).innerHTML = ['Versão ' + reg.getAttribute('numeroVersaoDocumento') + ' por ' + reg.getAttribute('siglaEditor'), reg.getAttribute('dataHoraEdicao')].join('<br/>');
                       if (rotulo.className != 'extraGedproRotuloGray') {
                         rotulo.addEventListener('click', (function(reg) {
                             return function(e)
@@ -736,7 +853,7 @@ var Eproc = {
                     }
                 });
                 var head = table.createTHead().insertRow(0);
-                ['','Documento','Número','Status','Ass.','Data Documento','Criação','Edição'].forEach(function (text, i)
+                ['','Documento','Número','Status','Data Documento','Criação','Edição'].forEach(function (text, i)
                 {
                     var th = document.createElement('th');
                     if (i == 1) th.colSpan = maiorIcone;
@@ -744,7 +861,6 @@ var Eproc = {
                     th.textContent = text;
                     head.appendChild(th);
                 });
-                table.tHead.rows[0].cells[4].title = 'Assinado digitalmente';
                 var pai = $('#cargaDocsGedpro');
                 pai.textContent = '';
                 pai.appendChild(table);
@@ -1243,22 +1359,24 @@ var Eproc = {
             css = css.replace(/\$l/g, l);
             return css;
         }
-        function getStyleElement(skin)
+        function getStyleElement(skin, styleElementName)
         {
-            var styleElementName = 'extraSkin';
-            if (typeof skin == 'undefined') {
-                styleElementName = 'extraMain';
-            } else if (skin == 'print') {
-                styleElementName = 'extraPrint';
-            }
-            if (temporario) {
-                styleElementName += 'Temp';
+            if (typeof styleElementName == 'undefined') {
+                styleElementName = 'extraSkin';
+                if (typeof skin == 'undefined') {
+                    styleElementName = 'extraMain';
+                } else if (skin == 'print') {
+                    styleElementName = 'extraPrint';
+                }
+                if (temporario) {
+                    styleElementName += 'Temp';
+                }
             }
             return Eproc.getStyle(styleElementName);
         }
-        function addStyleSheet(name)
+        function addStyleSheet(name, id)
         {
-            var estilo = getStyleElement(name);
+            var estilo = getStyleElement(name, id);
             var media = (name == 'print') ? 'print' : 'screen';
             estilo.media = media;
             if (typeof name == 'undefined') name = 'screen';
@@ -1270,6 +1388,7 @@ var Eproc = {
         addStyleSheet();
         addStyleSheet('print');
         addStyleSheet(skin);
+        addStyleSheet('cor-capa', 'extraCorCapa');
 
         $$('label[onclick^="listarTodos"], label[onclick^="listarEventos"], #txtEntidade, #txtPessoaEntidade').forEach(function(auto)
         {
