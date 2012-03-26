@@ -85,11 +85,16 @@ CheckBox.prototype.vincularElementoClasse = function(elemento, classe)
 };
 var Gedpro = (function()
 {
-    var linkElement, link, loginForm, validLogin, login, grupos, docsUrl;
-    var statuses = [];
+    var linkElement, link, loginForm, validLogin, login, grupos, docsUrl, host;
+    var statuses = [], buscando = false;
     return {
         getDocs: function(pagina)
         {
+            if (buscando) {
+                alert('A solicitação já foi enviada. Por favor aguarde.');
+                return;
+            }
+            buscando = true;
             var docsGedproStatus = {
                 0: 'Em edição',
                 1: 'Bloqueado',
@@ -102,19 +107,53 @@ var Gedpro = (function()
                 8: 'Conferido'
             };
             pagina = pagina || 1;
+            var pai = $('#cargaDocsGedpro');
+            var table = $('#tabelaDocsGedpro');
+            if (table) {
+                table.removeChild(table.tBodies[0]);
+            }
+            var paginacao = $('#divPaginacaoDocsGedpro');
+            if (paginacao) {
+                paginacao.textContent = '';
+            }
             Gedpro.getXml(pagina, function(xml)
             {
+                var linkCargaDocs = $('#linkCargaDocs');
+                var table = $('#tabelaDocsGedpro');
+                if (! table) {
+                    table = document.createElement('table');
+                    table.id = 'tabelaDocsGedpro';
+                    table.className = 'infraTable';
+                    var head = table.createTHead().insertRow(0);
+                    ['','Documento','Número','Status','Ass.','Data Documento','Criação','Edição'].forEach(function (text, i)
+                    {
+                        var th = document.createElement('th');
+                        th.className = 'infraTh';
+                        th.textContent = text;
+                        head.appendChild(th);
+                    });
+                    table.tHead.rows[0].cells[4].title = 'Assinado digitalmente';
+                    pai.insertBefore(table, linkCargaDocs);
+                    var oldLinkCargaDocs = linkCargaDocs;
+                    linkCargaDocs = oldLinkCargaDocs.cloneNode(true);
+                    linkCargaDocs.classList.remove('extraLinkAcao');
+                    linkCargaDocs.textContent = 'Falta de permissão de acesso?';
+                    linkCargaDocs.addEventListener('click', Gedpro.getNewLogin, false);
+                    pai.insertBefore(linkCargaDocs, oldLinkCargaDocs);
+                    pai.removeChild(oldLinkCargaDocs);
+                }
+                var tbody = document.createElement('tbody');
+                table.appendChild(tbody);
+                var arvore = [];
                 var maiorIcone = 0;
                 $$('reg', xml).forEach(function(reg)
                 {
                     if (reg.getAttribute('icones').length / 3 > maiorIcone) maiorIcone = reg.getAttribute('icones').length / 3;
                 });
-                var table = document.createElement('table');
-                table.className = 'infraTable';
-                var arvore = [];
+                table.tHead.rows[0].cells[1].colSpan = maiorIcone;
                 $$('reg', xml).forEach(function(reg, r)
                 {
-                    var row = table.insertRow(table.rows.length);
+                    var row = tbody.insertRow(tbody.rows.length);
                     row.className = (r % 2 == 0) ? 'infraTrClara' : 'infraTrEscura';
                     var icones = reg.getAttribute('icones');
                     for (var i = 0; i < reg.getAttribute('icones').length; i += 3) {
@@ -185,62 +224,38 @@ var Gedpro = (function()
                         cell.colSpan = 6;
                     }
                 });
-                var head = table.createTHead().insertRow(0);
-                ['','Documento','Número','Status','Ass.','Data Documento','Criação','Edição'].forEach(function (text, i)
-                {
-                    var th = document.createElement('th');
-                    if (i == 1) th.colSpan = maiorIcone;
-                    th.className = 'infraTh';
-                    th.textContent = text;
-                    head.appendChild(th);
-                });
-                table.tHead.rows[0].cells[4].title = 'Assinado digitalmente';
-                var pai = $('#cargaDocsGedpro');
-                pai.textContent = '';
-                pai.appendChild(table);
+                if (! paginacao) {
+                    paginacao = document.createElement('div');
+                    paginacao.id = 'divPaginacaoDocsGedpro';
+                    pai.insertBefore(paginacao, linkCargaDocs);
+                }
                 function criaLinkPaginacaoGedpro(pagina, texto)
                 {
                     var link = document.createElement('a');
                     link.href = '#cargaDocsGedpro';
                     link.textContent = texto;
                     link.addEventListener('click', function(e) {
-                        var newLink = document.createElement('a');
-                        newLink.className = 'extraLinkAcao';
-                        newLink.href = '#';
-                        newLink.textContent = 'Carregando documentos do GEDPRO...';
-                        newLink.addEventListener('click', function(e)
-                        {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            Gedpro.getDocs(pagina);
-                        }, false);
-                        pai.textContent = '';
-                        pai.appendChild(newLink);
                         return Gedpro.getDocs(pagina);
                     }, false);
-                    pai.appendChild(link);
+                    paginacao.appendChild(link);
                 }
-                var r = table.tBodies[0].rows.length;
+                var r = tbody.rows.length;
                 if (pagina > 1 || r >= 20) {
                     if (pagina > 2) {
                         criaLinkPaginacaoGedpro(1, '|<');
-                        pai.appendChild(document.createTextNode(' '));
+                        paginacao.appendChild(document.createTextNode(' '));
                     }
                     if (pagina > 1) {
                         criaLinkPaginacaoGedpro(pagina - 1, '<');
-                        pai.appendChild(document.createTextNode(' '));
+                        paginacao.appendChild(document.createTextNode(' '));
                     }
-                    pai.appendChild(document.createTextNode('Página ' + pagina + ' '));
+                    paginacao.appendChild(document.createTextNode('Página ' + pagina));
                     if (r >= 20) {
+                        paginacao.appendChild(document.createTextNode(' '));
                         criaLinkPaginacaoGedpro(pagina + 1, '>');
                     }
-                    pai.appendChild(document.createElement('br'));
                 }
-                var link = document.createElement('a');
-                link.href = '#';
-                link.textContent = 'Falta de permissão de acesso?';
-                link.addEventListener('click', (function(link) { return function(e) { Gedpro.login(e); }; })(), false);
-                pai.appendChild(link);
+                buscando = false;
             });
         },
         getDocsUrl: function(callback)
@@ -259,6 +274,16 @@ var Gedpro = (function()
             if (grupos) {
                 return callback(grupos);
             }
+            var setPublicGroups = function()
+            {
+                grupos = '11,28,82';
+                Gedpro.getGrupos(callback);
+            }
+            var onerror = function()
+            {
+                alert('Não foi possível obter os grupos do usuário.\nEstarão acessíveis apenas os documentos com visibilidade pública.');
+                return setPublicGroups();
+            };
             Gedpro.getLogin(function(login)
             {
                 Gedpro.pushStatus('Obtendo grupos do usuário...');
@@ -269,18 +294,16 @@ var Gedpro = (function()
                     {
                         Gedpro.popStatus();
                         var match;
-                        [match, grupos] = obj.responseText.match(/\&grupos=([^\&]*)\&/);
-                        if (grupos == '') {
-                            grupos = '11,28,82';
+                        try {
+                            [match, grupos] = obj.responseText.match(/\&grupos=([^\&]+)\&/);
+                        } catch (e) {
+                            return onerror();
                         }
                         Gedpro.getGrupos(callback);
                     },
-                    onerror: function(obj)
-                    {
-                        alert('Não foi possível obter os grupos do usuário.');
-                    }
+                    onerror: onerror
                 });
-            });
+            }, onerror);
         },
         getLink: function(callback)
         {
@@ -322,7 +345,7 @@ var Gedpro = (function()
                 Gedpro.getLinkElement(callback);
             }
         },
-        getLogin: function(callback)
+        getLogin: function(callback, onerror)
         {
             Gedpro.getValidLogin(function(validLogin)
             {
@@ -331,17 +354,18 @@ var Gedpro = (function()
                 iframe.addEventListener('load', function(e)
                 {
                     Gedpro.popStatus();
-                    var timer = window.setTimeout(function()
+                    var timer;
+                    timer = window.setTimeout(function()
                     {
-                        $('#divInfraAreaTelaE').removeChild(iframe);
                         window.clearTimeout(timer);
+                        $('#divInfraAreaTelaE').removeChild(iframe);
+                        callback();
                     }, 100);
-                    callback();
                 }, false);
                 $('#divInfraAreaTelaE').appendChild(iframe);
                 Gedpro.pushStatus('Tentando fazer login no GEDPRO...');
                 iframe.src = validLogin;
-            });
+            }, onerror);
         },
         getLoginForm: function(callback)
         {
@@ -368,11 +392,27 @@ var Gedpro = (function()
                 });
             });
         },
-        getValidLogin: function(callback)
+        getNewLogin: function(e)
+        {
+            e.preventDefault();
+            e.stopPropagation();
+            Gedpro.getLogin(function(login)
+            {
+                alert('Feche o documento e tente novamente agora.');
+            }, function()
+            {
+                alert('Não foi possível fazer login no GEDPRO.');
+            });
+        },
+        getValidLogin: function(callback, onerror)
         {
             if (validLogin) {
                 return callback(validLogin);
             }
+            onerror = onerror || function()
+            {
+                alert('Não é possível fazer login no GEDPRO.');
+            };
             Gedpro.getLoginForm(function(loginForm)
             {
                 Gedpro.pushStatus('Verificando possibilidade de login...');
@@ -383,7 +423,7 @@ var Gedpro = (function()
                     {
                         Gedpro.popStatus();
                         if (/<!-- Erro /.test(obj.responseText)) {
-                            alert('Não é possível realizar login no GEDPRO.');
+                            onerror();
                         } else {
                             validLogin = loginForm;
                             Gedpro.getValidLogin(callback);
@@ -415,90 +455,12 @@ var Gedpro = (function()
                 });
             });
         },
-        login: function(e)
-        {
-            var isEvent = false;
-            if (e) {
-                isEvent = true;
-                e.target.id = 'loginGedpro';
-                e.target.textContent = 'Tentando fazer login no GEDPRO...';
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            if (! loginForm) {
-                GM_xmlhttpRequest({
-                    method: 'GET',
-                    url: url,
-                    onload: (function(){return function(obj)
-                    {
-                        var formLogin = /FormLogin\.asp\?[^"]+/.exec(obj.responseText);
-                        if (formLogin) {
-                            loginForm = 'http://' + host + '/' + formLogin;
-                            Gedpro.login(e);
-                        }
-                    };})()
-                });
-            } else if (! login) {
-                GM_xmlhttpRequest({
-                    method: 'GET',
-                    url: loginForm,
-                    onload: (function(){return function(obj)
-                    {
-                        if (/<!-- Erro /.test(obj.responseText)) {
-                            alert('Não foi possível fazer login no GEDPRO.');
-                            if (isEvent) {
-                                $('#loginGedpro').textContent = 'Falta de permissão de acesso?';
-                            } else {
-                                $('#cargaDocsGedpro a').textContent = 'Carregar documentos do GEDPRO';
-                            }
-                            throw 'Erro de login GEDPRO';
-                        } else {
-                            login = loginForm;
-                            Gedpro.login(e);
-                        }
-                    };})()
-                });
-            } else {
-                var iframe = document.createElement('iframe');
-                iframe.style.display = 'none';
-                iframe.addEventListener('load', function(e)
-                {
-                    var erroNoLogin = false;
-                    try {
-                        erroNoLogin = e.target.contentDocument.querySelectorAll('.infraExcecao').length > 0;
-                    } catch (ex) {
-                    }
-                    if (erroNoLogin) {
-                        alert('Não foi possível fazer login no GEDPRO.');
-                        if (isEvent) {
-                            $('#loginGedpro').textContent = 'Falta de permissão de acesso?';
-                        } else {
-                            $('#cargaDocsGedpro a').textContent = 'Carregar documentos do GEDPRO';
-                        }
-                        throw 'Erro de login GEDPRO';
-                    }
-                    if (isEvent) {
-                        $('#loginGedpro').textContent = 'Falta de permissão de acesso?';
-                    } else {
-                        $('#cargaDocsGedpro a').textContent = 'Carregando documentos do GEDPRO...';
-                    }
-                    if (isEvent) {
-                        alert('Feche o documento e tente novamente agora.');
-                    } else {
-                        Gedpro.getDocs();
-                    }
-                }, false);
-                $('#divInfraAreaTelaE').appendChild(iframe);
-                iframe.src = login;
-            }
-        },
         popStatus: function()
         {
             var linkCargaDocs = $('#linkCargaDocs');
             var oldText = linkCargaDocs.textContent;
             var status = statuses.pop();
             linkCargaDocs.textContent = status;
-            GM_log(oldText + 'ok.');
             return oldText;
         },
         pushStatus: function(status)
@@ -507,7 +469,6 @@ var Gedpro = (function()
             var oldText = linkCargaDocs.textContent;
             statuses.push(oldText);
             linkCargaDocs.textContent = status;
-            GM_log('Status: ' + status + '\nStatuses: ' + statuses);
         }
     };
 })();
@@ -1808,12 +1769,7 @@ var Eproc = {
             }, false);
             var div = document.createElement('div');
             div.id = 'cargaDocsGedpro';
-            var onLinkCargaDocsClick =  function()
-            {
-                var self = this;
-                Gedpro.getDocs();
-            };
-            linkCargaDocs = new VirtualLink('Carregar documentos do GEDPRO', onLinkCargaDocsClick);
+            linkCargaDocs = new VirtualLink('Carregar documentos do GEDPRO', Gedpro.getDocs);
             linkCargaDocs.id = 'linkCargaDocs';
             linkCargaDocs.className = 'extraLinkAcao';
             div.appendChild(linkCargaDocs);
