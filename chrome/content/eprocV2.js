@@ -303,7 +303,11 @@ var Gedpro = (function()
                     },
                     onerror: onerror
                 });
-            }, onerror);
+            }, function()
+            {
+                alert('Não é possível fazer login no GEDPRO.\nEstarão acessíveis apenas os documentos com visibilidade pública.');
+                return setPublicGroups();
+            });
         },
         getLink: function(callback)
         {
@@ -399,9 +403,6 @@ var Gedpro = (function()
             Gedpro.getLogin(function(login)
             {
                 alert('Feche o documento e tente novamente agora.');
-            }, function()
-            {
-                alert('Não foi possível fazer login no GEDPRO.');
             });
         },
         getValidLogin: function(callback, onerror)
