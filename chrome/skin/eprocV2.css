@@ -269,6 +269,7 @@ tr.extraLocalizador[data-processos="0"] td, tr.extraLocalizador[data-processos="
     font-size: 1.2em;
     margin-left: 5px;
     -moz-border-radius: 5px;
+    border-radius: 5px;
     font-weight: bold;
 }
 .extraMarkerReuPreso {

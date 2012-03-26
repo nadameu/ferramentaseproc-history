@@ -94,6 +94,7 @@ div.infraBarraTribunal {
     height: 4em;
     content: '';
     -moz-border-radius-bottomright: 100%;
+    border-radius-bottomright: 100%;
     border-bottom-right-radius: 100% 50%;
 }
 #divInfraBarraSistema + div:after {
@@ -112,6 +113,7 @@ div.infraBarraTribunal {
     content: '';
     background-color: $background;
     -moz-border-radius-topleft: 100%;
+    border-radius-topleft: 100%;
     border-top-left-radius: 100% 50%;
 }
 #divInfraBarraSistema + div:after {
@@ -204,6 +206,7 @@ button.infraButton.extraBuscarPreventosButton:hover {
     padding: 0.5em 1ex;
     text-align: center;
     -moz-border-radius: 0.5ex;
+    border-radius: 0.5ex;
     font-weight: bold;
     border: 1px solid hsl(60, 100%, 40%);
     background: -moz-linear-gradient(
@@ -267,13 +270,16 @@ fieldset.infraFieldset {
     background: hsl($hB, 42%, 93%);
     border-radius: 4px;
     -moz-box-shadow: 1px 1px 2px hsla(0, 0%, 0%, 0.5) inset;
+    box-shadow: 1px 1px 2px hsla(0, 0%, 0%, 0.5) inset;
     border: none;
 }
 legend.infraLegend,
 legend.infraLegendObrigatorio,
 legend.infraLegendObrigatorioExterno {
     -moz-border-radius: 5px;
+    border-radius: 5px;
     -moz-box-shadow: 2px 2px 5px hsla(0, 0%, 0%, 0.5);
+    box-shadow: 2px 2px 5px hsla(0, 0%, 0%, 0.5);
     padding: 2px 8px;
 }
 legend.infraLegendObrigatorio,
@@ -283,6 +289,7 @@ legend.infraLegendObrigatorioExterno {
 fieldset.extraFieldset {
     border: 2px outset hsla(0, 0%, 50%, 0.5);
     -moz-box-shadow: none;
+    box-shadow: none;
 }
 .extraTabelaEventos img,
 .extraTabelaEventos img.infraImg,
@@ -321,6 +328,7 @@ tr.infraEventoImportante[data-parte] label.infraEventoDescricao {
     color: #fff;		
 	box-shadow: 0 0 3px #999999; 
 	-moz-border-radius: 3px;
+	border-radius: 3px;
 	border-radius: 3px; 
 	text-shadow: 0 1px 2px #666666;
 	vertical-align: middle;
@@ -366,6 +374,7 @@ a.infraNomeParte[data-parte="REU"], span.infraNomeParte[data-parte="REU"] {
 }
 .infraNomeParte {
     -moz-border-radius: 3px;
+    border-radius: 3px;
     padding: 1px 3px;
     vertical-align: top;
     background-color: hsl(0, 0%, 35%);
@@ -382,8 +391,10 @@ a.infraNomeParte[data-parte="REU"], span.infraNomeParte[data-parte="REU"] {
 }
 select.infraSelect, input.infraText {
     -moz-border-radius: 4px;
+    border-radius: 4px;
     padding: 3px 1px;
     -moz-box-shadow: 2px 2px 2px hsla(0, 0%, 0%, 0.5) inset;
+    box-shadow: 2px 2px 2px hsla(0, 0%, 0%, 0.5) inset;
     border: none;
 }
 #divInfraAreaProcesso {
@@ -395,8 +406,10 @@ a.extraLinkAcao,
 #btnDownloadCompletoRS,
 #btnDownloadCompletoTRF4 {
     -moz-border-radius: 4px;
+    border-radius: 4px;
     padding: 3px 1px;
     -moz-box-shadow: 2px 2px 2px hsla(0, 0%, 0%, 0.5);
+    box-shadow: 2px 2px 2px hsla(0, 0%, 0%, 0.5);
     border: 1px outset hsl($hB, 50%, 50%);
     font-size: 1.2em;
 }
@@ -632,6 +645,7 @@ a.extraLinkAcao {
     border: 1px outset #ddd;
     padding: 2px;
     -moz-border-radius: 3px;
+    border-radius: 3px;
     border-radius: 3px;
     color: #333;
     line-height: 16px;
