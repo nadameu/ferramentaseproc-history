@@ -459,17 +459,21 @@ var Gedpro = (function()
         popStatus: function()
         {
             var linkCargaDocs = $('#linkCargaDocs');
-            var oldText = linkCargaDocs.textContent;
-            var status = statuses.pop();
-            linkCargaDocs.textContent = status;
-            return oldText;
+            if (linkCargaDocs) {
+                var oldText = linkCargaDocs.textContent;
+                var status = statuses.pop();
+                linkCargaDocs.textContent = status;
+                return oldText;
+            }
         },
         pushStatus: function(status)
         {
             var linkCargaDocs = $('#linkCargaDocs');
-            var oldText = linkCargaDocs.textContent;
-            statuses.push(oldText);
-            linkCargaDocs.textContent = status;
+            if (linkCargaDocs) {
+                var oldText = linkCargaDocs.textContent;
+                statuses.push(oldText);
+                linkCargaDocs.textContent = status;
+            }
         }
     };
 })();
@@ -1166,6 +1170,21 @@ var Eproc = {
                 break;
         }
         this.colorirTabela();
+        Gedpro.getLinkElement(function(linkGedpro)
+        {
+            [, linkGedpro.href] = linkGedpro.getAttribute('onclick').match(/window.open\('([^']+)'/);
+            linkGedpro.removeAttribute('onclick');
+            linkGedpro.target = '_blank';
+            linkGedpro.addEventListener('click', function(e)
+            {
+                e.preventDefault();
+                e.stopPropagation();
+                Gedpro.getLink(function(url)
+                {
+                    IELauncher(url);
+                });
+            }, false);
+        });
         if (this.acao && this[this.acao]) {
             this[this.acao]();
         } else if (this.parametros.acao_origem && this[this.parametros.acao_origem + '_destino']) {
@@ -1758,19 +1777,7 @@ var Eproc = {
         document.title = Eproc.getProcessoF();
         Gedpro.getLinkElement(function(linkGedpro)
         {
-            [, linkGedpro.href] = linkGedpro.getAttribute('onclick').match(/window.open\('([^']+)'/);
-            linkGedpro.removeAttribute('onclick');
-            linkGedpro.target = '_blank';
             var linkCargaDocs;
-            linkGedpro.addEventListener('click', function(e)
-            {
-                e.preventDefault();
-                e.stopPropagation();
-                Gedpro.getLink(function(url)
-                {
-                    IELauncher(url);
-                });
-            }, false);
             var div = document.createElement('div');
             div.id = 'cargaDocsGedpro';
             linkCargaDocs = new VirtualLink('Carregar documentos do GEDPRO', Gedpro.getDocs);
