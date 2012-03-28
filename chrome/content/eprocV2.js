@@ -1281,13 +1281,14 @@ var Eproc = {
                     acao.addEventListener('click', function(e) { e.preventDefault(); }, false);
                 }
                 var acaoControlador = /\?acao=([^&]+)/.exec(acao.href);
-                var destacar = false;
+                var destacar = false, dispararOriginal = false;
                 if (acaoControlador.length == 2) {
                     var icone = null;
                     switch (acaoControlador[1]) {
                         case 'acessar_processo_gedpro':
                             icone = new ChromeIcone('ie.png');
                             destacar = true;
+                            dispararOriginal = true;
                             break;
 
                         case 'acesso_usuario_processo_listar':
@@ -1408,15 +1409,17 @@ var Eproc = {
                     var copia = acao.cloneNode(true);
                     acao.classList.add('extraLinkAcaoDestacadaOriginal');
                     divAcoesDestacadas.appendChild(copia);
-                    copia.addEventListener('click', (function(original)
-                    {
-                        return function(evento)
+                    if (dispararOriginal) {
+                        copia.addEventListener('click', (function(original)
                         {
-                            evento.preventDefault();
-                            evento.stopPropagation();
-                            Eproc.clicar(original);
-                        };
-                    })(acao), false);
+                            return function(evento)
+                            {
+                                evento.preventDefault();
+                                evento.stopPropagation();
+                                Eproc.clicar(original);
+                            };
+                        })(acao), false);
+                    }
                 }
             });
         }
