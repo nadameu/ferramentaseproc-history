@@ -101,7 +101,10 @@ div.infraAjaxAutoCompletar { max-height: 30em; overflow-y: scroll; } div.infraAj
 .extraGedproRotuloGreen { color: green; }
 .extraGedproRotuloBlue { color: blue; }
 .extraGedproRotuloGray { color: gray; cursor: inherit; }
-.extraGedproImg { cursor: inherit; }
+.extraGedproImg { cursor: inherit; vertical-align: middle; }
+.extraGedproPaginacao { text-align: center; }
+.extraGedproPaginacao a { text-decoration: none; }
+.extraGedproPaginaAtual { font-weight: bold; font-size: 1.3em; }
 button.infraButton.extraBuscarPreventosButton,
 button.infraButton.extraBuscarPreventosButton:hover {
     font-size: .8em;
