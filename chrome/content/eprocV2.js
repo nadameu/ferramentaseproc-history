@@ -1964,10 +1964,10 @@ var Eproc = {
                             if (! ('tagName' in child)) return null;
                             try {
                                 var onmouseover = child.getAttribute('onmouseover');
-                                var tooltip = /\('(Obs: .*)','',400\)/.exec(onmouseover)[1];
+                                var tooltip = /\('(.*)','',400\)/.exec(onmouseover)[1];
                                 var textos = tooltip.split('<br /><div style="margin-bottom:0.3em;" class="infraTooltipTitulo"></div>');
                                 var textoMaisRecente = textos[0];
-                                var texto = /^Obs: (.*) \/ .*\(.*\)$/.exec(textoMaisRecente)[1];
+                                var texto = /^(.*) \/ .*\(.*\)$/.exec(textoMaisRecente)[1];
                                 texto = texto.replace(/\\'/g, '\'').replace(/<br \/>/g, '\n');
                             } catch (e) {
                                 return null;
