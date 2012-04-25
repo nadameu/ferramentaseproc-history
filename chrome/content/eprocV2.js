@@ -274,6 +274,7 @@ var Gedpro = (function()
             }
             return tHead;
         }
+        var numCells = 7;
         var createTHead = function()
         {
             var table = getTable();
@@ -287,6 +288,7 @@ var Gedpro = (function()
                 th.textContent = text;
                 tr.appendChild(th);
             });
+            tr.cells[2].colSpan = 2;
         };
         var tBody;
         var getTBody = function()
@@ -325,7 +327,7 @@ var Gedpro = (function()
             var tr = tFoot.insertRow(0);
             var th = document.createElement('th');
             th.className = 'extraGedproPaginacao';
-            th.colSpan = 6;
+            th.colSpan = numCells;
             tr.appendChild(th);
         };
         var trClassName;
@@ -394,7 +396,7 @@ var Gedpro = (function()
             {
                 var tr = createRow();
                 var tdRotulo = tr.insertCell(0);
-                tdRotulo.colSpan = 6;
+                tdRotulo.colSpan = numCells;
                 node.icones.forEach(function(icone)
                 {
                     tdRotulo.appendChild(icone.toImg());
@@ -428,9 +430,8 @@ var Gedpro = (function()
                     })(doc), false);
                 }
                 row.insertCell(row.cells.length).innerHTML = doc.codigo;
-                var tdStatus = row.insertCell(row.cells.length);
-                tdStatus.appendChild(doc.statusIcone.toImg());
-                tdStatus.innerHTML += ' ' + doc.status;
+                row.insertCell(row.cells.length).innerHTML = doc.status;
+                row.insertCell(row.cells.length).appendChild(doc.statusIcone.toImg());
                 row.insertCell(row.cells.length).innerHTML = doc.data;
                 row.insertCell(row.cells.length).innerHTML = doc.criador + '<br/>' + doc.dataCriacao;
                 row.insertCell(row.cells.length).innerHTML = 'Versão ' + doc.versao + ' por ' + doc.editor + ' em<br/>' + doc.dataVersao;
