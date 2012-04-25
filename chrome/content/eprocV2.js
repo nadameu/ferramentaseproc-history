@@ -87,148 +87,288 @@ var Gedpro = (function()
 {
     var linkElement, link, loginForm, validLogin, login, grupos, docsUrl, host;
     var statuses = [], buscando = false;
-    return {
-        getDocs: function(pagina)
+    var GedproNodes = function(doc)
+    {
+        $$('reg', doc).forEach(function(reg)
         {
-            if (buscando) {
-                alert('A solicitação já foi enviada. Por favor aguarde.');
-                return;
-            }
-            buscando = true;
-            var docsGedproStatus = {
-                0: 'Em edição',
-                1: 'Bloqueado',
-                2: 'Pronto para assinar',
-                3: 'Assinado',
-                4: 'Movimentado',
-                5: 'Devolvido',
-                6: 'Arquivado',
-                7: 'Anulado',
-                8: 'Conferido'
-            };
-            pagina = pagina || 1;
-            var pai = $('#cargaDocsGedpro');
-            var table = $('#tabelaDocsGedpro');
-            if (table) {
-                table.removeChild(table.tBodies[0]);
-            }
-            var paginacao = $('#divPaginacaoDocsGedpro');
-            if (paginacao) {
-                paginacao.textContent = '';
-            }
-            Gedpro.getXml(pagina, function(xml)
-            {
-                var linkCargaDocs = $('#linkCargaDocs');
-                var table = $('#tabelaDocsGedpro');
-                if (! table) {
-                    table = document.createElement('table');
-                    table.id = 'tabelaDocsGedpro';
-                    table.className = 'infraTable';
-                    var head = table.createTHead().insertRow(0);
-                    ['','Documento','Número','Status','Ass.','Data Documento','Criação','Edição'].forEach(function (text, i)
-                    {
-                        var th = document.createElement('th');
-                        th.className = 'infraTh';
-                        th.textContent = text;
-                        head.appendChild(th);
-                    });
-                    table.tHead.rows[0].cells[4].title = 'Assinado digitalmente';
-                    pai.insertBefore(table, linkCargaDocs);
-                    var oldLinkCargaDocs = linkCargaDocs;
-                    linkCargaDocs = oldLinkCargaDocs.cloneNode(true);
-                    linkCargaDocs.classList.remove('extraLinkAcao');
-                    linkCargaDocs.textContent = 'Falta de permissão de acesso?';
-                    linkCargaDocs.addEventListener('click', Gedpro.getNewLogin, false);
-                    pai.insertBefore(linkCargaDocs, oldLinkCargaDocs);
-                    pai.removeChild(oldLinkCargaDocs);
-                }
-                var tbody = document.createElement('tbody');
-                table.appendChild(tbody);
-                var arvore = [];
-                var maiorIcone = 0;
-                $$('reg', xml).forEach(function(reg)
-                {
-                    if (reg.getAttribute('icones').length / 3 > maiorIcone) maiorIcone = reg.getAttribute('icones').length / 3;
-                });
-                table.tHead.rows[0].cells[1].colSpan = maiorIcone;
-                $$('reg', xml).forEach(function(reg, r)
-                {
-                    var row = tbody.insertRow(tbody.rows.length);
-                    row.className = (r % 2 == 0) ? 'infraTrClara' : 'infraTrEscura';
-                    var icones = reg.getAttribute('icones');
-                    for (var i = 0; i < reg.getAttribute('icones').length; i += 3) {
-                        var icone = {
-                            'iWO': 'Word.gif',
-                            'iPO': 'Papiro.gif',
-                            'PDF': 'pdfgedpro.gif',                                    
-                            'iPF': 'PastaAberta.gif',
-                            'iL+': 'L-.gif',
-                            'iT+': 'T-.gif',
-                            'iL0': 'L.gif',
-                            'iT0': 'T.gif',
-                            'i00': 'Vazio.gif',
-                            'iI0': 'I.gif',
-                        }[icones.substr(i, 3)];
-                        row.insertCell(row.cells.length).innerHTML = '<img class="extraGedproImg" src="http://' + host + '/images/' + icone + '"/>';
-                    }
-                    var rotulo = row.insertCell(row.cells.length);
-                    rotulo.colSpan = maiorIcone - (icones.length / 3) + 1;
-                    if (reg.getAttribute('codigoTipoNodo') == 2) {
-                        rotulo.textContent = reg.getAttribute('nomeTipoDocumentoExibicao');
-                        if (reg.getAttribute('MaiorAcesso') >= 8) {
-                            rotulo.className = 'extraGedproRotuloGreen';
-                        } else if (reg.getAttribute('MaiorAcesso') >= 2) {
-                            rotulo.className = 'extraGedproRotuloBlue';
-                        } else {
-                            rotulo.className = 'extraGedproRotuloGray';
-                        }
-                        row.insertCell(row.cells.length).textContent = reg.getAttribute('codigoDocumento');
-                        row.insertCell(row.cells.length).textContent = docsGedproStatus[reg.getAttribute('statusDocumento')];
-                        if (reg.getAttribute('assinaturaDigital')) {
-                            row.insertCell(row.cells.length).innerHTML = '<img class="extraGedproImg" src="http://' + host + '/images/assinatura.gif"/>';
-                        } else {
-                            row.insertCell(row.cells.length).innerHTML = '&nbsp;';
-                        }
-                        row.insertCell(row.cells.length).textContent = reg.getAttribute('dataDocumento');
-                        row.insertCell(row.cells.length).innerHTML = [reg.getAttribute('siglaCriador'), reg.getAttribute('dataCriacao')].join('<br/>');
-                        row.insertCell(row.cells.length).innerHTML = ['Versão ' + reg.getAttribute('numeroVersaoDocumento') + ' por ' + reg.getAttribute('siglaEditor'), reg.getAttribute('dataCriacao')].join('<br/>');
-                      if (rotulo.className != 'extraGedproRotuloGray') {
-                        rotulo.addEventListener('click', (function(reg) {
-                            return function(e)
-                            {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                var menuFechar = $('#extraFechar');
-                                if (menuFechar) {
-                                    menuFechar.style.visibility = 'visible';
-                                }
-                                var win = Eproc.windows['' + Eproc.processo + reg.getAttribute('codigoNodo')];
-                                if (typeof win == 'object' && !win.closed) {
-                                    return win.focus();
-                                } else {
-                                    Eproc.windows['' + Eproc.processo + reg.getAttribute('codigoNodo')] = window.open('http://' + host + '/visualizarDocumentos.asp?origem=pesquisa&ignoraframes=sim&codigoDocumento=' + reg.getAttribute('codigoDocumento'), '' + Eproc.processo + reg.getAttribute('codigoNodo'), 'menubar=0,resizable=1,status=0,toolbar=0,location=0,directories=0,scrollbars=1');
-                                }
-                            };
-                        })(reg), false);
-                      }
-                    } else {
-                        if (reg.getAttribute('codigoTipoNodo') == 0) {
-                            rotulo.textContent = 'Documentos do GEDPRO';
+            var node = GedproNode.fromReg(reg);
+            this.maiorIcone = Math.max(this.maiorIcone, node.icones.length);
+            this.push(node);
+        }, this);
+    };
+    GedproNodes.prototype = [];
+    GedproNodes.prototype.constructor = GedproNodes;
+    GedproNodes.prototype.maiorIcone = 0;
+    GedproNodes.prototype.accept = function(visitor)
+    {
+        visitor.visitNodes(this);
+        this.forEach(function(node)
+        {
+            visitor.visit(node);
+        }, this);
+    };
+    var GedproIcones = function(str)
+    {
+        for (var i = 0; i < str.length; i += 3) {
+            var icone = new GedproIcone(str.substr(i, 3));
+            this.push(icone);
+        }
+    };
+    GedproIcones.prototype = [];
+    GedproIcones.prototype.constructor = GedproIcones;
+    var GedproIcone = function(str)
+    {
+        if (str in GedproIcone.ARQUIVOS) {
+            this.arquivo = GedproIcone.ARQUIVOS[str];
+        }
+    };
+    GedproIcone.prototype = {
+        arquivo: 'Vazio',
+        toImg: function()
+        {
+            var img = document.createElement('img');
+            img.className = 'extraGedproImg';
+            img.src = 'http://' + host + '/images/' + this.arquivo + '.gif';
+            return img;
+        }
+    };
+    GedproIcone.ARQUIVOS = {
+        'iWO': 'Word',
+        'iPO': 'Papiro',
+        'PDF': 'pdfgedpro',                                    
+        'iPF': 'PastaAberta',
+        'iL+': 'L-',
+        'iT+': 'T-',
+        'iL0': 'L',
+        'iT0': 'T',
+        'i00': 'Vazio',
+        'iI0': 'I',
+        '0': 'documento', // Em edição
+        '1': 'chave', // Bloqueado
+        '2': 'valida', // Pronto para assinar
+        '3': 'assinatura', // Assinado
+        '4': 'fase', // Movimentado
+        '5': 'procedimentos', // Devolvido
+        '6': 'localizador', // Arquivado
+        '7': 'excluidos', // Anulado
+        '8': 'abrirbloco', // Conferido
+    };
+    var GedproNode = function(reg)
+    {
+        if (typeof reg == 'undefined') return;
+        this.icones = new GedproIcones(reg.getAttribute('icones'));
+    };
+    GedproNode.prototype = {
+        rotulo: '',
+        accept: function(visitor)
+        {
+            visitor.visitNode(this);
+        }
+    };
+    GedproNode.fromReg = function(reg)
+    {
+        switch (reg.getAttribute('codigoTipoNodo')) {
+            case '-1':
+                return new GedproDocComposto(reg);
+                break;
 
-                        } else if (reg.getAttribute('codigoTipoNodo') == 1) {
-                            rotulo.textContent = reg.getAttribute('descricaoIncidente');
-                        } else if (reg.getAttribute('codigoTipoNodo') == -1) {
-                            rotulo.textContent = reg.getAttribute('nomeTipoDocComposto') + ' ' + reg.getAttribute('identificador') + '/' + reg.getAttribute('ano');
-                        }
-                        var cell = row.insertCell(row.cells.length);
-                        cell.colSpan = 6;
-                    }
+            case '0':
+                return new GedproProcesso(reg);
+                break;
+
+            case '1':
+                return new GedproIncidente(reg);
+                break;
+
+            case '2':
+                return new GedproDoc(reg);
+                break;
+
+        }
+    };
+    var GedproDoc = function(reg)
+    {
+        GedproNode.apply(this, arguments);
+        this.rotulo = reg.getAttribute('nomeTipoDocumentoExibicao');
+        this.maiorAcesso = reg.getAttribute('MaiorAcesso');
+        this.codigo = reg.getAttribute('codigoDocumento');
+        var statusDocumento = reg.getAttribute('statusDocumento');
+        this.status = GedproDoc.STATUSES[statusDocumento];
+        this.statusIcone = new GedproIcone(statusDocumento);
+        this.data = reg.getAttribute('dataDocumento');
+        this.criador = reg.getAttribute('siglaCriador');
+        this.dataCriacao = reg.getAttribute('dataCriacao');
+        this.versao = reg.getAttribute('numeroVersaoDocumento');
+        this.editor = reg.getAttribute('siglaEditor');
+        this.dataVersao = reg.getAttribute('dataHoraEdicao');
+    };
+    GedproDoc.prototype = new GedproNode;
+    GedproDoc.prototype.constructor = GedproDoc;
+    GedproDoc.prototype.getClasse = function()
+    {
+        if (this.maiorAcesso >= 8) {
+            return 'extraGedproRotuloGreen';
+        } else if (this.maiorAcesso >= 2) {
+            return 'extraGedproRotuloBlue';
+        } else {
+            return 'extraGedproRotuloGray';
+        }
+    };
+    GedproDoc.prototype.accept = function(visitor)
+    {
+        visitor.visitDoc(this);
+    };
+    GedproDoc.STATUSES = {
+        0: 'Em edição',
+        1: 'Bloqueado',
+        2: 'Pronto para assinar',
+        3: 'Assinado',
+        4: 'Movimentado',
+        5: 'Devolvido',
+        6: 'Arquivado',
+        7: 'Anulado',
+        8: 'Conferido'
+    };
+    var GedproProcesso = function(reg)
+    {
+        GedproNode.apply(this, arguments);
+        this.rotulo = 'Documentos do GEDPRO';
+    };
+    GedproProcesso.prototype = new GedproNode;
+    GedproProcesso.prototype.constructor = GedproProcesso;
+    var GedproIncidente = function(reg)
+    {
+        GedproNode.apply(this, arguments);
+        this.rotulo = reg.getAttribute('descricaoIncidente');
+    };
+    GedproIncidente.prototype = new GedproNode;
+    GedproIncidente.prototype.constructor = GedproIncidente;
+    var GedproDocComposto = function(reg)
+    {
+        GedproNode.apply(this, arguments);
+        this.rotulo = reg.getAttribute('nomeTipoDocComposto') + ' ' + reg.getAttribute('identificador') + '/' + reg.getAttribute('ano');
+    };
+    GedproDocComposto.prototype = new GedproNode;
+    GedproDocComposto.prototype.constructor = GedproDocComposto;
+    var GedproTabela = (function()
+    {
+        var maiorIcone = 0;
+        var table;
+        var getTable = function()
+        {
+            if (! table) {
+                createTable();
+            }
+            return table;
+        }
+        var createTable = function()
+        {
+            table = document.createElement('table');
+            table.className = 'infraTable';
+        };
+        var tHead;
+        var getTHead = function()
+        {
+            if (! tHead) {
+                createTHead();
+            }
+            return tHead;
+        }
+        var numCells = 7;
+        var createTHead = function()
+        {
+            var table = getTable();
+            table.deleteTHead();
+            tHead = table.createTHead();
+            var tr = tHead.insertRow(0);
+            ['Documento','Número','Status','Data Documento','Criação','Edição'].forEach(function (text, i)
+            {
+                var th = document.createElement('th');
+                th.className = 'infraTh';
+                th.textContent = text;
+                tr.appendChild(th);
+            });
+            tr.cells[2].colSpan = 2;
+        };
+        var tBody;
+        var getTBody = function()
+        {
+            if (! tBody) {
+                createTBody();
+            }
+            return tBody;
+        };
+        var createTBody = function()
+        {
+            var table = getTable();
+            if (table.tBodies.length) {
+                $$('tbody', table).forEach(function(tBody)
+                {
+                    table.removeChild(tBody);
                 });
-                if (! paginacao) {
-                    paginacao = document.createElement('div');
-                    paginacao.id = 'divPaginacaoDocsGedpro';
-                    pai.insertBefore(paginacao, linkCargaDocs);
+            }
+            tBody = document.createElement('tbody');
+            table.appendChild(tBody);
+            trClassName = null;
+        };
+        var tFoot;
+        var getTFoot = function()
+        {
+            if (! tFoot) {
+                createTFoot();
+            }
+            return tFoot;
+        };
+        var createTFoot = function()
+        {
+            var table = getTable();
+            table.deleteTFoot();
+            tFoot = table.createTFoot();
+            var tr = tFoot.insertRow(0);
+            var th = document.createElement('th');
+            th.className = 'extraGedproPaginacao';
+            th.colSpan = numCells;
+            tr.appendChild(th);
+        };
+        var trClassName;
+        var createRow = function()
+        {
+            var tBody = getTBody();
+            var tr = tBody.insertRow(tBody.rows.length);
+            trClassName = (trClassName == 'infraTrClara') ? 'infraTrEscura' : 'infraTrClara';
+            tr.className = trClassName;
+            return tr;
+        };
+        var maiorPagina = pagina = 1;
+        return {
+            getPagina: function(estaPagina)
+            {
+                pagina = estaPagina;
+                maiorIcone = 0;
+                getTHead();
+                createTBody();
+                createTFoot();
+                return table;
+            },
+            getTable: function()
+            {
+                return getTable();
+            },
+            visit: function(obj)
+            {
+                obj.accept(this);
+            },
+            visitNodes: function(nodes)
+            {
+                var possuiMaisDocumentos = (nodes.length >= 21);
+                if (pagina > maiorPagina) {
+                    maiorPagina = pagina;
+                } else if (pagina == maiorPagina && possuiMaisDocumentos) {
+                    maiorPagina++;
                 }
+                maiorIcone = nodes.maiorIcone;
+                getTHead();
+                var cell = getTFoot().rows[0].cells[0];
                 function criaLinkPaginacaoGedpro(pagina, texto)
                 {
                     var link = document.createElement('a');
@@ -237,24 +377,87 @@ var Gedpro = (function()
                     link.addEventListener('click', function(e) {
                         return Gedpro.getDocs(pagina);
                     }, false);
-                    paginacao.appendChild(link);
+                    cell.appendChild(link);
                 }
-                var r = tbody.rows.length;
-                if (pagina > 1 || r >= 20) {
-                    if (pagina > 2) {
-                        criaLinkPaginacaoGedpro(1, '|<');
-                        paginacao.appendChild(document.createTextNode(' '));
+                cell.appendChild(document.createTextNode('Página '));
+                for (var p = 1; p <= maiorPagina; p++) {
+                    if (p == pagina) {
+                        var span = document.createElement('span');
+                        span.className = 'extraGedproPaginaAtual';
+                        span.textContent = pagina;
+                        cell.appendChild(span);
+                    } else {
+                        criaLinkPaginacaoGedpro(p, p);
                     }
-                    if (pagina > 1) {
-                        criaLinkPaginacaoGedpro(pagina - 1, '<');
-                        paginacao.appendChild(document.createTextNode(' '));
-                    }
-                    paginacao.appendChild(document.createTextNode('Página ' + pagina));
-                    if (r >= 20) {
-                        paginacao.appendChild(document.createTextNode(' '));
-                        criaLinkPaginacaoGedpro(pagina + 1, '>');
-                    }
+                    cell.appendChild(document.createTextNode(' '));
                 }
+            },
+            visitNode: function(node)
+            {
+                var tr = createRow();
+                var tdRotulo = tr.insertCell(0);
+                tdRotulo.colSpan = numCells;
+                node.icones.forEach(function(icone)
+                {
+                    tdRotulo.appendChild(icone.toImg());
+                });
+                tdRotulo.appendChild(document.createTextNode(' ' + node.rotulo));
+                return tr;
+            },
+            visitDoc: function(doc)
+            {
+                var row = this.visitNode(doc);
+                var tdRotulo = row.cells[row.cells.length - 1];
+                tdRotulo.removeAttribute('colspan');
+                tdRotulo.className = doc.getClasse();
+                if (tdRotulo.className != 'extraGedproRotuloGray') {
+                    tdRotulo.addEventListener('click', (function(node) {
+                        return function(e)
+                        {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            var menuFechar = $('#extraFechar');
+                            if (menuFechar) {
+                                menuFechar.style.visibility = 'visible';
+                            }
+                            var win = Eproc.windows['' + Eproc.processo + node.codigo];
+                            if (typeof win == 'object' && !win.closed) {
+                                return win.focus();
+                            } else {
+                                Eproc.windows['' + Eproc.processo + node.codigo] = window.open('http://' + host + '/visualizarDocumentos.asp?origem=pesquisa&ignoraframes=sim&codigoDocumento=' + node.codigo, '' + Eproc.processo + node.codigo, 'menubar=0,resizable=1,status=0,toolbar=0,location=0,directories=0,scrollbars=1');
+                            }
+                        };
+                    })(doc), false);
+                }
+                row.insertCell(row.cells.length).innerHTML = doc.codigo;
+                row.insertCell(row.cells.length).innerHTML = doc.status;
+                row.insertCell(row.cells.length).appendChild(doc.statusIcone.toImg());
+                row.insertCell(row.cells.length).innerHTML = doc.data;
+                row.insertCell(row.cells.length).innerHTML = doc.criador + '<br/>' + doc.dataCriacao;
+                row.insertCell(row.cells.length).innerHTML = 'Versão ' + doc.versao + ' por ' + doc.editor + ' em<br/>' + doc.dataVersao;
+                return row;
+            }
+        };
+    })();
+    return {
+        getDocs: function(pagina)
+        {
+            if (buscando) {
+                alert('A solicitação já foi enviada. Por favor aguarde.');
+                return;
+            }
+            buscando = true;
+            pagina = (typeof pagina == 'number') ? pagina : 1;
+            var table = GedproTabela.getPagina(pagina);
+            Gedpro.getXml(pagina, function(xml)
+            {
+                var nodes = new GedproNodes(xml);
+                GedproTabela.visit(nodes);
+                var pai = $('#cargaDocsGedpro');
+                var linkCargaDocs = $('#linkCargaDocs');
+                linkCargaDocs.transform();
+                var table = GedproTabela.getTable();
+                pai.insertBefore(table, linkCargaDocs);
                 buscando = false;
             });
         },
@@ -1783,6 +1986,18 @@ var Eproc = {
             linkCargaDocs = new VirtualLink('Carregar documentos do GEDPRO', Gedpro.getDocs);
             linkCargaDocs.id = 'linkCargaDocs';
             linkCargaDocs.className = 'extraLinkAcao';
+            var transformed = false;
+            linkCargaDocs.transform = function()
+            {
+                if (transformed) {
+                    return;
+                }
+                transformed = true;
+                this.removeTrigger();
+                this.classList.remove('extraLinkAcao');
+                this.textContent = 'Falta de permissão de acesso?';
+                this.addEventListener('click', Gedpro.getNewLogin, false);
+            };
             div.appendChild(linkCargaDocs);
             var tabelas = $$('.infraTable'), tabela = tabelas[tabelas.length - 1], tabelaParent = tabela.parentNode;
             tabelaParent.insertBefore(div, tabela);
@@ -1875,12 +2090,17 @@ var Eproc = {
             var vLink = document.createElement('a');
             vLink.href = '#';
             vLink.innerHTML = texto;
-            vLink.addEventListener('click', function(e)
+            var fn = function(e)
             {
                 e.preventDefault();
                 e.stopPropagation();
                 funcao.call(this);
-            }, false);
+            };
+            vLink.addEventListener('click', fn, false);
+            vLink.removeTrigger = function()
+            {
+                this.removeEventListener('click', fn, false);
+            };
             return vLink;
         }
         var processosRelacionados = getProcessosRelacionados();
@@ -1964,10 +2184,10 @@ var Eproc = {
                             if (! ('tagName' in child)) return null;
                             try {
                                 var onmouseover = child.getAttribute('onmouseover');
-                                var tooltip = /\('(Obs: .*)','',400\)/.exec(onmouseover)[1];
+                                var tooltip = /\('(.*)','',400\)/.exec(onmouseover)[1];
                                 var textos = tooltip.split('<br /><div style="margin-bottom:0.3em;" class="infraTooltipTitulo"></div>');
                                 var textoMaisRecente = textos[0];
-                                var texto = /^Obs: (.*) \/ .*\(.*\)$/.exec(textoMaisRecente)[1];
+                                var texto = /^(.*) \/ .*\(.*\)$/.exec(textoMaisRecente)[1];
                                 texto = texto.replace(/\\'/g, '\'').replace(/<br \/>/g, '\n');
                             } catch (e) {
                                 return null;
