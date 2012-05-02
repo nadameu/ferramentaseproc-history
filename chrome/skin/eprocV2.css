@@ -1,102 +1,3 @@
-html, body {
-    margin: 0;
-    height: 100%;
-}
-body {
-    background-color: $background;
-    overflow-y: auto;
-}
-div.extraWrapper {
-    padding: 0.5625% 0;
-    height: 98%
-}
-#divInfraAreaGlobal {
-    height: 100%;
-    margin-bottom: 0.5625%;
-}
-input.infraText, select.infraSelect, textarea.infraTextarea,
-select.infraSelect:focus option {
-    background-color: hsl($h, 50%, 92%);
-}
-input:focus,
-select:focus,
-textarea:focus {
-    background-color: #fff;
-}
-div.infraAjaxAutoCompletar,
-div.infraAjaxAutoCompletar li {
-    background-color: hsl($h, 50%, 92%);
-}
-div.infraAjaxAutoCompletar li.selected {
-    background-color: Highlight;
-}
-div.infraAjaxAutoCompletar li.selected a, div.infraAjaxAutoCompletar li.selected b {
-    color: HighlightText;
-}
-table.infraTable {
-    border-spacing: 0;
-    border: solid #ccc;
-    border-width: 1px 0 0 1px;
-    background-color: transparent;
-}
-.infraTable th, .infraTable td {
-    border: solid #ccc;
-    border-width: 0 1px 1px 0;
-}
-.infraTable table th, .infraTable table td {
-    border: none;
-}
-tr.infraTrClara {
-    background-color: hsl($h, 33%, 97%);
-}
-tr.infraTrEscura {
-    background-color: hsl($h, 33%, 95%);
-}
-tr.infraTrSelecionada td {
-    background-color: hsla(0, 0%, 50%, 0.25);
-}
-tr.infraTrSelecionada td td {
-    background-color: hsla(0, 0%, 50%, 0);
-}
-tr.infraTrMarcada td {
-    background-color: hsla(0, 0%, 50%, 0.375);
-}
-div.infraMenu a {
-    background-color: $background;
-    border-color: $background;
-}
-a.docLink {
-    font-size: 11px;
-}
-#lastClicked {
-    background: #ff0;
-}
-.infraBarraComandos, .infraAreaTelaD, .infraAreaDados {
-    border-color: $background !important;
-}
-.infraTable td label {
-    font-size: 1em;
-}
-#fldAssuntos label.infraLabelObrigatorio {
-    color: #333;
-}
-img.infraImg, img.infraImgNormal, img.infraImg:hover, img.infraImgNormal:hover {
-    width: auto;
-    height: auto;
-}
-*[disabled] {
-    color: #aaa;
-}
-button {
-    background-color: #eee;
-}
-a img {
-    border: none;
-}
-div[class^=infraLegend], div[id^=divDes] {
-    background-color: $background !important;
-}
-div.infraAjaxAutoCompletar { max-height: 30em; overflow-y: scroll; } div.infraAjaxAutoCompletar li a { display: block; margin-left: 3ex; text-indent: -3ex; } div.infraAjaxAutoCompletar li.selected { background-color: Highlight; } div.infraAjaxAutoCompletar li.selected a, div.infraAjaxAutoCompletar li.selected b { color: HighlightText; }
 .extraGedproRotuloGreen, .extraGedproRotuloBlue { cursor: pointer; }
 .extraGedproRotuloGreen { color: green; }
 .extraGedproRotuloBlue { color: blue; }
@@ -188,9 +89,6 @@ button.infraButton.extraBuscarPreventosButton:hover {
 .extraTabelaMostrarAnotacoes .extraDocumentoObservacao {
     margin-left: 34px;
 }
-#divInfraAreaProcesso {
-    clear: both;
-}
 #txtNumProcessoPesquisaRapida[placeholder] {
     width: 135px;
     font-size: 1.1em;
@@ -250,9 +148,6 @@ a.extraLinkAcao:hover {
     font-weight: bold;
     float: left;
 }
-#fldObsRegra #lblObsRegra {
-    position: relative;
-}
 tr.extraLocalizador[data-processos] {
     cursor: pointer;
 }
@@ -280,30 +175,5 @@ tr.extraLocalizador[data-processos="0"] td, tr.extraLocalizador[data-processos="
 }
 .extraMarkerPrioridade {
     background-color: brown;
-}
-div.infraBarraTribunalE, div.infraBarraTribunalD {
-    width: auto;
-}
-span.infraEventoPrazoFechou { display: inline; }
-tr.infraEventoPrazoFechouMovimento span.infraEventoPrazoFechouDescricao {
-    background-color: #fff;
-}
-tr.infraEventoPrazoAguardando td.infraEventoDescricao,
-tr.infraEventoPrazoAberto td.infraEventoDescricao,
-tr.infraEventoPrazoFechado td.infraEventoDescricao {
-    padding-right: 20px;
-}
-tr.infraEventoPrazoAguardando td.infraEventoDescricao {
-    background: rgb(252, 220, 220) url('imagens/prazos/aguardando.png') top right no-repeat;
-}
-tr.infraEventoPrazoAberto td.infraEventoDescricao {
-    background: rgb(252, 252, 189) url('imagens/prazos/aberto.png') top right no-repeat;
-}
-tr.infraEventoPrazoFechouMovimento td.infraEventoDescricao {
-    background: rgb(235, 242, 223) url('imagens/prazos/fechado.png') top right no-repeat;
-}
-tr.infraEventoPrazoFechouDecurso td.infraEventoDescricao {
-    background: rgb(235, 242, 223) url('imagens/prazos/decurso.png') top right no-repeat;
-    padding-right: 36px;
 }
 

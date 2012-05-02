@@ -1684,6 +1684,10 @@ var Eproc = {
             var styleElementName = 'extraSkin';
             if (typeof skin == 'undefined') {
                 styleElementName = 'extraMain';
+            } else if (/-extra$/.test(skin)) {
+                styleElementName = 'extraSkinExtra';
+            } else if (skin == 'fundo') {
+                styleElementName = 'extraFundo';
             } else if (skin == 'print') {
                 styleElementName = 'extraPrint';
             }
@@ -1705,7 +1709,6 @@ var Eproc = {
         }
         addStyleSheet();
         addStyleSheet('print');
-        addStyleSheet(skin);
 
         $$('label[onclick^="listarTodos"], label[onclick^="listarEventos"], #txtEntidade, #txtPessoaEntidade').forEach(function(auto)
         {
@@ -1715,6 +1718,13 @@ var Eproc = {
                 auto.style.width = auto.clientWidth + 'px';
             }
         }, this);
+
+        var estilosPersonalizados = $('link[href^="css/estilos.php"]');
+        if (! estilosPersonalizados) {
+            addStyleSheet('fundo');
+            addStyleSheet(skin);
+        }
+        addStyleSheet(skin + '-extra');
     },
     mudaEstilosTemporariamente: function(h, s, l, hB, sB, lB)
     {
@@ -1723,6 +1733,12 @@ var Eproc = {
     removeEstilosTemporarios: function()
     {
         var estilos = Eproc.getStyle('extraMainTemp');
+        estilos.parentNode.removeChild(estilos);
+        var estilos = Eproc.getStyle('extraSkinExtraTemp');
+        estilos.parentNode.removeChild(estilos);
+        var estilos = Eproc.getStyle('extraPrintTemp');
+        estilos.parentNode.removeChild(estilos);
+        var estilos = Eproc.getStyle('extraFundoTemp');
         estilos.parentNode.removeChild(estilos);
         var estilos = Eproc.getStyle('extraSkinTemp');
         estilos.parentNode.removeChild(estilos);
@@ -2252,7 +2268,7 @@ var Eproc = {
                     $$('a[href*="?acao=acessar_documento"]', colunaDocumentos).forEach(function(docLink, l, docLinks)
                     {
                         docLink.href += '&titulo_janela=' + encodeURIComponent(tr.cells[0].textContent.trim() + ' - ' + docLink.textContent);
-                        docLink.className = 'docLink';
+                        docLink.className = 'extraDocLink';
                         var ext = docLink.getAttribute('data-mimetype');
                         if (ext) {
                             docLink.href += '&tipo_doc=' + ext;
@@ -2528,6 +2544,11 @@ var Eproc = {
     },
     usuario_personalizacao_configuracao: function()
     {
+        var estilosPersonalizados = $('link[href^="css/estilos.php"]');
+        if (estilosPersonalizados) {
+            return;
+        }
+
         var tabela = $('#cadastro_plugins');
 
         function Configuracao(linhas)
