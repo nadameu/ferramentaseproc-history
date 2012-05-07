@@ -484,7 +484,12 @@ var Gedpro = (function()
             }
             var onerror = function()
             {
-                alert('Não foi possível obter os grupos do usuário.\nEstarão acessíveis apenas os documentos com visibilidade pública.');
+                var timer;
+                timer = window.setInterval(function()
+                {
+                    window.clearInterval(timer);
+                    alert('Não foi possível obter os grupos do usuário.\nEstarão acessíveis apenas os documentos com visibilidade pública.');
+                }, 100);
                 return setPublicGroups();
             };
             Gedpro.getLogin(function(login)
@@ -508,7 +513,11 @@ var Gedpro = (function()
                 });
             }, function()
             {
-                alert('Não é possível fazer login no GEDPRO.\nEstarão acessíveis apenas os documentos com visibilidade pública.');
+                timer = window.setInterval(function()
+                {
+                    window.clearInterval(timer);
+                    alert('Não é possível obter os grupos do usuário.\nEstarão acessíveis apenas os documentos com visibilidade pública.');
+                }, 100);
                 return setPublicGroups();
             });
         },
@@ -546,7 +555,7 @@ var Gedpro = (function()
             if (linkElement) {
                 return callback(linkElement);
             }
-            var links = $$('a[onclick^="window.open(\'processo/acessar_processo_gedpro.php?acao=acessar_processo_gedpro"]');
+            var links = $$('a[onclick^="window.open(\'processo/acessar_processo_gedpro.php?acao=acessar_processo_gedpro"], a[href^="processo/acessar_processo_gedpro.php?acao=acessar_processo_gedpro"]');
             if (links.length == 1) {
                 linkElement = links[0];
                 Gedpro.getLinkElement(callback);
@@ -1375,9 +1384,12 @@ var Eproc = {
         this.colorirTabela();
         Gedpro.getLinkElement(function(linkGedpro)
         {
-            [, linkGedpro.href] = linkGedpro.getAttribute('onclick').match(/window.open\('([^']+)'/);
+            try {
+                [, linkGedpro.href] = linkGedpro.getAttribute('onclick').match(/window.open\('([^']+)'/);
+                linkGedpro.target = '_blank';
+            } catch (e) {
+            }
             linkGedpro.removeAttribute('onclick');
-            linkGedpro.target = '_blank';
             linkGedpro.addEventListener('click', function(e)
             {
                 e.preventDefault();
@@ -1488,7 +1500,9 @@ var Eproc = {
             }
             acoes.forEach(function(acao)
             {
-                acao.classList.add('extraLinkAcao');
+                if (! acao.classList.contains('infraButton')) {
+                    acao.classList.add('extraLinkAcao');
+                }
                 var sublinhados = $$('u', acao);
                 if (sublinhados.length == 1) {
                     var u = sublinhados[0];
@@ -1621,7 +1635,7 @@ var Eproc = {
                         icone.addToLink(acao);
                     }
                 }
-                if (acao.nextSibling.nodeType == document.TEXT_NODE) {
+                if (acao.nextSibling && acao.nextSibling.nodeType == document.TEXT_NODE) {
                     var span = document.createElement('span');
                     span.className = 'extraAcoesSeparador';
                     span.textContent = acao.nextSibling.textContent;
@@ -1719,8 +1733,25 @@ var Eproc = {
             }
         }, this);
 
-        var estilosPersonalizados = $('link[href^="css/estilos.php"]');
-        if (! estilosPersonalizados) {
+        var estilosPersonalizados = $('link[href^="css/estilos.php?skin="]');
+        if (estilosPersonalizados) {
+            var result = /\?skin=([^&]+)/.exec(estilosPersonalizados.href);
+            switch (result[1]) {
+                case 'elegant':
+                    skin = 'candy';
+                    break;
+
+                case 'minimalist':
+                    skin = 'icecream';
+                    break;
+
+                case 'stock':
+                default:
+                    skin = 'stock';
+                    break;
+
+            }
+        } else {
             addStyleSheet('fundo');
             addStyleSheet(skin);
         }
@@ -2001,7 +2032,11 @@ var Eproc = {
             div.id = 'cargaDocsGedpro';
             linkCargaDocs = new VirtualLink('Carregar documentos do GEDPRO', Gedpro.getDocs);
             linkCargaDocs.id = 'linkCargaDocs';
-            linkCargaDocs.className = 'extraLinkAcao';
+            if ($$('a.infraButton').length) {
+                linkCargaDocs.className = 'infraButton';
+            } else {
+                linkCargaDocs.className = 'extraLinkAcao';
+            }
             var transformed = false;
             linkCargaDocs.transform = function()
             {
@@ -2479,6 +2514,7 @@ var Eproc = {
         }
         function getPrioridadeText()
         {
+            if ($('#lblPrioridade')) return null;
             return getLabelValue('Prioridade Atendimento: ');
         }
         function getLabelValue(text)
@@ -2499,6 +2535,7 @@ var Eproc = {
         }
         function getReuPreso()
         {
+            if ($('#lblReuPreso')) return null;
             var lblTextoAtencao = $('#lblTextoAtencao');
             if (lblTextoAtencao && lblTextoAtencao.textContent == 'PROCESSO COM RÉU PRESO') return lblTextoAtencao;
             return null;
