@@ -23,7 +23,6 @@ a.extraLinkAcao {
     -moz-border-radius: 4px;
     border-radius: 4px;
     padding: 3px 1px;
-    border: 1px outset hsl($hB, 50%, 50%);
     font-size: 1.2em;
 }
 a.extraLinkAcao {
