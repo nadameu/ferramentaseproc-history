@@ -484,7 +484,12 @@ var Gedpro = (function()
             }
             var onerror = function()
             {
-                alert('Não foi possível obter os grupos do usuário.\nEstarão acessíveis apenas os documentos com visibilidade pública.');
+                var timer;
+                timer = window.setInterval(function()
+                {
+                    window.clearInterval(timer);
+                    alert('Não foi possível obter os grupos do usuário.\nEstarão acessíveis apenas os documentos com visibilidade pública.');
+                }, 100);
                 return setPublicGroups();
             };
             Gedpro.getLogin(function(login)
@@ -508,7 +513,11 @@ var Gedpro = (function()
                 });
             }, function()
             {
-                alert('Não é possível fazer login no GEDPRO.\nEstarão acessíveis apenas os documentos com visibilidade pública.');
+                timer = window.setInterval(function()
+                {
+                    window.clearInterval(timer);
+                    alert('Não é possível obter os grupos do usuário.\nEstarão acessíveis apenas os documentos com visibilidade pública.');
+                }, 100);
                 return setPublicGroups();
             });
         },
@@ -546,7 +555,7 @@ var Gedpro = (function()
             if (linkElement) {
                 return callback(linkElement);
             }
-            var links = $$('a[onclick^="window.open(\'processo/acessar_processo_gedpro.php?acao=acessar_processo_gedpro"]');
+            var links = $$('a[onclick^="window.open(\'processo/acessar_processo_gedpro.php?acao=acessar_processo_gedpro"], a[href^="processo/acessar_processo_gedpro.php?acao=acessar_processo_gedpro"]');
             if (links.length == 1) {
                 linkElement = links[0];
                 Gedpro.getLinkElement(callback);
@@ -1375,9 +1384,12 @@ var Eproc = {
         this.colorirTabela();
         Gedpro.getLinkElement(function(linkGedpro)
         {
-            [, linkGedpro.href] = linkGedpro.getAttribute('onclick').match(/window.open\('([^']+)'/);
+            try {
+                [, linkGedpro.href] = linkGedpro.getAttribute('onclick').match(/window.open\('([^']+)'/);
+                linkGedpro.target = '_blank';
+            } catch (e) {
+            }
             linkGedpro.removeAttribute('onclick');
-            linkGedpro.target = '_blank';
             linkGedpro.addEventListener('click', function(e)
             {
                 e.preventDefault();
@@ -1434,7 +1446,9 @@ var Eproc = {
         }
         ChromeIcone.prototype = new Icone;
         var acoes = getAcoes();
-        if (acoes) {
+        var storage = unsafeWindow.localStorage;
+        var botoesDesabilitados = ('ch5' in storage) && (storage['ch5'] == 'N');
+        if (acoes && ! botoesDesabilitados) {
             var fieldset = $('#fldAcoes');
             var legend = $('legend', fieldset);
             if (legend) {
@@ -1488,7 +1502,9 @@ var Eproc = {
             }
             acoes.forEach(function(acao)
             {
-                acao.classList.add('extraLinkAcao');
+                if (! acao.classList.contains('infraButton')) {
+                    acao.classList.add('extraLinkAcao');
+                }
                 var sublinhados = $$('u', acao);
                 if (sublinhados.length == 1) {
                     var u = sublinhados[0];
@@ -1621,7 +1637,7 @@ var Eproc = {
                         icone.addToLink(acao);
                     }
                 }
-                if (acao.nextSibling.nodeType == document.TEXT_NODE) {
+                if (acao.nextSibling && acao.nextSibling.nodeType == document.TEXT_NODE) {
                     var span = document.createElement('span');
                     span.className = 'extraAcoesSeparador';
                     span.textContent = acao.nextSibling.textContent;
@@ -1675,6 +1691,10 @@ var Eproc = {
             {
                 return fn + '(' + hB + ', ' + (sB * Number(sPercent) / 100) + '%, ' + (lB * Number(lPercent) / 100) + '%)';
             });
+            css = css.replace(/(hsla?)\(\$hC, *([0-9\.]+)%, *([0-9\.]+)%\)/g, function(expr, fn, sPercent, lPercent)
+            {
+                return fn + '(' + hB + ', ' + (sB * Number(sPercent) / 100) + '%, ' + (lB * Number(lPercent) / 100) + '%)';
+            });
             css = css.replace(/\$s/g, s);
             css = css.replace(/\$l/g, l);
             return css;
@@ -1688,6 +1708,8 @@ var Eproc = {
                 styleElementName = 'extraSkinExtra';
             } else if (skin == 'fundo') {
                 styleElementName = 'extraFundo';
+            } else if (skin == 'barra') {
+                styleElementName = 'extraBarra';
             } else if (skin == 'print') {
                 styleElementName = 'extraPrint';
             }
@@ -1719,9 +1741,34 @@ var Eproc = {
             }
         }, this);
 
-        var estilosPersonalizados = $('link[href^="css/estilos.php"]');
-        if (! estilosPersonalizados) {
+        var estilosPersonalizados = $('link[href^="css/estilos.php?skin="]');
+        if (estilosPersonalizados) {
+            var result = /\?skin=([^&]+)/.exec(estilosPersonalizados.href);
+            switch (result[1]) {
+                case 'elegant':
+                    skin = 'candy';
+                    break;
+
+                case 'minimalist':
+                    skin = 'icecream';
+                    break;
+
+                case 'stock':
+                default:
+                    skin = 'stock';
+                    break;
+
+            }
+        } else {
             addStyleSheet('fundo');
+            if (skin == 'stock') {
+                var estilos = Eproc.getStyle('extraBarra');
+                if (estilos) {
+                    estilos.textContent = '';
+                }
+            } else {                
+                addStyleSheet('barra');
+            }
             addStyleSheet(skin);
         }
         addStyleSheet(skin + '-extra');
@@ -1739,6 +1786,8 @@ var Eproc = {
         var estilos = Eproc.getStyle('extraPrintTemp');
         estilos.parentNode.removeChild(estilos);
         var estilos = Eproc.getStyle('extraFundoTemp');
+        estilos.parentNode.removeChild(estilos);
+        var estilos = Eproc.getStyle('extraBarraTemp');
         estilos.parentNode.removeChild(estilos);
         var estilos = Eproc.getStyle('extraSkinTemp');
         estilos.parentNode.removeChild(estilos);
@@ -1870,11 +1919,33 @@ var Eproc = {
         }
         var botao = $('#lnkConfiguracaoSistema');
         var novasConfiguracoesMostradas = GM_getValue('v2.novasconfiguracoesmostradas', false);
-        if (botao && !novasConfiguracoesMostradas) {
-            var resposta = GM_yesNo('Novas configurações', 'Você deve configurar algumas opções antes de continuar.\n\nDeseja abrir a tela de configurações agora?');
-            if (resposta == 'YES') {
-                location.href = botao.href;
+        if (botao) {
+            if (! novasConfiguracoesMostradas) {
+                var resposta = GM_yesNo('Novas configurações', 'Você deve configurar algumas opções antes de continuar.\n\nDeseja abrir a tela de configurações agora?');
+                if (resposta == 'YES') {
+                    location.href = botao.href;
+                }
             }
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', botao.href);
+            xhr.onreadystatechange = function()
+            {
+                if (this.readyState == 4 && this.status == 200) {
+                    var div = document.createElement('div');
+                    div.innerHTML = this.responseText;
+                    var storage = unsafeWindow.localStorage;
+                    if (storage.length) {
+                        for (let key in storage) {
+                            storage.removeItem(key);
+                        }
+                    }
+                    $$('input[type=checkbox][id^="ch"]', div).forEach(function(input)
+                    {
+                        storage[input.id] = input.checked ? 'S' : 'N';
+                    });
+                }
+            };
+            xhr.send('');
         }
     },
     decorarLinhasTabelaLocalizadores: function(linhas)
@@ -2001,7 +2072,11 @@ var Eproc = {
             div.id = 'cargaDocsGedpro';
             linkCargaDocs = new VirtualLink('Carregar documentos do GEDPRO', Gedpro.getDocs);
             linkCargaDocs.id = 'linkCargaDocs';
-            linkCargaDocs.className = 'extraLinkAcao';
+            if ($$('a.infraButton').length) {
+                linkCargaDocs.className = 'infraButton';
+            } else {
+                linkCargaDocs.className = 'extraLinkAcao';
+            }
             var transformed = false;
             linkCargaDocs.transform = function()
             {
@@ -2479,6 +2554,7 @@ var Eproc = {
         }
         function getPrioridadeText()
         {
+            if ($('#lblPrioridade')) return null;
             return getLabelValue('Prioridade Atendimento: ');
         }
         function getLabelValue(text)
@@ -2499,6 +2575,7 @@ var Eproc = {
         }
         function getReuPreso()
         {
+            if ($('#lblReuPreso')) return null;
             var lblTextoAtencao = $('#lblTextoAtencao');
             if (lblTextoAtencao && lblTextoAtencao.textContent == 'PROCESSO COM RÉU PRESO') return lblTextoAtencao;
             return null;
@@ -2544,6 +2621,30 @@ var Eproc = {
     },
     usuario_personalizacao_configuracao: function()
     {
+        var corCapa = $('#ch1');
+        if (corCapa) {
+            document.body.addEventListener('keydown', function(e)
+            {
+                if (e.shiftKey && e.ctrlKey) {
+                    corCapa.name = '2';
+                }
+            }, false);
+            document.body.addEventListener('keyup', function(e)
+            {
+                if (corCapa.name != '1') {
+                    corCapa.name = '1';
+                }
+            }, false);
+        }
+        var storage = unsafeWindow.localStorage;
+        $$('input[type=checkbox][id^="ch"]').forEach(function(input)
+        {
+            input.addEventListener('click', function(e)
+            {
+                storage['ch' + this.name] = this.checked ? 'S' : 'N';
+            }, false);
+        });
+
         var estilosPersonalizados = $('link[href^="css/estilos.php"]');
         if (estilosPersonalizados) {
             return;
@@ -2629,19 +2730,20 @@ var Eproc = {
         var esquema = $('#selInfraCores', tabela).parentNode.parentNode;
         var confEsquema = Configuracao.fromRow(esquema);
         var estilo = confEsquema.clonar();
-        estilo.setTexto('Estilo');
+        estilo.setTexto('Estilo dos controles');
         estilo.setControle(new Estilos());
-        estilo.setDescricao('Altera o estilo dos botões e demais controles das páginas');
+        estilo.setDescricao('Altera o estilo dos botões, caixas de texto e demais controles do sistema.');
         estilo.insertBefore(esquema);
         var corFundo = confEsquema.clonar();
         corFundo.setTexto('Cor de fundo');
         corFundo.setControle(new TabelaCoresFundo());
-        corFundo.setDescricao('Altera a cor de fundo da página (clique sobre a cor para tornar a mudança permanente)');
+        corFundo.setDescricao('Altera a cor de fundo da página (clique sobre a cor para tornar a mudança permanente).');
         corFundo.insertAfter(esquema);
         var corBarra = confEsquema.clonar();
+        corBarra.setTexto('Cor da barra e controles');
         corBarra.hideFrom('stock');
         corBarra.setControle(new TabelaCoresBarra());
-        corBarra.setDescricao(' (clique sobre a cor para tornar a mudança permanente)', false);
+        corBarra.setDescricao('Altera a cor da barra superior, botões, caixas de texto e demais controles do sistema (clique sobre a cor para tornar a mudança permanente).');
         corBarra.insertAfter(esquema);
         // Não podemos esconder esta configuração antes de fazermos as clonagens necessárias
         confEsquema.hideFrom(['candy', 'icecream']);
@@ -2883,21 +2985,6 @@ var Eproc = {
             tooltip.vincular(botao);
             window.addEventListener('resize', tooltip.desenhar, false);
             botao.addEventListener('mouseover', tooltip.ocultar, false);
-        }
-        var corCapa = $('#ch1');
-        if (corCapa) {
-            document.body.addEventListener('keydown', function(e)
-            {
-                if (e.shiftKey && e.ctrlKey) {
-                    corCapa.name = '2';
-                }
-            }, false);
-            document.body.addEventListener('keyup', function(e)
-            {
-                if (corCapa.name != '1') {
-                    corCapa.name = '1';
-                }
-            }, false);
         }
     }
 };

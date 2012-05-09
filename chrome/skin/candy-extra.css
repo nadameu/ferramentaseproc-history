@@ -162,7 +162,6 @@ a.extraLinkAcao:hover {
 }
 fieldset.extraFieldset {
     border-style: outset;
-    border-color: $background;
     border-width: 1px;
 }
 #fldAcoes .extraNaoMostrarIcones {
@@ -210,6 +209,8 @@ span.extraSeparadorTitulo {display: block; clear: both; margin-bottom: 7px;}
 	margin-left:10px;
 	padding-left: 8px;
 	padding-right: 8px;
+	-moz-box-shadow: 0 0 3px #999;
+	box-shadow: 0 0 3px #999;
 }
 .extraMarkerPrioridade {
 	background-color: #AE432E;

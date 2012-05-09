@@ -1,649 +1,287 @@
-html, body {
-    margin: 0;
-    height: 100%;
+/*
+ * infra-global-esquema.css
+ */
+
+* {
+  color: #333;
 }
-body {
-    background-color: $background;
-    overflow-y: auto;
+div.infraAreaGlobal {
+  border: 2px solid #eee;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
 }
-#divInfraAreaGlobal {
-    height: 100%;
-    margin-bottom: 0.5625%;
+input, textarea, select {
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  background-color: hsl($hC, 42%, 91%); /* #fff */
+  border-width: 0;
+  -moz-box-shadow: 2px 2px 2px #888 inset;
+  box-shadow: 2px 2px 2px #888 inset;
+  padding: 3px;
 }
-#divInfraAreaGlobal, div.infraBarraTribunal {
-    border-color: hsl($hB, 50%, 80%);
-    border-left-color: hsl($hB, 94%, 39%);
+input:focus, select:focus, textarea:focus {
+  background-color: #fff; /* #ddd */
 }
-input.infraText, select.infraSelect,
-select.infraSelect:focus option {
-    background-color: hsl($hB, 50%, 92%);
+fieldset.infraFieldset {
+  position: relative;
+  margin-top: 1.7em !important;
+  padding-top: 1.5em !important;
+  background: hsl($hC, 42%, 91%);
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -moz-box-shadow: 0 0 3px #ababab inset;
+  box-shadow: 0 0 3px #ababab inset;
+  border: 0.1em solid hsl($hC, 80%, 37%);
 }
-input:focus,
-select:focus {
-    background-color: #fff;
+table {
+  font-size: 1.3em;
 }
-div.infraAjaxAutoCompletar,
-div.infraAjaxAutoCompletar li {
-    background-color: hsl($hB, 50%, 92%);
-}
-div.infraAjaxAutoCompletar li.selected {
-    background-color: Highlight;
-}
-div.infraAjaxAutoCompletar li.selected a, div.infraAjaxAutoCompletar li.selected b {
-    color: HighlightText;
-}
+
+/*
+ * infra-esquema-local.css
+ */
 table.infraTable {
-    border-spacing: 0;
-    border: solid #ccc;
-    border-width: 1px 0 0 1px;
-    background-color: transparent;
+	background-color: #eee;
 }
-.infraTable th, .infraTable td {
-    border: solid #ccc;
-    border-width: 0 1px 1px 0;
-}
-.infraTable table th, .infraTable table td {
-    border: none;
-}
-tr.infraTrClara {
-    background-color: hsl($hB, 33%, 97%);
-}
-tr.infraTrEscura {
-    background-color: hsl($hB, 33%, 95%);
-}
-tr.infraTrSelecionada td {
-    background-color: hsla(0, 0%, 50%, 0.25);
-}
-tr.infraTrSelecionada td td {
-    background-color: hsla(0, 0%, 50%, 0);
-}
-tr.infraTrMarcada td {
-    background-color: hsla(0, 0%, 50%, 0.375);
-}
-#tabLocalizadores tr.infraTrMarcada td {
-    background-color: hsl($hB, 78%, 38%);
-    color: #fff;
-    text-shadow: 0 1px 2px #666666;
+
+tr.infraTrClara, tr.infraTrEscura {
+  background-color: #fff;
 }
 div.infraMenu a {
-    background-color: $background;
-    border-color: $background;
-}
-a.docLink {
-    font-size: 11px;
-}
-#lastClicked {
-    background: #ff0;
-}
-.infraBarraComandos, .infraAreaTelaD, .infraAreaDados {
-    border-color: $background !important;
-}
-div.infraBarraTribunal {
-    background-color: hsl($hB, 50%, 50%);
-}
-#divInfraBarraSistema + div img {
-    display: none;
-}
-#divInfraBarraSistema + div:before {
-    display: inline-block;
-    width: 2em;
-    height: 4em;
-    content: '';
-    -moz-border-radius-bottomright: 100%;
-    border-radius-bottomright: 100%;
-    border-bottom-right-radius: 100% 50%;
-}
-#divInfraBarraSistema + div:after {
-    display: inline-block;
-    width: 2em;
-    height: 4em;
-    content: '';
-}
-#divInfraBarraLocalizacao:before {
-    position: absolute;
-    font-size: 50%;
-    margin-left: -2em;
-    margin-top: -0.6em;
-    width: 2em;
-    height: 4em;
-    content: '';
-    background-color: $background;
-    -moz-border-radius-topleft: 100%;
-    border-radius-topleft: 100%;
-    border-top-left-radius: 100% 50%;
-}
-#divInfraBarraSistema + div:after {
-    background-color: $background;
-}
-#divInfraBarraSistema,
-#divInfraBarraSistema + div:before,
-#divInfraBarraSistema + div:after {
-    background-color: hsl($hB, 75%, 50%) !important;
-}
-div.infraBarraTribunalE, div.infraBarraTribunalD {
-    width: auto;
-}
-div.infraBarraTribunal,
-#divInfraBarraSistema,
-#divInfraBarraSistema + div:before,
-#divInfraBarraSistema + div:after {
-    background-image: -moz-linear-gradient(top,
-        hsla(0, 0%, 100%, 0.5),
-        hsla(0, 0%, 75%, 0.5) 25%,
-        hsla(0, 0%, 50%, 0.25) 25%,
-        hsla(0, 0%, 75%, 0.125)
-    ) !important;
-}
-div.infraBarraSistemaD {
-    top: 25% !important;
-    height: 50% !important;
-}
-.infraTable td label {
-    font-size: 1em;
-}
-#fldAssuntos label.infraLabelObrigatorio {
-    color: #333;
-}
-img.infraImg, img.infraImgNormal, img.infraImg:hover, img.infraImgNormal:hover {
-    width: auto;
-    height: auto;
-}
-.prazoAguardaAbertura {
-    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAALPSURBVDjLjZNbSFNxHMcXm+BDBEFBvgRS9CBFrxJRoUlPs4ceJMiHsIshSTdSi7AI1K6KOfOSaZgXQmyic5u3TJ3zNue8TEvP5tl0czed7uy+nW//DV3ajQ58D+fh9/nwP/8fX85s9e1okkySVhKKhCEJqspvYKjoEnrykoOtD08zjbeOU++vxbYKUvdlFqbsjgbACYVDhgcWxfkwDApgVlbBOvUBFlUNVkYqsdxXCl1HIaiWfEzX5mCg6DKas0+BCAYiAnXtA9WWwKSoJHkHo7wcS18FWJS8BiV8htmGJ1BW3kXfy9SwoCg1RhURyCbpOIWsFwviCszUP8KIIA09+edBjg1ybFRfP4SytIOoyDiKhqcXUFFSgJI6cVxEEHr1zPskCr0XVocfbh8Lj5+FzRnAjMGNMdoFrdULyuJF27gFJe1ayRYcEYQiVbs+S9VOdpEMM54gDHY/Zo0eaAgo+76Bt1Id+0akbd4O7xCEIlSux7co7dQw5YBu1ReG2ydsKJXS88UiTfyv8G+CrdQPmvvHaQZjWgcEErrvTzP/FDQOmuQTegYKIihu0/T/t6BeZjohHDXTkzoHbEwAxnU/RGMmFDTNLYjTE0p7+XvorgQeK03i6kiydwhq+1eETUMmVmN2hzfhDbDYcAehs/nQXfYCynsn4Ra9AquWwNl4B6MZxwIdibybYbimzyjtnLJh2e6D0xuEj8CBIAuGfCv1LnRdPAwXgVHMB7L2AnmxsDw/A+lZrobT0DkVV9dvQK96DeYNfxgmbFhgdwXwbcWDrsQosIrQBn8+a7kHEPqdcBempWUYkMsgn7NCb3Fh3UlWaHSg/osWjz9OoCU5BkxVGkAgz30OVknodC7IPSztKNPfuqDI5WP46hEYsmJhzokCdWUXuvm8gCSJ+4Czvc6kwhSpMLNZ4XAXSIWDpMLMp5T9NtE5nnNzC0shOHR/PwBGKPcL7gZY5gAAAABJRU5ErkJggg==') no-repeat scroll 99% 7% #FCDCDC;
-}
-.prazoAberto {
-    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAxlJREFUeNqMU11Ik1EYfs73fduc35ZNbWlKOlsR/Rg2EcSULioioiIhDYyiguomuiiri25CiBDsB6IyF9KFTi9SyuhnuUxLxbIfxFJzVqYrf9JCt+W275zOttYP3nTg/Q7nPe/znvd9n+cjDcUZMVQJnGGMZTHAAhDMXizo7SSEdAiidJIIwvfIjUSp8i2r4Ah806OAbwyKd3IWXNQaAPU8i1pntHTUXjgk8kwg4Yek4DbRXQNDWiZiV+RClJP4g+wPmgcq7mFMOJ/ha/cjEPZvcqn/81SpV7/4mPrVTTD3VQRoOEIgf+cgUOnnwROzHK4vztKlyXMRaTX4NV688/6TaEpVWxKBZfxO4E77ECCrgGgpvIsUaGob8R7elJDadCxrFEQIt1duH3Q311cMmBcuzv9GYpAoTEHvH4LedQuG8QdgxAhJE4d3PW7cKDu+JeXAi9dP5g6jZc4QmrkJgt8N25WSekfNpSJlxOVt+0Tgcr6CXmeC57sCN0mDs29mtKxRh7yia3dVCmyaAKClYROClVjvvfHYys/W7V2blPOm1XG2w78ew5o8fEw4iabGtpJt2VHrVCJQmFOMnFQUBAKoZjTcKrHe7+VDp9BoomTO9mVBjt8VHyfD3rkdT9/WhWgSeGRAASr2ncaEpwf2riq098OmlrBTopIMEvCafH5lgMUvQnp0L9JlilPddag9fB5uv53LSAKllCeKRddIFTZa9kBQVRa290IlpdSvRt+Gx/XEkIRs8hAmmYuGGRAkc8L3Ds8/3vlNJ2W3QTgjXaOV2Jy5D6091nxegU7144eSHquPhjkhFcw/AyJFhbQ0SV9CNSfMdfBM/b+UyefR0GVFYBoOiQpqX6L4gXuXo19jRgLXAe8NuSt34kRFNUSODhlPsH8HQpV94Bp53IIHj0pwiDQcTWfmFUbEpqyCwZQBol3AqRF5FdF8elHceM3uceRdX4MDu4H+Pg52hMAHt57De8k55rvoffllo/q1awmjDWB8WBH5Ek5UkGct04AkAwODIbAjAo5IeT63OG5a/N8K/q4DkcNPAQYAZnEuH2sFut0AAAAASUVORK5CYII=') no-repeat scroll 99% 7% #FCFCBD;
-}
-table.prazoComDestaque .prazoDecurso {
-    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAs5JREFUeNq0UktIVFEY/s99zcydO47zaMZxSi0f+SLLnCKjlEAobGGLXosgLCiwRVmSQiCUQVCkhJtIC4IWNdRCskBCqE2ghLoQoqYi85Uzt0nndWfmnDudO2lOrtr0w8f5OY/v/7//O2iozQVakKTaI8+GdywFooJKUhDwA/gDALzApEwWntgcAgWPzTZ+jGXReVgOrh11/s4EGH3We2Lfl4WI7LIYDHaTYJsJxqZicYKUJEFETaE8u2g92v1oFDKCS6VSKzmCfwh6H/03AsYgsCIXm8J4bqgy6ixn5HcDeUuhJe0RZHkuTYrurSLNmUwCRjtcxkTD1b4ua04xxxQceY8YTkWcjiBOT6TqC5OO9eX8ga7+Lu1exhvgMsjGtfaO3X7Y8/LK6TZBlb4L1k8pW3n9nMVRYKD73aUW3wTFeGYHaEtrb6Y+UFW1mqbbXl872665IAqcvelG/53mssfFde63hfTsBcWDPxIURQEN8XgckslkekhrdYpsRFe17kNlaW3fHoS4elpHr41OA7NmyDW0g5qhzjOtKxtyKC7fb97QbnbWVej1Wc5sZ30ZUaEBEwANmQQeWtnz9PKplrCCF1d1YbQ46+VLivbmHz/5BKyu3SUqQU0EA0ex6gKt7HlzveXiwmJc/sv30HC2JOqMgP3I6/WCEp43C8aNFbR6XZIScNEZH+hdm9LziCVIVPp4ayfJcqCYs5T9MTbojuNXgnN7LTsbHIHB523gV0aBt+YU4cDnw6oKw8zMwF2ITPsAY5y2FEuFMjLl/2RFR4Q1CSGDWU8Y3TcQGBkaD94EIx8CyRi38XqpCmPYpc1AnB+850wkEjqNQHEd8jHu/V8Fe1UggaZIbh6PDMwcSHwEInJHepX4MOS4zYXUtGbtX9socs9VQkd2EkqCQQCV2hMIA2xuhDzbBuoiLcOyVC8Fw4JCdDDNcZAQOBj5JcAAxBZTOchnWusAAAAASUVORK5CYII=') no-repeat scroll 95% 7%, url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAodJREFUeNqkk0tME0Ecxr/Z3b4ADZRqAqQ2hJJSmhAfxKjUqIlXLujJqAe96NGee+Bi4kE5edHIyRhOcsEY4sGDotGEgxEBCUQpTVqgD0262310dtaZlcL25MFJvs3M7P/37X+y8xHHcfA/QxEP8jwCyIRLLEgvCCb4bIwruleX5/oAB7NwnAJsvrIdODfKfw08Yzyo+DOJvkQ8FomGOwIdQdGfZqonNku59Fph/YrZMKf41lxLB034cODQ5MXUhaQCOUQtCtVSm+/a4t0DbdGuaPe7lfeTNd3dd02kvYLegOTPnB8aS1p1M6SqKgzDaNHLwWegeiN0Jn466Se+jGAODKgzMdgzEDdUI6RpGnRdb9GDgaxbNn98hpvQUCwcjQvGa3Au0h4J12o1mKbpSnSxvbuNO8Hr6Ky0I5/P4+bru1heWQYzWFgwXoNjMuSgbdv4fGkexUoRuZ0cYqQPZ7tGoSgKpjdf4FX5DRpSA4ZlBAXjNQC1KW73X8PS0hLmh2dwMjKCJyMPXfhteQGPC9NACK6oQl3mwKDhbJW1kpH9eh+yLMPn8+Hp0CP4FB/W6z9wbzML1sH4v4Ari5iGYLwdfNwuFatyWEb6+7j71aaurt8COrEPCxm1elUwXoPZ31uVDQlEJ30Ep75dduHUYho40gozZutmUd8QzIEBcwq2Rqcqn4qrDmU6iRGkvnA4hv1zC7EG1dXF6iqr21OCcWMgwkQIz0GMB2FUGpf65Yw/2R73J9rCcpcSFEX2L2pYa/WqtaptsJ8cXmRzyNlw2T0DcaW7uSLolXowjDSOIsXD5d42Hp4CdrGMFSygwHb4TomrzFnaNJA8J1X+kWCRRY2rzln2R4ABABpvPoBuuSpnAAAAAElFTkSuQmCC') no-repeat scroll 99% 7% #ebf2df;
-}
-table.prazoComDestaque .prazoFechado {
-    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAodJREFUeNqkk0tME0Ecxr/Z3b4ADZRqAqQ2hJJSmhAfxKjUqIlXLujJqAe96NGee+Bi4kE5edHIyRhOcsEY4sGDotGEgxEBCUQpTVqgD0262310dtaZlcL25MFJvs3M7P/37X+y8xHHcfA/QxEP8jwCyIRLLEgvCCb4bIwruleX5/oAB7NwnAJsvrIdODfKfw08Yzyo+DOJvkQ8FomGOwIdQdGfZqonNku59Fph/YrZMKf41lxLB034cODQ5MXUhaQCOUQtCtVSm+/a4t0DbdGuaPe7lfeTNd3dd02kvYLegOTPnB8aS1p1M6SqKgzDaNHLwWegeiN0Jn466Se+jGAODKgzMdgzEDdUI6RpGnRdb9GDgaxbNn98hpvQUCwcjQvGa3Au0h4J12o1mKbpSnSxvbuNO8Hr6Ky0I5/P4+bru1heWQYzWFgwXoNjMuSgbdv4fGkexUoRuZ0cYqQPZ7tGoSgKpjdf4FX5DRpSA4ZlBAXjNQC1KW73X8PS0hLmh2dwMjKCJyMPXfhteQGPC9NACK6oQl3mwKDhbJW1kpH9eh+yLMPn8+Hp0CP4FB/W6z9wbzML1sH4v4Ari5iGYLwdfNwuFatyWEb6+7j71aaurt8COrEPCxm1elUwXoPZ31uVDQlEJ30Ep75dduHUYho40gozZutmUd8QzIEBcwq2Rqcqn4qrDmU6iRGkvnA4hv1zC7EG1dXF6iqr21OCcWMgwkQIz0GMB2FUGpf65Yw/2R73J9rCcpcSFEX2L2pYa/WqtaptsJ8cXmRzyNlw2T0DcaW7uSLolXowjDSOIsXD5d42Hp4CdrGMFSygwHb4TomrzFnaNJA8J1X+kWCRRY2rzln2R4ABABpvPoBuuSpnAAAAAElFTkSuQmCC') no-repeat scroll 99% 7% #ebf2df;
-}
-.prazoExtra {
-    display: none;
-}
-.prazoComDestaque .prazoExtra {
-    display: inline;
-}
-.prazoComDestaque .prazoFechado .prazoEvento,
-.prazoComDestaque .prazoDecurso .prazoEvento {
-    background-color: #fff;
-}
-*[disabled] {
-    color: #aaa;
-}
-button {
-    background-color: #eee;
-}
-a img {
-    border: none;
-}
-div[class^=infraLegend], div[id^=divDes] {
-    background-color: $background !important;
-}
-div.infraAjaxAutoCompletar { max-height: 30em; overflow-y: scroll; } div.infraAjaxAutoCompletar li a { display: block; margin-left: 3ex; text-indent: -3ex; } div.infraAjaxAutoCompletar li.selected { background-color: Highlight; } div.infraAjaxAutoCompletar li.selected a, div.infraAjaxAutoCompletar li.selected b { color: HighlightText; }
-@media print {
-    #divInfraAreaGlobal, #divInfraAreaTela, #divInfraAreaTelaD {
-        display: block;
-        margin: 0;
-        padding: 0;
-        border: none;
-        width: auto;
-        height: auto;
-    }
-    #divInfraBarraTribunal, #divInfraBarraSistemaLocalizacao, #divInfraAreaTelaE, div.infraBarraComandos {
-        display: none;
-    }
-    div.infraAreaDados > #divPainel {
-        display: block;
-    }
-}
-fieldset.infraFieldset {
-    border-style: groove;
-    border-color: $background;
-    border-width: 2px;
-}
-fieldset.infraFieldset {
-    background: hsl($hB, 42%, 93%);
-    border-radius: 4px;
-    -moz-box-shadow: 1px 1px 2px hsla(0, 0%, 0%, 0.5) inset;
-    box-shadow: 1px 1px 2px hsla(0, 0%, 0%, 0.5) inset;
-    border: none;
-}
-legend.infraLegend,
-legend.infraLegendObrigatorio,
-legend.infraLegendObrigatorioExterno {
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    -moz-box-shadow: 2px 2px 5px hsla(0, 0%, 0%, 0.5);
-    box-shadow: 2px 2px 5px hsla(0, 0%, 0%, 0.5);
-    padding: 2px 8px;
-}
-legend.infraLegendObrigatorio,
-legend.infraLegendObrigatorioExterno {
-    background: $background;
-}
-.infraTable label.infraEventoDescricao {
-    font-size: 1.1em; 
-    display: inline-block;
-    font-weight: bold;
-}
-tr.infraEventoMuitoImportante[data-parte] label.infraEventoDescricao,
-tr.infraEventoImportante[data-parte] label.infraEventoDescricao {
-    background-color: hsl(0, 0%, 35%);
-    color: #fff;        
-    padding: 2px 6px;
-    margin-bottom: 5px;
-    color: #fff;		
-	box-shadow: 0 0 3px #999999; 
-	-moz-border-radius: 3px;
-	border-radius: 3px;
-	border-radius: 3px; 
-	text-shadow: 0 1px 2px #666666;
-	vertical-align: middle;
-	margin-bottom: 5px;
-}
-.infraEventoPrazoParte {
-    font-weight: bold; text-shadow: 1px 1px #fff;
-}
-tr.infraEventoMuitoImportante[data-parte="INTERNO"] td.infraEventoDescricao {
-    border: 2px solid #77AB13;
-}
-label.infraEventoDescricao,
-label.infraEventoUsuario {
-    color: hsl(0, 0%, 35%);
-}
-tr[data-parte="INTERNO"] label.infraEventoDescricao,
-tr[data-parte="INTERNO"] label.infraEventoUsuario {
-    color: #77AB13;
-}
-tr.infraEventoMuitoImportante[data-parte="INTERNO"] label.infraEventoDescricao,
-tr.infraEventoImportante[data-parte="INTERNO"] label.infraEventoDescricao {
-    background-color: #77AB13;
-}
-tr[data-parte="AUTOR"] label.infraEventoDescricao,
-tr[data-parte="AUTOR"] label.infraEventoUsuario,
-span.infraEventoPrazoParte[data-parte="AUTOR"] {
-    color: #058DC7;
-}
-tr.infraEventoMuitoImportante[data-parte="AUTOR"] label.infraEventoDescricao,
-tr.infraEventoImportante[data-parte="AUTOR"] label.infraEventoDescricao,
-a.infraNomeParte[data-parte="AUTOR"], span.infraNomeParte[data-parte="AUTOR"] {
-    background-color: #058DC7;
-}
-tr[data-parte="REU"] label.infraEventoDescricao,
-tr[data-parte="REU"] label.infraEventoUsuario,
-span.infraEventoPrazoParte[data-parte="REU"] {
-    color: hsl(10, 60%, 35%);
-}
-tr.infraEventoMuitoImportante[data-parte="REU"] label.infraEventoDescricao,
-tr.infraEventoImportante[data-parte="REU"] label.infraEventoDescricao,
-a.infraNomeParte[data-parte="REU"], span.infraNomeParte[data-parte="REU"] {
-    background-color: #AE432E;
-}
-.infraNomeParte {
-    -moz-border-radius: 3px;
-    border-radius: 3px;
-    padding: 1px 3px;
-    vertical-align: top;
-    background-color: hsl(0, 0%, 35%);
-    color: #fff;
-}
-.infraNomeParte[data-parte="AUTOR"] {
-    margin-left: 2px;
-}
-.prazoAguardaAbertura label.infraEventoDescricao {
-    color: hsl(10, 60%, 35%) !important; /* deixa o título vermelho mesmo sendo interno em intimações que o prazo ainda não abriu */
-}
-select.infraSelect, input.infraText {
-    -moz-border-radius: 4px;
-    border-radius: 4px;
-    padding: 3px 1px;
-    -moz-box-shadow: 2px 2px 2px hsla(0, 0%, 0%, 0.5) inset;
-    box-shadow: 2px 2px 2px hsla(0, 0%, 0%, 0.5) inset;
-    border: none;
-}
-#divInfraAreaProcesso {
-    clear: both;
-}
-
-input.infraButton:active, button.infraButton:active,
-#btnDownloadCompletoRS:active,
-#btnDownloadCompletoTRF4:active {
-    position: relative;
-    top: 1px;
-}
-input.infraButton[disabled], button.infraButton[disabled] {
-    color: #aaa;
-}
-#txtNumProcessoPesquisaRapida[placeholder] {
-    width: 135px;
-    font-size: 1.1em;
-}
-#txtNumProcessoPesquisaRapida:-moz-placeholder {
-    font-style: italic;
-    color: gray;
-}
-#fldObsRegra #lblObsRegra {
-    position: relative;
-}
-
-/* FELIPE */
-body {
-    background-color: $background;
-}        
-#divInfraAreaTela input, select {
-    background-color: #EBF2DF;
-}
-#divInfraAreaTela input:focus {
-    background-color: #fff;
-}
-select:focus {
-    background-color: hsla(0, 0%, 50%, 0.25);
-}
-select:focus option {
-    background-color: hsla(0, 0%, 100%, 0.25);
-}
-div.infraAjaxAutoCompletar {
-    background-color: $background;
-}
-div.infraAjaxAutoCompletar li {
-    background-color: hsla(0, 0%, 80%, 0.25);
-}
-div.infraAjaxAutoCompletar li.selected {
-    background-color: Highlight;
-}
-div.infraAjaxAutoCompletar li.selected a, div.infraAjaxAutoCompletar li.selected b {
-    color: HighlightText;
-}
-table.infraTable {
-    border-spacing: 0;
-    border: solid #ccc;
-    border-width: 1px 0 0 1px;
-    background-color: transparent;
-}
-.infraTable th, .infraTable td {
-    border: solid #ccc;
-    border-width: 0 1px 1px 0;
-}
-.infraTable table th, .infraTable table td {
-    border: none;
-}
-tr.infraTrClara {
-    background-color: hsla(0, 0%, 98%, 0.5);
-}
-tr.infraTrEscura {
-    background-color: hsla(0, 0%, 94%, 0.5);
-}
-tr.infraTrSelecionada td {
-    background-color: hsla(0, 0%, 50%, 0.25);
-}
-tr.infraTrSelecionada td td {
-    background-color: hsla(0, 0%, 50%, 0);
-}
-tr.infraTrMarcada td {
-    background-color: hsl($hB, 60%, 37%);
-	color: #fff;
-	font-size: 14px;
-	font-weight: bold;
-	text-shadow: 0 1px 2px #666666;
-}
-tr[data-classe="000169"] {
-    background-color: #bf8040;
-}
-tr[data-classe="000169"][data-competencia="10"] {
-    background-color: #60a0d2;
-}
-div.infraMenu a {
-    background-color: $background;
-    border-color: $background;
-}
-a.docLink {
-    font-size: 11px;
-}
-#lastClicked {
-    background: #ff0;
-}
-.infraBarraComandos, .infraAreaTelaD, .infraAreaDados {
-    border-color: $background !important;
-}
-div.infraBarraTribunal {
-	margin-top: -13px;
-	margin-bottom: 6px;
-	padding-bottom: 3px;
-	border-bottom: none;
-}
-.infraTable td label {
-    font-size: 1em;
-	padding: 3px;
-}
-label.infraLabelObrigatorio {
-    color: #333;
-}
-img.infraImg, img.infraImgNormal, img.infraImg:hover, img.infraImgNormal:hover {
-    width: auto;
-    height: auto;
-}
-.infraEventoPrazoAguardando td.infraEventoDescricao {
-    background-color: #FCDCDC;
-}
-.infraEventoPrazoAberto td.infraEventoDescricao {
-    background-color: #FCFCBD;
-}
-.infraEventoPrazoFechouDecurso td.infraEventoDescricao {
-    background-color: #EBF2DF;
-}
-.infraEventoPrazoFechouMovimento td.infraEventoDescricao {
-    background-color: #EBF2DF;
-}
-*[disabled] {
-    color: #aaa;
-}
-button {
-    background-color: #eee;
-}
-a img {
-    border: none;
-}
-div[class^=infraLegend], div[id^=divDes] {
-    background-color: $background !important;
-}
-div.infraAjaxAutoCompletar { max-height: 30em; overflow-y: scroll; } div.infraAjaxAutoCompletar li a { display: block; margin-left: 3ex; text-indent: -3ex; } div.infraAjaxAutoCompletar li.selected { background-color: Highlight; } div.infraAjaxAutoCompletar li.selected a, div.infraAjaxAutoCompletar li.selected b { color: HighlightText; }
-@media print {
-    #divInfraAreaGlobal, #divInfraAreaTela, #divInfraAreaTelaD {
-        display: block;
-        margin: 0;
-        padding: 0;
-        border: none;
-        width: auto;
-        height: auto;
-    }
-    #divInfraBarraTribunal, #divInfraBarraSistemaLocalizacao, #divInfraAreaTelaE, div.infraBarraComandos {
-        display: none;
-    }
-    div.infraAreaDados > #divPainel {
-        display: block;
-    }
-}
-fieldset.infraFieldset {
-    border-style: groove;
-    border-color: $background;
-    border-width: 2px;
-}
-#naoMostrarIcones {
-    margin: 0;
-}
-label.infraEventoDescricao {
-	font-size: 1.2em; 
-	margin-right: 10px;
-	overflow: visible;	
-	text-decoration: none;
-	vertical-align: baseline;
-	display: inline-block;
-}
-tr[data-parte="AUTOR"] label.infraEventoDescricao,
-tr[data-parte="REU"] label.infraEventoDescricao,
-tr.infraEventoImportante[data-parte="INTERNO"] label.infraEventoDescricao,
-tr.infraEventoMuitoImportante[data-parte="INTERNO"] label.infraEventoDescricao {
-    font-weight: bold;
-}
-tr[data-parte="INTERNO"] label.infraEventoUsuario {color: #77AB13}
-tr[data-parte="AUTOR"] label.infraEventoUsuario {color: #058DC7}
-tr[data-parte="REU"] label.infraEventoUsuario {color:#AE432E} 
-
-tr[data-parte="INTERNO"] label.infraEventoDescricao {
-    color: #77AB13;
-	font-weight: bold;
-	padding-left: 0;
-	vertical-align: middle;
-	text-shadow: 1px 1px #fff;
-}
-tr.infraEventoImportante[data-parte="INTERNO"]  label.infraEventoDescricao,
-tr.infraEventoMuitoImportante[data-parte="INTERNO"]  label.infraEventoDescricao {
-    background-color: #77AB13;
-	color: #fff;		
-	box-shadow: 0 0 3px #999999; 
-	border-radius: 3px; 
-	text-shadow: 0 1px 2px #666666;
-	border-radius: 3px;
-	vertical-align: middle;
-	padding: 2px 6px;
-	margin-bottom: 5px;
-	border: 1px solid #337D33;
-}
-.infraEventoPrazoAguardando label.infraEventoDescricao {color: #AE432E !important; } /* deixa o título vermelho mesmo sendo interno em intimações que o prazo ainda não abriu */
-
-tr[data-parte="AUTOR"] label.infraEventoDescricao {
-    color: #058DC7;
-	font-weight: bold;
-	padding-left: 0;
-	vertical-align: middle;
-	text-shadow: 1px 1px #fff;
-}
-
-tr.infraEventoImportante[data-parte="AUTOR"] label.infraEventoDescricao,
-tr.infraEventoMuitoImportante[data-parte="AUTOR"] label.infraEventoDescricao {
-    background-color: #058DC7;
-	color: #fff;		
-	box-shadow: 0 0 3px #999999; 
-	border-radius: 3px; 
-	text-shadow: 0 1px 2px #666666;
-	border-radius: 3px;
-	vertical-align: middle;
-	margin-bottom: 5px;
-	padding: 2px 6px;
-}
-
-tr[data-parte="REU"] label.infraEventoDescricao {
-    color: #AE432E;
-	font-weight: bold;
-	padding-left: 0;
-	vertical-align: middle;
-	text-shadow: 1px 1px #fff;
-}
-
-tr.infraEventoImportante[data-parte="REU"] label.infraEventoDescricao,
-tr.infraEventoMuitoImportante[data-parte="REU"] label.infraEventoDescricao {
-    background-color: #AE432E;
-	color: #fff;		
-	box-shadow: 0 0 3px #999999; 
-	border-radius: 3px; 
-	text-shadow: 0 1px 2px #666666;
-	vertical-align: middle;
-	margin-bottom: 5px;
-	padding: 2px 6px; 	
-}
-
-a.infraNomeParte {
-  border-radius: 3px 3px 3px 3px;
-  padding: 1px 3px;
-  vertical-align: top;
-  color: #fff;
-  display: inline;
-  margin-left: 2px;
-}
-span.infraNomeParte {
-  border-radius: 3px 3px 3px 3px;
-  padding: 1px 3px;
-  vertical-align: top;
-  color: #fff;
-}
-
-tr.infraEventoMuitoImportante[data-parte="INTERNO"] td.infraEventoDescricao {
-    border: 2px solid #77AB13;
-}
-
-/* Felipe */
-fieldset.infraFieldset {background: hsl($hB, 42%, 91%); border-radius: 4px; box-shadow: 0 0 3px #ABABAB inset; margin-bottom: 3px; margin-top: 4px; padding-top: 7px; border: 0.1em solid hsl($hB, 80%, 37%)}
-select.infraSelect {background: hsl($hB, 42%, 91%) !important; border-radius: 4px; padding: 2px;}
-#fldAcoes input {background: #fff}
-.infraTable th, .infraTable td {border-color: #EEEEEE} /* talvez retirar */
-div.infraAreaDados {overflow: visible; border: none;}
-input.infraButton, button.infraButton, input.infraButton:hover, button.infraButton:hover, #btnDownloadCompletoRS, #btnDownloadCompletoTRF4 {font-size: 1.5em; padding: 8px; border-radius: 5px; background-image: none;}
-#divInfraBarraComandosSuperior {margin-bottom: 10px; margin-top: -12px}
-* {color: #333333}
-table {font-size: 1.3em}
-tr.infraTrClara, tr.infraTrEscura{background-color: #fff} /*alternativa é #F2F3FA */
-
-
-
-/*  Buttons  */
-button.infraButton, #btnDownloadCompletoRS, #btnDownloadCompletoTRF4, button {
-	display:inline-block;
-	-webkit-border-radius:3px;
-	-moz-border-radius:3px;
-	border-radius:3px;
-	text-decoration:none;
+  background-color: $background; /* #EFEFEF */
+}
+input.infraButton, button.infraButton, a.infraButton,
+input.infraButton:hover, button.infraButton:hover, a.infraButton:hover,
+button#btnDownloadCompletoRS, button#btnDownloadCompletoTRF4 {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+input.infraButton, button.infraButton,
+input.infraButton:hover, button.infraButton:hover,
+button#btnDownloadCompletoRS, button#btnDownloadCompletoTRF4 {
+  font-size: 1.5em;
+  padding: 8px;
+  -moz-box-shadow: none;
+  box-shadow: none;
 	text-shadow:0 1px 2px #666;
-	white-space:nowrap;
-	cursor:pointer;
-	vertical-align:baseline;
 	-webkit-transition:all 400ms ease;
 	-moz-transition:all 400ms ease;
 	-o-transition:all 400ms ease;
 	transition:all 400ms ease;
-	overflow:visible;
-	width:auto;
+  border-color:hsl($hC, 79%, 45%) hsl($hC, 79%, 39%) hsl($hC, 79%, 34%);
+  background: hsl($hC,63%,60%); /* Old browsers */
+  background: -moz-linear-gradient(top,  hsl($hC,89%,78%) 0%, hsl($hC,63%,60%) 5%, hsl($hC,78%,38%) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,hsl($hC,89%,78%)), color-stop(5%,hsl($hC,63%,60%)), color-stop(100%,hsl($hC,78%,38%))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  hsl($hC,89%,78%) 0%,hsl($hC,63%,60%) 5%,hsl($hC,78%,38%) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  hsl($hC,89%,78%) 0%,hsl($hC,63%,60%) 5%,hsl($hC,78%,38%) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  hsl($hC,89%,78%) 0%,hsl($hC,63%,60%) 5%,hsl($hC,78%,38%) 100%); /* IE10+ */
+  background: linear-gradient(top,  hsl($hC,89%,78%) 0%,hsl($hC,63%,60%) 5%,hsl($hC,78%,38%) 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='hsl($hC,63%,60%)', endColorstr='hsl($hC,78%,38%)',GradientType=0 ); /* IE6-9 */
+  color: hsl($hC, 100%, 95%);
+  	cursor: pointer;
+    font-weight: bold;
 }
-
-/*  Buttons :: Button :: Green  */
-button.infraButton, #btnDownloadCompletoRS, #btnDownloadCompletoTRF4 { 
-    border-color:hsl($hB, 79%, 45%) hsl($hB, 79%, 39%) hsl($hB, 79%, 34%);
-        background:-moz-linear-gradient(top, hsl($hB, 91%, 78%), hsl($hB, 63%, 60%) 5%, hsl($hB, 78%, 38%) 100%);
-        background:-webkit-gradient(linear, left top, left bottom, from(hsl($hB, 91%, 78%)), to(hsl($hB, 78%, 38%)), color-stop(0.05, hsl($hB, 63%, 60%)));
-        background:-o-linear-gradient(top, hsl($hB, 91%, 78%), hsl($hB, 63%, 60%) 5%, hsl($hB, 78%, 38%) 100%);
-        color:#f7ffe5;
-        font-weight: bold;
+input.infraButton, button.infraButton,
+button.infraButton span {
+  font-weight: bold;
 }
-button.infraButton:hover, #btnDownloadCompletoRS:hover, #btnDownloadCompletoTRF4 :hover{
-        background:-moz-linear-gradient(top, hsl($hB, 91%, 78%), hsl($hB, 63%, 60%) 5%, hsl($hB, 79%, 32%) 100%);
-        background:-webkit-gradient(linear, left top, left bottom, from(hsl($hB, 91%, 78%)), to(hsl($hB, 79%, 32%)), color-stop(0.05, hsl($hB, 63%, 60%)));
-        background:-o-linear-gradient(top, hsl($hB, 91%, 78%), hsl($hB, 63%, 60%) 5%, hsl($hB, 79%, 32%) 100%);
-        color:#fff;
+button.infraButton span, button#btnDownloadCompletoTRF4 span, button#btnDownloadCompletoRS span {
+  color: hsl($hC, 100%, 95%);
 }
-
+input.infraButton:hover, button.infraButton:hover,
+input.infraButton:focus, button.infraButton:focus,
+button#btnDownloadCompletoTRF4:hover, button#btnDownloadCompletoRS:hover, 
+button#btnDownloadCompletoTRF4:focus, button#btnDownloadCompletoRS:focus {
+  background: hsl($hC,63%,60%); /* Old browsers */
+  background: -moz-linear-gradient(top,  hsl($hC,91%,78%) 0%, hsl($hC,63%,60%) 5%, hsl($hC,79%,32%) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,hsl($hC,91%,78%)), color-stop(5%,hsl($hC,63%,60%)), color-stop(100%,hsl($hC,79%,32%))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  hsl($hC,91%,78%) 0%,hsl($hC,63%,60%) 5%,hsl($hC,79%,32%) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  hsl($hC,91%,78%) 0%,hsl($hC,63%,60%) 5%,hsl($hC,79%,32%) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  hsl($hC,91%,78%) 0%,hsl($hC,63%,60%) 5%,hsl($hC,79%,32%) 100%); /* IE10+ */
+  background: linear-gradient(top,  hsl($hC,91%,78%) 0%,hsl($hC,63%,60%) 5%,hsl($hC,79%,32%) 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='hsl($hC,63%,60%)', endColorstr='hsl($hC,79%,32%)',GradientType=0 ); /* IE6-9 */
+  color: #fff;
+}
 .infraButton.disabled, button:disabled {
-        background:#fafafa;
-        border-color:#b1b1b1;
-        color:#a0a0a0;
-}
-button.infraButton span {color: #fff !important; font-weight: bold}
-button.infraButton {font-weight: bold}
-legend.infraLegendObrigatorio {margin-top: -12px; background: hsl($hB, 42%, 91%); border-radius: 5px; border: 0.1em solid hsl($hB, 80%, 37%); padding: 2px 8px}
-#divInfraAreaGlobal {border: 2px solid #EEEEEE; border-radius: 5px; }
-div.infraBarraComandos {border: none;}
-#divInfraBarraComandosMeio {margin-bottom: -11px; margin-top: -29px;}
-#lblSigilo {
-    color: red;
+  background: #fafafa;
+  border-color: #b1b1b1;
+  color: #a0a0a0;
 }
 
-#divOrdenacao, #divPaginacao, #divCamposConsulta {background-color: #EBF2DF}
-#divInfraBarraSistemaLocalizacao {margin-top: -6px}
-#fldPartes td {vertical-align: top; padding: 10px 1px 5px 8px}
-#tbInfoProcesso td {background-color:#EBF2DF}
+/*
+ * infra-ajax.css
+ */
 
-input:focus, button:focus, select:focus, textarea:focus {background-color: #fff}
-.infraTable button.infraButton, .infraTable button.infraButton:hover, #tbDocumentosCadastradas button.infraButton, #tbDocumentosCadastradas button.infraButton:hover {font-size: 1em; padding: 4px;}
-#fldAssuntos td:nth-of-type(2) {font-size: 1.4em; text-shadow: 1px 1px 0 #DDDDDD}
-#fldAssuntos td {text-align: center; }
+div.infraAjaxAutoCompletar {
+  background-color: hsl($hC, 42%, 91%); /* #fff */
+}
+
+/*
+ * LOCAL
+ */
+html, body {
+  margin: 0;
+}
+#tabLocalizadores tr.infraTrMarcada td {
+  background-color: hsl($hC, 78%, 38%);
+  color: #fff;
+  text-shadow: 0 1px 2px #666;
+}
+legend.infraLegend,
+legend.infraLegendOpcional,
+legend.infraLegendObrigatorio {
+	margin-top: -1.2em !important;
+  border: 0.1em solid hsl($hC, 80%, 37%);
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -moz-box-shadow: 2px 2px 5px #888;
+  box-shadow: 2px 2px 5px #888;
+  padding: 2px 8px;
+  background: hsl($hC, 42%, 91%);
+}
+table[summary=Eventos] tr > td:first-child + td + td {
+  padding: 8px;
+  padding-left: 11px;
+}
+#fldAcoes input {
+  background: #fff;
+}
+#divInfraBarraComandosSuperior #lblSigilo,
+#divInfraBarraComandosSuperior #lblReuPreso,
+#divInfraBarraComandosSuperior #lblPrioridade {
+	margin-top: 5px;
+	vertical-align: middle;
+	margin-left:10px;
+	-moz-box-shadow: 0 0 3px #999;
+	box-shadow: 0 0 3px #999;
+}
+#divInfraBarraComandosSuperior #lblPrioridade {
+	background: #AE432E;
+}
+#divOrdenacao, #divPaginacao, #divCamposConsulta {
+  background-color: hsl($h, 42%, 91%);
+}
+select:focus option {
+  background-color: hsl($hC, 42%, 91%); /* #fff */
+}
+#fldPartes td {
+  vertical-align: top;
+  padding: 10px 1px 5px 8px;
+}
+#fldAssuntos td {
+  text-align: center;
+}
+#fldAssuntos tr > td:first-child + td {
+  font-size: 1.4em;
+  text-shadow: 1px 1px 0 #ddd;
+}
+span.infraEventoPrazoParte[data-parte],
+label.infraEventoDescricao,
+label.infraEventoUsuario {
+  color: rgb(89, 89, 89);
+}
+.infraTable label.infraEventoDescricao {
+  font-size: 1.2em;
+  margin-right: 10px;
+  overflow: visible;
+}
+table.infraTable td.infraEventoDescricao {
+  padding: 0.7em 0.5em;
+}
+tr.infraEventoMuitoImportante[data-parte="INTERNO"] td.infraEventoDescricao {
+  border-color: rgb(105, 142, 35);
+}
+span.infraEventoPrazoParte[data-parte] {
+  font-weight: bold;
+	text-shadow: 1px 1px #fff;
+}
+tr[data-parte="INTERNO"] label.infraEventoDescricao,
+tr[data-parte="INTERNO"] label.infraEventoUsuario {
+  color: rgb(119, 171, 19);
+}
+span.infraEventoPrazoParte[data-parte="AUTOR"],
+tr[data-parte="AUTOR"] label.infraEventoDescricao,
+tr[data-parte="AUTOR"] label.infraEventoUsuario {
+  color: rgb(5, 141, 199);
+}
+span.infraEventoPrazoParte[data-parte="REU"],
+tr[data-parte="REU"] label.infraEventoDescricao,
+tr[data-parte="REU"] label.infraEventoUsuario {
+  color: rgb(174, 67, 46);
+}
+a.infraNomeParte[data-parte],
+span.infraNomeParte[data-parte],
+tr.infraEventoImportante label.infraEventoDescricao,
+tr.infraEventoMuitoImportante label.infraEventoDescricao {
+  display: inline-block;
+  padding: 2px 6px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  -moz-box-shadow: 0 0 3px #999;
+  box-shadow: 0 0 3px #999;
+  margin-bottom: 5px;
+  background-color: rgb(89, 89, 89);
+  color: #fff;
+}
+tr.infraEventoImportante label.infraEventoDescricao,
+tr.infraEventoMuitoImportante label.infraEventoDescricao {
+  text-shadow: 0 1px 2px #666;
+}
+tr.infraEventoImportante[data-parte="INTERNO"] label.infraEventoDescricao,
+tr.infraEventoMuitoImportante[data-parte="INTERNO"] label.infraEventoDescricao {
+  background-color: rgb(119, 171, 19);
+  border: 1px solid rgb(51, 125, 51);
+}
+a.infraNomeParte[data-parte="AUTOR"],
+span.infraNomeParte[data-parte="AUTOR"],
+tr.infraEventoImportante[data-parte="AUTOR"] label.infraEventoDescricao,
+tr.infraEventoMuitoImportante[data-parte="AUTOR"] label.infraEventoDescricao {
+  background-color: rgb(5, 141, 199);
+}
+a.infraNomeParte[data-parte="REU"],
+span.infraNomeParte[data-parte="REU"],
+tr.infraEventoImportante[data-parte="REU"] label.infraEventoDescricao,
+tr.infraEventoMuitoImportante[data-parte="REU"] label.infraEventoDescricao {
+  background-color: rgb(174, 67, 46);
+}
+tr.infraEventoMuitoImportante td.infraEventoDescricao {
+  border-style: solid;
+  border-width: 2px;
+}
+.infraEventoPrazoAguardando label.infraEventoDescricao {
+  color: rgb(174, 67, 46) !important; /* deixa o título vermelho mesmo sendo interno em intimações que o prazo ainda não abriu */
+}
+
+/* Lembretes provisório - enquanto não migrarmos a versão do Plugin */
+
+#fldLembretes tr > td:first-child + td + td + td + td {
+	-webkit-border-radius: 0.5ex;
+	-moz-border-radius: 0.5ex;
+	border-radius: 0.5ex;
+	font-weight: bold;
+	border: 1px solid #cc0;
+	background: #ffff99; /* Old browsers */
+	background: -moz-linear-gradient(top,  #ffff99 0%, #fdfdcd 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffff99), color-stop(100%,#fdfdcd)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #ffff99 0%,#fdfdcd 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #ffff99 0%,#fdfdcd 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #ffff99 0%,#fdfdcd 100%); /* IE10+ */
+	background: linear-gradient(top,  #ffff99 0%,#fdfdcd 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffff99', endColorstr='#fdfdcd',GradientType=0 ); /* IE6-9 */
+}
+
+table[summary="Eventos"] tr > td:first-child + td + td + td {
+  text-align: center;
+}
+
+a.infraButton {
+	padding: 3px 1px;
+	font-size: 1.2em;
+}
+

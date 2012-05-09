@@ -1,3 +1,4 @@
+a img { border: none; }
 .extraGedproRotuloGreen, .extraGedproRotuloBlue { cursor: pointer; }
 .extraGedproRotuloGreen { color: green; }
 .extraGedproRotuloBlue { color: blue; }
@@ -127,6 +128,7 @@ a.extraLinkAcao:hover {
     display: inherit;
     text-align: center;
 }
+.extraAcoesDestacar .extraAcoesDestacadas a.infraButton,
 .extraAcoesDestacar .extraAcoesDestacadas a.extraLinkAcao {
     font-weight: bold;
     font-size: 1.4em;

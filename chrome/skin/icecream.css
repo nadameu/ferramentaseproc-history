@@ -1,190 +1,64 @@
-#divInfraAreaGlobal, div.infraBarraTribunal {
-    border-color: hsl($hB, 50%, 80%);
-    border-left-color: hsl($hB, 94%, 39%);
-}
-#divInfraBarraSistema + div img {
-    display: none;
-}
-#divInfraBarraSistema + div:before {
-    display: inline-block;
-    width: 2em;
-    height: 4em;
-    content: '';
-    -moz-border-radius-bottomright: 100%;
-    border-radius-bottomright: 100%;
-    border-bottom-right-radius: 100% 50%;
-}
-#divInfraBarraSistema + div:after {
-    display: inline-block;
-    width: 2em;
-    height: 4em;
-    content: '';
-}
-#divInfraBarraLocalizacao:before {
-    position: absolute;
-    font-size: 50%;
-    margin-left: -2em;
-    margin-top: -0.6em;
-    width: 2em;
-    height: 4em;
-    content: '';
-    background-color: $background;
-    -moz-border-radius-topleft: 100%;
-    border-radius-topleft: 100%;
-    border-top-left-radius: 100% 50%;
-}
-#divInfraBarraSistema + div:after {
-    background-color: $background;
-}
-div.infraBarraTribunalE, div.infraBarraTribunalD {
-    width: auto;
-}
-div.infraBarraTribunal {
-    background-color: hsl($hB, 50%, 50%);
-    background-image: -moz-linear-gradient(top,
-        hsl($hB, 50%, 75%) 0%,
-        hsl($hB, 31.25%, 62.5%) 25%,
-        hsl($hB, 37.5%, 50%) 25%,
-        hsl($hB, 45.3125%, 53.125%) 100%
-    ) !important;
-}
-#divInfraBarraSistema,
-#divInfraBarraSistema + div:before,
-#divInfraBarraSistema + div:after {
-    background-color: hsl($hB, 75%, 50%) !important;
-    background-image: -moz-linear-gradient(top,
-        hsl($hB, 75%, 75%) 0%,
-        hsl($hB, 46.875%, 62.5%) 25%,
-        hsl($hB, 65.625%, 50%) 25%,
-        hsl($hB, 67.96875%, 53.125%) 100%
-    ) !important;
-}
-div.infraBarraSistemaD {
-    top: 25% !important;
-    height: 50% !important;
-}
-#tabLocalizadores tr.infraTrMarcada td {
-    background-color: hsl($hB, 78%, 38%);
-    color: #fff;
-    text-shadow: 0 1px 2px #666666;
-}
-select.infraSelect, input.infraText, textarea.infraTextarea {
-    -moz-border-radius: 4px;
-    border-radius: 4px;
-    padding: 3px 1px;
-    -moz-box-shadow: 2px 2px 2px hsl(0, 0%, 50%) inset;
-    box-shadow: 2px 2px 2px hsl(0, 0%, 50%) inset;
-    border: none;
-}
-input.infraButton, button.infraButton,
-input.infraButton:hover, button.infraButton:hover,
-#btnDownloadCompletoRS,
-#btnDownloadCompletoTRF4 {
-    -moz-border-radius: 4px;
-    border-radius: 4px;
-    padding: 3px 1px;
-    border: 1px outset hsl($hB, 50%, 50%);
-    font-size: 1.2em;
-}
-input.infraButton, button.infraButton,
-#btnDownloadCompletoRS,
-#btnDownloadCompletoTRF4 {
-    background: -moz-linear-gradient(
-            hsl($hB, 40%, 60%) 0%,
-            hsl($hB, 60%, 40%) 100%
-        ) transparent !important;
-}
-input.infraButton, button.infraButton,
-input.infraButton span, button.infraButton span,
-input.infraButton:hover, button.infraButton:hover,
-#btnDownloadCompletoRS,
-#btnDownloadCompletoTRF4 {
-    font-weight: bold;
-    color: #fff;
-}
-input.infraButton:hover, button.infraButton:hover,
-#btnDownloadCompletoRS:hover,
-#btnDownloadCompletoTRF4:hover {
-    background: -moz-linear-gradient(
-            hsl($hB, 40%, 75%) 0%,
-            hsl($hB, 60%, 55%) 100%
-        ) transparent !important;
-}
-input.infraButton:active, button.infraButton:active,
-#btnDownloadCompletoRS:active,
-#btnDownloadCompletoTRF4:active {
-    position: relative;
-    top: 1px;
-}
-input.infraButton[disabled], button.infraButton[disabled] {
-    color: #aaa;
-}
+/*
+ * infra-global-esquema.css
+ */
 fieldset.infraFieldset {
-    border: 2px groove $background;
-    background: hsl($h, 42%, 93%);
+  border: 2px groove $background;
+  background: hsl($h, 42%, 93%);
 }
-span.infraEventoPrazoParte[data-parte],
-label.infraEventoDescricao, label.infraEventoUsuario {
-    color: rgb(89, 89, 89);
+/*
+ * infra-esquema-local.css
+ */
+
+input.infraButton, button.infraButton,
+input.infraButton:hover, button.infraButton:hover {
+  background: hsl($hC,40%,60%); /* Old browsers */
+  background: -moz-linear-gradient(top,  hsl($hC,40%,60%) 0%, hsl($hC,60%,40%) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,hsl($hC,40%,60%)), color-stop(100%,hsl($hC,60%,40%))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  hsl($hC,40%,60%) 0%,hsl($hC,60%,40%) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  hsl($hC,40%,60%) 0%,hsl($hC,60%,40%) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  hsl($hC,40%,60%) 0%,hsl($hC,60%,40%) 100%); /* IE10+ */
+  background: linear-gradient(top,  hsl($hC,40%,60%) 0%,hsl($hC,60%,40%) 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='hsl($hC,40%,60%)', endColorstr='hsl($hC,60%,40%)',GradientType=0 ); /* IE6-9 */
 }
-.infraTable label.infraEventoDescricao {
-    font-size: 1.2em;
-    font-weight: bold;
+input.infraButton, button.infraButton,
+input.infraButton:hover, button.infraButton:hover,
+button#btnDownloadCompletoRS, button#btnDownloadCompletoRS:hover,
+button#btnDownloadCompletoTRF4, button#btnDownloadCompletoTRF4:hover {
+  font-size: 1.2em;
+  padding: 4px;
 }
-table.infraTable td.infraEventoDescricao {
-    padding: 0.5em 0.3em;
-}
-tr.infraEventoMuitoImportante[data-parte="INTERNO"] td.infraEventoDescricao {
-    border-color: rgb(105, 142, 35);
-}
-span.infraEventoPrazoParte[data-parte] {
-    font-weight: bold;
-}
-tr[data-parte="INTERNO"] label.infraEventoDescricao,
-tr[data-parte="INTERNO"] label.infraEventoUsuario {
-    color: rgb(105, 142, 35);
-}
-span.infraEventoPrazoParte[data-parte="AUTOR"],
-tr[data-parte="AUTOR"] label.infraEventoDescricao,
-tr[data-parte="AUTOR"] label.infraEventoUsuario {
-    color: rgb(35, 110, 142);
-}
-span.infraEventoPrazoParte[data-parte="REU"],
-tr[data-parte="REU"] label.infraEventoDescricao,
-tr[data-parte="REU"] label.infraEventoUsuario {
-    color: rgb(142, 53, 35);
-}
-a.infraNomeParte[data-parte], span.infraNomeParte[data-parte],
-tr.infraEventoImportante label.infraEventoDescricao,
-tr.infraEventoMuitoImportante label.infraEventoDescricao {
-    padding: 2px;
-    -moz-border-radius: 2px;
-    border-radius: 2px;
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
-    background-color: rgb(89, 89, 89);
-    color: #fff;
-}
-tr.infraEventoImportante label.infraEventoDescricao,
-tr.infraEventoMuitoImportante label.infraEventoDescricao {
-    display: inline-block;
-}
-tr.infraEventoImportante[data-parte="INTERNO"] label.infraEventoDescricao,
-tr.infraEventoMuitoImportante[data-parte="INTERNO"] label.infraEventoDescricao {
-    background-color: rgb(105, 142, 35);
-}
-a.infraNomeParte[data-parte="AUTOR"], span.infraNomeParte[data-parte="AUTOR"],
-tr.infraEventoImportante[data-parte="AUTOR"] label.infraEventoDescricao,
-tr.infraEventoMuitoImportante[data-parte="AUTOR"] label.infraEventoDescricao {
-    background-color: rgb(35, 110, 142);
-}
-a.infraNomeParte[data-parte="REU"], span.infraNomeParte[data-parte="REU"],
-tr.infraEventoImportante[data-parte="REU"] label.infraEventoDescricao,
-tr.infraEventoMuitoImportante[data-parte="REU"] label.infraEventoDescricao {
-    background-color: rgb(142, 53, 35);
-}
-tr.infraEventoMuitoImportante td.infraEventoDescricao {
-    border-style: solid;
-    border-width: 2px;
+input.infraButton, button.infraButton,
+input.infraButton:hover, button.infraButton:hover,
+button.infraButton span,
+button#btnDownloadCompletoRS, button#btnDownloadCompletoRS:hover,
+button#btnDownloadCompletoTRF4, button#btnDownloadCompletoTRF4:hover {
+  font-weight: bold;
+  color: #fff;
 }
 
+/*
+ * LOCAL
+ */
+
+input, button, textarea, select, a.infraButton {
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  padding: 1px;
+}
+tr.infraTrMarcada td, tr.infraTrMarcada td a:link {
+  color: #fff;
+}
+tr.infraTrMarcada td a:visited {
+  color: hsl($hC, 100%, 90%);
+}
+#tabLocalizadores tr.infraTrMarcada td {
+  text-shadow: 0 1px 1px #444;
+}
+input.infraButton[disabled], button.infraButton[disabled] {
+  color: #aaa;
+}
+
+a.infraButton {
+	padding: 3px 1px;
+}
