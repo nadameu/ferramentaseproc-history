@@ -914,7 +914,6 @@ var Eproc = {
     },
     digitar_documento: function()
     {
-        unsafeWindow.FCKeditor_OnComplete = this.digitar_documento_oncomplete;
         if (null == $('#txt_fck___Frame')) return;
         var infoWindow = unsafeWindow.opener;
         if (infoWindow) {
@@ -929,32 +928,112 @@ var Eproc = {
                 });
                 function getCellContent(cellIndex)
                 {
-                    return info.rows[1].cells[cellIndex].innerHTML.replace(/<br[^>]*>/g, ' ');
+                    var lista = info.rows[1].cells[cellIndex].innerHTML.replace(/<br[^>]*><label[^>]*>[^<]*<\/label>/g, '').split(/(?:<br[^>]*>){2}/);
+                    var ultimo = lista.pop();
+                    if (ultimo != '') {
+                        lista.push(ultimo);
+                    }
+                    return lista;
                 }
-                var autor = getCellContent(2);
-                var reu = getCellContent(3);
+                var autores = getCellContent(2);
+                var reus = getCellContent(3);
+            } else {
+                var infoLocal = $('#divInfraBarraLocalizacao', infoWindow.document);
+                if (infoLocal) {
+                    var processoMatch = /Processo Nº (\d{7}-\d{2}\.\d{4}.\d{3}.\d{4})/.exec(infoLocal.textContent);
+                    if (processoMatch) {
+                        var processo = processoMatch[1];
+                    }
+                }
             }
         }
-        function criaBotao (sTexto, sTitulo, sConteudo, iTipo, oElemento)
+        function BotaoDigitacao(sTexto, sTitulo, sConteudo, iTipo, oElemento)
         {
-            var oBotao = document.createElement('button');
-            oBotao.innerHTML = sTexto;
-            oBotao.addEventListener('click', function(evt)
+            this.nome = sTexto;
+            this.titulo = sTitulo;
+            this.texto = sConteudo;
+            this.tipo = iTipo;
+        }
+        BotaoDigitacao.prototype = {
+            nome: '',
+            titulo: '',
+            texto: '',
+            tipo: 0,
+            criarBotao: function()
+            {
+                var oBotao = document.createElement('button');
+                oBotao.textContent = this.nome;
+                var that = this;
+                oBotao.addEventListener('click', function() { return that.onClick.apply(that, arguments); }, false);
+                return oBotao;
+            },
+            getImageUrl: function()
+            {
+                var link = document.createElement('a');
+                link.href = 'imagens/brasao_pb.jpg';
+                link.protocol = 'http:';
+                var imgUrl = link.href;
+                this.getImageUrl = function() { return imgUrl; };
+                return this.getImageUrl();
+            },
+            insertBefore: function(oElemento)
+            {
+                oElemento.parentNode.insertBefore(this.criarBotao(), oElemento);
+            },
+            insertAfter: function(oElemento)
+            {
+                this.insertBefore(oElemento.nextSibling);
+            },
+            onClick: function(e)
             {
                 var oTexto = unsafeWindow.FCKeditorAPI.GetInstance('txt_fck');
                 if (!oTexto.IsDirty() || confirm('Todo o texto já digitado será apagado.\nConfirma?')) {
-                    var imgUrl = location.href.split('/');
-                    imgUrl.pop();
-                    imgUrl.push('imagens');
-                    imgUrl.push('brasao_pb.jpg');
-                    imgUrl = imgUrl.join('/');
-                    imgUrl = 'data:image/jpeg;base64,' + GM_getBase64('chrome://eproc/skin/Logo_JF.jpg') + '==.jpg';
-                    oTexto.SetHTML('<html lang="pt-BR" dir="ltr"><head><title>' + sTitulo.replace(/<[^>]+>/g, '') + '</title><style type="text/css">.header { font-family: Calibri, Helvetica, sans-serif; font-size: 9pt; } .title { font-family: Times; font-size: 14pt; font-weight: bold; } .text { font-family: Times; font-size: 13pt; } .signature { font-family: Times; font-size: 12pt; font-weight: bold; font-style: italic; } .dados { font-family: Times; font-size: 13pt; font-weight: bold; }</style></head><body bgcolor="white"><div class="header" align="center"><img width="135" height="100" src="' + imgUrl + '" alt="Logo JF"></div><div class="header" align="center"></strong>' + GM_getValue('v1.secao') + '</div><div class="header" align="center">' + GM_getValue('v1.subsecao') + '</div><div class="header" align="center">' + GM_getValue('v1.vara') + '</div><p class="text" align="justify">&nbsp;</p>' + (info ? '<div class="dados" align="left">PROCESSO: ' + processo + '</div><div class="dados" align="left">AUTOR: ' + autor + '</div><div class="dados" align="left">RÉU: ' + reu + '</div><p class="text" align="justify">&nbsp;</p>' : '') + '<p class="title" align="center">' + sTitulo + '</p><p class="text" align="justify">&nbsp;</p><p class="text" align="justify">' + sConteudo + '</p><p class="text" align="justify">&nbsp;</p><p class="text" align="justify">&nbsp;</p><p class="text" align="justify">&nbsp;</p><p class="signature" align="center">documento assinado eletronicamente</p></body></html>');
-                    $('#selTipoArquivo').value = iTipo;
+                    var sTexto = '<html lang="pt-BR" dir="ltr">\n';
+                    sTexto += '  <head>\n';
+                    sTexto += '    <title>' + this.titulo.replace(/<[^>]+>/g, '') + '</title>\n';
+                    sTexto += '    <style type="text/css">\n';
+                    sTexto += '.header { font-family: Calibri, Helvetica, sans-serif; font-size: 9pt; }\n';
+                    sTexto += '.dados { font-family: Times; font-size: 13pt; font-weight: bold; }\n';
+                    sTexto += '.title { font-family: Times; font-size: 14pt; font-weight: bold; }\n';
+                    sTexto += '.text { font-family: Times; font-size: 13pt; }\n';
+                    sTexto += '.signature { font-family: Times; font-size: 12pt; font-weight: bold; font-style: italic; }\n';
+                    sTexto += '    </style>\n';
+                    sTexto += '  </head>\n';
+                    sTexto += '  <body bgcolor="white">\n';
+                    sTexto += '    <p class="header" align="center"><img width="85" height="86" src="' + this.getImageUrl() + '" alt="Brasão da República"><br/>';
+                    sTexto += 'PODER JUDICIÁRIO<br/>';
+                    sTexto += '&nbsp;<strong>JUSTIÇA FEDERAL</strong>&nbsp;<br/>';
+                    sTexto += GM_getValue('v1.secao') + '<br/>';
+                    sTexto += GM_getValue('v1.subsecao') + '<br/>';
+                    sTexto += GM_getValue('v1.vara') + '</p>\n';
+                    sTexto += '    <p class="text" align="justify">&nbsp;</p>\n';
+                    if (processo) {
+                        sTexto += '    <div class="dados" align="left">PROCESSO: ' + processo + '</div>\n';
+                        if (info) {
+                            var AUTOR_ABRE, AUTOR_FECHA;
+                            [AUTOR_ABRE, AUTOR_FECHA] = ['<div class="dados" align="left">AUTOR: ', '</div>'];
+                            sTexto += '    ' + AUTOR_ABRE + autores.join(AUTOR_FECHA + AUTOR_ABRE) + AUTOR_FECHA + '\n';
+                            var REU_ABRE, REU_FECHA;
+                            [REU_ABRE, REU_FECHA] = ['<div class="dados" align="left">RÉU: ', '</div>'];
+                            sTexto += '    ' + REU_ABRE + reus.join(REU_FECHA + REU_ABRE) + REU_FECHA + '\n';
+                        }
+                        sTexto += '    <p class="text" align="justify">&nbsp;</p>\n';
+                    }
+                    sTexto += '    <p class="title" align="center">' + this.titulo + '</p>\n';
+                    sTexto += '    <p class="text" align="justify">&nbsp;</p>\n';
+                    sTexto += '    <p class="text" align="justify">' + this.texto + '</p>\n';
+                    sTexto += '    <p class="text" align="justify">&nbsp;</p>\n';
+                    sTexto += '    <p class="text" align="justify">&nbsp;</p>\n';
+                    sTexto += '    <p class="text" align="justify">&nbsp;</p>\n';
+                    sTexto += '    <p class="signature" align="center">documento assinado eletronicamente</p>\n';
+                    sTexto += '</body>\n';
+                    sTexto += '</html>\n';
+                    oTexto.SetHTML(sTexto);
+                    oTexto.ResetIsDirty();
+                    $('#selTipoArquivo').value = this.tipo;
                 }
-            }, true);
-            document.body.insertBefore(oBotao, oElemento);
-        }
+            }
+        };
         if (screen.availWidth >= 780 && screen.availHeight >= 630) {
             var w = 780;
             var h = Math.floor((screen.availHeight - 30) / 100) * 100 + 30;
@@ -963,16 +1042,40 @@ var Eproc = {
             window.resizeTo(w, h);
         }
         document.body.insertBefore(document.createTextNode(' '), document.body.firstChild);
-        criaBotao('Sentença', 'SENTENÇA', 'TextoDaSentença', '14', document.body.firstChild);
-        criaBotao('Despacho', 'DESPACHO', 'TextoDoDespacho', '15', document.body.firstChild);
-        criaBotao('Decisão', 'DECISÃO', 'TextoDaDecisão', '32', document.body.firstChild);
-        criaBotao('Certidão', 'CERTIDÃO', 'CERTIFICO que .', '16', document.body.firstChild);
-        criaBotao('Ato', 'ATO DE SECRETARIA', 'De ordem do MM. Juiz Federal, a Secretaria da Vara .', '18', document.body.firstChild);
+        new BotaoDigitacao('Sentença', 'SENTENÇA', 'TextoDaSentença', '14').insertBefore(document.body.firstChild);
+        new BotaoDigitacao('Despacho', 'DESPACHO', 'TextoDoDespacho', '15').insertBefore(document.body.firstChild);
+        new BotaoDigitacao('Decisão', 'DECISÃO', 'TextoDaDecisão', '32').insertBefore(document.body.firstChild);
+        new BotaoDigitacao('Certidão', 'CERTIDÃO', 'CERTIFICO que .', '16').insertBefore(document.body.firstChild);
+        new BotaoDigitacao('Ato Ordinatório', 'ATO ORDINATÓRIO', 'De ordem do MM. Juiz Federal, a Secretaria da Vara .', '109').insertBefore(document.body.firstChild);
+        new BotaoDigitacao('Ato de Secretaria', 'ATO DE SECRETARIA', 'De ordem do MM. Juiz Federal, a Secretaria da Vara .', '18').insertBefore(document.body.firstChild);
+        var itemName = (processo ? processo.split(/\D/).join('') : '') + '_RASCUNHO';
+        window.addEventListener('beforeunload', function(e)
+        {
+            var oTexto = unsafeWindow.FCKeditorAPI.GetInstance('txt_fck');
+            if (oTexto.IsDirty() && GM_yesNo('Texto com alterações', 'Deseja salvar o texto digitado como rascunho?') == 'YES') {
+                var itemValue = oTexto.GetHTML();
+                GM_storage.setItem(itemName, itemValue);
+            } else {
+                GM_storage.removeItem(itemName);
+            }
+        }, false);
+        var itemValue = GM_storage.getItem(itemName);
+        if (itemValue) {
+            var that = this;
+            unsafeWindow.FCKeditor_OnComplete = function(ed) {
+                return that.digitar_documento_oncomplete(ed, itemValue);
+            };
+        } else {
+            unsafeWindow.FCKeditor_OnComplete = this.digitar_documento_oncomplete;
+        }
     },
-    digitar_documento_oncomplete: function(ed)
+    digitar_documento_oncomplete: function(ed, texto)
     {
         ed.Events.AttachEvent('OnAfterSetHTML', function(e) { e.ResetIsDirty(); });
         ed.Config.FullPage = true;
+        if (typeof texto != 'undefined') {
+            ed.SetHTML(texto);
+        }
         ed.Config.ToolbarSets['eProcv2custom'] = [
             ['Cut','Copy','Paste','PasteText','PasteWord'],
             ['Undo','Redo'],
