@@ -937,12 +937,25 @@ var Eproc = {
                 }
                 var autores = getCellContent(2);
                 var reus = getCellContent(3);
-            } else {
+            }
+            if (! processo) {
                 var infoLocal = $('#divInfraBarraLocalizacao', infoWindow.document);
                 if (infoLocal) {
                     var processoMatch = /Processo Nº (\d{7}-\d{2}\.\d{4}.\d{3}.\d{4})/.exec(infoLocal.textContent);
                     if (processoMatch) {
                         var processo = processoMatch[1];
+                    }
+                }
+            }
+            if (! processo) {
+                var numProcesso = $('#hdnNumProcesso', infoWindow.document);
+                if (numProcesso) {
+                    var processoMatch = /^(\d{7})(\d{2})(\d{4})(\d{3})(\d{4})$/.exec(numProcesso.value);
+                    if (processoMatch) {
+                        var resultado = processoMatch.shift();
+                        var primeiraParte = processoMatch.shift();
+                        var parteFinal = processoMatch.join('.');
+                        var processo = primeiraParte + '-' + parteFinal;
                     }
                 }
             }
@@ -1028,8 +1041,7 @@ var Eproc = {
                     sTexto += '    <p class="signature" align="center">documento assinado eletronicamente</p>\n';
                     sTexto += '</body>\n';
                     sTexto += '</html>\n';
-                    oTexto.SetHTML(sTexto);
-                    oTexto.ResetIsDirty();
+                    oTexto.SetHTML(sTexto, true);
                     $('#selTipoArquivo').value = this.tipo;
                 }
             }
@@ -1048,22 +1060,44 @@ var Eproc = {
         new BotaoDigitacao('Certidão', 'CERTIDÃO', 'CERTIFICO que .', '16').insertBefore(document.body.firstChild);
         new BotaoDigitacao('Ato Ordinatório', 'ATO ORDINATÓRIO', 'De ordem do MM. Juiz Federal, a Secretaria da Vara .', '109').insertBefore(document.body.firstChild);
         new BotaoDigitacao('Ato de Secretaria', 'ATO DE SECRETARIA', 'De ordem do MM. Juiz Federal, a Secretaria da Vara .', '18').insertBefore(document.body.firstChild);
-        var itemName = (processo ? processo.split(/\D/).join('') : '') + '_RASCUNHO';
+
+        var formularioEnviado = false;
+        $('input[onclick^="Anexa"]').addEventListener('click', function(e)
+        {
+            if ($('#selTipoArquivo').value == 'null') {
+                formularioEnviado = false;
+            } else {
+                formularioEnviado = true;
+            }
+            unsafeWindow.Anexa();
+        }, false);
+        $('input[onclick^="Anexa"]').removeAttribute('onclick');
+
+        var rascunhoStorageKey = (processo ? processo.split(/\D/).join('') : '');
+        var rascunhoStorageKeyContents = rascunhoStorageKey + '_RASCUNHO';
+        var rascunhoStorageKeyTipo = rascunhoStorageKey + '_TIPO';
         window.addEventListener('beforeunload', function(e)
         {
             var oTexto = unsafeWindow.FCKeditorAPI.GetInstance('txt_fck');
-            if (oTexto.IsDirty() && GM_yesNo('Texto com alterações', 'Deseja salvar o texto digitado como rascunho?') == 'YES') {
-                var itemValue = oTexto.GetHTML();
-                GM_storage.setItem(itemName, itemValue);
+            if (oTexto.IsDirty()
+                && ! formularioEnviado
+                && GM_yesNo('Texto contém alterações', 'O texto contém alterações.\nDeseja salvá-las como rascunho para este processo?') == 'YES') {
+                var rascunhoContents = oTexto.GetHTML();
+                var rascunhoTipo = $('#selTipoArquivo').value;
+                GM_storage.setItem(rascunhoStorageKeyContents, rascunhoContents);
+                GM_storage.setItem(rascunhoStorageKeyTipo, rascunhoTipo);
             } else {
-                GM_storage.removeItem(itemName);
+                GM_storage.removeItem(rascunhoStorageKeyContents);
+                GM_storage.removeItem(rascunhoStorageKeyTipo);
             }
         }, false);
-        var itemValue = GM_storage.getItem(itemName);
-        if (itemValue) {
+        var rascunhoContents = GM_storage.getItem(rascunhoStorageKeyContents);
+        if (rascunhoContents) {
+            var rascunhoTipo = GM_storage.getItem(rascunhoStorageKeyTipo);
+            $('#selTipoArquivo').value = rascunhoTipo;
             var that = this;
             unsafeWindow.FCKeditor_OnComplete = function(ed) {
-                return that.digitar_documento_oncomplete(ed, itemValue);
+                return that.digitar_documento_oncomplete(ed, rascunhoContents);
             };
         } else {
             unsafeWindow.FCKeditor_OnComplete = this.digitar_documento_oncomplete;
@@ -1071,10 +1105,9 @@ var Eproc = {
     },
     digitar_documento_oncomplete: function(ed, texto)
     {
-        ed.Events.AttachEvent('OnAfterSetHTML', function(e) { e.ResetIsDirty(); });
         ed.Config.FullPage = true;
         if (typeof texto != 'undefined') {
-            ed.SetHTML(texto);
+            ed.SetHTML(texto, false);
         }
         ed.Config.ToolbarSets['eProcv2custom'] = [
             ['Cut','Copy','Paste','PasteText','PasteWord'],
