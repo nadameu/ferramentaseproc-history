@@ -13,75 +13,90 @@ function $$(selector, baseElement)
     var elements = baseElement.querySelectorAll(selector);
     return Array.prototype.slice.call(elements);
 }
+var Util = {
+    extend: function(obj, props)
+    {
+        var args = Array.prototype.slice.call(arguments);
+        var obj = args.shift();
+        while (props = args.shift()) {
+            var n;
+            for (n in props) {
+                obj[n] = props[n];
+            }
+        }
+        return obj;
+    }
+};
 function CheckBox(preferencia, texto)
 {
-    var checkbox = null, label = null;
-    var that = this;
-    this.getCheckbox = function()
+    var checkbox, label;
+
+    var me = this;
+    var createConjunto = function()
     {
-        if (! checkbox) {
-            createConjunto();
+        checkbox = me.createCheckbox(me.preferencia());
+        label = me.createLabel(checkbox, texto);
+    };
+
+    Util.extend(this, {
+        getCheckbox: function()
+        {
+            if (! checkbox) {
+                createConjunto();
+            }
+            return checkbox;
+        },
+        getLabel: function()
+        {
+            if (! label) {
+                createConjunto();
+            }
+            return label;
+        },
+        preferencia: function(valor)
+        {
+            if (typeof valor != 'undefined') {
+                return GM_setValue(preferencia, valor);
+            } else {
+                return GM_getValue(preferencia, false);
+            }        
         }
+    });
+
+}
+CheckBox.prototype = {
+    createCheckbox: function(valor) {
+        var checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = valor;
         return checkbox;
-    }
-    this.getLabel = function()
-    {
-        if (! label) {
-            createConjunto();
-        }
+    },
+    createLabel: function(checkbox, texto) {
+        var label = document.createElement('label');
+        label.className = 'infraLabel noprint';
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(' ' + texto));
         return label;
-    }
-    function createConjunto()
+    },
+    vincularElementoClasse: function(elemento, classe)
     {
-        checkbox = that.createCheckbox(that.preferencia());
-        label = that.createLabel(checkbox, texto);
-    }
-    this.vincularModificacao = function(fn)
+        var me = this;
+        this.vincularModificacao(function(e)
+        {
+            var valor = e.target.checked;
+            me.preferencia(valor);
+            alterarClasse(valor);
+        });
+        function alterarClasse(valor)
+        {
+            valor ? elemento.classList.add(classe) : elemento.classList.remove(classe);
+        }
+        alterarClasse(this.preferencia());
+    },
+    vincularModificacao: function(fn)
     {
         this.getCheckbox().addEventListener('change', fn, false);
-    };
-    this.preferencia = function(valor)
-    {
-        if (typeof valor != 'undefined') {
-            GM_setValue(preferencia, valor);
-        } else {
-            return GM_getValue(preferencia, false);
-        }
-    };
-}
-CheckBox.prototype.createCheckbox = function(valor)
-{
-    var checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.checked = valor;
-    return checkbox;
-};
-CheckBox.prototype.createLabel = function(checkbox, texto)
-{
-    var label = document.createElement('label');
-    label.className = 'infraLabel noprint';
-    label.appendChild(this.getCheckbox());
-    label.appendChild(document.createTextNode(' ' + texto));
-    return label;
-};
-CheckBox.prototype.vincularElementoClasse = function(elemento, classe)
-{
-    var that = this;
-    this.vincularModificacao(function(e)
-    {
-        var valor = e.target.checked;
-        that.preferencia(valor);
-        alterarClasse(valor);
-    });
-    function alterarClasse(valor)
-    {
-        if (valor) {
-            elemento.classList.add(classe);
-        } else {
-            elemento.classList.remove(classe);
-        }
-    };
-    alterarClasse(this.preferencia());
+    }
 };
 var Gedpro = (function()
 {
@@ -2419,7 +2434,9 @@ var Eproc = {
                             } catch (e) {
                                 return null;
                             }
-                            if (child.tagName == 'IMG') {
+                            if (/^Criado por \[[^\]]+\]  Editado por \[[^\]]+\]/.test(texto)) {
+                                return new DocumentoInfoGedpro(texto);
+                            } else if (child.tagName == 'IMG') {
                                 return new DocumentoObservacao(texto);
                             } else if (child.tagName == 'A' && /^\?acao=processo_evento_documento_tooltip_alterar/.test(child.search)) {
                                 return new DocumentoMemo(texto);
@@ -2440,6 +2457,13 @@ var Eproc = {
                         };
                         DocumentoMemo.prototype = new Anotacao;
                         DocumentoMemo.prototype.constructor = DocumentoMemo;
+                        function DocumentoInfoGedpro(texto)
+                        {
+                            Anotacao.apply(this, arguments);
+                            this.setClassName('noscreen');
+                        }
+                        DocumentoInfoGedpro.prototype = new Anotacao;
+                        DocumentoInfoGedpro.prototype.constructor = DocumentoInfoGedpro;
                         $$('td', colunaDocumentos).forEach(function(subtd, subc, subtds)
                         {
                             var child = null, anexarAnotacao = null, onmouseover = null, onmouseout = null;
@@ -2447,7 +2471,7 @@ var Eproc = {
                                 var anotacao;
                                 if (anotacao = Anotacao.fromChild(child)) {
                                     anexarAnotacao = anotacao.getElemento();
-                                    if (anotacao instanceof DocumentoObservacao) {
+                                    if (!(anotacao instanceof DocumentoMemo)) {
                                         var espaco = child.nextSibling;
                                         subtd.removeChild(espaco);
                                         var linkMemo = child.nextSibling;
