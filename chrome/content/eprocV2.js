@@ -1918,7 +1918,7 @@ var Eproc = {
             this.decorarLinhasTabelaLocalizadores(linhas);
         }
         var botao = $('#lnkConfiguracaoSistema');
-        var novasConfiguracoesMostradas = GM_getValue('v2.novasconfiguracoesmostradas', false);
+        var novasConfiguracoesMostradas = GM_getValue('v2.novasconfiguracoes2mostradas', false);
         if (botao) {
             if (! novasConfiguracoesMostradas) {
                 var resposta = GM_yesNo('Novas configurações', 'Você deve configurar algumas opções antes de continuar.\n\nDeseja abrir a tela de configurações agora?');
@@ -2645,6 +2645,69 @@ var Eproc = {
             }, false);
         });
 
+        var botao = $('#lnkConfiguracaoSistema');
+        var novasConfiguracoesMostradas = GM_getValue('v2.novasconfiguracoes2mostradas', false);
+        if (botao && !novasConfiguracoesMostradas) {
+            alert('Por favor, verifique se todas as configurações estão de acordo com suas preferências.');
+            var novasConfiguracoesMostradas = GM_setValue('v2.novasconfiguracoes2mostradas', true);
+            function Tooltip(texto)
+            {
+                var div = document.createElement('div');
+                div.innerHTML = '<img src="imagens/tooltip/arrow3.gif" style="position: absolute;"/>';
+                var img = div.firstChild;
+                div.innerHTML = '<div style="position: absolute; background: lightyellow; border: 1px solid black; font-size: 1.2em; width: 30ex; text-align: center; padding: 10px;">' + texto + '</div>';
+                div = div.firstChild;
+                var elementoVinculado, x = 0, y = 0;
+                this.vincular = function(elemento)
+                {
+                    elementoVinculado = elemento;
+                    this.desenhar();
+                };
+                this.desenhar = function()
+                {
+                    removerElementos();
+                    calcularXY(elementoVinculado);
+                    adicionarElementos();
+                    posicionarElementos();
+                };
+                this.ocultar = function()
+                {
+                    removerElementos();
+                    adicionarElementos = function(){};
+                };
+                function calcularXY(elemento)
+                {
+                    for (x = 0, y = 0; elemento != null; elemento = elemento.offsetParent) {
+                        x += elemento.offsetLeft;
+                        y += elemento.offsetTop;
+                    }
+                }
+                function posicionarElementos()
+                {
+                    img.style.top = y + elementoVinculado.offsetHeight + 'px';
+                    img.style.left = x + elementoVinculado.offsetWidth/2 - 15 + 'px';
+                    div.style.top = y + elementoVinculado.offsetHeight + 15 - 1 + 'px';
+                    div.style.left = x + elementoVinculado.offsetWidth/2 - div.offsetWidth + 10 + 'px';
+                }
+                function removerElementos()
+                {
+                    if (div.parentNode == document.body) {
+                        document.body.removeChild(div);
+                        document.body.removeChild(img);
+                    }
+                }
+                function adicionarElementos()
+                {
+                    document.body.appendChild(div);
+                    document.body.appendChild(img);
+                }
+            };
+            var tooltip = new Tooltip('Este ícone permite acessar novamente as configurações a qualquer momento.');
+            tooltip.vincular(botao);
+            window.addEventListener('resize', tooltip.desenhar, false);
+            botao.addEventListener('mouseover', tooltip.ocultar, false);
+        }
+
         var estilosPersonalizados = $('link[href^="css/estilos.php"]');
         if (estilosPersonalizados) {
             return;
@@ -2924,68 +2987,6 @@ var Eproc = {
         };
         CellDecoratorBarra.prototype = new CellDecorator;
         CellDecoratorBarra.prototype.constructor = CellDecorator;
-        var botao = $('#lnkConfiguracaoSistema');
-        var novasConfiguracoesMostradas = GM_getValue('v2.novasconfiguracoesmostradas', false);
-        if (botao && !novasConfiguracoesMostradas) {
-            alert('Por favor, verifique se todas as configurações estão de acordo com suas preferências.');
-            var novasConfiguracoesMostradas = GM_setValue('v2.novasconfiguracoesmostradas', true);
-            function Tooltip(texto)
-            {
-                var div = document.createElement('div');
-                div.innerHTML = '<img src="imagens/tooltip/arrow3.gif" style="position: absolute;"/>';
-                var img = div.firstChild;
-                div.innerHTML = '<div style="position: absolute; background: lightyellow; border: 1px solid black; font-size: 1.2em; width: 30ex; text-align: center; padding: 10px;">' + texto + '</div>';
-                div = div.firstChild;
-                var elementoVinculado, x = 0, y = 0;
-                this.vincular = function(elemento)
-                {
-                    elementoVinculado = elemento;
-                    this.desenhar();
-                };
-                this.desenhar = function()
-                {
-                    removerElementos();
-                    calcularXY(elementoVinculado);
-                    adicionarElementos();
-                    posicionarElementos();
-                };
-                this.ocultar = function()
-                {
-                    removerElementos();
-                    adicionarElementos = function(){};
-                };
-                function calcularXY(elemento)
-                {
-                    for (x = 0, y = 0; elemento != null; elemento = elemento.offsetParent) {
-                        x += elemento.offsetLeft;
-                        y += elemento.offsetTop;
-                    }
-                }
-                function posicionarElementos()
-                {
-                    img.style.top = y + elementoVinculado.offsetHeight + 'px';
-                    img.style.left = x + elementoVinculado.offsetWidth/2 - 15 + 'px';
-                    div.style.top = y + elementoVinculado.offsetHeight + 15 - 1 + 'px';
-                    div.style.left = x + elementoVinculado.offsetWidth/2 - div.offsetWidth + 10 + 'px';
-                }
-                function removerElementos()
-                {
-                    if (div.parentNode == document.body) {
-                        document.body.removeChild(div);
-                        document.body.removeChild(img);
-                    }
-                }
-                function adicionarElementos()
-                {
-                    document.body.appendChild(div);
-                    document.body.appendChild(img);
-                }
-            };
-            var tooltip = new Tooltip('Este ícone permite acessar novamente as configurações a qualquer momento.');
-            tooltip.vincular(botao);
-            window.addEventListener('resize', tooltip.desenhar, false);
-            botao.addEventListener('mouseover', tooltip.ocultar, false);
-        }
     }
 };
 Eproc.init();
