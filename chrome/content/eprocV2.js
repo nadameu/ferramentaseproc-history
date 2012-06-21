@@ -2369,7 +2369,10 @@ var Eproc = {
         iconTrueColor['PNG' ] = 'imagens/tree_icons/page_white_picture.gif';
         iconTrueColor['HTM' ] = 'imagens/tree_icons/page_world.gif';
         iconTrueColor['HTML'] = 'imagens/tree_icons/page_world.gif';
-        iconTrueColor['MP3' ] = 'imagens/tree_icons/page_white_cd.gif';
+        iconTrueColor['MP3' ] = '../infra_css/imagens/audio.gif';
+        iconTrueColor['MPG' ] = '../infra_css/imagens/video.gif';
+        iconTrueColor['MPEG'] = '../infra_css/imagens/video.gif';
+        iconTrueColor['WMV' ] = '../infra_css/imagens/video.gif';
         iconTrueColor['N/A' ] = 'imagens/tree_icons/page_white_error.gif';
         function formatSize(size)
         {
