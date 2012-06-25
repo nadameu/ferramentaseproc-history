@@ -1073,7 +1073,7 @@ var Eproc = {
         new BotaoDigitacao('Despacho', 'DESPACHO', 'TextoDoDespacho', '15').insertBefore(document.body.firstChild);
         new BotaoDigitacao('Decisão', 'DECISÃO', 'TextoDaDecisão', '32').insertBefore(document.body.firstChild);
         new BotaoDigitacao('Certidão', 'CERTIDÃO', 'CERTIFICO que .', '16').insertBefore(document.body.firstChild);
-        new BotaoDigitacao('Ato Ordinatório', 'ATO ORDINATÓRIO', 'De ordem do MM. Juiz Federal, a Secretaria da Vara .', '109').insertBefore(document.body.firstChild);
+        new BotaoDigitacao('Ato Ordinatório', 'ATO ORDINATÓRIO', 'De ordem do MM. Juiz Federal, .', '109').insertBefore(document.body.firstChild);
         new BotaoDigitacao('Ato de Secretaria', 'ATO DE SECRETARIA', 'De ordem do MM. Juiz Federal, a Secretaria da Vara .', '18').insertBefore(document.body.firstChild);
 
         var formularioEnviado = false;
