@@ -178,4 +178,22 @@ tr.extraLocalizador[data-processos="0"] td, tr.extraLocalizador[data-processos="
 .extraMarkerPrioridade {
     background-color: brown;
 }
+#lastClicked {
+    background-color: yellow;
+}
+#tableRelacionado {
+    display: table;
+}
+#labelRelacionado {
+    display: block;
+}
+.extraRelacionados tr,
+.extraRelacionados:hover tfoot tr {
+    display: none;
+}
+.extraRelacionados tr:first-of-type,
+.extraRelacionados tfoot tr,
+.extraRelacionados:hover tr {
+    display: inherit;
+}
 

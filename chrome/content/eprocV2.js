@@ -2603,18 +2603,12 @@ var Eproc = {
                 });
                 tableRelacionado.appendChild(document.createElement('tfoot'));
                 tableRelacionado.tFoot.insertRow(0).insertCell(0).innerHTML = 'E OUTROS (' + (tableRelacionado.tBodies[0].rows.length - 1) + ')...';
+                tableRelacionado.tFoot.rows[0].className = 'noprint';
                 div.className = 'extraRelacionados';
                 var br = div.previousSibling.previousSibling;
                 if ('tagName' in br && br.tagName.toUpperCase() == 'BR') {
                     br.parentNode.removeChild(br);
                 }
-                Eproc.addCssRule('#tableRelacionado { display: table; }');
-                Eproc.addCssRule('#labelRelacionado { display: block; }');
-                Eproc.addCssRule('.extraRelacionados tr { display: none; }');
-                Eproc.addCssRule('.extraRelacionados tr:first-of-type { display: inherit; }');
-                Eproc.addCssRule('.extraRelacionados tfoot tr { display: inherit; }');
-                Eproc.addCssRule('.extraRelacionados:hover tfoot tr { display: none; }');
-                Eproc.addCssRule('.extraRelacionados:hover tr { display: inherit; }');
             }
         }
         var menu = Eproc.getMenu();
