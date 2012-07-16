@@ -930,31 +930,21 @@ var Eproc = {
     digitar_documento: function()
     {
         if (null == $('#txt_fck___Frame')) return;
-        var infoWindow = unsafeWindow.opener;
+        var infoWindow = getInfoWindow();
         if (infoWindow) {
-            var info = $('#tbInfoProcesso', infoWindow.document);
+            var info = getInfo(infoWindow), processo;
             if (info) {
-                var processo;
                 $$('label', info).forEach(function(label)
                 {
                     if (label.textContent == 'Processo:') {
                         processo = label.nextSibling.textContent;
                     }
                 });
-                function getCellContent(cellIndex)
-                {
-                    var lista = info.rows[1].cells[cellIndex].innerHTML.replace(/<br[^>]*><label[^>]*>[^<]*<\/label>/g, '').split(/(?:<br[^>]*>){2}/);
-                    var ultimo = lista.pop();
-                    if (ultimo != '') {
-                        lista.push(ultimo);
-                    }
-                    return lista;
-                }
-                var autores = getCellContent(2);
-                var reus = getCellContent(3);
+                var autores = getCellContent(info, 2);
+                var reus = getCellContent(info, 3);
             }
             if (! processo) {
-                var infoLocal = $('#divInfraBarraLocalizacao', infoWindow.document);
+                var infoLocal = getInfoLocal(infoWindow);
                 if (infoLocal) {
                     var processoMatch = /Processo Nº (\d{7}-\d{2}\.\d{4}.\d{3}.\d{4})/.exec(infoLocal.textContent);
                     if (processoMatch) {
@@ -963,17 +953,42 @@ var Eproc = {
                 }
             }
             if (! processo) {
-                var numProcesso = $('#hdnNumProcesso', infoWindow.document);
+                var numProcesso = getHiddenNumProcesso(infoWindow);
                 if (numProcesso) {
                     var processoMatch = /^(\d{7})(\d{2})(\d{4})(\d{3})(\d{4})$/.exec(numProcesso.value);
                     if (processoMatch) {
                         var resultado = processoMatch.shift();
-                        var primeiraParte = processoMatch.shift();
-                        var parteFinal = processoMatch.join('.');
-                        var processo = primeiraParte + '-' + parteFinal;
+                        var antesDoHifen = processoMatch.shift();
+                        var depoisDoHifen = processoMatch.join('.');
+                        var processo = antesDoHifen + '-' + depoisDoHifen;
                     }
                 }
             }
+        }
+        function getInfoWindow()
+        {
+            return unsafeWindow.opener;
+        }
+        function getInfo(infoWindow)
+        {
+            return $('#tbInfoProcesso', infoWindow.document);
+        }
+        function getCellContent(info, cellIndex)
+        {
+            var lista = info.rows[1].cells[cellIndex].innerHTML.replace(/<br[^>]*><label[^>]*>[^<]*<\/label>/g, '').split(/(?:<br[^>]*>){2}/);
+            var ultimo = lista.pop();
+            if (ultimo != '') {
+                lista.push(ultimo);
+            }
+            return lista;
+        }
+        function getInfoLocal(infoWindow)
+        {
+            return $('#divInfraBarraLocalizacao', infoWindow.document);
+        }
+        function getHiddenNumProcesso(infoWindow)
+        {
+            return $('#hdnNumProcesso', infoWindow.document);
         }
         function BotaoDigitacao(sTexto, sTitulo, sConteudo, iTipo, oElemento)
         {
@@ -991,8 +1006,8 @@ var Eproc = {
             {
                 var oBotao = document.createElement('button');
                 oBotao.textContent = this.nome;
-                var that = this;
-                oBotao.addEventListener('click', function() { return that.onClick.apply(that, arguments); }, false);
+                var me = this;
+                oBotao.addEventListener('click', function() { return me.onClick.apply(me, arguments); }, false);
                 return oBotao;
             },
             getImageUrl: function()
