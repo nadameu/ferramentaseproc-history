@@ -1106,16 +1106,14 @@ var Eproc = {
         var rascunhoStorageKey = (processo ? processo.split(/\D/).join('') : '');
         var rascunhoStorageKeyContents = rascunhoStorageKey + '_RASCUNHO';
         var rascunhoStorageKeyTipo = rascunhoStorageKey + '_TIPO';
+        var salvarRascunho = function(){};
         window.addEventListener('beforeunload', function(e)
         {
             var oTexto = unsafeWindow.FCKeditorAPI.GetInstance('txt_fck');
             if (oTexto.IsDirty()
                 && ! formularioEnviado
                 && GM_yesNo('Texto contém alterações', 'O texto contém alterações.\nDeseja salvá-las como rascunho para este processo?') == 'YES') {
-                var rascunhoContents = oTexto.GetHTML();
-                var rascunhoTipo = $('#selTipoArquivo').value;
-                GM_storage.setItem(rascunhoStorageKeyContents, rascunhoContents);
-                GM_storage.setItem(rascunhoStorageKeyTipo, rascunhoTipo);
+                salvarRascunho();
             } else {
                 GM_storage.removeItem(rascunhoStorageKeyContents);
                 GM_storage.removeItem(rascunhoStorageKeyTipo);
@@ -1125,30 +1123,36 @@ var Eproc = {
         if (rascunhoContents) {
             var rascunhoTipo = GM_storage.getItem(rascunhoStorageKeyTipo);
             $('#selTipoArquivo').value = rascunhoTipo;
-            var that = this;
-            unsafeWindow.FCKeditor_OnComplete = function(ed) {
-                return that.digitar_documento_oncomplete(ed, rascunhoContents);
-            };
-        } else {
-            unsafeWindow.FCKeditor_OnComplete = this.digitar_documento_oncomplete;
         }
-    },
-    digitar_documento_oncomplete: function(ed, texto)
-    {
-        ed.Config.FullPage = true;
-        if (typeof texto != 'undefined') {
-            ed.SetHTML(texto, false);
-        }
-        ed.Config.ToolbarSets['eProcv2custom'] = [
-            ['Cut','Copy','Paste','PasteText','PasteWord'],
-            ['Undo','Redo'],
-            ['Bold','Italic','Underline'],
-            ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
-            ['OrderedList','UnorderedList'],
-            ['TextColor'],
-            ['Source']
-        ];
-        ed.ToolbarSet.Load('eProcv2custom');
+        unsafeWindow.FCKeditor_OnComplete = function(ed)
+        {
+            ed.Config.FullPage = true;
+            if (rascunhoContents) {
+                ed.SetHTML(rascunhoContents, false);
+            }
+            ed.Config.ToolbarSets['eProcv2custom'] = [
+                ['Cut','Copy','Paste','PasteText','PasteWord'],
+                ['Undo','Redo'],
+                ['Bold','Italic','Underline'],
+                ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
+                ['OrderedList','UnorderedList'],
+                ['TextColor'],
+                ['Source']
+            ];
+            ed.ToolbarSet.Load('eProcv2custom');
+            salvarRascunho = function()
+            {
+                try {
+                    var rascunhoContents = ed.GetHTML();
+                    var rascunhoTipo = $('#selTipoArquivo').value;
+                    GM_storage.setItem(rascunhoStorageKeyContents, rascunhoContents);
+                    GM_storage.setItem(rascunhoStorageKeyTipo, rascunhoTipo);
+                } catch (e) {
+                    throw e;
+                }
+            }
+            window.setInterval(salvarRascunho, 60000);
+        };
     },
     entrar: function()
     {
