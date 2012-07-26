@@ -1087,45 +1087,9 @@ var Eproc = {
         new BotaoDigitacao('Ato Ordinatório', 'ATO ORDINATÓRIO', 'De ordem do MM. Juiz Federal, .', '109').insertBefore(document.body.firstChild);
         new BotaoDigitacao('Ato de Secretaria', 'ATO DE SECRETARIA', 'De ordem do MM. Juiz Federal, a Secretaria da Vara .', '18').insertBefore(document.body.firstChild);
 
-        var formularioEnviado = false;
-        $('input[onclick^="Anexa"]').addEventListener('click', function(e)
-        {
-            if ($('#selTipoArquivo').value == 'null') {
-                formularioEnviado = false;
-            } else {
-                formularioEnviado = true;
-            }
-            unsafeWindow.Anexa();
-        }, false);
-        $('input[onclick^="Anexa"]').removeAttribute('onclick');
-
-        var rascunhoStorageKey = (processo ? processo.split(/\D/).join('') : '');
-        var rascunhoStorageKeyContents = rascunhoStorageKey + '_RASCUNHO';
-        var rascunhoStorageKeyTipo = rascunhoStorageKey + '_TIPO';
-        var salvarRascunho = function(){};
-        window.addEventListener('beforeunload', function(e)
-        {
-            var oTexto = unsafeWindow.FCKeditorAPI.GetInstance('txt_fck');
-            if (oTexto.IsDirty()
-                && ! formularioEnviado
-                && GM_yesNo('Texto contém alterações', 'O texto contém alterações.\nDeseja salvá-las como rascunho para este processo?') == 'YES') {
-                salvarRascunho();
-            } else {
-                GM_storage.removeItem(rascunhoStorageKeyContents);
-                GM_storage.removeItem(rascunhoStorageKeyTipo);
-            }
-        }, false);
-        var rascunhoContents = GM_storage.getItem(rascunhoStorageKeyContents);
-        if (rascunhoContents) {
-            var rascunhoTipo = GM_storage.getItem(rascunhoStorageKeyTipo);
-            $('#selTipoArquivo').value = rascunhoTipo;
-        }
         unsafeWindow.FCKeditor_OnComplete = function(ed)
         {
             ed.Config.FullPage = true;
-            if (rascunhoContents) {
-                ed.SetHTML(rascunhoContents, false);
-            }
             ed.Config.ToolbarSets['eProcv2custom'] = [
                 ['Cut','Copy','Paste','PasteText','PasteWord'],
                 ['Undo','Redo'],
@@ -1136,18 +1100,6 @@ var Eproc = {
                 ['Source']
             ];
             ed.ToolbarSet.Load('eProcv2custom');
-            salvarRascunho = function()
-            {
-                try {
-                    var rascunhoContents = ed.GetHTML();
-                    var rascunhoTipo = $('#selTipoArquivo').value;
-                    GM_storage.setItem(rascunhoStorageKeyContents, rascunhoContents);
-                    GM_storage.setItem(rascunhoStorageKeyTipo, rascunhoTipo);
-                } catch (e) {
-                    throw e;
-                }
-            }
-            window.setInterval(salvarRascunho, 60000);
         };
     },
     entrar: function()
