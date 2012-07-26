@@ -786,19 +786,25 @@ var Eproc = {
             div.className = 'extraLembretes noprint';
             $$('tr.infraTrClara, tr.infraTrEscura', table).forEach(function(tr, r)
             {
-                var destino = tr.cells[3].textContent;
+                var orgaoDestino = tr.cells[2].textContent;
+                var destino = tr.cells[3].textContent || orgaoDestino;
                 var inicio = tr.cells[6].textContent == ' - ' ? null : tr.cells[6].textContent;
                 var fim = tr.cells[7].textContent == ' - ' ? null : tr.cells[7].textContent;
                 var floater = document.createElement('div');
                 floater.className = 'extraLembrete';
-                if (new RegExp(destino).test(usuarioAtual)) {
+                if (/TODOS OS ÓRGÃOS/.test(destino)) {
+                    destino = 'TODOS';
+                    floater.classList.add('extraLembreteTodos');
+                } else if (/TODOS DO ÓRGÃO/.test(destino)) {
+                    destino = orgaoDestino;
+                } else if (new RegExp(destino).test(usuarioAtual)) {
                     destino = 'VOCÊ';
                     floater.classList.add('extraLembreteVoce');
                 }
                 floater.innerHTML =
                     '<div class="extraLembretePara">Para: '
                         + destino
-                        + (tr.cells[8].textContent == 'N' ? ' (<abbr '
+                        + (tr.cells[8].textContent == 'Não' ? ' (<abbr '
                             + 'onmouseover="return infraTooltipMostrar('
                             + '\'Este lembrete não será exibido na movimentação processual\','
                             + '\'Movimentação processual\',' + '400);" '
@@ -811,8 +817,12 @@ var Eproc = {
                         + '<div class="extraLembreteData">' + tr.cells[5].textContent
                         + '<br/>' + tr.cells[1].textContent + '</div>';
                 var celulaBotoes = tr.cells[tr.cells.length - 1];
-                floater.childNodes[0].appendChild(celulaBotoes.childNodes[2]);
-                floater.childNodes[0].appendChild(celulaBotoes.childNodes[0]);
+                if (celulaBotoes.childNodes.length > 2) {
+                    floater.childNodes[0].appendChild(celulaBotoes.childNodes[2]);
+                }
+                if (celulaBotoes.childNodes.length > 0) {
+                    floater.childNodes[0].appendChild(celulaBotoes.childNodes[0]);
+                }
                 div.appendChild(floater);
             });
             var separator = document.createElement('div');
@@ -1086,45 +1096,9 @@ var Eproc = {
         new BotaoDigitacao('Ato Ordinatório', 'ATO ORDINATÓRIO', 'De ordem do MM. Juiz Federal, .', '109').insertBefore(document.body.firstChild);
         new BotaoDigitacao('Ato de Secretaria', 'ATO DE SECRETARIA', 'De ordem do MM. Juiz Federal, a Secretaria da Vara .', '18').insertBefore(document.body.firstChild);
 
-        var formularioEnviado = false;
-        $('input[onclick^="Anexa"]').addEventListener('click', function(e)
-        {
-            if ($('#selTipoArquivo').value == 'null') {
-                formularioEnviado = false;
-            } else {
-                formularioEnviado = true;
-            }
-            unsafeWindow.Anexa();
-        }, false);
-        $('input[onclick^="Anexa"]').removeAttribute('onclick');
-
-        var rascunhoStorageKey = (processo ? processo.split(/\D/).join('') : '');
-        var rascunhoStorageKeyContents = rascunhoStorageKey + '_RASCUNHO';
-        var rascunhoStorageKeyTipo = rascunhoStorageKey + '_TIPO';
-        var salvarRascunho = function(){};
-        window.addEventListener('beforeunload', function(e)
-        {
-            var oTexto = unsafeWindow.FCKeditorAPI.GetInstance('txt_fck');
-            if (oTexto.IsDirty()
-                && ! formularioEnviado
-                && GM_yesNo('Texto contém alterações', 'O texto contém alterações.\nDeseja salvá-las como rascunho para este processo?') == 'YES') {
-                salvarRascunho();
-            } else {
-                GM_storage.removeItem(rascunhoStorageKeyContents);
-                GM_storage.removeItem(rascunhoStorageKeyTipo);
-            }
-        }, false);
-        var rascunhoContents = GM_storage.getItem(rascunhoStorageKeyContents);
-        if (rascunhoContents) {
-            var rascunhoTipo = GM_storage.getItem(rascunhoStorageKeyTipo);
-            $('#selTipoArquivo').value = rascunhoTipo;
-        }
         unsafeWindow.FCKeditor_OnComplete = function(ed)
         {
             ed.Config.FullPage = true;
-            if (rascunhoContents) {
-                ed.SetHTML(rascunhoContents, false);
-            }
             ed.Config.ToolbarSets['eProcv2custom'] = [
                 ['Cut','Copy','Paste','PasteText','PasteWord'],
                 ['Undo','Redo'],
@@ -1135,18 +1109,6 @@ var Eproc = {
                 ['Source']
             ];
             ed.ToolbarSet.Load('eProcv2custom');
-            salvarRascunho = function()
-            {
-                try {
-                    var rascunhoContents = ed.GetHTML();
-                    var rascunhoTipo = $('#selTipoArquivo').value;
-                    GM_storage.setItem(rascunhoStorageKeyContents, rascunhoContents);
-                    GM_storage.setItem(rascunhoStorageKeyTipo, rascunhoTipo);
-                } catch (e) {
-                    throw e;
-                }
-            }
-            window.setInterval(salvarRascunho, 60000);
         };
     },
     entrar: function()
