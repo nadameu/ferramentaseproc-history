@@ -786,7 +786,8 @@ var Eproc = {
             div.className = 'extraLembretes noprint';
             $$('tr.infraTrClara, tr.infraTrEscura', table).forEach(function(tr, r)
             {
-                var destino = tr.cells[3].textContent;
+                var orgaoDestino = tr.cells[2].textContent;
+                var destino = tr.cells[3].textContent || orgaoDestino;
                 var inicio = tr.cells[6].textContent == ' - ' ? null : tr.cells[6].textContent;
                 var fim = tr.cells[7].textContent == ' - ' ? null : tr.cells[7].textContent;
                 var floater = document.createElement('div');
@@ -798,7 +799,7 @@ var Eproc = {
                 floater.innerHTML =
                     '<div class="extraLembretePara">Para: '
                         + destino
-                        + (tr.cells[8].textContent == 'N' ? ' (<abbr '
+                        + (tr.cells[8].textContent == 'Não' ? ' (<abbr '
                             + 'onmouseover="return infraTooltipMostrar('
                             + '\'Este lembrete não será exibido na movimentação processual\','
                             + '\'Movimentação processual\',' + '400);" '
