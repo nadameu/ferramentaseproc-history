@@ -792,7 +792,12 @@ var Eproc = {
                 var fim = tr.cells[7].textContent == ' - ' ? null : tr.cells[7].textContent;
                 var floater = document.createElement('div');
                 floater.className = 'extraLembrete';
-                if (new RegExp(destino).test(usuarioAtual)) {
+                if (/TODOS OS ÓRGÃOS/.test(destino)) {
+                    destino = 'TODOS';
+                    floater.classList.add('extraLembreteTodos');
+                } else if (/TODOS DO ÓRGÃO/.test(destino)) {
+                    destino = orgaoDestino;
+                } else if (new RegExp(destino).test(usuarioAtual)) {
                     destino = 'VOCÊ';
                     floater.classList.add('extraLembreteVoce');
                 }
@@ -812,8 +817,12 @@ var Eproc = {
                         + '<div class="extraLembreteData">' + tr.cells[5].textContent
                         + '<br/>' + tr.cells[1].textContent + '</div>';
                 var celulaBotoes = tr.cells[tr.cells.length - 1];
-                floater.childNodes[0].appendChild(celulaBotoes.childNodes[2]);
-                floater.childNodes[0].appendChild(celulaBotoes.childNodes[0]);
+                if (celulaBotoes.childNodes.length > 2) {
+                    floater.childNodes[0].appendChild(celulaBotoes.childNodes[2]);
+                }
+                if (celulaBotoes.childNodes.length > 0) {
+                    floater.childNodes[0].appendChild(celulaBotoes.childNodes[0]);
+                }
                 div.appendChild(floater);
             });
             var separator = document.createElement('div');

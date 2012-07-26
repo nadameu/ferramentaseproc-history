@@ -26,6 +26,9 @@ button.infraButton.extraBuscarPreventosButton:hover {
 .extraLembreteVoce {
     background-color: hsl(60, 100%, 70%);
 }
+.extraLembreteTodos {
+    background-color: hsl(60, 100%, 75%);
+}
 .extraLembrete a {
     float: right;
     vertical-align: middle;
