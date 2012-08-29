@@ -1385,12 +1385,14 @@ var Eproc = {
         if (unsafeWindow.FeP) {
             GM_analisarVersao(unsafeWindow.FeP);
         }
+	/*
         if (document.body && document.body.hasAttribute('onload')) {
             document.body.setAttribute('onload', document.body.getAttribute('onload').replace('infraProcessarResize();', ''));
         }
         if (unsafeWindow.infraResize instanceof Function) {
             window.removeEventListener('resize', unsafeWindow.infraResize, false);
         }
+	*/
         this.pagina = location.pathname.split('/eprocV2/')[1];
         this.parametros = {};
         for (var p = 0, params = location.search.split('?').splice(0).join('').split('&'), param; (p < params.length) && (param = params[p]); p++) {
