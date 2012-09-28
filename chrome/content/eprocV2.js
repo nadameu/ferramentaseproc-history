@@ -932,6 +932,26 @@ var Eproc = {
         extra.innerHTML = 'div.infraAreaDados { height: auto !important; overflow: inherit; }';
         extra.innerHTML += rule;
     },
+    corrigirLinksDocumentos: function()
+    {
+        var links = $$('a[href^="controlador.php?acao=acessar_documento"]');
+        links.forEach(function(link)
+        {
+            var id;
+            [, id] = /\&doc=(\d+)/.exec(link.href);
+            link.addEventListener('click', function(e)
+            {
+                e.preventDefault();
+                e.stopPropagation();
+                var win = Eproc.windows[id];
+                if (typeof win == 'object' && !win.closed) {
+                    win.focus();
+                } else {
+                    Eproc.windows[id] = window.open(link.href, id, 'menubar=0,resizable=1,status=0,toolbar=0,location=0,directories=0,scrollbars=1');
+                }
+            }, false);
+        });
+    },
     digitar_documento: function()
     {
         if (null == $('#txt_fck___Frame')) return;
@@ -1494,6 +1514,9 @@ var Eproc = {
             this[this.acao]();
         } else if (this.parametros.acao_origem && this[this.parametros.acao_origem + '_destino']) {
             this[this.parametros.acao_origem + '_destino']();
+        }
+        if (this.acao != 'processo_selecionar') {
+            Eproc.corrigirLinksDocumentos();
         }
         window.addEventListener('beforeunload', function(e)
         {
