@@ -2442,27 +2442,28 @@ var Eproc = {
                             }
                         }, false);
                     })
+                    var colunaDescricao = tr.cells[tr.cells.length - 3];
+                    var texto = colunaDescricao.textContent;
+                    var numeroEvento = /^\d+/.exec(tr.cells[tr.cells.length - 5].textContent);
                     if (tr.getAttribute('data-parte') == 'INTERNO') {
-                        var colunaDescricao = tr.cells[tr.cells.length - 3];
-                        var texto = colunaDescricao.textContent;
-                        var numeroEvento = /^\d+/.exec(tr.cells[tr.cells.length - 5].textContent);
                         if (/^Despacho\/Decisão - Conversão em Diligência$/.test(texto) || /^Trânsito em Julgado$/.test(texto)) {
                             tr.classList.add('infraEventoImportante');
-                        } else if (/Refer\. ao Evento: \d+$/.test(texto)) {
-                            var eventoReferido = /\d+$/.exec(texto);
-                            if ( ! (eventoReferido in eventosReferidos)) {
-                                eventosReferidos[eventoReferido] = [];
-                            }
-                            eventosReferidos[eventoReferido].push(tr);
-                        } else if (numeroEvento in eventosReferidos) {
-                            var parte = $('.infraEventoPrazoParte', tr);
-                            if (parte) {
-                                var tipoParte = parte.getAttribute('data-parte');
-                                eventosReferidos[numeroEvento].forEach(function(linha)
-                                {
-                                    linha.setAttribute('data-parte', tipoParte);
-                                });
-                            }
+                        }
+                    }
+                    if (/Refer\. ao Evento: \d+$/.test(texto)) {
+                        var eventoReferido = /\d+$/.exec(texto);
+                        if ( ! (eventoReferido in eventosReferidos)) {
+                            eventosReferidos[eventoReferido] = [];
+                        }
+                        eventosReferidos[eventoReferido].push(tr);
+                    } else if (numeroEvento in eventosReferidos) {
+                        var parte = $('.infraEventoPrazoParte', tr);
+                        if (parte) {
+                            var tipoParte = parte.getAttribute('data-parte');
+                            eventosReferidos[numeroEvento].forEach(function(linha)
+                            {
+                                linha.cells[linha.cells.length - 3].innerHTML += '<br>' + (colunaDescricao.innerHTML + '<br>').split('<br>')[1];
+                            });
                         }
                     }
                 });
