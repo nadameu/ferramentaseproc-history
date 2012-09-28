@@ -2278,7 +2278,7 @@ var Eproc = {
                 var possuiAnotacoes = false;
                 $$('tr[class^="infraTr"]', table).forEach(function(tr, r, trs)
                 {
-                    var colunaDocumentos = tr.cells[4];
+                    var colunaDocumentos = tr.cells[tr.cells.length - 1];
                     var tabelaDocumentos = $('table', colunaDocumentos);
                     if (tabelaDocumentos) {
                         function Anotacao(texto)
@@ -2386,7 +2386,7 @@ var Eproc = {
                     }
                     $$('a[href*="?acao=acessar_documento"]', colunaDocumentos).forEach(function(docLink, l, docLinks)
                     {
-                        docLink.href += '&titulo_janela=' + encodeURIComponent(tr.cells[0].textContent.trim() + ' - ' + docLink.textContent);
+                        docLink.href += '&titulo_janela=' + encodeURIComponent(tr.cells[tr.cells.length - 5].textContent.trim() + ' - ' + docLink.textContent);
                         docLink.className = 'extraDocLink';
                         var ext = docLink.getAttribute('data-mimetype');
                         if (ext) {
