@@ -2409,7 +2409,7 @@ var Eproc = {
                         var size = docLink.getAttribute('data-bytes');
                         if (size) {
                             if (docLink.hasAttribute('onmouseover')) {
-                                docLink.setAttribute('onmouseover', docLink.getAttribute('onmouseover').replace(/(\('Sigilo:.*)(','',400\))/, '$1[' + formatSize(size) + ']$2'));
+                                docLink.setAttribute('onmouseover', docLink.getAttribute('onmouseover').replace(/(<br>.*)(','',400\))/, '$1<br>' + formatSize(size) + '$2'));
                             } else if (docLink.hasAttribute('title')) {
                                 docLink.setAttribute('title', docLink.getAttribute('title').replace(/(Sigilo:.*)$/, '$1 [' + formatSize(size) + ']'));
                             }
