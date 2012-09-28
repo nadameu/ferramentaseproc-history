@@ -1113,10 +1113,10 @@ var Eproc = {
     },
     entrar: function()
     {
-	    $$('#divInfraBarraTribunalD .infraAcaoBarraSistema').forEach(function(barra, b, barras)
+        $$('#divInfraBarraTribunalD .infraAcaoBarraSistema').forEach(function(barra, b, barras)
         {
             if (b < (barras.length - 1)) barra.parentNode.removeChild(barra);
-    	});
+        });
         Eproc.corrigirCss('#fldLogin { position: static; margin: 6% auto; }');
         function Perfil(perfil)
         {
@@ -1385,14 +1385,6 @@ var Eproc = {
         if (unsafeWindow.FeP) {
             GM_analisarVersao(unsafeWindow.FeP);
         }
-	/*
-        if (document.body && document.body.hasAttribute('onload')) {
-            document.body.setAttribute('onload', document.body.getAttribute('onload').replace('infraProcessarResize();', ''));
-        }
-        if (unsafeWindow.infraResize instanceof Function) {
-            window.removeEventListener('resize', unsafeWindow.infraResize, false);
-        }
-	*/
         this.pagina = location.pathname.split('/eprocV2/')[1];
         this.parametros = {};
         for (var p = 0, params = location.search.split('?').splice(0).join('').split('&'), param; (p < params.length) && (param = params[p]); p++) {
@@ -2280,7 +2272,6 @@ var Eproc = {
                         Anotacao.prototype.createElemento = function(texto)
                         {
                             var anotacao = document.createElement('div');
-                            anotacao.className = 'noprint';
                             anotacao.appendChild(document.createTextNode(texto));
                             anotacao.textContent = texto;
                             anotacao.innerHTML = anotacao.innerHTML.split('\n').join('<br />');
@@ -2329,6 +2320,7 @@ var Eproc = {
                         function DocumentoInfoGedpro(texto)
                         {
                             Anotacao.apply(this, arguments);
+                            this.setClassName('noprint');
                             this.setClassName('noscreen');
                         }
                         DocumentoInfoGedpro.prototype = new Anotacao;
@@ -2591,7 +2583,7 @@ var Eproc = {
             });
             try {
                 var label = labelFound.parentNode.nextSibling.childNodes[0];
-	            return label.textContent;
+                return label.textContent;
             } catch (e) {
                 return null;
             }
@@ -2602,23 +2594,6 @@ var Eproc = {
             var lblTextoAtencao = $('#lblTextoAtencao');
             if (lblTextoAtencao && lblTextoAtencao.textContent == 'PROCESSO COM RÉU PRESO') return lblTextoAtencao;
             return null;
-        }
-        var firstStyle = $('head > style');
-        if (firstStyle) {
-            var formatacaoDiferenciada = /\[data-parte="INTERNO"\]/.test(firstStyle.textContent);
-            if (! formatacaoDiferenciada) {
-                ['infraNomeParte', 'infraEventoUsuario', 'infraEventoPrazoParte', 'infraEventoMuitoImportante'].forEach(function(nomeClasse)
-                {
-                    $$('.' + nomeClasse).forEach(function(elemento)
-                    {
-                        elemento.classList.remove(nomeClasse);
-                    });
-                });
-                $$('label.infraEventoDescricao').forEach(function(elemento)
-                {
-                    elemento.classList.remove('infraEventoDescricao');
-                });
-            }
         }
     },
     isSegundoGrau: function()
