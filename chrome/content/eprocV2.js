@@ -832,7 +832,7 @@ var Eproc = {
             table.classList.add('noscreen');
         });
     },
-    colorirTabela: function()
+    modificarTabelaProcessos: function()
     {
         var findTh = function(campo, texto)
         {
@@ -879,6 +879,7 @@ var Eproc = {
             while (table.tagName.toLowerCase() != 'table') {
                 table = table.parentNode;
             }
+            Eproc.permitirAbrirEmAbas(table);
             table.setAttribute('width', '');
             $$('th', table).forEach(function(th, h)
             {
@@ -1491,7 +1492,7 @@ var Eproc = {
                 this.colorirLembretes();
                 break;
         }
-        this.colorirTabela();
+        this.modificarTabelaProcessos();
         Gedpro.getLinkElement(function(linkGedpro)
         {
             try {
@@ -1842,6 +1843,29 @@ var Eproc = {
             }
             addStyleSheet(skin + '-extra');
         }
+    },
+    permitirAbrirEmAbas: function(table)
+    {
+        var link = new VirtualLink('Abrir os processos selecionados em abas/janelas', function(e)
+        {
+            var marcadas = 0, links = [];
+            $$('tr.infraTrMarcada', table).forEach(function(linha)
+            {
+                var linkProcesso = $('a[href^="controlador.php?acao=processo_selecionar"]', linha).href;
+                links.push(linkProcesso);
+                GM_log(linkProcesso);
+                marcadas++;
+            });
+            if (marcadas > 0) {
+                if (marcadas < 10 || (GM_yesNo('Abrindo ' + marcadas + ' abas/janelas', 'Tem certeza de que deseja abrir ' + marcadas + ' novas abas/janelas?\nSeu sistema pode deixar de responder.') == 'YES')) {
+                    links.forEach(function(linkProcesso)
+                    {
+                        window.open(linkProcesso);
+                    });
+                }
+            }                            
+        });
+        table.parentNode.insertBefore(link, table);
     },
     prevencao_judicial: function()
     {
@@ -2207,24 +2231,6 @@ var Eproc = {
                 }
             }
             return false;
-        }
-        function VirtualLink(texto, funcao)
-        {
-            var vLink = document.createElement('a');
-            vLink.href = '#';
-            vLink.innerHTML = texto;
-            var fn = function(e)
-            {
-                e.preventDefault();
-                e.stopPropagation();
-                funcao.call(this);
-            };
-            vLink.addEventListener('click', fn, false);
-            vLink.removeTrigger = function()
-            {
-                this.removeEventListener('click', fn, false);
-            };
-            return vLink;
         }
         var processosRelacionados = getProcessosRelacionados();
         if (processosRelacionados) {
@@ -2755,5 +2761,23 @@ var Eproc = {
         }
     }
 };
+function VirtualLink(texto, funcao)
+{
+    var vLink = document.createElement('a');
+    vLink.href = '#';
+    vLink.innerHTML = texto;
+    var fn = function(e)
+    {
+        e.preventDefault();
+        e.stopPropagation();
+        funcao.call(this);
+    };
+    vLink.addEventListener('click', fn, false);
+    vLink.removeTrigger = function()
+    {
+        this.removeEventListener('click', fn, false);
+    };
+    return vLink;
+}
 Eproc.init();
 
