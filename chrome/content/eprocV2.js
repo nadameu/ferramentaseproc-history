@@ -455,6 +455,11 @@ var Gedpro = (function()
         };
     })();
     return {
+        error: function(msg)
+        {
+            alert(msg);
+            buscando = false;
+        },
         getDocs: function(pagina)
         {
             if (buscando) {
@@ -499,12 +504,7 @@ var Gedpro = (function()
             }
             var onerror = function()
             {
-                var timer;
-                timer = window.setInterval(function()
-                {
-                    window.clearInterval(timer);
-                    alert('Não foi possível obter os grupos do usuário.\nEstarão acessíveis apenas os documentos com visibilidade pública.');
-                }, 100);
+                Gedpro.warn('Não foi possível obter os grupos do usuário.\nEstarão acessíveis apenas os documentos com visibilidade pública.');
                 return setPublicGroups();
             };
             Gedpro.getLogin(function(login)
@@ -528,11 +528,7 @@ var Gedpro = (function()
                 });
             }, function()
             {
-                timer = window.setInterval(function()
-                {
-                    window.clearInterval(timer);
-                    alert('Não é possível obter os grupos do usuário.\nEstarão acessíveis apenas os documentos com visibilidade pública.');
-                }, 100);
+                Gedpro.warn('Não é possível obter os grupos do usuário.\nEstarão acessíveis apenas os documentos com visibilidade pública.');
                 return setPublicGroups();
             });
         },
@@ -557,7 +553,7 @@ var Gedpro = (function()
                             host = a.host;
                             Gedpro.getLink(callback);
                         } else {
-                            alert('Não foi possível obter o endereço do GEDPRO.');
+                            Gedpro.error('Não foi possível obter o endereço do GEDPRO.');
                         }
                     }
                 };
@@ -603,7 +599,8 @@ var Gedpro = (function()
             if (loginForm) {
                 return callback(loginForm);
             }
-            Gedpro.getLink(function(link)
+            var getLinkCallback;
+            getLinkCallback = function(link)
             {
                 Gedpro.pushStatus('Obtendo link de requisição de login...');
                 GM_xmlhttpRequest({
@@ -613,15 +610,20 @@ var Gedpro = (function()
                     {
                         Gedpro.popStatus();
                         var formLogin = /FormLogin\.asp\?[^"]+/.exec(obj.responseText);
+                        var mainframePage = /\/mainframe\.asp\?[^"]+/.exec(obj.responseText);
                         if (formLogin) {
                             loginForm = 'http://' + host + '/' + formLogin;
                             Gedpro.getLoginForm(callback);
+                        } else if (mainframePage) {
+                            var mainframe = 'http://' + host + mainframePage;
+                            getLinkCallback(mainframe);
                         } else {
-                            alert('Não foi possível obter o link de requisição de login.');
+                            Gedpro.error('Não foi possível obter o link de requisição de login.');
                         }
                     }
                 });
-            });
+            }
+            Gedpro.getLink(getLinkCallback);
         },
         getNewLogin: function(e)
         {
@@ -629,7 +631,7 @@ var Gedpro = (function()
             e.stopPropagation();
             Gedpro.getLogin(function(login)
             {
-                alert('Feche o documento e tente novamente agora.');
+                Gedpro.info('Feche o documento e tente novamente agora.');
             });
         },
         getValidLogin: function(callback, onerror)
@@ -639,7 +641,7 @@ var Gedpro = (function()
             }
             onerror = onerror || function()
             {
-                alert('Não é possível fazer login no GEDPRO.');
+                Gedpro.error('Não é possível fazer login no GEDPRO.');
             };
             Gedpro.getLoginForm(function(loginForm)
             {
@@ -678,10 +680,19 @@ var Gedpro = (function()
                     },
                     onerror: function(obj)
                     {
-                        alert('Não foi possível carregar a página ' + pagina + ' da árvore de documentos.');
+                        Gedpro.error('Não foi possível carregar a página ' + pagina + ' da árvore de documentos.');
                     }
                 });
             });
+        },
+        info: function(msg)
+        {
+            var timer;
+            timer = window.setInterval(function()
+            {
+                window.clearInterval(timer);
+                alert(msg);
+            }, 100);
         },
         popStatus: function()
         {
@@ -701,6 +712,10 @@ var Gedpro = (function()
                 statuses.push(oldText);
                 linkCargaDocs.textContent = status;
             }
+        },
+        warn: function(msg)
+        {
+            Gedpro.info(msg);
         }
     };
 })();
@@ -1846,6 +1861,9 @@ var Eproc = {
     },
     permitirAbrirEmAbas: function(table)
     {
+        if ($$('a[href^="controlador.php?acao=processo_selecionar&"]').length <= 1) {
+            return;
+        }
         var link = new VirtualLink('Abrir os processos selecionados em abas/janelas', function(e)
         {
             var marcadas = 0, links = [];
