@@ -2292,9 +2292,99 @@ var Eproc = {
             }
             return size + kPowers[kPower];
         }
+        function getNextPage(div)
+        {
+            if (typeof div == 'undefined') div = document;
+            var pageSelector = $('#selPaginacaoR', div);
+            if (! pageSelector) return null;
+            if (typeof div == 'undefined') {
+                var currentPage = $('option[selected]', pageSelector).value;
+                if (currentPage != 0) return null;
+            }
+            var nextPage = $('#selPaginacaoR + a', pageSelector.parentNode);
+            if (! nextPage) return null;
+            return nextPage;
+        }
         $$('.infraTable').forEach(function(table, t, tables)
         {
             if (table.getAttribute('summary') == 'Eventos' || table.rows[0].cells[0].textContent == 'Evento') {
+                applyTableModifications(table);
+                var nextPage = getNextPage();
+                if (nextPage) {
+                    var tFoot = table.createTFoot();
+                    var cell = tFoot.insertRow(0).insertCell(0);
+                    cell.style.textAlign = 'center';
+                    cell.colSpan = table.rows[0].cells.length;
+                    var div1 = document.createElement('div');
+                    div1.style.display = 'inline-block';
+                    div1.style.width = '50%';
+                    cell.appendChild(div1);
+                    var imgNext = document.createElement('img');
+                    imgNext.src = 'imagens/loading_pequeno.gif';
+                    imgNext.style.display = 'none';
+                    cell.insertBefore(imgNext, div1.nextSibling);
+                    var carregarNovaPagina;
+                    var link = new VirtualLink('Carregar próxima página', carregarNovaPagina = function(todas)
+                    {
+                        if (typeof todas == 'undefined') todas = false;
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('GET', link.href, true);
+                        xhr.onreadystatechange = function()
+                        {
+                            if (xhr.readyState == 4) {
+                                div1.style.display = 'inline-block';
+                                linkTodas.style.display = '';
+                                imgNext.style.display = 'none';
+                                if (xhr.status == 200) {
+                                    var div = document.createElement('div');
+                                    div.innerHTML = xhr.responseText;
+                                    var newTable = div.querySelector('table[summary="Eventos"]');
+                                    applyTableModifications(newTable);
+                                    var newTbody = newTable.querySelector('tbody');
+                                    table.insertBefore(newTbody, table.tFoot);
+                                    var newNextPage = getNextPage(div);
+                                    if (newNextPage) {
+                                        link.href = newNextPage.href;
+                                        if (todas) {
+                                            carregarNovaPagina(todas);
+                                        }
+                                    } else {
+                                        table.removeChild(table.tFoot);
+                                    }
+                                    $$('input[type="hidden"][id^="hdnEventoRelev_"]', div).forEach(function(input)
+                                    {
+                                        table.parentNode.insertBefore(input, table.nextSibling);
+                                    });
+                                    $$('input[type="hidden"][id^="hdnRelevanciaDocsEv_"]', div).forEach(function(input)
+                                    {
+                                        table.parentNode.insertBefore(input, table.nextSibling);
+                                    });
+                                    unsafeWindow.carregarEventosDocsRelevantes();
+                                }
+                            }
+                        };
+                        div1.style.display = 'none';
+                        linkTodas.style.display = 'none';
+                        imgNext.style.display = '';
+                        xhr.send('');
+                    });
+                    link.href = nextPage.href;
+                    div1.appendChild(link);
+                    var linkTodas = new VirtualLink('Carregar TODAS as páginas', function() { carregarNovaPagina.call(this, true); });
+                    cell.insertBefore(linkTodas, imgNext.nextSibling);
+                }
+            }
+        });
+        function applyTableModifications(table)
+        {
+                if (! table.tHead) {
+                    table.createTHead();
+                    var firstRow = table.rows[0];
+                    if (firstRow.cells[0].tagName == 'TH') {
+                        table.tHead.appendChild(firstRow);
+                    }
+                }
+                var tHeadRow = null;
                 $$('th', table).forEach(function(th)
                 {
                     th.setAttribute('width', '');
@@ -2515,8 +2605,7 @@ var Eproc = {
                     }
                     return /^(TXT|PDF|GIF|JPEG|JPG|PNG|HTM|HTML)$/.exec(mime);
                 }
-            }
-        });
+        }
         var tableRelacionado = $('#tableRelacionado');
         var labelRelacionado = $('#lblRelac') || $('#lblProcRel');
         if (tableRelacionado && labelRelacionado) {
