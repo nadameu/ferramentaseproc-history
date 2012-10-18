@@ -455,6 +455,11 @@ var Gedpro = (function()
         };
     })();
     return {
+        error: function(msg)
+        {
+            alert(msg);
+            buscando = false;
+        },
         getDocs: function(pagina)
         {
             if (buscando) {
@@ -499,12 +504,7 @@ var Gedpro = (function()
             }
             var onerror = function()
             {
-                var timer;
-                timer = window.setInterval(function()
-                {
-                    window.clearInterval(timer);
-                    alert('Não foi possível obter os grupos do usuário.\nEstarão acessíveis apenas os documentos com visibilidade pública.');
-                }, 100);
+                Gedpro.warn('Não foi possível obter os grupos do usuário.\nEstarão acessíveis apenas os documentos com visibilidade pública.');
                 return setPublicGroups();
             };
             Gedpro.getLogin(function(login)
@@ -528,11 +528,7 @@ var Gedpro = (function()
                 });
             }, function()
             {
-                timer = window.setInterval(function()
-                {
-                    window.clearInterval(timer);
-                    alert('Não é possível obter os grupos do usuário.\nEstarão acessíveis apenas os documentos com visibilidade pública.');
-                }, 100);
+                Gedpro.warn('Não é possível obter os grupos do usuário.\nEstarão acessíveis apenas os documentos com visibilidade pública.');
                 return setPublicGroups();
             });
         },
@@ -557,7 +553,7 @@ var Gedpro = (function()
                             host = a.host;
                             Gedpro.getLink(callback);
                         } else {
-                            alert('Não foi possível obter o endereço do GEDPRO.');
+                            Gedpro.error('Não foi possível obter o endereço do GEDPRO.');
                         }
                     }
                 };
@@ -603,7 +599,8 @@ var Gedpro = (function()
             if (loginForm) {
                 return callback(loginForm);
             }
-            Gedpro.getLink(function(link)
+            var getLinkCallback;
+            getLinkCallback = function(link)
             {
                 Gedpro.pushStatus('Obtendo link de requisição de login...');
                 GM_xmlhttpRequest({
@@ -613,15 +610,20 @@ var Gedpro = (function()
                     {
                         Gedpro.popStatus();
                         var formLogin = /FormLogin\.asp\?[^"]+/.exec(obj.responseText);
+                        var mainframePage = /\/mainframe\.asp\?[^"]+/.exec(obj.responseText);
                         if (formLogin) {
                             loginForm = 'http://' + host + '/' + formLogin;
                             Gedpro.getLoginForm(callback);
+                        } else if (mainframePage) {
+                            var mainframe = 'http://' + host + mainframePage;
+                            getLinkCallback(mainframe);
                         } else {
-                            alert('Não foi possível obter o link de requisição de login.');
+                            Gedpro.error('Não foi possível obter o link de requisição de login.');
                         }
                     }
                 });
-            });
+            }
+            Gedpro.getLink(getLinkCallback);
         },
         getNewLogin: function(e)
         {
@@ -629,7 +631,7 @@ var Gedpro = (function()
             e.stopPropagation();
             Gedpro.getLogin(function(login)
             {
-                alert('Feche o documento e tente novamente agora.');
+                Gedpro.info('Feche o documento e tente novamente agora.');
             });
         },
         getValidLogin: function(callback, onerror)
@@ -639,7 +641,7 @@ var Gedpro = (function()
             }
             onerror = onerror || function()
             {
-                alert('Não é possível fazer login no GEDPRO.');
+                Gedpro.error('Não é possível fazer login no GEDPRO.');
             };
             Gedpro.getLoginForm(function(loginForm)
             {
@@ -678,10 +680,19 @@ var Gedpro = (function()
                     },
                     onerror: function(obj)
                     {
-                        alert('Não foi possível carregar a página ' + pagina + ' da árvore de documentos.');
+                        Gedpro.error('Não foi possível carregar a página ' + pagina + ' da árvore de documentos.');
                     }
                 });
             });
+        },
+        info: function(msg)
+        {
+            var timer;
+            timer = window.setInterval(function()
+            {
+                window.clearInterval(timer);
+                alert(msg);
+            }, 100);
         },
         popStatus: function()
         {
@@ -701,6 +712,10 @@ var Gedpro = (function()
                 statuses.push(oldText);
                 linkCargaDocs.textContent = status;
             }
+        },
+        warn: function(msg)
+        {
+            Gedpro.info(msg);
         }
     };
 })();
@@ -832,7 +847,7 @@ var Eproc = {
             table.classList.add('noscreen');
         });
     },
-    colorirTabela: function()
+    modificarTabelaProcessos: function()
     {
         var findTh = function(campo, texto)
         {
@@ -879,6 +894,7 @@ var Eproc = {
             while (table.tagName.toLowerCase() != 'table') {
                 table = table.parentNode;
             }
+            Eproc.permitirAbrirEmAbas(table);
             table.setAttribute('width', '');
             $$('th', table).forEach(function(th, h)
             {
@@ -931,6 +947,26 @@ var Eproc = {
         var extra = Eproc.getStyle('extraCorrecaoCss');
         extra.innerHTML = 'div.infraAreaDados { height: auto !important; overflow: inherit; }';
         extra.innerHTML += rule;
+    },
+    corrigirLinksDocumentos: function()
+    {
+        var links = $$('a[href^="controlador.php?acao=acessar_documento"]');
+        links.forEach(function(link)
+        {
+            var id;
+            [, id] = /\&doc=(\d+)/.exec(link.href);
+            link.addEventListener('click', function(e)
+            {
+                e.preventDefault();
+                e.stopPropagation();
+                var win = Eproc.windows[id];
+                if (typeof win == 'object' && !win.closed) {
+                    win.focus();
+                } else {
+                    Eproc.windows[id] = window.open(link.href, id, 'menubar=0,resizable=1,status=0,toolbar=0,location=0,directories=0,scrollbars=1');
+                }
+            }, false);
+        });
     },
     digitar_documento: function()
     {
@@ -1113,10 +1149,10 @@ var Eproc = {
     },
     entrar: function()
     {
-	    $$('#divInfraBarraTribunalD .infraAcaoBarraSistema').forEach(function(barra, b, barras)
+        $$('#divInfraBarraTribunalD .infraAcaoBarraSistema').forEach(function(barra, b, barras)
         {
             if (b < (barras.length - 1)) barra.parentNode.removeChild(barra);
-    	});
+        });
         Eproc.corrigirCss('#fldLogin { position: static; margin: 6% auto; }');
         function Perfil(perfil)
         {
@@ -1385,12 +1421,6 @@ var Eproc = {
         if (unsafeWindow.FeP) {
             GM_analisarVersao(unsafeWindow.FeP);
         }
-        if (document.body && document.body.hasAttribute('onload')) {
-            document.body.setAttribute('onload', document.body.getAttribute('onload').replace('infraProcessarResize();', ''));
-        }
-        if (unsafeWindow.infraResize instanceof Function) {
-            window.removeEventListener('resize', unsafeWindow.infraResize, false);
-        }
         this.pagina = location.pathname.split('/eprocV2/')[1];
         this.parametros = {};
         for (var p = 0, params = location.search.split('?').splice(0).join('').split('&'), param; (p < params.length) && (param = params[p]); p++) {
@@ -1477,7 +1507,7 @@ var Eproc = {
                 this.colorirLembretes();
                 break;
         }
-        this.colorirTabela();
+        this.modificarTabelaProcessos();
         Gedpro.getLinkElement(function(linkGedpro)
         {
             try {
@@ -1500,6 +1530,9 @@ var Eproc = {
             this[this.acao]();
         } else if (this.parametros.acao_origem && this[this.parametros.acao_origem + '_destino']) {
             this[this.parametros.acao_origem + '_destino']();
+        }
+        if (this.acao != 'processo_selecionar') {
+            Eproc.corrigirLinksDocumentos();
         }
         window.addEventListener('beforeunload', function(e)
         {
@@ -1825,6 +1858,32 @@ var Eproc = {
             }
             addStyleSheet(skin + '-extra');
         }
+    },
+    permitirAbrirEmAbas: function(table)
+    {
+        if ($$('a[href^="controlador.php?acao=processo_selecionar&"]').length <= 1) {
+            return;
+        }
+        var link = new VirtualLink('Abrir os processos selecionados em abas/janelas', function(e)
+        {
+            var marcadas = 0, links = [];
+            $$('tr.infraTrMarcada', table).forEach(function(linha)
+            {
+                var linkProcesso = $('a[href^="controlador.php?acao=processo_selecionar"]', linha).href;
+                links.push(linkProcesso);
+                GM_log(linkProcesso);
+                marcadas++;
+            });
+            if (marcadas > 0) {
+                if (marcadas < 10 || (GM_yesNo('Abrindo ' + marcadas + ' abas/janelas', 'Tem certeza de que deseja abrir ' + marcadas + ' novas abas/janelas?\nSeu sistema pode deixar de responder.') == 'YES')) {
+                    links.forEach(function(linkProcesso)
+                    {
+                        window.open(linkProcesso);
+                    });
+                }
+            }                            
+        });
+        table.parentNode.insertBefore(link, table);
     },
     prevencao_judicial: function()
     {
@@ -2191,24 +2250,6 @@ var Eproc = {
             }
             return false;
         }
-        function VirtualLink(texto, funcao)
-        {
-            var vLink = document.createElement('a');
-            vLink.href = '#';
-            vLink.innerHTML = texto;
-            var fn = function(e)
-            {
-                e.preventDefault();
-                e.stopPropagation();
-                funcao.call(this);
-            };
-            vLink.addEventListener('click', fn, false);
-            vLink.removeTrigger = function()
-            {
-                this.removeEventListener('click', fn, false);
-            };
-            return vLink;
-        }
         var processosRelacionados = getProcessosRelacionados();
         if (processosRelacionados) {
             processosRelacionados.forEach(function(linkProcessoRelacionado)
@@ -2251,17 +2292,108 @@ var Eproc = {
             }
             return size + kPowers[kPower];
         }
+        function getNextPage(div)
+        {
+            if (typeof div == 'undefined') div = document;
+            var pageSelector = $('#selPaginacaoR', div);
+            if (! pageSelector) return null;
+            if (typeof div == 'undefined') {
+                var currentPage = $('option[selected]', pageSelector).value;
+                if (currentPage != 0) return null;
+            }
+            var nextPage = $('#selPaginacaoR + a', pageSelector.parentNode);
+            if (! nextPage) return null;
+            return nextPage;
+        }
         $$('.infraTable').forEach(function(table, t, tables)
         {
             if (table.getAttribute('summary') == 'Eventos' || table.rows[0].cells[0].textContent == 'Evento') {
+                applyTableModifications(table);
+                var nextPage = getNextPage();
+                if (nextPage) {
+                    var tFoot = table.createTFoot();
+                    var cell = tFoot.insertRow(0).insertCell(0);
+                    cell.style.textAlign = 'center';
+                    cell.colSpan = table.rows[0].cells.length;
+                    var div1 = document.createElement('div');
+                    div1.style.display = 'inline-block';
+                    div1.style.width = '50%';
+                    cell.appendChild(div1);
+                    var imgNext = document.createElement('img');
+                    imgNext.src = 'imagens/loading_pequeno.gif';
+                    imgNext.style.display = 'none';
+                    cell.insertBefore(imgNext, div1.nextSibling);
+                    var carregarNovaPagina;
+                    var link = new VirtualLink('Carregar próxima página', carregarNovaPagina = function(todas)
+                    {
+                        if (typeof todas == 'undefined') todas = false;
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('GET', link.href, true);
+                        xhr.onreadystatechange = function()
+                        {
+                            if (xhr.readyState == 4) {
+                                div1.style.display = 'inline-block';
+                                linkTodas.style.display = '';
+                                imgNext.style.display = 'none';
+                                if (xhr.status == 200) {
+                                    var div = document.createElement('div');
+                                    div.innerHTML = xhr.responseText;
+                                    var newTable = div.querySelector('table[summary="Eventos"]');
+                                    applyTableModifications(newTable);
+                                    var newTbody = newTable.querySelector('tbody');
+                                    table.insertBefore(newTbody, table.tFoot);
+                                    var newNextPage = getNextPage(div);
+                                    if (newNextPage) {
+                                        link.href = newNextPage.href;
+                                        if (todas) {
+                                            carregarNovaPagina(todas);
+                                        }
+                                    } else {
+                                        table.removeChild(table.tFoot);
+                                    }
+                                    $$('input[type="hidden"][id^="hdnEventoRelev_"]', div).forEach(function(input)
+                                    {
+                                        table.parentNode.insertBefore(input, table.nextSibling);
+                                    });
+                                    $$('input[type="hidden"][id^="hdnRelevanciaDocsEv_"]', div).forEach(function(input)
+                                    {
+                                        table.parentNode.insertBefore(input, table.nextSibling);
+                                    });
+                                    unsafeWindow.carregarEventosDocsRelevantes();
+                                }
+                            }
+                        };
+                        div1.style.display = 'none';
+                        linkTodas.style.display = 'none';
+                        imgNext.style.display = '';
+                        xhr.send('');
+                    });
+                    link.href = nextPage.href;
+                    div1.appendChild(link);
+                    var linkTodas = new VirtualLink('Carregar TODAS as páginas', function() { carregarNovaPagina.call(this, true); });
+                    cell.insertBefore(linkTodas, imgNext.nextSibling);
+                }
+            }
+        });
+        function applyTableModifications(table)
+        {
+                if (! table.tHead) {
+                    table.createTHead();
+                    var firstRow = table.rows[0];
+                    if (firstRow.cells[0].tagName == 'TH') {
+                        table.tHead.appendChild(firstRow);
+                    }
+                }
+                var tHeadRow = null;
                 $$('th', table).forEach(function(th)
                 {
                     th.setAttribute('width', '');
                 });
                 var possuiAnotacoes = false;
+                var eventosReferidos = {};
                 $$('tr[class^="infraTr"]', table).forEach(function(tr, r, trs)
                 {
-                    var colunaDocumentos = tr.cells[4];
+                    var colunaDocumentos = tr.cells[tr.cells.length - 1];
                     var tabelaDocumentos = $('table', colunaDocumentos);
                     if (tabelaDocumentos) {
                         function Anotacao(texto)
@@ -2278,7 +2410,6 @@ var Eproc = {
                         Anotacao.prototype.createElemento = function(texto)
                         {
                             var anotacao = document.createElement('div');
-                            anotacao.className = 'noprint';
                             anotacao.appendChild(document.createTextNode(texto));
                             anotacao.textContent = texto;
                             anotacao.innerHTML = anotacao.innerHTML.split('\n').join('<br />');
@@ -2327,6 +2458,7 @@ var Eproc = {
                         function DocumentoInfoGedpro(texto)
                         {
                             Anotacao.apply(this, arguments);
+                            this.setClassName('noprint');
                             this.setClassName('noscreen');
                         }
                         DocumentoInfoGedpro.prototype = new Anotacao;
@@ -2369,7 +2501,7 @@ var Eproc = {
                     }
                     $$('a[href*="?acao=acessar_documento"]', colunaDocumentos).forEach(function(docLink, l, docLinks)
                     {
-                        docLink.href += '&titulo_janela=' + encodeURIComponent(tr.cells[0].textContent.trim() + ' - ' + docLink.textContent);
+                        docLink.href += '&titulo_janela=' + encodeURIComponent(tr.cells[tr.cells.length - 5].textContent.trim() + ' - ' + docLink.textContent);
                         docLink.className = 'extraDocLink';
                         var ext = docLink.getAttribute('data-mimetype');
                         if (ext) {
@@ -2391,7 +2523,7 @@ var Eproc = {
                         var size = docLink.getAttribute('data-bytes');
                         if (size) {
                             if (docLink.hasAttribute('onmouseover')) {
-                                docLink.setAttribute('onmouseover', docLink.getAttribute('onmouseover').replace(/(\('Sigilo:.*)(','',400\))/, '$1[' + formatSize(size) + ']$2'));
+                                docLink.setAttribute('onmouseover', docLink.getAttribute('onmouseover').replace(/(<br>.*)(','',400\))/, '$1<br>' + formatSize(size) + '$2'));
                             } else if (docLink.hasAttribute('title')) {
                                 docLink.setAttribute('title', docLink.getAttribute('title').replace(/(Sigilo:.*)$/, '$1 [' + formatSize(size) + ']'));
                             }
@@ -2424,6 +2556,30 @@ var Eproc = {
                             }
                         }, false);
                     })
+                    var colunaDescricao = tr.cells[tr.cells.length - 3];
+                    var texto = colunaDescricao.textContent;
+                    var numeroEvento = /^\d+/.exec(tr.cells[tr.cells.length - 5].textContent);
+                    if (tr.getAttribute('data-parte') == 'INTERNO') {
+                        if (/^Despacho\/Decisão - Conversão em Diligência$/.test(texto) || /^Trânsito em Julgado$/.test(texto)) {
+                            tr.classList.add('infraEventoImportante');
+                        }
+                    }
+                    if (/Refer\. ao Evento: \d+$/.test(texto)) {
+                        var eventoReferido = /\d+$/.exec(texto);
+                        if ( ! (eventoReferido in eventosReferidos)) {
+                            eventosReferidos[eventoReferido] = [];
+                        }
+                        eventosReferidos[eventoReferido].push(tr);
+                    } else if (numeroEvento in eventosReferidos) {
+                        var parte = $('.infraEventoPrazoParte', tr);
+                        if (parte) {
+                            var tipoParte = parte.getAttribute('data-parte');
+                            eventosReferidos[numeroEvento].forEach(function(linha)
+                            {
+                                linha.cells[linha.cells.length - 3].innerHTML += '<br>' + (colunaDescricao.innerHTML + '<br>').split('<br>')[1];
+                            });
+                        }
+                    }
                 });
                 table.classList.add('extraTabelaEventos');
                 if (possuiAnotacoes) {
@@ -2449,8 +2605,7 @@ var Eproc = {
                     }
                     return /^(TXT|PDF|GIF|JPEG|JPG|PNG|HTM|HTML)$/.exec(mime);
                 }
-            }
-        });
+        }
         var tableRelacionado = $('#tableRelacionado');
         var labelRelacionado = $('#lblRelac') || $('#lblProcRel');
         if (tableRelacionado && labelRelacionado) {
@@ -2589,7 +2744,7 @@ var Eproc = {
             });
             try {
                 var label = labelFound.parentNode.nextSibling.childNodes[0];
-	            return label.textContent;
+                return label.textContent;
             } catch (e) {
                 return null;
             }
@@ -2600,23 +2755,6 @@ var Eproc = {
             var lblTextoAtencao = $('#lblTextoAtencao');
             if (lblTextoAtencao && lblTextoAtencao.textContent == 'PROCESSO COM RÉU PRESO') return lblTextoAtencao;
             return null;
-        }
-        var firstStyle = $('head > style');
-        if (firstStyle) {
-            var formatacaoDiferenciada = /\[data-parte="INTERNO"\]/.test(firstStyle.textContent);
-            if (! formatacaoDiferenciada) {
-                ['infraNomeParte', 'infraEventoUsuario', 'infraEventoPrazoParte', 'infraEventoMuitoImportante'].forEach(function(nomeClasse)
-                {
-                    $$('.' + nomeClasse).forEach(function(elemento)
-                    {
-                        elemento.classList.remove(nomeClasse);
-                    });
-                });
-                $$('label.infraEventoDescricao').forEach(function(elemento)
-                {
-                    elemento.classList.remove('infraEventoDescricao');
-                });
-            }
         }
     },
     isSegundoGrau: function()
@@ -2730,5 +2868,23 @@ var Eproc = {
         }
     }
 };
+function VirtualLink(texto, funcao)
+{
+    var vLink = document.createElement('a');
+    vLink.href = '#';
+    vLink.innerHTML = texto;
+    var fn = function(e)
+    {
+        e.preventDefault();
+        e.stopPropagation();
+        funcao.call(this);
+    };
+    vLink.addEventListener('click', fn, false);
+    vLink.removeTrigger = function()
+    {
+        this.removeEventListener('click', fn, false);
+    };
+    return vLink;
+}
 Eproc.init();
 
