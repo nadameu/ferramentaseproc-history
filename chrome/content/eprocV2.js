@@ -572,27 +572,6 @@ var Gedpro = (function()
                 Gedpro.getLinkElement(callback);
             }
         },
-        getLogin: function(callback, onerror)
-        {
-            Gedpro.getValidLogin(function(validLogin)
-            {
-                Gedpro.pushStatus('Tentando fazer login no GEDPRO...');
-                GM_xmlhttpRequest({
-                    method: 'GET',
-                    url: validLogin,
-                    onload: function(obj)
-                    {
-                        Gedpro.popStatus();
-                        var timer;
-                        timer = window.setTimeout(function()
-                        {
-                            window.clearTimeout(timer);
-                            callback();
-                        }, 100);
-                    }, onerror: onerror
-                });
-            }, onerror);
-        },
         getLoginForm: function(callback)
         {
             var getLinkCallback;
@@ -630,7 +609,7 @@ var Gedpro = (function()
                 Gedpro.info('Feche o documento e tente novamente agora.');
             });
         },
-        getValidLogin: function(callback, onerror)
+        getLogin: function(callback, onerror)
         {
             onerror = onerror || function()
             {
@@ -2283,15 +2262,15 @@ var Eproc = {
             }
             return size + kPowers[kPower];
         }
+        function isFirstPage()
+        {
+            return $$('#selPaginacaoT').length == 0;
+        }
         function getNextPage(div)
         {
             if (typeof div == 'undefined') div = document;
             var pageSelector = $('#selPaginacaoR', div);
             if (! pageSelector) return null;
-            if (typeof div == 'undefined') {
-                var currentPage = $('option[selected]', pageSelector).value;
-                if (currentPage != 0) return null;
-            }
             var nextPage = $('#selPaginacaoR + a', pageSelector.parentNode);
             if (! nextPage) return null;
             return nextPage;
@@ -2300,8 +2279,9 @@ var Eproc = {
         {
             if (table.getAttribute('summary') == 'Eventos' || table.rows[0].cells[0].textContent == 'Evento') {
                 applyTableModifications(table);
+                var firstPage = isFirstPage();
                 var nextPage = getNextPage();
-                if (nextPage) {
+                if (firstPage && nextPage) {
                     var tFoot = table.createTFoot();
                     var cell = tFoot.insertRow(0).insertCell(0);
                     cell.style.textAlign = 'center';
@@ -2333,14 +2313,25 @@ var Eproc = {
                                     applyTableModifications(newTable);
                                     var newTbody = newTable.querySelector('tbody');
                                     table.insertBefore(newTbody, table.tFoot);
+                                    var opcoes = $$('#selPaginacaoR option'), primeiraOpcao, segundaOpcao;
+                                    [primeiraOpcao, segundaOpcao] = opcoes;
+                                    var paginaSegundaOpcao, primeiroEvento, ultimoEvento;
+                                    [, paginaSegundaOpcao] = /^(\d+)/.exec(segundaOpcao.textContent);
+                                    [, primeiroEvento] = /Evento (\d+)/.exec(segundaOpcao.textContent);
+                                    [, ultimoEvento] = / a (\d+)$/.exec(primeiraOpcao.textContent);
+                                    primeiraOpcao.textContent = '1-' + paginaSegundaOpcao + ' - Evento ' + primeiroEvento + ' a ' + ultimoEvento;
+                                    segundaOpcao.parentNode.removeChild(segundaOpcao);
                                     var newNextPage = getNextPage(div);
                                     if (newNextPage) {
                                         link.href = newNextPage.href;
+                                        nextPage.href = newNextPage.href;
                                         if (todas) {
                                             carregarNovaPagina(todas);
                                         }
                                     } else {
                                         table.removeChild(table.tFoot);
+                                        nextPage.parentNode.removeChild($('#ultimaR').parentNode);
+                                        nextPage.parentNode.removeChild(nextPage);
                                     }
                                     $$('input[type="hidden"][id^="hdnEventoRelev_"]', div).forEach(function(input)
                                     {
