@@ -100,7 +100,7 @@ CheckBox.prototype = {
 };
 var Gedpro = (function()
 {
-    var linkElement, link, loginForm, validLogin, login, grupos, docsUrl, host;
+    var linkElement, link, login, grupos, docsUrl, host;
     var statuses = [], buscando = false;
     var GedproNodes = function(doc)
     {
@@ -576,29 +576,25 @@ var Gedpro = (function()
         {
             Gedpro.getValidLogin(function(validLogin)
             {
-                var iframe = document.createElement('iframe');
-                iframe.style.display = 'none';
-                iframe.addEventListener('load', function(e)
-                {
-                    Gedpro.popStatus();
-                    var timer;
-                    timer = window.setTimeout(function()
-                    {
-                        window.clearTimeout(timer);
-                        $('#divInfraAreaTelaE').removeChild(iframe);
-                        callback();
-                    }, 100);
-                }, false);
-                $('#divInfraAreaTelaE').appendChild(iframe);
                 Gedpro.pushStatus('Tentando fazer login no GEDPRO...');
-                iframe.src = validLogin;
+                GM_xmlhttpRequest({
+                    method: 'GET',
+                    url: validLogin,
+                    onload: function(obj)
+                    {
+                        Gedpro.popStatus();
+                        var timer;
+                        timer = window.setTimeout(function()
+                        {
+                            window.clearTimeout(timer);
+                            callback();
+                        }, 100);
+                    }, onerror: onerror
+                });
             }, onerror);
         },
         getLoginForm: function(callback)
         {
-            if (loginForm) {
-                return callback(loginForm);
-            }
             var getLinkCallback;
             getLinkCallback = function(link)
             {
@@ -612,8 +608,8 @@ var Gedpro = (function()
                         var formLogin = /FormLogin\.asp\?[^"]+/.exec(obj.responseText);
                         var mainframePage = /\/mainframe\.asp\?[^"]+/.exec(obj.responseText);
                         if (formLogin) {
-                            loginForm = 'http://' + host + '/' + formLogin;
-                            Gedpro.getLoginForm(callback);
+                            var loginForm = 'http://' + host + '/' + formLogin;
+                            return callback(loginForm);
                         } else if (mainframePage) {
                             var mainframe = 'http://' + host + mainframePage;
                             getLinkCallback(mainframe);
@@ -636,9 +632,6 @@ var Gedpro = (function()
         },
         getValidLogin: function(callback, onerror)
         {
-            if (validLogin) {
-                return callback(validLogin);
-            }
             onerror = onerror || function()
             {
                 Gedpro.error('Não é possível fazer login no GEDPRO.');
@@ -655,8 +648,7 @@ var Gedpro = (function()
                         if (/<!-- Erro /.test(obj.responseText)) {
                             onerror();
                         } else {
-                            validLogin = loginForm;
-                            Gedpro.getValidLogin(callback);
+                            return callback(loginForm);
                         }
                     }
                 });
@@ -1871,7 +1863,6 @@ var Eproc = {
             {
                 var linkProcesso = $('a[href^="controlador.php?acao=processo_selecionar"]', linha).href;
                 links.push(linkProcesso);
-                GM_log(linkProcesso);
                 marcadas++;
             });
             if (marcadas > 0) {
@@ -2377,234 +2368,234 @@ var Eproc = {
         });
         function applyTableModifications(table)
         {
-                if (! table.tHead) {
-                    table.createTHead();
-                    var firstRow = table.rows[0];
-                    if (firstRow.cells[0].tagName == 'TH') {
-                        table.tHead.appendChild(firstRow);
-                    }
+            if (! table.tHead) {
+                table.createTHead();
+                var firstRow = table.rows[0];
+                if (firstRow.cells[0].tagName == 'TH') {
+                    table.tHead.appendChild(firstRow);
                 }
-                var tHeadRow = null;
-                $$('th', table).forEach(function(th)
-                {
-                    th.setAttribute('width', '');
-                });
-                var possuiAnotacoes = false;
-                var eventosReferidos = {};
-                $$('tr[class^="infraTr"]', table).forEach(function(tr, r, trs)
-                {
-                    var colunaDocumentos = tr.cells[tr.cells.length - 1];
-                    var tabelaDocumentos = $('table', colunaDocumentos);
-                    if (tabelaDocumentos) {
-                        function Anotacao(texto)
+            }
+            var tHeadRow = null;
+            $$('th', table).forEach(function(th)
+            {
+                th.setAttribute('width', '');
+            });
+            var possuiAnotacoes = false;
+            var eventosReferidos = {};
+            $$('tr[class^="infraTr"]', table).forEach(function(tr, r, trs)
+            {
+                var colunaDocumentos = tr.cells[tr.cells.length - 1];
+                var tabelaDocumentos = $('table', colunaDocumentos);
+                if (tabelaDocumentos) {
+                    function Anotacao(texto)
+                    {
+                        var anotacao = null;
+                        this.getElemento = function()
                         {
-                            var anotacao = null;
-                            this.getElemento = function()
-                            {
-                                if (! anotacao) {
-                                    anotacao = this.createElemento(texto);
-                                }
-                                return anotacao;
-                            };
-                        }
-                        Anotacao.prototype.createElemento = function(texto)
-                        {
-                            var anotacao = document.createElement('div');
-                            anotacao.appendChild(document.createTextNode(texto));
-                            anotacao.textContent = texto;
-                            anotacao.innerHTML = anotacao.innerHTML.split('\n').join('<br />');
+                            if (! anotacao) {
+                                anotacao = this.createElemento(texto);
+                            }
                             return anotacao;
                         };
-                        Anotacao.prototype.setClassName = function(className)
-                        {
-                            this.getElemento().classList.add(className);
-                        };
-                        Anotacao.fromChild = function(child)
-                        {
-                            if (! ('tagName' in child)) return null;
-                            try {
-                                var onmouseover = child.getAttribute('onmouseover');
-                                var tooltip = /\('(.*)','',400\)/.exec(onmouseover)[1];
-                                var textos = tooltip.split('<br /><div style="margin-bottom:0.3em;" class="infraTooltipTitulo"></div>');
-                                var textoMaisRecente = textos[0];
-                                var texto = /^(.*) \/ .*\(.*\)$/.exec(textoMaisRecente)[1];
-                                texto = texto.replace(/\\'/g, '\'').replace(/<br \/>/g, '\n');
-                            } catch (e) {
-                                return null;
-                            }
-                            if (/^Criado por \[[^\]]+\]  Editado por \[[^\]]+\]/.test(texto)) {
-                                return new DocumentoInfoGedpro(texto);
-                            } else if (child.tagName == 'IMG') {
-                                return new DocumentoObservacao(texto);
-                            } else if (child.tagName == 'A' && /^\?acao=processo_evento_documento_tooltip_alterar/.test(child.search)) {
-                                return new DocumentoMemo(texto);
-                            }
-                            return null;
-                        };
-                        function DocumentoObservacao(texto)
-                        {
-                            Anotacao.apply(this, arguments);
-                            this.setClassName('extraDocumentoObservacao');
-                        };
-                        DocumentoObservacao.prototype = new Anotacao;
-                        DocumentoObservacao.prototype.constructor = DocumentoObservacao;
-                        function DocumentoMemo(texto)
-                        {
-                            Anotacao.apply(this, arguments);
-                            this.setClassName('extraDocumentoMemo');
-                        };
-                        DocumentoMemo.prototype = new Anotacao;
-                        DocumentoMemo.prototype.constructor = DocumentoMemo;
-                        function DocumentoInfoGedpro(texto)
-                        {
-                            Anotacao.apply(this, arguments);
-                            this.setClassName('noprint');
-                            this.setClassName('noscreen');
-                        }
-                        DocumentoInfoGedpro.prototype = new Anotacao;
-                        DocumentoInfoGedpro.prototype.constructor = DocumentoInfoGedpro;
-                        $$('td', colunaDocumentos).forEach(function(subtd, subc, subtds)
-                        {
-                            var child = null, anexarAnotacao = null, onmouseover = null, onmouseout = null;
-                            while (child = subtd.firstChild) {
-                                var anotacao;
-                                if (anotacao = Anotacao.fromChild(child)) {
-                                    anexarAnotacao = anotacao.getElemento();
-                                    if (!(anotacao instanceof DocumentoMemo)) {
-                                        var espaco = child.nextSibling;
-                                        subtd.removeChild(espaco);
-                                        var linkMemo = child.nextSibling;
-                                        var iconeMemo = linkMemo.firstChild;
-                                        linkMemo.replaceChild(child, iconeMemo);
-                                        child = linkMemo;
-                                    }
-                                }
-                                colunaDocumentos.appendChild(child);
-                            }
-                            colunaDocumentos.appendChild(document.createElement('br'));
-                            if (anexarAnotacao) {
-                                colunaDocumentos.appendChild(anexarAnotacao);
-                                possuiAnotacoes = true;
-                            }
-                        });
-                        colunaDocumentos.removeChild(tabelaDocumentos);
-                    } else {
-                        var children = Array.prototype.slice.call(colunaDocumentos.childNodes);
-                        children.forEach(function(child)
-                        {
-                            if (!child.tagName || (child.tagName.toUpperCase() == 'BR')) {
-                                colunaDocumentos.removeChild(child);
-                            } else if (child.tagName.toUpperCase() == 'A' && /^\?acao=acessar_documento/.test(child.search)) {
-                                colunaDocumentos.insertBefore(document.createElement('br'), child.nextSibling);
-                            }
-                        });
                     }
-                    $$('a[href*="?acao=acessar_documento"]', colunaDocumentos).forEach(function(docLink, l, docLinks)
+                    Anotacao.prototype.createElemento = function(texto)
                     {
-                        docLink.href += '&titulo_janela=' + encodeURIComponent(tr.cells[tr.cells.length - 5].textContent.trim() + ' - ' + docLink.textContent);
-                        docLink.className = 'extraDocLink';
-                        var ext = docLink.getAttribute('data-mimetype');
-                        if (ext) {
-                            docLink.href += '&tipo_doc=' + ext;
-                            ext = ext.toUpperCase();
-                            if (! (ext in iconTrueColor)) {
-                                ext = 'N/A';
-                            }
-                            var img = $('img', docLink);
-                            if (img) {
-                                img.src = iconTrueColor[ext];
-                            } else {
-                                img = docLink.previousSibling;
-                                if (('tagName' in img) && (img.tagName.toUpperCase() == 'IMG')) { 
-                                    img.src = iconTrueColor[ext];
+                        var anotacao = document.createElement('div');
+                        anotacao.appendChild(document.createTextNode(texto));
+                        anotacao.textContent = texto;
+                        anotacao.innerHTML = anotacao.innerHTML.split('\n').join('<br />');
+                        return anotacao;
+                    };
+                    Anotacao.prototype.setClassName = function(className)
+                    {
+                        this.getElemento().classList.add(className);
+                    };
+                    Anotacao.fromChild = function(child)
+                    {
+                        if (! ('tagName' in child)) return null;
+                        try {
+                            var onmouseover = child.getAttribute('onmouseover');
+                            var tooltip = /\('(.*)','',400\)/.exec(onmouseover)[1];
+                            var textos = tooltip.split('<br /><div style="margin-bottom:0.3em;" class="infraTooltipTitulo"></div>');
+                            var textoMaisRecente = textos[0];
+                            var texto = /^(.*) \/ .*\(.*\)$/.exec(textoMaisRecente)[1];
+                            texto = texto.replace(/\\'/g, '\'').replace(/<br \/>/g, '\n');
+                        } catch (e) {
+                            return null;
+                        }
+                        if (/^Criado por \[[^\]]+\]  Editado por \[[^\]]+\]/.test(texto)) {
+                            return new DocumentoInfoGedpro(texto);
+                        } else if (child.tagName == 'IMG') {
+                            return new DocumentoObservacao(texto);
+                        } else if (child.tagName == 'A' && /^\?acao=processo_evento_documento_tooltip_alterar/.test(child.search)) {
+                            return new DocumentoMemo(texto);
+                        }
+                        return null;
+                    };
+                    function DocumentoObservacao(texto)
+                    {
+                        Anotacao.apply(this, arguments);
+                        this.setClassName('extraDocumentoObservacao');
+                    };
+                    DocumentoObservacao.prototype = new Anotacao;
+                    DocumentoObservacao.prototype.constructor = DocumentoObservacao;
+                    function DocumentoMemo(texto)
+                    {
+                        Anotacao.apply(this, arguments);
+                        this.setClassName('extraDocumentoMemo');
+                    };
+                    DocumentoMemo.prototype = new Anotacao;
+                    DocumentoMemo.prototype.constructor = DocumentoMemo;
+                    function DocumentoInfoGedpro(texto)
+                    {
+                        Anotacao.apply(this, arguments);
+                        this.setClassName('noprint');
+                        this.setClassName('noscreen');
+                    }
+                    DocumentoInfoGedpro.prototype = new Anotacao;
+                    DocumentoInfoGedpro.prototype.constructor = DocumentoInfoGedpro;
+                    $$('td', colunaDocumentos).forEach(function(subtd, subc, subtds)
+                    {
+                        var child = null, anexarAnotacao = null, onmouseover = null, onmouseout = null;
+                        while (child = subtd.firstChild) {
+                            var anotacao;
+                            if (anotacao = Anotacao.fromChild(child)) {
+                                anexarAnotacao = anotacao.getElemento();
+                                if (!(anotacao instanceof DocumentoMemo)) {
+                                    var espaco = child.nextSibling;
+                                    subtd.removeChild(espaco);
+                                    var linkMemo = child.nextSibling;
+                                    var iconeMemo = linkMemo.firstChild;
+                                    linkMemo.replaceChild(child, iconeMemo);
+                                    child = linkMemo;
                                 }
                             }
+                            colunaDocumentos.appendChild(child);
                         }
-                        var size = docLink.getAttribute('data-bytes');
-                        if (size) {
-                            if (docLink.hasAttribute('onmouseover')) {
-                                docLink.setAttribute('onmouseover', docLink.getAttribute('onmouseover').replace(/(<br>.*)(','',400\))/, '$1<br>' + formatSize(size) + '$2'));
-                            } else if (docLink.hasAttribute('title')) {
-                                docLink.setAttribute('title', docLink.getAttribute('title').replace(/(Sigilo:.*)$/, '$1 [' + formatSize(size) + ']'));
+                        colunaDocumentos.appendChild(document.createElement('br'));
+                        if (anexarAnotacao) {
+                            colunaDocumentos.appendChild(anexarAnotacao);
+                            possuiAnotacoes = true;
+                        }
+                    });
+                    colunaDocumentos.removeChild(tabelaDocumentos);
+                } else {
+                    var children = Array.prototype.slice.call(colunaDocumentos.childNodes);
+                    children.forEach(function(child)
+                    {
+                        if (!child.tagName || (child.tagName.toUpperCase() == 'BR')) {
+                            colunaDocumentos.removeChild(child);
+                        } else if (child.tagName.toUpperCase() == 'A' && /^\?acao=acessar_documento/.test(child.search)) {
+                            colunaDocumentos.insertBefore(document.createElement('br'), child.nextSibling);
+                        }
+                    });
+                }
+                $$('a[href*="?acao=acessar_documento"]', colunaDocumentos).forEach(function(docLink, l, docLinks)
+                {
+                    docLink.href += '&titulo_janela=' + encodeURIComponent(tr.cells[tr.cells.length - 5].textContent.trim() + ' - ' + docLink.textContent);
+                    docLink.className = 'extraDocLink';
+                    var ext = docLink.getAttribute('data-mimetype');
+                    if (ext) {
+                        docLink.href += '&tipo_doc=' + ext;
+                        ext = ext.toUpperCase();
+                        if (! (ext in iconTrueColor)) {
+                            ext = 'N/A';
+                        }
+                        var img = $('img', docLink);
+                        if (img) {
+                            img.src = iconTrueColor[ext];
+                        } else {
+                            img = docLink.previousSibling;
+                            if (('tagName' in img) && (img.tagName.toUpperCase() == 'IMG')) { 
+                                img.src = iconTrueColor[ext];
                             }
                         }
-                        var id = Eproc.processo + r + docLink.innerHTML.replace(/<[^>]*>/g, '');
-                        docLink.addEventListener('click', function(e)
+                    }
+                    var size = docLink.getAttribute('data-bytes');
+                    if (size) {
+                        if (docLink.hasAttribute('onmouseover')) {
+                            docLink.setAttribute('onmouseover', docLink.getAttribute('onmouseover').replace(/(<br>.*)(','',400\))/, '$1<br>' + formatSize(size) + '$2'));
+                        } else if (docLink.hasAttribute('title')) {
+                            docLink.setAttribute('title', docLink.getAttribute('title').replace(/(Sigilo:.*)$/, '$1 [' + formatSize(size) + ']'));
+                        }
+                    }
+                    var id = Eproc.processo + r + docLink.innerHTML.replace(/<[^>]*>/g, '');
+                    docLink.addEventListener('click', function(e)
+                    {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        for (var docLink = e.target; docLink.tagName.toUpperCase() != 'A'; docLink = docLink.parentNode);
+                        var mime = getLinkMimeType(docLink);
+                        if (! isEmbeddable(mime)) {
+                            window.open(docLink.href.replace('?acao=acessar_documento&', '?acao=acessar_documento_implementacao&'), id, 'menubar=0');
+                            return;
+                        }
+                        var lastClicked = $('#lastClicked');
+                        if (lastClicked) {
+                            lastClicked.removeAttribute('id');
+                        }
+                        docLink.id = 'lastClicked';
+                        var menuFechar = $('#extraFechar');
+                        if (menuFechar) {
+                            menuFechar.style.visibility = 'visible';
+                        }
+                        var win = Eproc.windows[id];
+                        if (typeof win == 'object' && !win.closed) {
+                            win.focus();
+                        } else {
+                            Eproc.windows[id] = window.open(docLink.href, id, 'menubar=0,resizable=1,status=0,toolbar=0,location=0,directories=0,scrollbars=1');
+                        }
+                    }, false);
+                })
+                var colunaDescricao = tr.cells[tr.cells.length - 3];
+                var texto = colunaDescricao.textContent;
+                var numeroEvento = /^\d+/.exec(tr.cells[tr.cells.length - 5].textContent);
+                if (tr.getAttribute('data-parte') == 'INTERNO') {
+                    if (/^Despacho\/Decisão - Conversão em Diligência$/.test(texto) || /^Trânsito em Julgado$/.test(texto)) {
+                        tr.classList.add('infraEventoImportante');
+                    }
+                }
+                if (/Refer\. ao Evento: \d+$/.test(texto)) {
+                    var eventoReferido = /\d+$/.exec(texto);
+                    if ( ! (eventoReferido in eventosReferidos)) {
+                        eventosReferidos[eventoReferido] = [];
+                    }
+                    eventosReferidos[eventoReferido].push(tr);
+                } else if (numeroEvento in eventosReferidos) {
+                    var parte = $('.infraEventoPrazoParte', tr);
+                    if (parte) {
+                        var tipoParte = parte.getAttribute('data-parte');
+                        eventosReferidos[numeroEvento].forEach(function(linha)
                         {
-                            e.stopPropagation();
-                            e.preventDefault();
-                            for (var docLink = e.target; docLink.tagName.toUpperCase() != 'A'; docLink = docLink.parentNode);
-                            var mime = getLinkMimeType(docLink);
-                            if (! isEmbeddable(mime)) {
-                                window.open(docLink.href.replace('?acao=acessar_documento&', '?acao=acessar_documento_implementacao&'), id, 'menubar=0');
-                                return;
-                            }
-                            var lastClicked = $('#lastClicked');
-                            if (lastClicked) {
-                                lastClicked.removeAttribute('id');
-                            }
-                            docLink.id = 'lastClicked';
-                            var menuFechar = $('#extraFechar');
-                            if (menuFechar) {
-                                menuFechar.style.visibility = 'visible';
-                            }
-                            var win = Eproc.windows[id];
-                            if (typeof win == 'object' && !win.closed) {
-                                win.focus();
-                            } else {
-                                Eproc.windows[id] = window.open(docLink.href, id, 'menubar=0,resizable=1,status=0,toolbar=0,location=0,directories=0,scrollbars=1');
-                            }
-                        }, false);
-                    })
-                    var colunaDescricao = tr.cells[tr.cells.length - 3];
-                    var texto = colunaDescricao.textContent;
-                    var numeroEvento = /^\d+/.exec(tr.cells[tr.cells.length - 5].textContent);
-                    if (tr.getAttribute('data-parte') == 'INTERNO') {
-                        if (/^Despacho\/Decisão - Conversão em Diligência$/.test(texto) || /^Trânsito em Julgado$/.test(texto)) {
-                            tr.classList.add('infraEventoImportante');
-                        }
+                            linha.cells[linha.cells.length - 3].innerHTML += '<br>' + (colunaDescricao.innerHTML + '<br>').split('<br>')[1];
+                        });
                     }
-                    if (/Refer\. ao Evento: \d+$/.test(texto)) {
-                        var eventoReferido = /\d+$/.exec(texto);
-                        if ( ! (eventoReferido in eventosReferidos)) {
-                            eventosReferidos[eventoReferido] = [];
-                        }
-                        eventosReferidos[eventoReferido].push(tr);
-                    } else if (numeroEvento in eventosReferidos) {
-                        var parte = $('.infraEventoPrazoParte', tr);
-                        if (parte) {
-                            var tipoParte = parte.getAttribute('data-parte');
-                            eventosReferidos[numeroEvento].forEach(function(linha)
-                            {
-                                linha.cells[linha.cells.length - 3].innerHTML += '<br>' + (colunaDescricao.innerHTML + '<br>').split('<br>')[1];
-                            });
-                        }
-                    }
-                });
-                table.classList.add('extraTabelaEventos');
-                if (possuiAnotacoes) {
-                    var checkbox = new CheckBox('v2.mostraranotacoes', 'Mostrar observações e memos dos documentos');
-                    checkbox.vincularElementoClasse(table, 'extraTabelaMostrarAnotacoes');
-                    if (! $('caption', table)) {
-                        table.appendChild(document.createElement('caption'));
-                        table.caption.className = 'infraCaption';
-                    }
-                    table.caption.appendChild(checkbox.getLabel());
                 }
-                function getLinkMimeType(docLink)
-                {
-                    var type = docLink.getAttribute('data-mimetype');
-                    return type ? type.toUpperCase() : 'PDF';
+            });
+            table.classList.add('extraTabelaEventos');
+            if (possuiAnotacoes) {
+                var checkbox = new CheckBox('v2.mostraranotacoes', 'Mostrar observações e memos dos documentos');
+                checkbox.vincularElementoClasse(table, 'extraTabelaMostrarAnotacoes');
+                if (! $('caption', table)) {
+                    table.appendChild(document.createElement('caption'));
+                    table.caption.className = 'infraCaption';
                 }
-                function isEmbeddable(mime)
-                {
-                    if (mime == 'PDF') {
-                        var mimetype = navigator.mimeTypes.namedItem('application/pdf');
-                        if (mimetype) return mimetype.enabledPlugin;
-                        return false;
-                    }
-                    return /^(TXT|PDF|GIF|JPEG|JPG|PNG|HTM|HTML)$/.exec(mime);
+                table.caption.appendChild(checkbox.getLabel());
+            }
+            function getLinkMimeType(docLink)
+            {
+                var type = docLink.getAttribute('data-mimetype');
+                return type ? type.toUpperCase() : 'PDF';
+            }
+            function isEmbeddable(mime)
+            {
+                if (mime == 'PDF') {
+                    var mimetype = navigator.mimeTypes.namedItem('application/pdf');
+                    if (mimetype) return mimetype.enabledPlugin;
+                    return false;
                 }
+                return /^(TXT|PDF|GIF|JPEG|JPG|PNG|HTM|HTML)$/.exec(mime);
+            }
         }
         var tableRelacionado = $('#tableRelacionado');
         var labelRelacionado = $('#lblRelac') || $('#lblProcRel');
