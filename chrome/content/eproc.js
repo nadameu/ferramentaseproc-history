@@ -33,18 +33,18 @@ Eproc = {
         this.page = location.pathname.split(/(\/eproc(?:V1)?\/|\.php)/)[2];
         switch(this.page) {
             case 'menu_vara':
-                GM_addStyle(<style><![CDATA[
-                    ul {
-                        list-style-type: none;
-                        margin: 0 0 10px;
-                        padding: 0 20px;
-                        font-family: Verdana;
-                        font-size: 10pt;
-                    }
-                    li {
-                        margin: 5px 0;
-                    }
-                ]]></style>.toString());
+                GM_addStyle(''
+                    + 'ul {'
+                    + '    list-style-type: none;'
+                    + '    margin: 0 0 10px;'
+                    + '    padding: 0 20px;'
+                    + '    font-family: Verdana;'
+                    + '    font-size: 10pt;'
+                    + '}'
+                    + 'li {'
+                    + '    margin: 5px 0;'
+                    + '}'
+                + '');
                 ul = $('#body ul');
                 div = $('<ul></ul>').insertBefore('#body ul');
                 var fonts = ul.find('font font'), font, delay = 250;
@@ -654,4 +654,3 @@ Table.prototype = {
 }
 // }}}
 Eproc.init();
-// vim:enc=utf-8
