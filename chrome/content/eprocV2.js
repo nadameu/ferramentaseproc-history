@@ -983,7 +983,8 @@ var Eproc = {
         }
         function getInfo(infoWindow)
         {
-            return $('#tbInfoProcesso', infoWindow.document);
+            var info = $('#tbInfoProcesso', infoWindow.document);
+            return (info.rows.length == 1 ? null : info);
         }
         function getCellContent(info, cellIndex)
         {
