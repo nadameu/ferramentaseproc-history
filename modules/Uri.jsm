@@ -4,7 +4,7 @@ var Uri = function(uri)
 {
     var parts = new RegExp(
         '^(https?)' // scheme
-        + '://(jef[23]?|eproc(?:[34]?|2(?:d-(?:um|dois|tres))?|teste|-(?:apresentacao|[12]g-desenv|ws))|homologa-[12]g1)' // subdominio
+        + '://(jef[23]?|eproc(?:[34]?|2(?:d-(?:um|dois|tres))?|teste|-(?:apresentacao|[12]g-desenv|ws))|homologa-[12]g1|apresentacao-trf4)' // subdominio
         + '\\.(jf(pr|rs|sc)|trf4)' // dominio, estado
         + '\\.(?:gov|jus)\\.br/+(eproc(?:|V1|V2|2trf4|(?:trf4|v2)_[^/]+)|(?:homologa|apresenta)_[12]g|apresentacao_[^/]+)/+' // sistema
         + '(|([^.]+)(?:\\.php)?[^?#]*)' // arquivo, controlador
