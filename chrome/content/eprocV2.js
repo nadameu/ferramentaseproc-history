@@ -802,6 +802,10 @@ var Eproc = {
                         + '</div>' + tr.cells[4].textContent.replace(/\n/g, '<br/>')
                         + '<div class="extraLembreteData">' + tr.cells[5].textContent
                         + '<br/>' + tr.cells[1].textContent + '</div>';
+                var props = Eproc.getHiddenProps(tr.cells[4].innerHTML);
+                for (n in props.properties) {
+                    floater.setAttribute('data-' + n, props.properties[n]);
+                }
                 var celulaBotoes = tr.cells[tr.cells.length - 1];
                 if (celulaBotoes.childNodes.length > 2) {
                     floater.childNodes[0].appendChild(celulaBotoes.childNodes[2]);
@@ -1357,6 +1361,54 @@ var Eproc = {
                 perfil.addButton();
             });
         }
+    },
+    getHiddenProps: function(texto)
+    {
+        var reComentario = /<!--\s+(.*?)\s+-->/g, codigoOculto;
+        var properties = {}, clean = texto;
+        while ((codigoOculto = reComentario.exec(texto)) !== null) {
+            var tmpObj = {}, isValid = true;
+            var tmpCodigo = /^{(.*)}$/.exec(codigoOculto[1]);
+            if (! tmpCodigo) {
+                isValid = false;
+            } else {
+                var props = tmpCodigo[1].trim().split(',');
+                props.forEach(function(prop)
+                {
+                    var name, value;
+                    var parts = prop.split(':');
+                    if (parts.length == 2) {
+                        [name, value] = parts;
+                    } else {
+                        isValid = false;
+                        return null;
+                    }
+                    tmpObj[name.trim()] = value.trim();
+                });
+            }
+            if (isValid) {
+                clean = clean.replace(codigoOculto[0], '');
+                for (n in tmpObj) {
+                    properties[n] = tmpObj[n];
+                }
+            }
+        }
+        return {
+            original: texto,
+            clean: clean,
+            properties: properties,
+            toString: function()
+            {
+                var props = [];
+                for (n in this.properties) {
+                    props.push(n + ':' + this.properties[n]);
+                }
+                if (props.length == 0) {
+                    return this.clean;
+                }
+                return '<!-- {' + props.join(',') + '} -->' + this.clean;
+            }
+        };
     },
     getStyle: function(id)
     {
@@ -2102,6 +2154,57 @@ var Eproc = {
     processo_evento_paginacao_listar: function()
     {
         this.processo_selecionar();
+    },
+    processo_lembrete_destino_alterar: function()
+    {
+        this.processo_lembrete_destino_cadastrar();
+    },
+    processo_lembrete_destino_cadastrar: function()
+    {
+        var descricao = $('#txaDescricao');
+        descricao.name = '';
+        var props = Eproc.getHiddenProps(descricao.textContent);
+        descricao.value = props.clean;
+        var newDescricao = document.createElement('input');
+        newDescricao.id = 'newTxaDescricao';
+        newDescricao.name = 'txaDescricao';
+        newDescricao.type = 'hidden';
+        newDescricao.value = props;
+        descricao.parentNode.insertBefore(newDescricao, descricao.nextSibling);
+        var onDescricaoChange = function(e)
+        {
+            props.clean = descricao.value;
+            newDescricao.value = props;
+        };
+        descricao.addEventListener('change', onDescricaoChange, false);
+        var fieldset = $('#fldNovoLembrete');
+        fieldset.appendChild(document.createElement('br'));
+        var lblCor = document.createElement('label');
+        lblCor.htmlFor = 'extraCorLembrete';
+        lblCor.textContent = 'Cor ';
+        lblCor.className = 'infraLabelOpcional';
+        fieldset.appendChild(lblCor);
+        var selCor = document.createElement('select');
+        selCor.id = 'extraCorLembrete';
+        ['', 'vermelho', 'amarelo', 'verde'].forEach(function(cor)
+        {
+            var option = document.createElement('option');
+            option.textContent = cor;
+            if (('cor' in props.properties) && (props.properties.cor == cor)) {
+                option.selected = true;
+            }
+            selCor.appendChild(option);
+        });
+        selCor.addEventListener('change', function(e)
+        {
+            if (selCor.value == '') {
+                delete props.properties.cor;
+            } else {
+                props.properties.cor = selCor.value;
+            }
+            onDescricaoChange();
+        }, false);
+        fieldset.appendChild(selCor);
     },
     processo_seleciona_publica: function()
     {

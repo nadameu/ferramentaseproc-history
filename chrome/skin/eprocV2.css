@@ -23,11 +23,29 @@ button.infraButton.extraBuscarPreventosButton:hover {
     background-color: hsl(60, 100%, 80%);
     color: hsl(0, 0%, 0%);
 }
+.extraLembrete[data-cor='verde'] {
+    background-color: hsl(120, 100%, 80%);
+}
+.extraLembrete[data-cor='vermelho'] {
+    background-color: hsl(0, 100%, 80%);
+}
 .extraLembreteVoce {
     background-color: hsl(60, 100%, 70%);
 }
+.extraLembreteVoce[data-cor='verde'] {
+    background-color: hsl(120, 100%, 70%);
+}
+.extraLembreteVoce[data-cor='vermelho'] {
+    background-color: hsl(0, 100%, 70%);
+}
 .extraLembreteTodos {
     background-color: hsl(60, 100%, 75%);
+}
+.extraLembreteTodos[data-cor='verde'] {
+    background-color: hsl(120, 100%, 75%);
+}
+.extraLembreteTodos[data-cor='vermelho'] {
+    background-color: hsl(0, 100%, 75%);
 }
 .extraLembrete a {
     float: right;

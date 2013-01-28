@@ -52,7 +52,7 @@
             </tabpanel>
             <tabpanel>
                 <groupbox>
-                    <caption><checkbox id="v2_enable" label="Habilitar alterações" oncommand="Commands.on_v2_enable();"/></caption>
+                    <caption><checkbox id="v2_enable" label="Habilitar alterações"/></caption>
                     <grid>
                         <columns>
                             <column flex="2"/>
