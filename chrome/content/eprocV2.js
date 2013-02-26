@@ -1060,12 +1060,12 @@ var Eproc = {
                     sTexto += '    </style>\n';
                     sTexto += '  </head>\n';
                     sTexto += '  <body bgcolor="white">\n';
-                    sTexto += '    <p class="header" align="center"><img width="85" height="86" src="' + this.getImageUrl() + '" alt="Brasão da República"><br/>';
+                    sTexto += '    <div class="header" align="center"><img width="85" height="86" src="' + this.getImageUrl() + '" alt="Brasão da República"><br/>';
                     sTexto += 'PODER JUDICIÁRIO<br/>';
                     sTexto += '&nbsp;<strong>JUSTIÇA FEDERAL</strong>&nbsp;<br/>';
                     sTexto += GM_getValue('v1.secao') + '<br/>';
                     sTexto += GM_getValue('v1.subsecao') + '<br/>';
-                    sTexto += GM_getValue('v1.vara') + '</p>\n';
+                    sTexto += GM_getValue('v1.vara') + '</div>\n';
                     sTexto += '    <p class="text" align="justify">&nbsp;</p>\n';
                     if (processo) {
                         sTexto += '    <div class="dados" align="left">PROCESSO: ' + processo + '</div>\n';
