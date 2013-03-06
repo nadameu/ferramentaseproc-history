@@ -2520,6 +2520,8 @@ var Eproc = {
                         }
                         if (/^Criado por \[[^\]]+\]  Editado por \[[^\]]+\]/.test(texto)) {
                             return new DocumentoInfoGedpro(texto);
+                        } else if (/^\(cont\. doc\. anterior\)$/.test(texto)) {
+                            return null;
                         } else if (child.tagName == 'IMG') {
                             return new DocumentoObservacao(texto);
                         } else if (child.tagName == 'A' && /^\?acao=processo_evento_documento_tooltip_alterar/.test(child.search)) {
