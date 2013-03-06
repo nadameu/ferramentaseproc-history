@@ -2054,13 +2054,113 @@ var Eproc = {
             var processos = getQtdProcessos(link);
             linha.classList.add('extraLocalizador');
             linha.setAttribute('data-processos', processos);
-            if (processos > 0) {
-                linha.addEventListener('click', function(e)
-                {
-                    location.href = url;
-                }, false);
-            }
+
+            if (processos == 0) return;
+
+            linha.addEventListener('click', function(e)
+            {
+                location.href = url;
+            }, false);
         });
+
+        var menu = $('#divInfraMenu');
+        if (! menu) return;
+
+        var lista = $$('a[href^="controlador.php?acao=localizador_processos_lista"]', menu);
+        if (lista.length == 0) return;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', lista[0].href);
+        xhr.responseType = 'document';
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                var doc = xhr.responseXML;
+                var consultar = $('#btnConsultar', doc);
+                if (! consultar) return;
+
+                var sessao = /criarCookieFiltroCriterios\((\d+)\);/.exec(consultar.getAttribute('onclick'));
+                if (sessao.length != 2) return;
+
+                sessao = sessao[1];
+
+                var oldCookie = unsafeWindow.infraLerCookie(sessao).replace(/%3B/g, ';');
+                unsafeWindow.infraCriarCookie(sessao, 'EventoProcessoEvento;100;S;FALSE;FALSE;FALSE;FALSE;FALSE;FALSE;S', 1);
+
+                var linhasProcessadas = 0;
+                linhas.forEach(function(linha)
+                {
+                    var link = getLink(linha);
+                    var url = getUrl(link);
+
+                    var processos = getQtdProcessos(link);
+                    if (processos == 0) return;
+
+                    if (/^javascript:/.test(url)) return;
+
+                    var situacao = linha.insertCell(2);
+                    situacao.innerHTML = '...';
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', url);
+                    xhr.responseType = 'document';
+                    xhr.onreadystatechange = function()
+                    {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            situacao.textContent = 'ok';
+                            var doc = xhr.responseXML;
+                            if (tabela = doc.getElementById('tabelaLocalizadores')) {
+                                cellIndex = -1;
+                                Array.prototype.forEach.call(tabela.rows[0].cells, function(cell, c)
+                                {
+                                    if (/Dias Situação/.test(cell.textContent)) {
+                                        cellIndex = c;
+                                    }
+                                });
+                                if (cellIndex == -1) return;
+
+                                porcentagens = [], soma = 0, count = 0;
+                                Array.prototype.forEach.call(tabela.rows, function(row, r)
+                                {
+                                    if (r == 0) return;
+
+                                    count++;
+                                    var diasSituacao = row.cells[cellIndex].textContent;
+                                    soma += Number(diasSituacao);
+                                });
+                                media = soma / count;
+
+                                var pct = Math.floor(media * 10).toString();
+                                situacao.innerHTML = pct.substr(0, pct.length - 1) + ',' + pct.substr(-1) + '&nbsp;dia(s)';
+                                situacao.style.textAlign = 'right';
+
+                                media = soma / 30 / 5;
+                                if (media >= 2) {
+                                    situacao.style.backgroundColor = '#faa';
+                                } else if (media >= 1) {
+                                    situacao.style.backgroundColor = '#ffa';
+                                } else {
+                                    situacao.style.backgroundColor = '#afa';
+                                }
+                            }
+                        }
+                    };
+                    var tmpForm = new FormData();
+                    tmpForm.append('optNdiasSituacao', 'S');
+                    xhr.send(tmpForm);
+
+                    linhasProcessadas++;
+                });
+
+                if (linhasProcessadas > 0) {
+                    var th = document.createElement('th');
+                    th.className = 'infraTh';
+                    th.textContent = 'Tempo médio';
+                    linhas[0].parentNode.rows[0].appendChild(th);
+                }
+
+                unsafeWindow.infraCriarCookie(sessao, oldCookie, 365);
+            }
+        };
+        xhr.send();
         function getLink(tr)
         {
             try {
