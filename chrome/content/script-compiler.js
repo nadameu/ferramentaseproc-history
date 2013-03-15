@@ -186,14 +186,20 @@ var EprocGmCompiler = {
         {
             var prompts = Cc["@mozilla.org/embedcomp/prompt-service;1"].getService(Ci.nsIPromptService);
             var flags = 0;
+            var stringTitles = ['', '', ''];
             var titles = Array.prototype.slice.call(arguments);
             titles.forEach(function(title, position)
             {
-                flags += prompts['BUTTON_TITLE_' + title] * prompts['BUTTON_POS_' + position];
+                if (title in ['YES', 'NO', 'CANCEL']) {
+                    flags += prompts['BUTTON_TITLE_' + title] * prompts['BUTTON_POS_' + position];
+                } else {
+                    flags += prompts.BUTTON_TITLE_IS_STRING * prompts['BUTTON_POS_' + position];
+                    stringTitles[position] = title;
+                }
             });
             return function(title, text)
             {
-                var position = prompts.confirmEx(null, title, text, flags, '', '', '', '', {value: false});
+                var position = prompts.confirmEx(null, title, text, flags, stringTitles[0], stringTitles[1], stringTitles[2], '', {value: false});
                 return titles[position];
             };
         };
