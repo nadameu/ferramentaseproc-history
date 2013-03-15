@@ -78,10 +78,12 @@ var Options = {
             'v1.alteracao_assunto.enable',
             'v1.eproc.enable',
 			'v2.enable',
+            'v2.ie.enable',
             'v2.ielocation'
         ];
         this.action('get');
         Commands.on_v1_enable();
+        Commands.on_v2_enable();
     },
 
     ok: function() {
@@ -100,6 +102,11 @@ var Commands = {
     on_v1_enable: function()
     {
         Commands.process('v1_enable', 'v1_consulta_processo_enable v1_html_to_pdf_enable v1_alteracao_assunto_enable v1_eproc_enable');
+    },
+
+    on_v2_enable: function()
+    {
+        Commands.process('v2_enable', 'v2_ie_enable v2_ielocation v2_ielocation_label v2_ielocation_button');
     },
 
     on_v2_ielocation: function()

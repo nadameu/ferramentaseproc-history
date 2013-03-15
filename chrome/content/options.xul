@@ -15,8 +15,8 @@
     <tabbox selectedIndex="0">
         <tabs>
             <tab label="Cabeçalho padrão"/>
-            <tab label="e-Proc V1 (JEF)"/>
-            <tab label="e-Proc V2 (Rito Ordinário)"/>
+            <tab label="e-Proc V1"/>
+            <tab label="e-Proc V2"/>
         </tabs>
         <tabpanels>
             <tabpanel>
@@ -52,7 +52,7 @@
             </tabpanel>
             <tabpanel>
                 <groupbox>
-                    <caption><checkbox id="v2_enable" label="Habilitar alterações"/></caption>
+                    <caption><checkbox id="v2_enable" label="Habilitar alterações" oncommand="Commands.on_v2_enable();"/></caption>
                     <grid>
                         <columns>
                             <column flex="2"/>
@@ -60,9 +60,12 @@
                             <column flex="1"/>
                         </columns>
                         <rows>
+                            <row>
+                                <checkbox id="v2_ie_enable" label="Abrir Gedpro com Internet Explorer"/>
+                            </row>
                             <row align="center">
-                                <label control="v2_ielocation" value="Localização do Internet Explorer:"/>
-                                <textbox id="v2_ielocation"/><button label="Procurar..." oncommand="Commands.on_v2_ielocation();"/>
+                                <label id="v2_ielocation_label" control="v2_ielocation" value="Localização do Internet Explorer:"/>
+                                <textbox id="v2_ielocation"/><button id="v2_ielocation_button" label="Procurar..." oncommand="Commands.on_v2_ielocation();"/>
                             </row>
                         </rows>
                     </grid>

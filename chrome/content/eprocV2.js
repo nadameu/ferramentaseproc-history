@@ -1509,6 +1509,7 @@ var Eproc = {
             var div = document.createElement('div');
             div.className = 'infraAcaoBarraSistema';
             var a = document.createElement('a');
+            a.id = 'extraConfiguracaoComplemento';
             a.addEventListener('click', function(e)
             {
                 GM_showPreferences();
@@ -1535,19 +1536,46 @@ var Eproc = {
         Gedpro.getLinkElement(function(linkGedpro)
         {
             try {
-                [, linkGedpro.href] = linkGedpro.getAttribute('onclick').match(/window.open\('([^']+)'/);
+                var onclick = linkGedpro.getAttribute('onclick');
+                [, linkGedpro.href] = onclick.match(/window.open\('([^']+)'/);
                 linkGedpro.target = '_blank';
             } catch (e) {
             }
             linkGedpro.removeAttribute('onclick');
+            onclickFunction = new Function('e', onclick);
             linkGedpro.addEventListener('click', function(e)
             {
                 e.preventDefault();
                 e.stopPropagation();
-                Gedpro.getLink(function(url)
-                {
-                    IELauncher(url);
-                });
+                var abrirComIE = GM_getValue('v2.ie.enable', true);
+                var botao = $('#extraConfiguracaoComplemento');
+                var mensagemMostrada = GM_getValue('v2.ie.mensagemmostrada', false);
+                if (botao && !mensagemMostrada) {
+                    var naoMostrar = {value: false};
+                    var confirmacao = GM_confirmCheck('Navegador padrão', 'Seu computador está configurado para abrir o Gedpro com o ' + (abrirComIE ? 'Internet Explorer' : 'Firefox') + '.\nCaso deseje mudar esta configuração, clique em "Cancelar".', 'Não mostrar esta mensagem novamente', naoMostrar);
+                    if (naoMostrar.value == true) {
+                        GM_setValue('v2.ie.mensagemmostrada', true);
+                    }
+                    if (! confirmacao) {
+                        botao.scrollIntoView();
+                        var tooltip = new Tooltip('<p style="font-weight: bold;">CONFIGURAÇÕES</p><p>Este ícone permite acessar as configurações a qualquer momento.</p><p>Na aba "e-Proc V2", marque ou desmarque a opção "Abrir Gedpro com Internet Explorer".</p>');
+                        tooltip.vincular(botao);
+                        window.addEventListener('resize', tooltip.desenhar, false);
+                        botao.addEventListener('click', function(e)
+                        {
+                            tooltip.ocultar();
+                        }, false);
+                        return;
+                    }
+                }
+                if (abrirComIE) {
+                    Gedpro.getLink(function(url)
+                    {
+                        IELauncher(url);
+                    });
+                } else {
+                    onclickFunction.apply(this, arguments);
+                }
             }, false);
         });
         if (this.acao && this[this.acao]) {
@@ -2997,58 +3025,6 @@ var Eproc = {
         if (botao && !novasConfiguracoesMostradas) {
             alert('Por favor, verifique se todas as configurações estão de acordo com suas preferências.');
             var novasConfiguracoesMostradas = GM_setValue('v2.novasconfiguracoes2mostradas', true);
-            function Tooltip(texto)
-            {
-                var div = document.createElement('div');
-                div.innerHTML = '<img src="imagens/tooltip/arrow3.gif" style="position: absolute;"/>';
-                var img = div.firstChild;
-                div.innerHTML = '<div style="position: absolute; background: lightyellow; border: 1px solid black; font-size: 1.2em; width: 30ex; text-align: center; padding: 10px;">' + texto + '</div>';
-                div = div.firstChild;
-                var elementoVinculado, x = 0, y = 0;
-                this.vincular = function(elemento)
-                {
-                    elementoVinculado = elemento;
-                    this.desenhar();
-                };
-                this.desenhar = function()
-                {
-                    removerElementos();
-                    calcularXY(elementoVinculado);
-                    adicionarElementos();
-                    posicionarElementos();
-                };
-                this.ocultar = function()
-                {
-                    removerElementos();
-                    adicionarElementos = function(){};
-                };
-                function calcularXY(elemento)
-                {
-                    for (x = 0, y = 0; elemento != null; elemento = elemento.offsetParent) {
-                        x += elemento.offsetLeft;
-                        y += elemento.offsetTop;
-                    }
-                }
-                function posicionarElementos()
-                {
-                    img.style.top = y + elementoVinculado.offsetHeight + 'px';
-                    img.style.left = x + elementoVinculado.offsetWidth/2 - 15 + 'px';
-                    div.style.top = y + elementoVinculado.offsetHeight + 15 - 1 + 'px';
-                    div.style.left = x + elementoVinculado.offsetWidth/2 - div.offsetWidth + 10 + 'px';
-                }
-                function removerElementos()
-                {
-                    if (div.parentNode == document.body) {
-                        document.body.removeChild(div);
-                        document.body.removeChild(img);
-                    }
-                }
-                function adicionarElementos()
-                {
-                    document.body.appendChild(div);
-                    document.body.appendChild(img);
-                }
-            };
             var tooltip = new Tooltip('Este ícone permite acessar novamente as configurações a qualquer momento.');
             tooltip.vincular(botao);
             window.addEventListener('resize', tooltip.desenhar, false);
@@ -3056,6 +3032,58 @@ var Eproc = {
         }
     }
 };
+function Tooltip(texto)
+{
+    var div = document.createElement('div');
+    div.innerHTML = '<img src="imagens/tooltip/arrow3.gif" style="position: absolute;"/>';
+    var img = div.firstChild;
+    div.innerHTML = '<div style="position: absolute; background: lightyellow; border: 1px solid black; font-size: 1.2em; width: 30ex; text-align: center; padding: 10px;">' + texto + '</div>';
+    div = div.firstChild;
+    var elementoVinculado, x = 0, y = 0;
+    this.vincular = function(elemento)
+    {
+        elementoVinculado = elemento;
+        this.desenhar();
+    };
+    this.desenhar = function()
+    {
+        removerElementos();
+        calcularXY(elementoVinculado);
+        adicionarElementos();
+        posicionarElementos();
+    };
+    this.ocultar = function()
+    {
+        removerElementos();
+        adicionarElementos = function(){};
+    };
+    function calcularXY(elemento)
+    {
+        for (x = 0, y = 0; elemento != null; elemento = elemento.offsetParent) {
+            x += elemento.offsetLeft;
+            y += elemento.offsetTop;
+        }
+    }
+    function posicionarElementos()
+    {
+        img.style.top = y + elementoVinculado.offsetHeight + 'px';
+        img.style.left = x + elementoVinculado.offsetWidth/2 - 15 + 'px';
+        div.style.top = y + elementoVinculado.offsetHeight + 15 - 1 + 'px';
+        div.style.left = x + elementoVinculado.offsetWidth/2 - div.offsetWidth + 10 + 'px';
+    }
+    function removerElementos()
+    {
+        if (div.parentNode == document.body) {
+            document.body.removeChild(div);
+            document.body.removeChild(img);
+        }
+    }
+    function adicionarElementos()
+    {
+        document.body.appendChild(div);
+        document.body.appendChild(img);
+    }
+}
 function VirtualLink(texto, funcao)
 {
     var vLink = document.createElement('a');
