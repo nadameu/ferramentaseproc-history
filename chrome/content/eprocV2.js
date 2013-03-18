@@ -2555,7 +2555,7 @@ var Eproc = {
                             return null;
                         } else if (child.tagName == 'IMG') {
                             return new DocumentoObservacao(texto);
-                        } else if (child.tagName == 'A' && /^\?acao=processo_evento_documento_tooltip_alterar/.test(child.search)) {
+                        } else if (child.tagName == 'A' && /\?acao=processo_evento_documento_tooltip_/.test(child.href)) {
                             return new DocumentoMemo(texto);
                         }
                         return null;
