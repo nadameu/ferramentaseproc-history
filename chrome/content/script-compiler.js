@@ -190,7 +190,7 @@ var EprocGmCompiler = {
             var titles = Array.prototype.slice.call(arguments);
             titles.forEach(function(title, position)
             {
-                if (title in ['YES', 'NO', 'CANCEL']) {
+                if (['YES', 'NO', 'CANCEL'].indexOf(title) > -1) {
                     flags += prompts['BUTTON_TITLE_' + title] * prompts['BUTTON_POS_' + position];
                 } else {
                     flags += prompts.BUTTON_TITLE_IS_STRING * prompts['BUTTON_POS_' + position];
