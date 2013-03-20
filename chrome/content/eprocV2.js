@@ -2552,7 +2552,7 @@ var Eproc = {
                         if (/^Criado por \[[^\]]+\]  Editado por \[[^\]]+\]/.test(texto)) {
                             return new DocumentoInfoGedpro(texto);
                         } else if (/^\(cont\. doc\. anterior\)$/.test(texto)) {
-                            return null;
+                            return new DocumentoInfo(texto);
                         } else if (child.tagName == 'IMG') {
                             return new DocumentoObservacao(texto);
                         } else if (child.tagName == 'A' && /\?acao=processo_evento_documento_tooltip_/.test(child.href)) {
@@ -2574,13 +2574,19 @@ var Eproc = {
                     };
                     DocumentoMemo.prototype = new Anotacao;
                     DocumentoMemo.prototype.constructor = DocumentoMemo;
-                    function DocumentoInfoGedpro(texto)
+                    function DocumentoInfo(texto)
                     {
                         Anotacao.apply(this, arguments);
                         this.setClassName('noprint');
                         this.setClassName('noscreen');
                     }
-                    DocumentoInfoGedpro.prototype = new Anotacao;
+                    DocumentoInfo.prototype = new Anotacao;
+                    DocumentoInfo.prototype.constructor = DocumentoInfo;
+                    function DocumentoInfoGedpro(texto)
+                    {
+                        DocumentoInfo.apply(this, arguments);
+                    }
+                    DocumentoInfoGedpro.prototype = new DocumentoInfo;
                     DocumentoInfoGedpro.prototype.constructor = DocumentoInfoGedpro;
                     $$('td', colunaDocumentos).forEach(function(subtd, subc, subtds)
                     {
@@ -2589,7 +2595,7 @@ var Eproc = {
                             var anotacao;
                             if (anotacao = Anotacao.fromChild(child)) {
                                 anexarAnotacao = anotacao.getElemento();
-                                if (!(anotacao instanceof DocumentoMemo)) {
+                                if (anexarAnotacao.tagName == 'IMG') {
                                     var espaco = child.nextSibling;
                                     subtd.removeChild(espaco);
                                     var linkMemo = child.nextSibling;
@@ -2597,13 +2603,15 @@ var Eproc = {
                                     linkMemo.replaceChild(child, iconeMemo);
                                     child = linkMemo;
                                 }
+                                if ((anotacao instanceof DocumentoObservacao) || (anotacao instanceof DocumentoMemo)) {
+                                    possuiAnotacoes = true;
+                                }
                             }
                             colunaDocumentos.appendChild(child);
                         }
                         colunaDocumentos.appendChild(document.createElement('br'));
                         if (anexarAnotacao) {
                             colunaDocumentos.appendChild(anexarAnotacao);
-                            possuiAnotacoes = true;
                         }
                     });
                     colunaDocumentos.removeChild(tabelaDocumentos);
