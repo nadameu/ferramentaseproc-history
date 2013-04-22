@@ -2468,14 +2468,14 @@ var Eproc = {
                                         nextPage.parentNode.removeChild($('#ultimaR').parentNode);
                                         nextPage.parentNode.removeChild(nextPage);
                                     }
-                                    $$('input[type="hidden"][id^="hdnEventoRelev_"]', div).forEach(function(input)
+                                    ['hdnNrSeqEventos', 'hdnRelevanciaEventos', 'hdnRelevanciaDocsEv_M'].forEach(function(beginning)
                                     {
-                                        table.parentNode.insertBefore(input, table.nextSibling);
+                                        $$('input[type="hidden"][id^="' + beginning + '"]', div).forEach(function(input)
+                                        {
+                                            table.parentNode.insertBefore(input, table.nextSibling);
+                                        });
                                     });
-                                    $$('input[type="hidden"][id^="hdnRelevanciaDocsEv_"]', div).forEach(function(input)
-                                    {
-                                        table.parentNode.insertBefore(input, table.nextSibling);
-                                    });
+                                    unsafeWindow.carregarEventosRelevantes();
                                     unsafeWindow.carregarEventosDocsRelevantes();
                                 }
                             }
