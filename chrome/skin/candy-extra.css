@@ -129,10 +129,6 @@ fieldset.extraFieldset {
 .extraTabelaEventos td:last-of-type {
     white-space: nowrap;
 }
-.extraTabelaMostrarAnotacoes .extraDocumentoObservacao,
-.extraTabelaMostrarAnotacoes .extraDocumentoMemo {
-	background-color: #FEFBC5;
-}
 .extraTabelaEventos td:nth-of-type(3) {
     padding: 0.25em 0.5ex;
 }

@@ -435,11 +435,11 @@ var Gedpro = (function()
                             if (menuFechar) {
                                 menuFechar.style.visibility = 'visible';
                             }
-                            var win = Eproc.windows['' + Eproc.processo + node.codigo];
+                            var win = unsafeWindow.documentosAbertos['' + Eproc.processo + node.codigo];
                             if (typeof win == 'object' && !win.closed) {
                                 return win.focus();
                             } else {
-                                Eproc.windows['' + Eproc.processo + node.codigo] = window.open('http://' + host + '/visualizarDocumentos.asp?origem=pesquisa&ignoraframes=sim&codigoDocumento=' + node.codigo, '' + Eproc.processo + node.codigo, 'menubar=0,resizable=1,status=0,toolbar=0,location=0,directories=0,scrollbars=1');
+                                unsafeWindow.documentosAbertos['' + Eproc.processo + node.codigo] = window.open('http://' + host + '/visualizarDocumentos.asp?origem=pesquisa&ignoraframes=sim&codigoDocumento=' + node.codigo, '' + Eproc.processo + node.codigo, 'menubar=0,resizable=1,status=0,toolbar=0,location=0,directories=0,scrollbars=1');
                             }
                         };
                     })(doc), false);
@@ -715,8 +715,8 @@ var Eproc = {
     closeAllWindows: function(e)
     {
         var windows = [];
-        for (w in Eproc.windows) {
-            var win = Eproc.windows[w];
+        for (w in unsafeWindow.documentosAbertos) {
+            var win = unsafeWindow.documentosAbertos[w];
             if (typeof win == 'object' && !win.closed) {
                 windows.push(win);
             }
@@ -934,11 +934,11 @@ var Eproc = {
             {
                 e.preventDefault();
                 e.stopPropagation();
-                var win = Eproc.windows[id];
+                var win = unsafeWindow.documentosAbertos[id];
                 if (typeof win == 'object' && !win.closed) {
                     win.focus();
                 } else {
-                    Eproc.windows[id] = window.open(link.href, id, 'menubar=0,resizable=1,status=0,toolbar=0,location=0,directories=0,scrollbars=1');
+                    unsafeWindow.documentosAbertos[id] = window.open(link.href, id, 'menubar=0,resizable=1,status=0,toolbar=0,location=0,directories=0,scrollbars=1');
                 }
             }, false);
         });
@@ -1591,7 +1591,6 @@ var Eproc = {
         }
         window.addEventListener('beforeunload', function(e)
         {
-            Eproc.closeAllWindows(e);
             delete Eproc;
         }, false);
         function Icone()
@@ -2046,7 +2045,7 @@ var Eproc = {
             this.decorarLinhasTabelaLocalizadores(linhas);
         }
         var botao = $('#lnkConfiguracaoSistema');
-        var novasConfiguracoesMostradas = GM_getValue('v2.novasconfiguracoes2mostradas', false);
+        var novasConfiguracoesMostradas = GM_getValue('v2.novasconfiguracoes3mostradas', false);
         if (botao) {
             if (! novasConfiguracoesMostradas) {
                 var resposta = GM_yesNo('Novas configurações', 'Você deve configurar algumas opções antes de continuar.\n\nDeseja abrir a tela de configurações agora?');
@@ -2152,11 +2151,11 @@ var Eproc = {
                     {
                         e.preventDefault();
                         e.stopPropagation();
-                        var win = Eproc.windows['' + processo + numero];
+                        var win = unsafeWindow.documentosAbertos['' + processo + numero];
                         if (typeof win == 'object' && !win.closed) {
                             return win.focus();
                         } else {
-                            Eproc.windows['' + processo + numero] = window.open(e.target.href, '' + processo + numero, 'menubar=0,resizable=1,status=0,toolbar=0,location=0,directories=0,scrollbars=1');
+                            unsafeWindow.documentosAbertos['' + processo + numero] = window.open(e.target.href, '' + processo + numero, 'menubar=0,resizable=1,status=0,toolbar=0,location=0,directories=0,scrollbars=1');
                         }
                     };
                 })(processo, numero), false);
@@ -2274,99 +2273,6 @@ var Eproc = {
             tabelaParent.insertBefore(document.createElement('br'), tabela);
             tabelaParent.insertBefore(document.createElement('br'), tabela);
         });
-        var linkPrevencao = getLinkPrevencaoNaoExecutada();
-        if (linkPrevencao) {
-            var linkPrevencaoClicado = false, linkPrevencaoOldText = linkPrevencao.textContent;
-            var onLinkPrevencaoClick;
-            var restore = function()
-            {
-                alert('Ocorreu um erro. Favor tentar novamente.');
-                linkPrevencao.textContent = linkPrevencaoOldText;
-                linkPrevencao.removeEventListener('click', onLinkPrevencaoClick, false);
-                linkPrevencaoClicado = false;
-            };
-            onLinkPrevencaoClick = function(e)
-            {
-                if (e.ctrlKey || e.shiftKey) return;
-                e.preventDefault();
-                e.stopPropagation();
-                if (linkPrevencaoClicado) return;
-                linkPrevencaoClicado = true;
-                e.target.textContent = 'Aguarde, executando...';
-                var xhr = new XMLHttpRequest();
-                xhr.open('GET', e.target.href.replace(/'\);$/, ''));
-                xhr.onreadystatechange = function()
-                {
-                    if (xhr.readyState == 4 && xhr.status == 200) {
-                        var div = document.createElement('div');
-                        div.innerHTML = xhr.responseText;
-                        var form = div.querySelector('#frmProcessoLista');
-                        if (form) {
-                            form.action = xhr.responseText.match(/controlador\.php\?acao=prevencao_judicial&[^']+/);
-                            form.querySelector('#acao').value = 'prevencao_judicial';
-                            form.style.display = 'none';
-                            document.body.appendChild(form);
-                            form.submit();
-                        } else {
-                            restore();
-                        }
-                    } else if (this.readyState == 4) {
-                        restore();
-                    }
-                };
-                xhr.send('');
-            };
-            linkPrevencao.addEventListener('click', onLinkPrevencaoClick, false);
-        }
-        function getLinkPrevencaoNaoExecutada()
-        {
-            var linkPrevencao = $('#Prevencao');
-            if (linkPrevencao && /NÃO executada/.test(linkPrevencao.textContent)) return linkPrevencao;
-            else return false;
-        }
-        var linkLembrete = getLinkLembrete();
-        if (linkLembrete  && isCompetenciaCriminal()) {
-        }
-        function getLinkLembrete()
-        {
-            var linkLembrete = $$('a[href*="?acao=processo_lembrete_destino_cadastrar"]');
-            if (linkLembrete.length == 1) return linkLembrete[0];
-            else return false;
-        }
-        function isCompetenciaCriminal()
-        {
-            var txtCompetencia = $('#txtCompetencia');
-            if (txtCompetencia) {
-                var competencia = txtCompetencia.textContent;
-                if (/Criminal/.test(competencia)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        function isInquerito()
-        {
-            var capa = $('#fldAssuntos');
-            if (capa) {
-                var classe = capa.getAttribute('data-classe');
-                if (classe == '000120') {
-                    return true;
-                }
-            }
-            return false;
-        }
-        var processosRelacionados = getProcessosRelacionados();
-        if (processosRelacionados) {
-            processosRelacionados.forEach(function(linkProcessoRelacionado)
-            {
-                linkProcessoRelacionado.target = '_blank';
-            });
-        }
-        function getProcessosRelacionados()
-        {
-            var processosRelacionados = $$('#tableRelacionado td:nth-of-type(1) a');
-            return (processosRelacionados.length > 0) ? processosRelacionados : false;
-        }
         var iconTrueColor = {};
         iconTrueColor['DOC' ] = 'imagens/tree_icons/page_word.gif';
         iconTrueColor['RTF' ] = 'imagens/tree_icons/page_word.gif';
@@ -2506,144 +2412,31 @@ var Eproc = {
             {
                 th.setAttribute('width', '');
             });
-            var possuiAnotacoes = false;
             var eventosReferidos = {};
-            $$('tr[class^="infraTr"]', table).forEach(function(tr, r, trs)
+            $$('tr[class^="infraTr"], tr[bgcolor="#FFFACD"]', table).forEach(function(tr, r, trs)
             {
                 var colunaDocumentos = tr.cells[tr.cells.length - 1];
-                var tabelaDocumentos = $('table', colunaDocumentos);
-                if (tabelaDocumentos) {
-                    function Anotacao(texto)
-                    {
-                        var anotacao = null;
-                        this.getElemento = function()
-                        {
-                            if (! anotacao) {
-                                anotacao = this.createElemento(texto);
-                            }
-                            return anotacao;
-                        };
-                    }
-                    Anotacao.prototype.createElemento = function(texto)
-                    {
-                        var anotacao = document.createElement('div');
-                        anotacao.appendChild(document.createTextNode(texto));
-                        anotacao.textContent = texto;
-                        anotacao.innerHTML = anotacao.innerHTML.split('\n').join('<br />');
-                        return anotacao;
-                    };
-                    Anotacao.prototype.setClassName = function(className)
-                    {
-                        this.getElemento().classList.add(className);
-                    };
-                    Anotacao.fromChild = function(child)
-                    {
-                        if (! ('tagName' in child)) return null;
-                        try {
-                            var onmouseover = child.getAttribute('onmouseover');
-                            var tooltip = /\('(.*)','',400\)/.exec(onmouseover)[1];
-                            var textos = tooltip.split('<br /><div style="margin-bottom:0.3em;" class="infraTooltipTitulo"></div>');
-                            var textoMaisRecente = textos[0];
-                            var texto = /^(.*) \/ .*\(.*\)$/.exec(textoMaisRecente)[1];
-                            texto = texto.replace(/\\'/g, '\'').replace(/<br \/>/g, '\n');
-                        } catch (e) {
-                            return null;
-                        }
-                        if (/^Criado por \[[^\]]+\]  Editado por \[[^\]]+\]/.test(texto)) {
-                            return new DocumentoInfoGedpro(texto);
-                        } else if (/^\(cont\. doc\. anterior\)$/.test(texto)) {
-                            return new DocumentoInfo(texto);
-                        } else if (child.tagName == 'IMG') {
-                            return new DocumentoObservacao(texto);
-                        } else if (child.tagName == 'A' && /\?acao=processo_evento_documento_tooltip_/.test(child.href)) {
-                            return new DocumentoMemo(texto);
-                        }
-                        return null;
-                    };
-                    function DocumentoObservacao(texto)
-                    {
-                        Anotacao.apply(this, arguments);
-                        this.setClassName('extraDocumentoObservacao');
-                    };
-                    DocumentoObservacao.prototype = new Anotacao;
-                    DocumentoObservacao.prototype.constructor = DocumentoObservacao;
-                    function DocumentoMemo(texto)
-                    {
-                        Anotacao.apply(this, arguments);
-                        this.setClassName('extraDocumentoMemo');
-                    };
-                    DocumentoMemo.prototype = new Anotacao;
-                    DocumentoMemo.prototype.constructor = DocumentoMemo;
-                    function DocumentoInfo(texto)
-                    {
-                        Anotacao.apply(this, arguments);
-                        this.setClassName('noprint');
-                        this.setClassName('noscreen');
-                    }
-                    DocumentoInfo.prototype = new Anotacao;
-                    DocumentoInfo.prototype.constructor = DocumentoInfo;
-                    function DocumentoInfoGedpro(texto)
-                    {
-                        DocumentoInfo.apply(this, arguments);
-                    }
-                    DocumentoInfoGedpro.prototype = new DocumentoInfo;
-                    DocumentoInfoGedpro.prototype.constructor = DocumentoInfoGedpro;
-                    $$('td', colunaDocumentos).forEach(function(subtd, subc, subtds)
-                    {
-                        var child = null, anexarAnotacao = null, onmouseover = null, onmouseout = null;
-                        while (child = subtd.firstChild) {
-                            var anotacao;
-                            if (anotacao = Anotacao.fromChild(child)) {
-                                anexarAnotacao = anotacao.getElemento();
-                                if (anexarAnotacao.tagName == 'IMG') {
-                                    var espaco = child.nextSibling;
-                                    subtd.removeChild(espaco);
-                                    var linkMemo = child.nextSibling;
-                                    var iconeMemo = linkMemo.firstChild;
-                                    linkMemo.replaceChild(child, iconeMemo);
-                                    child = linkMemo;
-                                }
-                                if ((anotacao instanceof DocumentoObservacao) || (anotacao instanceof DocumentoMemo)) {
-                                    possuiAnotacoes = true;
-                                }
-                            }
-                            colunaDocumentos.appendChild(child);
-                        }
-                        colunaDocumentos.appendChild(document.createElement('br'));
-                        if (anexarAnotacao) {
-                            colunaDocumentos.appendChild(anexarAnotacao);
-                        }
-                    });
-                    colunaDocumentos.removeChild(tabelaDocumentos);
-                } else {
-                    var children = Array.prototype.slice.call(colunaDocumentos.childNodes);
-                    children.forEach(function(child)
-                    {
-                        if (!child.tagName || (child.tagName.toUpperCase() == 'BR')) {
-                            colunaDocumentos.removeChild(child);
-                        } else if (child.tagName.toUpperCase() == 'A' && /^\?acao=acessar_documento/.test(child.search)) {
-                            colunaDocumentos.insertBefore(document.createElement('br'), child.nextSibling);
-                        }
-                    });
-                }
-                $$('a[href*="?acao=acessar_documento"]', colunaDocumentos).forEach(function(docLink, l, docLinks)
+                $$('a[data-doc]', colunaDocumentos).forEach(function(docLink, l, docLinks)
                 {
                     docLink.href += '&titulo_janela=' + encodeURIComponent(tr.cells[tr.cells.length - 5].textContent.trim() + ' - ' + docLink.textContent);
                     docLink.className = 'extraDocLink';
-                    var ext = docLink.getAttribute('data-mimetype');
-                    if (ext) {
-                        docLink.href += '&tipo_doc=' + ext;
-                        ext = ext.toUpperCase();
-                        if (! (ext in iconTrueColor)) {
-                            ext = 'N/A';
+                    var mime = getLinkMimeType(docLink);
+                    if (mime) {
+                        if (! isEmbeddable(mime)) {
+                            docLink.href = docLink.href.replace('?acao=acessar_documento&', '?acao=acessar_documento_implementacao&');
+                        }
+                        docLink.href += '&tipo_doc=' + mime;
+                        mime = mime.toUpperCase();
+                        if (! (mime in iconTrueColor)) {
+                            mime = 'N/A';
                         }
                         var img = $('img', docLink);
                         if (img) {
-                            img.src = iconTrueColor[ext];
+                            img.src = iconTrueColor[mime];
                         } else {
                             img = docLink.previousSibling;
                             if (('tagName' in img) && (img.tagName.toUpperCase() == 'IMG')) { 
-                                img.src = iconTrueColor[ext];
+                                img.src = iconTrueColor[mime];
                             }
                         }
                     }
@@ -2661,11 +2454,6 @@ var Eproc = {
                         e.stopPropagation();
                         e.preventDefault();
                         for (var docLink = e.target; docLink.tagName.toUpperCase() != 'A'; docLink = docLink.parentNode);
-                        var mime = getLinkMimeType(docLink);
-                        if (! isEmbeddable(mime)) {
-                            window.open(docLink.href.replace('?acao=acessar_documento&', '?acao=acessar_documento_implementacao&'), id, 'menubar=0');
-                            return;
-                        }
                         var lastClicked = $('#lastClicked');
                         if (lastClicked) {
                             lastClicked.removeAttribute('id');
@@ -2675,22 +2463,11 @@ var Eproc = {
                         if (menuFechar) {
                             menuFechar.style.visibility = 'visible';
                         }
-                        var win = Eproc.windows[id];
-                        if (typeof win == 'object' && !win.closed) {
-                            win.focus();
-                        } else {
-                            Eproc.windows[id] = window.open(docLink.href, id, 'menubar=0,resizable=1,status=0,toolbar=0,location=0,directories=0,scrollbars=1');
-                        }
                     }, false);
                 })
                 var colunaDescricao = tr.cells[tr.cells.length - 3];
                 var texto = colunaDescricao.textContent;
                 var numeroEvento = /^\d+/.exec(tr.cells[tr.cells.length - 5].textContent);
-                if (tr.getAttribute('data-parte') == 'INTERNO') {
-                    if (/^Despacho\/Decisão - Conversão em Diligência$/.test(texto) || /^Trânsito em Julgado$/.test(texto)) {
-                        tr.classList.add('infraEventoImportante');
-                    }
-                }
                 if (/Refer\. ao Evento: \d+$/.test(texto)) {
                     var eventoReferido = /\d+$/.exec(texto);
                     if ( ! (eventoReferido in eventosReferidos)) {
@@ -2709,15 +2486,6 @@ var Eproc = {
                 }
             });
             table.classList.add('extraTabelaEventos');
-            if (possuiAnotacoes) {
-                var checkbox = new CheckBox('v2.mostraranotacoes', 'Mostrar observações e memos dos documentos');
-                checkbox.vincularElementoClasse(table, 'extraTabelaMostrarAnotacoes');
-                if (! $('caption', table)) {
-                    table.appendChild(document.createElement('caption'));
-                    table.caption.className = 'infraCaption';
-                }
-                table.caption.appendChild(checkbox.getLabel());
-            }
             function getLinkMimeType(docLink)
             {
                 var type = docLink.getAttribute('data-mimetype');
@@ -2932,10 +2700,10 @@ var Eproc = {
         });
 
         var botao = $('#lnkConfiguracaoSistema');
-        var novasConfiguracoesMostradas = GM_getValue('v2.novasconfiguracoes2mostradas', false);
+        var novasConfiguracoesMostradas = GM_getValue('v2.novasconfiguracoes3mostradas', false);
         if (botao && !novasConfiguracoesMostradas) {
             alert('Por favor, verifique se todas as configurações estão de acordo com suas preferências.');
-            var novasConfiguracoesMostradas = GM_setValue('v2.novasconfiguracoes2mostradas', true);
+            var novasConfiguracoesMostradas = GM_setValue('v2.novasconfiguracoes3mostradas', true);
             var tooltip = new Tooltip('Este ícone permite acessar novamente as configurações a qualquer momento.');
             tooltip.vincular(botao);
             window.addEventListener('resize', tooltip.desenhar, false);
