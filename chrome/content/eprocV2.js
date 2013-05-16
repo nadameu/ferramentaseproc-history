@@ -2695,9 +2695,9 @@ var Eproc = {
 				originalCell.removeChild(originalSpan);
 			}
 			document.getElementsByName('acao')[0].value = acao;
-			var fd = new FormData(form);
 			var xhr = new XMLHttpRequest();
 			xhr.open(form.method, action);
+			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xhr.onreadystatechange = function(e)
 			{
 				if (this.readyState == 4 && this.status == 200) {
@@ -2709,7 +2709,6 @@ var Eproc = {
 					{
 						if (this.readyState == 4 && this.status == 200) {
 							var newLink = $('a[href*="controlador.php?acao=processo_evento_documento_tooltip_sbfrm"][href*="&id_documento=' + Eproc.parametros.id_documento + '"]', this.response.documentElement);
-							originalCell.replaceChild(newLink, originalLink);
 							var newCell = newLink.parentNode;
 							var newSpan = $('span.infraTextoTooltip', newCell);
 							if (newSpan) {
@@ -2717,12 +2716,19 @@ var Eproc = {
 								originalCell.appendChild(newSpan);
 							}
 							originalLink.removeEventListener('click', doNothing, false);
+							originalCell.replaceChild(newLink, originalLink);
 						}
 					};
 					xhr2.send('');
 				}
 			};
-			xhr.send(fd);
+			var data = [];
+			$$('input, select, textarea', form).forEach(function(el)
+			{
+				data.push((el.name || el.id) + '=' + escape(el.value).replace(/%20/g, '+'));
+			});
+			data = data.join('&');
+			xhr.send(data);
 		}
 		btnSalvar.forEach(function(btn)
 		{
