@@ -2676,13 +2676,11 @@ var Eproc = {
 	processo_evento_documento_tooltip_sbfrm: function()
 	{
 		var originalLink = $('a[href*="controlador.php?acao=processo_evento_documento_tooltip_sbfrm"][href*="&id_documento=' + this.parametros.id_documento + '"]', window.parent.document.documentElement);
-		var btnSalvar = Array.prototype.slice.call(document.getElementsByName('btnSalvar'));
-		if (btnSalvar.length == 0) return;
-		var onSalvarClick = btnSalvar[0].getAttribute('onclick').match(/ocultarSubFrm(Alterar|Cadastrar)/)[0];
-		var onSalvarClickSource = unsafeWindow[onSalvarClick].toSource();
-		var action = onSalvarClickSource.match(/'(controlador.php[^']+)'/)[1];
-		var acao = onSalvarClickSource.match(/'(processo_evento_documento_tooltip_sbfrm_(alterar|cadastrar))'/)[1];
 		var form = $('#frmProcessoEventoDocumentoTooltip');
+		var btnSalvar = Array.prototype.slice.call(document.getElementsByName('btnSalvar'));
+		var btnDesativar = Array.prototype.slice.call(document.getElementsByName('sbmDesativar'));
+		if (btnSalvar.length == 0) return;
+		ajustarAcoesForm(form);
 		function salvarMemo()
 		{
 			function doNothing(e) { e.preventDefault(); }
@@ -2694,33 +2692,28 @@ var Eproc = {
 				originalCell.removeChild(originalSpan.previousSibling);
 				originalCell.removeChild(originalSpan);
 			}
-			document.getElementsByName('acao')[0].value = acao;
 			var xhr = new XMLHttpRequest();
-			xhr.open(form.method, action);
+			xhr.open(form.method, form.action);
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-			xhr.onreadystatechange = function(e)
+			xhr.onload = function()
 			{
-				if (this.readyState == 4 && this.status == 200) {
-					var newPage = this.responseText.match(/"(controlador.php[^"]+)"/)[1];
-					var xhr2 = new XMLHttpRequest();
-					xhr2.open('GET', newPage);
-					xhr2.responseType = 'document';
-					xhr2.onreadystatechange = function(e)
-					{
-						if (this.readyState == 4 && this.status == 200) {
-							var newLink = $('a[href*="controlador.php?acao=processo_evento_documento_tooltip_sbfrm"][href*="&id_documento=' + Eproc.parametros.id_documento + '"]', this.response.documentElement);
-							var newCell = newLink.parentNode;
-							var newSpan = $('span.infraTextoTooltip', newCell);
-							if (newSpan) {
-								originalCell.appendChild(newSpan.previousSibling);
-								originalCell.appendChild(newSpan);
-							}
-							originalLink.removeEventListener('click', doNothing, false);
-							originalCell.replaceChild(newLink, originalLink);
-						}
-					};
-					xhr2.send('');
-				}
+				var newPage = this.responseText.match(/"(controlador.php[^"]+)"/)[1];
+				var xhr2 = new XMLHttpRequest();
+				xhr2.open('GET', newPage);
+				xhr2.responseType = 'document';
+				xhr2.onload = function()
+				{
+					var newLink = $('a[href*="controlador.php?acao=processo_evento_documento_tooltip_sbfrm"][href*="&id_documento=' + Eproc.parametros.id_documento + '"]', this.response.documentElement);
+					var newCell = newLink.parentNode;
+					var newSpan = $('span.infraTextoTooltip', newCell);
+					if (newSpan) {
+						originalCell.appendChild(newSpan.previousSibling);
+						originalCell.appendChild(newSpan);
+					}
+					originalLink.removeEventListener('click', doNothing, false);
+					originalCell.replaceChild(newLink, originalLink);
+				};
+				xhr2.send('');
 			};
 			var data = [];
 			$$('input, select, textarea', form).forEach(function(el)
@@ -2732,23 +2725,49 @@ var Eproc = {
 		}
 		btnSalvar.forEach(function(btn)
 		{
-			btn.addEventListener('click', function(e)
+			switch (btn.getAttribute('onclick').match(/ocultarSubFrm(Alterar|Cadastrar)/)[1]) {
+				case 'Alterar':
+					var acaoSalvar = 'processo_evento_documento_tooltip_sbfrm_alterar';
+					break;
+
+				case 'Cadastrar':
+					var acaoSalvar = 'processo_evento_documento_tooltip_sbfrm_cadastrar';
+					break;
+			}
+			ajustarAcoesBotao(btn, function() { return unsafeWindow.OnSubmitForm(); }, acaoSalvar);
+		});
+		btnDesativar.forEach(function(btn)
+		{
+			var acaoDesativar = 'processo_evento_documento_tooltip_sbfrm_desativar';
+			var condicaoDesativar = function()
+			{
+				return confirm('Confirma desativação do Memo deste documento ?');
+			};
+			ajustarAcoesBotao(btn, condicaoDesativar, acaoDesativar);
+		});
+		function ajustarAcoesForm(form)
+		{
+			form.addEventListener('submit', function(e)
+			{
+				var executar = unsafeWindow.OnSubmitForm();
+				if (! executar) e.preventDefault();
+			}, true);
+			form.removeAttribute('onsubmit');
+		}
+		function ajustarAcoesBotao(elemento, condicao, acao)
+		{
+			elemento.addEventListener('click', function(e)
 			{
 				e.preventDefault();
-				if (unsafeWindow.OnSubmitForm()) {
+				if (condicao()) {
+					document.getElementsByName('acao')[0].value = acao;
 					salvarMemo();
 					window.close();
 					unsafeWindow.parent.wrappedJSObject.ocultarSubForm();
 				}
 			}, false);
-			btn.removeAttribute('onclick');
-		});
-		form.addEventListener('submit', function(e)
-		{
-			var executar = unsafeWindow.OnSubmitForm();
-			if (! executar) e.preventDefault();
-		}, true);
-		form.removeAttribute('onsubmit');
+			elemento.removeAttribute('onclick');
+		}
 	},
 	processo_evento_documento_tooltip_sbfrm_visualizar: function()
 	{
