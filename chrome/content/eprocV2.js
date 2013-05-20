@@ -2685,7 +2685,7 @@ var Eproc = {
 		{
 			function doNothing(e) { e.preventDefault(); }
 			originalLink.addEventListener('click', doNothing, false);
-			originalLink.innerHTML = '<img alt="Aguarde, atualizando..." src="imagens/loading_pequeno.gif"/>';
+			originalLink.innerHTML = '<img alt="Aguarde, atualizando..." src="imagens/loading_pequeno.gif" style="width: 0.9em; height: 0.9em;"/>';
 			var originalCell = originalLink.parentNode;
 			var originalSpan = $('span.infraTextoTooltip', originalCell);
 			if (originalSpan) {
