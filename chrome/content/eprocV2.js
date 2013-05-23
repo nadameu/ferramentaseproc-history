@@ -923,26 +923,6 @@ var Eproc = {
 		extra.innerHTML = 'div.infraAreaDados { height: auto !important; overflow: inherit; }';
 		extra.innerHTML += rule;
 	},
-	corrigirLinksDocumentos: function()
-	{
-		var links = $$('a[href^="controlador.php?acao=acessar_documento"]');
-		links.forEach(function(link)
-		{
-			var id;
-			[, id] = /\&doc=(\d+)/.exec(link.href);
-			link.addEventListener('click', function(e)
-			{
-				e.preventDefault();
-				e.stopPropagation();
-				var win = unsafeWindow.documentosAbertos[id];
-				if (typeof win == 'object' && !win.closed) {
-					win.focus();
-				} else {
-					unsafeWindow.documentosAbertos[id] = window.open(link.href, id, 'menubar=0,resizable=1,status=0,toolbar=0,location=0,directories=0,scrollbars=1');
-				}
-			}, false);
-		});
-	},
 	digitar_documento: function()
 	{
 		if (null == $('#txt_fck___Frame')) return;
@@ -1586,9 +1566,6 @@ var Eproc = {
 		} else if (this.parametros.acao_origem && this[this.parametros.acao_origem + '_destino']) {
 			this[this.parametros.acao_origem + '_destino']();
 		}
-		if (this.acao != 'processo_selecionar') {
-			Eproc.corrigirLinksDocumentos();
-		}
 		window.addEventListener('beforeunload', function(e)
 		{
 			delete Eproc;
@@ -2146,19 +2123,7 @@ var Eproc = {
 				this.link.textContent = this.toString();
 				this.link.href = linkGedpro + numero;
 				this.link.target='_blank';
-				this.link.addEventListener('click', (function(processo, numero) {
-					return function(e)
-					{
-						e.preventDefault();
-						e.stopPropagation();
-						var win = unsafeWindow.documentosAbertos['' + processo + numero];
-						if (typeof win == 'object' && !win.closed) {
-							return win.focus();
-						} else {
-							unsafeWindow.documentosAbertos['' + processo + numero] = window.open(e.target.href, '' + processo + numero, 'menubar=0,resizable=1,status=0,toolbar=0,location=0,directories=0,scrollbars=1');
-						}
-					};
-				})(processo, numero), false);
+				this.link.setAttribute('data-doc', numero);
 			};
 			Doc.fromRow = function(row) {
 				var processo = row.cells[0].textContent;
@@ -2179,6 +2144,7 @@ var Eproc = {
 				newCell.appendChild(doc.link);
 				row.parentNode.removeChild(row);
 			});
+			unsafeWindow.analisarDocs();
 		}
 	},
 	processo_evento_paginacao_listar: function()
@@ -2383,6 +2349,7 @@ var Eproc = {
 									});
 									unsafeWindow.carregarEventosRelevantes();
 									unsafeWindow.carregarEventosDocsRelevantes();
+									unsafeWindow.analisarDocs();
 								}
 							}
 						};
@@ -2451,8 +2418,6 @@ var Eproc = {
 					var id = Eproc.processo + r + docLink.innerHTML.replace(/<[^>]*>/g, '');
 					docLink.addEventListener('click', function(e)
 					{
-						e.stopPropagation();
-						e.preventDefault();
 						for (var docLink = e.target; docLink.tagName.toUpperCase() != 'A'; docLink = docLink.parentNode);
 						var lastClicked = $('#lastClicked');
 						if (lastClicked) {
