@@ -92,24 +92,12 @@ button.infraButton.extraBuscarPreventosButton:hover {
     display: inline-block;
 }
 .extraTabelaEventos td:first-of-type,
-.extraTabelaEventos td:nth-of-type(2),
-.extraTabelaEventos td:last-of-type {
+.extraTabelaEventos td:nth-of-type(2) {
     white-space: nowrap;
 }
 .extraDocumentoObservacao,
 .extraDocumentoMemo {
     display: none;
-}
-.extraTabelaMostrarAnotacoes .extraDocumentoObservacao,
-.extraTabelaMostrarAnotacoes .extraDocumentoMemo {
-    display: block;
-    margin-bottom: 0.5em;
-    font-size: 11px;
-    white-space: normal;
-    max-width: 50ex;
-}
-.extraTabelaMostrarAnotacoes .extraDocumentoObservacao {
-    margin-left: 34px;
 }
 #txtNumProcessoPesquisaRapida[placeholder] {
     width: 135px;
@@ -217,4 +205,3 @@ tr.extraLocalizador[data-processos="0"] td, tr.extraLocalizador[data-processos="
 .extraRelacionados:hover tr {
     display: inherit;
 }
-
